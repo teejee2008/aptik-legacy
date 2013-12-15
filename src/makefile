@@ -20,9 +20,9 @@ install:
 	mkdir -p "$(DESTDIR)$(mandir)"
 	mkdir -p "$(DESTDIR)$(man1dir)"
 	mkdir -p "$(DESTDIR)$(launcherdir)"
-	mkdir -p "$(DESTDIR)$(sharedir)/aptik"
-	mkdir -p "$(DESTDIR)$(sharedir)/pixmaps"
-	mkdir -p "$(DESTDIR)$(localedir)/it_IT/LC_MESSAGES"
+	#mkdir -p "$(DESTDIR)$(sharedir)/aptik"
+	#mkdir -p "$(DESTDIR)$(sharedir)/pixmaps"
+	#mkdir -p "$(DESTDIR)$(localedir)/it_IT/LC_MESSAGES"
 	
 	#binary
 	install -m 0755 aptik "$(DESTDIR)$(bindir)"

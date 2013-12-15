@@ -217,7 +217,7 @@ public class Main : GLib.Object{
 					
 				default: 
 					//unknown option - show help and exit
-					stdout.printf(_("Unknown option:") + " %s\n".printf(args[k]));
+					stdout.printf(_("Unknown option") + ": %s\n".printf(args[k]));
 					stdout.printf(help_message());
 					return false;
 			}
