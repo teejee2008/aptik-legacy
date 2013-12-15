@@ -1,0 +1,150 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Tony George (teejee2008@gmail.com)
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: aptik 1.2\n"
+"Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
+"POT-Creation-Date: 2013-12-15 12:22+0530\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/Main.vala:430
+#, c-format
+msgid "Adding"
+msgstr ""
+
+#: src/Main.vala:107
+msgid "Assume Yes for all prompts"
+msgstr ""
+
+#: src/Main.vala:103
+msgid "Backup downloaded packages from APT cache"
+msgstr ""
+
+#: src/Main.vala:559
+#, c-format
+msgid "Cache backup not found in current directory"
+msgstr ""
+
+#: src/Main.vala:456
+#, c-format
+msgid "Checking available packages"
+msgstr ""
+
+#: src/Main.vala:450
+#, c-format
+msgid "Checking installed packages"
+msgstr ""
+
+#: src/Main.vala:99
+msgid "Create a backup list of PPAs"
+msgstr ""
+
+#: src/Main.vala:100
+msgid "Create a backup list of packages installed by user"
+msgstr ""
+
+#: src/Main.vala:418 src/Main.vala:466 src/Main.vala:559
+#, c-format
+msgid "Error"
+msgstr ""
+
+#: src/Main.vala:418 src/Main.vala:466
+#, c-format
+msgid "File not found in current directory"
+msgstr ""
+
+#: src/Main.vala:366 src/Main.vala:410
+#, c-format
+msgid "File saved"
+msgstr ""
+
+#: src/Main.vala:509
+#, c-format
+msgid "Following packages are not available"
+msgstr ""
+
+#: src/Main.vala:514
+#, c-format
+msgid "Following packages will be installed"
+msgstr ""
+
+#: src/Main.vala:98
+msgid "List Personal Package Archives (PPAs)"
+msgstr ""
+
+#: src/Main.vala:93
+msgid "List available packages"
+msgstr ""
+
+#: src/Main.vala:97
+msgid "List default packages for linux distribution"
+msgstr ""
+
+#: src/Main.vala:94
+msgid "List installed packages"
+msgstr ""
+
+#: src/Main.vala:95
+msgid "List top-level installed packages"
+msgstr ""
+
+#: src/Main.vala:96
+msgid "List top-level packages installed by user"
+msgstr ""
+
+#: src/Main.vala:105
+msgid "Makes current user the owner of all files in her home directory"
+msgstr ""
+
+#: src/Main.vala:91
+msgid "Options"
+msgstr ""
+
+#: src/Main.vala:444
+#, c-format
+msgid "PPA added successfully"
+msgstr ""
+
+#: src/Main.vala:102
+msgid "Reinstall missing packages from file 'packages.list'"
+msgstr ""
+
+#: src/Main.vala:101
+msgid "Restore PPAs from file 'ppa.list'"
+msgstr ""
+
+#: src/Main.vala:104
+msgid "Restore packages to APT cache"
+msgstr ""
+
+#: src/Main.vala:520
+#, c-format
+msgid "Selected packages are already installed"
+msgstr ""
+
+#: src/Main.vala:108
+msgid "Show all options"
+msgstr ""
+
+#: src/Main.vala:106
+msgid "Show package description if available"
+msgstr ""
+
+#: src/Main.vala:89
+msgid "Syntax"
+msgstr ""
+
+#: src/Main.vala:220
+#, c-format
+msgid "Unknown option:"
+msgstr ""
