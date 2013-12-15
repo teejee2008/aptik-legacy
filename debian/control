@@ -1,0 +1,21 @@
+Source: aptik
+Section: utils
+Priority: extra
+Maintainer: Tony George <tony.george.kol@gmail.com>
+Build-Depends: debhelper (>= 8.0.0), autotools-dev, valac, libgtk-3-dev, libgee-dev, libsoup2.4-dev, libjson-glib-dev
+Standards-Version: 3.9.3
+Homepage: http://teejeetech.blogspot.in/
+#Vcs-Git: git://git.debian.org/collab-maint/hello.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/hello.git;a=summary
+
+Package: aptik
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libgtk-3-0, libgee2, rsync, aptitude
+#Recommends: 
+Description: Utility to simplify re-installation of software packages
+ Command line utility to simplify re-installation of software packages
+ after upgrading/re-installing Ubuntu-based distributions.
+ Provides options to backup and re-install extra applications installed
+ by user; backup and re-add third-party PPAs; backup and restore 
+ downloaded packages in APT cache; fixing ownership of files in user's 
+ home directory.

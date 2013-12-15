@@ -1,0 +1,5 @@
+./installer/aptik-latest-i386.run
+./installer/aptik-latest-amd64.run
+./installer/amd64
+./installer/i386
+./src/aptik
