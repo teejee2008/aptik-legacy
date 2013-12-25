@@ -39,7 +39,7 @@ using TeeJee.Misc;
 
 public Main App;
 public const string AppName = "Aptik";
-public const string AppVersion = "1.0";
+public const string AppVersion = "1.1";
 public const string AppAuthor = "Tony George";
 public const string AppAuthorEmail = "teejee2008@gmail.com";
 
@@ -102,7 +102,7 @@ public class Main : GLib.Object{
 		msg += "  --restore-packages   " + _("Reinstall missing packages from file 'packages.list'") + "\n";
 		msg += "  --backup-cache       " + _("Backup downloaded packages from APT cache") + "\n";
 		msg += "  --restore-cache      " + _("Restore packages to APT cache") + "\n";
-		msg += "  --fix-ownership      " + _("Makes current user the owner of all files in her home directory") + "\n";
+		msg += "  --take-ownership      " + _("Take ownership of files in your home directory") + "\n";
 		msg += "  --[show-]desc        " + _("Show package description if available") + "\n";
 		msg += "  --yes                " + _("Assume Yes for all prompts") + "\n";
 		msg += "  --h[elp]             " + _("Show all options") + "\n";
@@ -201,8 +201,8 @@ public class Main : GLib.Object{
 					restore_apt_cache();
 					break;
 					
-				case "--fix-ownership":
-					fix_home_ownership();
+				case "--take-ownership":
+					take_ownership();
 					break;
 					
 				case "--desc":
@@ -574,7 +574,7 @@ done
 		}
 	}
 
-	private bool fix_home_ownership(){
+	private bool take_ownership(){
 		string home = Environment.get_home_dir();
 		string user = get_user_login();
 

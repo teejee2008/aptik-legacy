@@ -18,6 +18,11 @@ long_line_column=80
 
 [files]
 current_page=0
+FILE_NAME_0=3959;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FMain.vala;0;4
+FILE_NAME_1=215;Make;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2Fmakefile;0;4
+FILE_NAME_2=0;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FUtility.vala;0;4
+FILE_NAME_3=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fdebian%2Fchangelog;0;4
+FILE_NAME_4=964;Conf;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fdebian%2Fcontrol;0;4
 
 [VTE]
 last_dir=/home/teejee

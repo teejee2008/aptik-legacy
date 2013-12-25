@@ -4,6 +4,8 @@ backup=`pwd`
 DIR="$( cd "$( dirname "$0" )" && pwd )"
 cd "$DIR"
 
+sh push.sh
+
 #check for errors
 if [ $? -ne 0 ]; then
 	cd "$backup"
@@ -25,7 +27,5 @@ for arch in i386 amd64
 do
   cp -p --no-preserve=ownership -t /home/teejee/Dropbox/Public/linux ./aptik-latest-${arch}.run
 done
-
-sh push.sh
 
 cd "$backup"
