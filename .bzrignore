@@ -3,3 +3,4 @@
 ./installer/amd64
 ./installer/i386
 ./src/aptik
+./src/aptik-gtk

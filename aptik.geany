@@ -17,12 +17,17 @@ long_line_behaviour=1
 long_line_column=80
 
 [files]
-current_page=0
-FILE_NAME_0=3959;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FMain.vala;0;4
-FILE_NAME_1=215;Make;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2Fmakefile;0;4
-FILE_NAME_2=0;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FUtility.vala;0;4
-FILE_NAME_3=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fdebian%2Fchangelog;0;4
-FILE_NAME_4=964;Conf;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fdebian%2Fcontrol;0;4
+current_page=1
+FILE_NAME_0=17723;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FUtility.vala;0;4
+FILE_NAME_1=10064;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FMain.vala;0;4
+FILE_NAME_2=7015;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FAptikConsole.vala;0;4
+FILE_NAME_3=1591;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FAptikGtk.vala;0;4
+FILE_NAME_4=26014;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FMainWindow.vala;0;4
+FILE_NAME_5=572;Make;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2Fmakefile;0;4
+FILE_NAME_6=137;None;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fdebian%2Fchangelog;0;4
+FILE_NAME_7=440;Conf;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fdebian%2Fcontrol;0;4
+FILE_NAME_8=257;Conf;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2Faptik.desktop;0;4
+FILE_NAME_9=3657;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FLogWindow.vala;0;4
 
 [VTE]
 last_dir=/home/teejee
@@ -39,10 +44,10 @@ NF_03_LB=Clean
 NF_03_CM=make clean
 NF_03_WD=
 EX_00_LB=_Execute
-EX_00_CM=gksu './aptik --show-commands --debug'
+EX_00_CM=gksu ./aptik-gtk
 EX_00_WD=
 EX_01_LB=Execute (sudo)
-EX_01_CM=gksu './aptik --show-commands --debug'
+EX_01_CM=
 EX_01_WD=
 ValaFT_01_LB=_Build
 ValaFT_01_CM=make all

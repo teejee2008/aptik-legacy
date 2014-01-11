@@ -39,7 +39,7 @@ using TeeJee.Misc;
 
 public Main App;
 public const string AppName = "Aptik";
-public const string AppVersion = "1.1";
+public const string AppVersion = "1.2";
 public const string AppAuthor = "Tony George";
 public const string AppAuthorEmail = "teejee2008@gmail.com";
 
@@ -49,260 +49,187 @@ const string LOCALE_DIR = "/usr/share/locale";
 //extern void exit(int exit_code);
 
 public class Main : GLib.Object{
-	public string temp_dir = "/tmp/aptik";
+	public string temp_dir = "";
+	public string backup_dir = "";
+	public bool gui_mode = false;//TODO:Remove
 
-	public static int main (string[] args) {
-		set_locale();
+	public string err_line;
+	public string out_line;
+	public string status_line;
+	public string status_summary;
+	public Gee.ArrayList<string> stdout_lines;
+	public Gee.ArrayList<string> stderr_lines;
+	public Pid proc_id;
+	public DataInputStream dis_out;
+	public DataInputStream dis_err;
+	public int progress_count;
+	public int progress_total;
+	public bool is_running;
 
-		App = new Main(args);
-		
-		bool success = App.parse_arguments(args);
-		
-		App.exit_app();
-		
-		return (success) ? 0 : 1;
-	}
-	
-	private static void set_locale(){
-		Intl.setlocale(GLib.LocaleCategory.MESSAGES, "aptik");
-		Intl.textdomain(GETTEXT_PACKAGE);
-		Intl.bind_textdomain_codeset(GETTEXT_PACKAGE, "utf-8");
-		Intl.bindtextdomain(GETTEXT_PACKAGE, LOCALE_DIR);
-	}
-	
+	private Regex rex_aptget_download;
+	private Regex rex_pkg_installed;
+	private MatchInfo match;
+			
 	public Main(string[] args){
 		try{
+			temp_dir = get_temp_file_path();
+			
 			var f = File.new_for_path(temp_dir);
 			if (f.query_exists()){
-				f.delete();
+				Posix.system("sudo rm -rf %s".printf(temp_dir));
 			}
 			f.make_directory_with_parents();
+
+			rex_aptget_download = new Regex("""([^%]*)%[ \t]*\[([^\]]*)\]""");
 		}
 		catch (Error e) {
 			log_error (e.message);
 		}
 	}
-
-	public string help_message(){
-		string msg = "\n" + AppName + " v" + AppVersion + " by Tony George (teejee2008@gmail.com)" + "\n";
-		msg += "\n";
-		msg += _("Syntax") + ": aptik [options]\n";
-		msg += "\n";
-		msg += _("Options") + ":\n";
-		msg += "\n";
-		msg += "  --list-all           " + _("List available packages") + "\n";
-		msg += "  --list-installed     " + _("List installed packages") + "\n";
-		msg += "  --list-top           " + _("List top-level installed packages") + "\n";
-		msg += "  --list-user          " + _("List top-level packages installed by user") + "\n";
-		msg += "  --list-default       " + _("List default packages for linux distribution") + "\n";
-		msg += "  --list-ppa           " + _("List Personal Package Archives (PPAs)") + "\n";
-		msg += "  --backup-ppa         " + _("Create a backup list of PPAs") + "\n";
-		msg += "  --backup-packages    " + _("Create a backup list of packages installed by user") + "\n";
-		msg += "  --restore-ppa        " + _("Restore PPAs from file 'ppa.list'") + "\n";
-		msg += "  --restore-packages   " + _("Reinstall missing packages from file 'packages.list'") + "\n";
-		msg += "  --backup-cache       " + _("Backup downloaded packages from APT cache") + "\n";
-		msg += "  --restore-cache      " + _("Restore packages to APT cache") + "\n";
-		msg += "  --take-ownership      " + _("Take ownership of files in your home directory") + "\n";
-		msg += "  --[show-]desc        " + _("Show package description if available") + "\n";
-		msg += "  --yes                " + _("Assume Yes for all prompts") + "\n";
-		msg += "  --h[elp]             " + _("Show all options") + "\n";
-		msg += "\n";
-		return msg;
-	}
 	
-	private bool parse_arguments(string[] args){
-		
-		bool show_desc = false;
-		bool no_prompt = false;
-		
-		Gee.ArrayList<Package> list = null;
-		
-		if (args.length == 1){
-			//no args given
-			stdout.printf(help_message());
+	/* Common */
+	
+	private bool check_backup_file(string file_name){
+		string backup_file = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + file_name;
+		var f = File.new_for_path(backup_file);
+		if (!f.query_exists()){
+			log_error(_("File not found in backup directory") + ": '%s'".printf(file_name));
 			return false;
 		}
-		
-		for (int k = 1; k < args.length; k++) // Oth arg is app path 
-		{
-			switch (args[k].down()){
-				case "--desc":
-				case "--show-desc":
-					show_desc = true;
-					break;
-				case "-y":
-				case "--yes":
-					no_prompt = true;
-					break;
-				case "--help":
-				case "--h":
-				case "-h":
-					stdout.printf(help_message());
-					return true;
-			}
+		else{
+			return true;
 		}
-		
-		for (int k = 1; k < args.length; k++) // Oth arg is app path 
-		{
-			switch (args[k].down()){
-				case "--list-all":
-					list = list_all();
-					break;
-				case "--list-installed":
-					list = list_installed();
-					break;
-
-				case "--list-top":
-					list = list_top();
-					break;
-					
-				case "--list-user":
-					list = list_user();
-					break;
-
-				case "--list-default":
-					list = list_default();
-					break;
-
-				case "--list-ppa":
-				case "--list-ppas":
-					foreach(string ppa in list_ppa()){
-						stdout.printf("%s\n".printf(ppa));
-					}
-					break;
-
-				case "--backup-ppa":
-				case "--backup-ppas":
-					backup_ppa();
-					break;
-					
-				case "--backup-package":
-				case "--backup-packages":
-					backup_packages();
-					break;
-
-				case "--restore-ppa":
-				case "--restore-ppas":
-					restore_ppa();
-					break;
-					
-				case "--restore-package":
-				case "--restore-packages":
-					restore_packages(no_prompt);
-					break;
-				
-				case "--backup-cache":
-				case "--backup-apt-cache":
-					backup_apt_cache();
-					break;
-				
-				case "--restore-cache":
-				case "--restore-apt-cache":
-					restore_apt_cache();
-					break;
-					
-				case "--take-ownership":
-					take_ownership();
-					break;
-					
-				case "--desc":
-				case "--show-desc":
-				case "-y":
-				case "--yes":
-				case "--help":
-				case "--h":
-				case "-h":
-					//handled already - do nothing
-					break;
-					
-				default: 
-					//unknown option - show help and exit
-					stdout.printf(_("Unknown option") + ": %s\n".printf(args[k]));
-					stdout.printf(help_message());
-					return false;
-			}
-		}
-		
-		for (int k = 1; k < args.length; k++) // Oth arg is app path 
-		{
-			switch (args[k].down()){
-				case "--list-all":
-				case "--list-installed":
-				case "--list-top":
-				case "--list-user":
-				case "--list-default":
-					int max_length = 0;
-					foreach(Package pkg in list){
-						if (pkg.name.length > max_length){
-							max_length = pkg.name.length;
-						}
-					}
-					string fmt = "%%-%ds".printf(max_length + 2);
-					
-					if (show_desc){
-						fmt = fmt + "%s\n";
-						foreach(Package pkg in list){
-							stdout.printf(fmt.printf(pkg.name, pkg.description));
-						}
-					}
-					else{
-						fmt = fmt + "\n";
-						foreach(Package pkg in list){
-							stdout.printf(fmt.printf(pkg.name));
-						}
-					}
-					
-					break;
-					
-				case "--list-ppa":
-					//do nothing
-					break;
-			}
-		}
-		
-		return true;
 	}
 	
-	private Gee.ArrayList<Package> list_all(){
-		var pkg_list = new Gee.ArrayList<Package>();
+	/* Package selections */
+	
+	public Gee.HashMap<string,Package> list_all(){
+		var pkg_list_available = list_available();
+		var pkg_list_installed = list_installed(true);
+		var pkg_list_default = list_default();
+		var pkg_list_top = list_top();
+		var pkg_list_manual = list_manual();
 		
+		var pkg_list_all = pkg_list_available;
+		
+		foreach(Package pkg in pkg_list_installed.values){
+			if (pkg_list_all.has_key(pkg.name)){
+				pkg_list_all[pkg.name].is_installed = true;
+				pkg_list_all[pkg.name].server = pkg.server;
+				pkg_list_all[pkg.name].repo = pkg.repo;
+			}
+		}
+
+		foreach(Package pkg in pkg_list_default.values){
+			if (pkg_list_all.has_key(pkg.name)){
+				pkg_list_all[pkg.name].is_default = true;
+			}
+		}
+
+		foreach(Package pkg in pkg_list_top.values){
+			if (pkg_list_all.has_key(pkg.name)){
+				pkg_list_all[pkg.name].is_top = true;
+			}
+		}
+
+		foreach(Package pkg in pkg_list_manual.values){
+			if (pkg_list_all.has_key(pkg.name)){
+				pkg_list_all[pkg.name].is_manual = true;
+			}
+		}
+
+		return pkg_list_all;
+	}
+	
+	public Gee.HashMap<string,Package> list_available(){
+		var pkg_list = new Gee.HashMap<string,Package>();
+
 		string txt = execute_command_sync_get_output("aptitude search --disable-columns -F '%p|%d' '.'");
 		
 		foreach(string line in txt.split("\n")){
 			if (line.strip() == "") { continue; }
 			if (line.index_of("|") == -1) { continue; }
-
-			Package pkg = new Package();
-			pkg_list.add(pkg);
 			
-			pkg.name = line.split("|")[0].strip();
-			pkg.description = line.split("|")[1].strip();
+			string pkg_name = line.split("|")[0].strip();
+			string pkg_desc = line.split("|")[1].strip();
+			
+			Package pkg = new Package(pkg_name);
+			pkg.description = pkg_desc;
+			pkg.is_available = true;
+			pkg_list[pkg.name] = pkg;
 		}
-		
+
 		return pkg_list;
 	}
 
-	private Gee.ArrayList<Package> list_installed(){
-		var pkg_list = new Gee.ArrayList<Package>();
+	public Gee.HashMap<string,Package> list_installed(bool get_ppa_info){
 		
-		string txt = execute_command_sync_get_output("aptitude search --disable-columns -F '%p|%d' '?installed'");
+		var pkg_list = new Gee.HashMap<string,Package>();
+
+		string cmd = "aptitude search --disable-columns -F '%p|%d' '?installed'";
+		string txt = execute_command_sync_get_output(cmd);
 		
 		foreach(string line in txt.split("\n")){
 			if (line.strip() == "") { continue; }
 			if (line.index_of("|") == -1) { continue; }
 
-			Package pkg = new Package();
-			pkg_list.add(pkg);
+			string pkg_name = line.split("|")[0].strip();
+			string pkg_desc = line.split("|")[1].strip();
 			
-			pkg.name = line.split("|")[0].strip();
-			pkg.description = line.split("|")[1].strip();
+			Package pkg = new Package(pkg_name);
+			pkg.description = pkg_desc;
+			pkg.is_installed = true;
+			pkg_list[pkg.name] = pkg;
+		}
+
+		//get ppa info ---------------------------
+		
+		if (get_ppa_info){
+			
+			cmd =
+"""apt-cache policy $(dpkg -l | awk 'NR >= 6 { print $2 }') |
+  awk '/^[^ ]/    { split($1, a, ":"); pkg = a[1] }
+	nextline == 1 { nextline = 0; printf("%-40s %-50s %s\n", pkg, $2, $3) }
+	/\*\*\*/      { nextline = 1 }'
+""";
+
+			string txtout, txterr;
+			int exit_code = execute_command_script_sync(cmd, out txtout, out txterr);
+
+			if (exit_code == 0){;
+				string pkg_name;
+				string pkg_server;
+				string pkg_repo;
+				
+				try{
+					rex_pkg_installed = new Regex("""([^ \t]*)[ \t]*([^ \t]*)[ \t]*([^ \t]*)[ \t]*""");
+				}
+				catch (Error e) {
+					log_error (e.message);
+				}
+				
+				foreach(string line in txtout.split("\n")){
+					if (line.strip().length == 0) { continue; }
+
+					if (rex_pkg_installed.match (line, 0, out match)){
+						pkg_name = match.fetch(1).strip();
+						pkg_server = match.fetch(2).strip();
+						pkg_repo = match.fetch(3).strip();
+
+						if (pkg_list.has_key(pkg_name)){
+							pkg_list[pkg_name].server = pkg_server;
+							pkg_list[pkg_name].repo = pkg_repo;
+						}				
+					}
+				}
+			}
 		}
 		
 		return pkg_list;
 	}
 
-	private Gee.ArrayList<Package> list_top(){
-		var pkg_list = new Gee.ArrayList<Package>();
+	public Gee.HashMap<string,Package> list_top(){
+		var pkg_list = new Gee.HashMap<string,Package>();
 		
 		string txt = execute_command_sync_get_output("aptitude search --disable-columns -F '%p|%d' '?installed !?automatic !?reverse-depends(?installed)'");
 		
@@ -310,64 +237,230 @@ public class Main : GLib.Object{
 			if (line.strip() == "") { continue; }
 			if (line.index_of("|") == -1) { continue; }
 
-			Package pkg = new Package();
-			pkg_list.add(pkg);
+			string pkg_name = line.split("|")[0].strip();
+			string pkg_desc = line.split("|")[1].strip();
 			
-			pkg.name = line.split("|")[0].strip();
-			pkg.description = line.split("|")[1].strip();
+			Package pkg = new Package(pkg_name);
+			pkg.description = pkg_desc;
+			pkg.is_top = true;
+			pkg_list[pkg.name] = pkg;
 		}
 		
 		return pkg_list;
 	}
 	
-	private Gee.ArrayList<Package> list_default(){
-		var pkg_list = new Gee.ArrayList<Package>();
+	public Gee.HashMap<string,Package> list_default(){
+		var pkg_list = new Gee.HashMap<string,Package>();
 		
 		string txt = "";
 		execute_command_script_sync("gzip -dc /var/log/installer/initial-status.gz | sed -n 's/^Package: //p' | sort | uniq", out txt, null);
 		
 		foreach(string line in txt.split("\n")){
 			if (line.strip() == "") { continue; }
-			Package pkg = new Package();
-			pkg_list.add (pkg);
-			pkg.name = line.strip();
+			
+			Package pkg = new Package(line.strip());
+			pkg.is_default = true;
+			pkg_list[pkg.name] = pkg;
 		}
-		
+
 		return pkg_list;
 	}
 	
-	private Gee.ArrayList<Package> list_user(){
+	public Gee.HashMap<string,Package> list_manual(){
 		var pkg_list_default = list_default();
 		var pkg_list_top = list_top();
-		var pkg_list = new Gee.ArrayList<Package>();
+		var pkg_list = new Gee.HashMap<string,Package>();
 		
-		foreach(Package pkg in pkg_list_top){
-			bool is_default = false;
-			foreach(Package pkg_def in pkg_list_default){
-				if (pkg_def.name == pkg.name){
-					is_default = true;
-					break;
-				}
+		foreach(Package pkg in pkg_list_top.values){
+			if (!pkg_list_default.has_key(pkg.name)){
+				pkg_list[pkg.name] = pkg;
+				pkg.is_selected = true;
 			}
-			if (!is_default){
-				pkg_list.add(pkg);
+		}
+
+		return pkg_list;
+	}
+
+	public bool save_package_list_selected(Gee.HashMap<string,Package> package_list){
+		string file_name = "packages.list";
+		string list_file = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + file_name;
+
+		var pkg_list = new ArrayList<Package>();
+		foreach(Package pkg in package_list.values) {
+			pkg_list.add(pkg);
+		}
+		CompareFunc<Package> func = (a, b) => {
+			return strcmp(a.name,b.name);
+		};
+		pkg_list.sort(func);
+		
+		string text = "";
+		foreach(Package pkg in pkg_list){
+			if (pkg.is_selected){
+				text += "%s\n".printf(pkg.name);
+			}
+			else{
+				text += "#%s\n".printf(pkg.name);
+			}
+		}
+		
+		bool is_success = write_file(list_file,text);
+		
+		if (is_success){
+			log_msg(_("File saved") + " '%s'".printf(file_name));
+		}
+		else{
+			log_error(_("Failed to write")  + " '%s'".printf(file_name));
+		}
+		
+		return is_success;
+	}
+
+	public bool save_package_list_installed(Gee.HashMap<string,Package> package_list){
+		string file_name = "packages-installed.list";
+		string list_file = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + file_name;
+		
+		var pkg_list = new ArrayList<Package>();
+		foreach(Package pkg in package_list.values) {
+			pkg_list.add(pkg);
+		}
+		CompareFunc<Package> func = (a, b) => {
+			return strcmp(a.name,b.name);
+		};
+		pkg_list.sort(func);
+		
+		string text = "";
+		foreach(Package pkg in pkg_list){
+			if (pkg.is_installed){
+				text += "%s\n".printf(pkg.name);
+			}
+		}
+		
+		bool is_success = write_file(list_file,text);
+		
+		if (is_success){
+			log_msg(_("File saved") + " '%s'".printf(file_name));
+		}
+		else{
+			log_error(_("Failed to write")  + " '%s'".printf(file_name));
+		}
+		
+		return is_success;
+	}
+	
+	public Gee.HashMap<string,Package> read_package_list(Gee.HashMap<string,Package> pkg_list_all){
+		string file_name = "packages.list";
+		string pkg_list_file = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + file_name;
+		var pkg_list = new Gee.HashMap<string,Package>();
+		
+		//check file
+		if (!check_backup_file(file_name)){
+			return pkg_list;
+		}
+
+		//read package names
+		foreach(string line in read_file(pkg_list_file).split("\n")){
+			if (line.strip() == "") { continue; }
+			
+			bool pkg_selected;
+			string pkg_name;
+			if (line.strip().has_prefix("#")){
+				pkg_selected = false;
+				pkg_name = line.split("#")[1].strip();
+			}
+			else{
+				pkg_selected = true;
+				pkg_name = line.strip();
+			}
+
+			Package pkg = new Package(pkg_name);
+			pkg_list[pkg_name] = pkg;
+			pkg.is_selected = pkg_selected;
+			
+			//check if available/installed/top/default/manual
+			if (pkg_list_all.has_key(pkg_name)){
+				Package pkg_ref = pkg_list_all[pkg_name];
+				//copy description and flags
+				pkg.description = pkg_ref.description;
+				pkg.is_available = pkg_ref.is_available;
+				pkg.is_installed = pkg_ref.is_installed;
+				pkg.is_top = pkg_ref.is_top;
+				pkg.is_default = pkg_ref.is_default;
+				pkg.is_manual = pkg_ref.is_manual;
+			}
+			else{
+				//pkg is NOT available/installed/top/default/manual
 			}
 		}
 		
 		return pkg_list;
 	}
 
-	private void backup_packages(){
-		string pkg_list = "";
-		foreach(Package pkg in list_user()){
-			pkg_list += "%s\n".printf(pkg.name);
+	public bool download_packages (string pkg_list){
+		string[] argv = new string[1];
+		argv[0] = create_temp_bash_script("apt-get install -d -y %s".printf(pkg_list));
+		
+		Pid child_pid;
+		int input_fd;
+		int output_fd;
+		int error_fd;
+
+		try {
+			//execute script file
+			Process.spawn_async_with_pipes(
+			    null, //working dir
+			    argv, //argv
+			    null, //environment
+			    SpawnFlags.SEARCH_PATH,
+			    null,   // child_setup
+			    out child_pid,
+			    out input_fd,
+			    out output_fd,
+			    out error_fd);
+			
+			is_running = true;
+			
+			proc_id = child_pid;
+
+			//create stream readers
+			UnixInputStream uis_out = new UnixInputStream(output_fd, false);
+			UnixInputStream uis_err = new UnixInputStream(error_fd, false);
+			dis_out = new DataInputStream(uis_out);
+			dis_err = new DataInputStream(uis_err);
+			dis_out.newline_type = DataStreamNewlineType.ANY;
+			dis_err.newline_type = DataStreamNewlineType.ANY;
+			
+			progress_count = 0;
+			//stdout_lines = new Gee.ArrayList<string>();
+			stderr_lines = new Gee.ArrayList<string>();
+			
+        	try {
+				//start thread for reading output stream
+			    Thread.create<void> (apt_read_output_line, true);
+		    } catch (Error e) {
+		        log_error (e.message);
+		    }
+		    
+		    try {
+				//start thread for reading error stream
+			    Thread.create<void> (apt_read_error_line, true);
+		    } catch (Error e) {
+		        log_error (e.message);
+		    }
+		    
+        	return true;
 		}
-		write_file("packages.list",pkg_list);
-		stdout.printf(_("File saved") + ": packages.list\n");
+		catch (Error e) {
+			log_error (e.message);
+			return false;
+		}
 	}
+
+	/* PPA */
 	
-	private Gee.ArrayList<string> list_ppa(){
-		var ppa_list = new Gee.ArrayList<string>();
+	public Gee.HashMap<string,Ppa> list_ppa(){
+		var ppa_list = new Gee.HashMap<string,Ppa>();
+		var pkg_list_installed = App.list_installed(true);
 		
 		string sh =
 """
@@ -375,7 +468,7 @@ for listfile in `find /etc/apt/ -name \*.list`; do
     grep -o "^deb http://ppa.launchpad.net/[a-z0-9\-]\+/[a-z0-9.\-]\+" $listfile | while read entry ; do
         user=`echo $entry | cut -d/ -f4`
         ppa=`echo $entry | cut -d/ -f5`
-        echo "ppa:$user/$ppa"
+        echo "$user/$ppa"
     done
 done
 """;
@@ -383,150 +476,221 @@ done
 		execute_command_script_sync(sh, out txt, null);
 		
 		foreach(string line in txt.split("\n")){
-			string ppa = line.strip();
-			if (ppa.length > 0) {
-				ppa_list.add(line.strip());
+			string ppa_name = line.strip();
+			if (ppa_name.length > 0) {
+				var ppa = new Ppa(ppa_name);
+				ppa.is_selected = true;
+				ppa.is_installed = true;
+				ppa_list[ppa_name] = ppa;
+				
+				foreach (Package pkg in pkg_list_installed.values) {
+					if (pkg.server.contains(ppa.name)){
+						ppa.description += " %s".printf(pkg.name);
+					}
+				}
+				ppa.description = ppa.description.strip();
 			}
+		}
+
+		return ppa_list;
+	}
+
+	public bool save_ppa_list_selected(Gee.HashMap<string,Ppa> ppa_list_to_save){
+		string file_name = "ppa.list";
+		string ppa_list_file = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + file_name;
+
+		var ppa_list = new ArrayList<Ppa>();
+		foreach(Ppa ppa in ppa_list_to_save.values) {
+			ppa_list.add(ppa);
+		}
+		CompareFunc<Ppa> func = (a, b) => {
+			return strcmp(a.name,b.name);
+		};
+		ppa_list.sort(func);
+		
+		string text = "";
+		foreach(Ppa ppa in ppa_list){
+			if (ppa.is_selected){
+				text += "%s #%s\n".printf(ppa.name, ppa.description);
+			}
+			else{
+				text += "#%s #%s\n".printf(ppa.name, ppa.description);
+			}
+		}
+		
+		bool is_success = write_file(ppa_list_file,text);
+		
+		if (is_success){
+			log_msg(_("File saved") + " '%s'".printf(file_name));
+		}
+		else{
+			log_error(_("Failed to write")  + " '%s'".printf(file_name));
+		}
+		
+		return is_success;
+	}
+
+	public Gee.HashMap<string,Ppa> read_ppa_list(){
+		string file_name = "ppa.list";
+		string ppa_list_file = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + file_name;
+		var ppa_list = new Gee.HashMap<string,Ppa>();
+		
+		//check file
+		if (!check_backup_file(file_name)){
+			return ppa_list;
+		}
+		
+		//get installed list
+		var ppa_list_installed = list_ppa();
+		
+		//read file
+		foreach(string line in read_file(ppa_list_file).split("\n")){
+			if (line.strip() == "") { continue; }
+			
+			string ppa_name = "";
+			string ppa_desc = "";
+			bool ppa_selected;
+			if (line.strip().has_prefix("#")){
+				ppa_selected = false;
+				ppa_name = line.split("#")[1].strip();
+				if (line.split("#").length == 3){
+					ppa_desc = line.split("#")[2].strip();
+				}
+			}
+			else{
+				ppa_selected = true;
+				if (line.split("#").length == 2){
+					ppa_name = line.split("#")[0].strip();
+					ppa_desc = line.split("#")[1].strip();
+				}
+				else{
+					ppa_name = line.strip();
+				}
+			}
+			
+			Ppa ppa = new Ppa(ppa_name);
+			ppa.description = ppa_desc;
+			ppa.is_selected = ppa_selected;
+			ppa_list[ppa_name] = ppa;
+			
+			//check if installed
+			if (ppa_list_installed.has_key(ppa_name)){
+				ppa.is_installed = true;
+			}		
 		}
 		
 		return ppa_list;
 	}
 
-	private void backup_ppa(){
-		string ppa_list = "";
-		//string script ="#!/bin/bash";
+	public bool run_apt_update (){
+		string[] argv = new string[1];
+		argv[0] = create_temp_bash_script("apt-get -y update");
 		
-		foreach(string ppa in list_ppa()){
-			ppa_list += "%s\n".printf(ppa);
-			//script += "sudo apt-add-repository -y %s\n".printf(ppa);
+		Pid child_pid;
+		int input_fd;
+		int output_fd;
+		int error_fd;
+
+		try {
+			//execute script file
+			Process.spawn_async_with_pipes(
+			    null, //working dir
+			    argv, //argv
+			    null, //environment
+			    SpawnFlags.SEARCH_PATH,
+			    null,   // child_setup
+			    out child_pid,
+			    out input_fd,
+			    out output_fd,
+			    out error_fd);
+			
+			is_running = true;
+			
+			proc_id = child_pid;
+
+			//create stream readers
+			UnixInputStream uis_out = new UnixInputStream(output_fd, false);
+			UnixInputStream uis_err = new UnixInputStream(error_fd, false);
+			dis_out = new DataInputStream(uis_out);
+			dis_err = new DataInputStream(uis_err);
+			dis_out.newline_type = DataStreamNewlineType.ANY;
+			dis_err.newline_type = DataStreamNewlineType.ANY;
+			
+			progress_count = 0;
+			//stdout_lines = new Gee.ArrayList<string>();
+			stderr_lines = new Gee.ArrayList<string>();
+			
+        	try {
+				//start thread for reading output stream
+			    Thread.create<void> (apt_read_output_line, true);
+		    } catch (Error e) {
+		        log_error (e.message);
+		    }
+		    
+		    try {
+				//start thread for reading error stream
+			    Thread.create<void> (apt_read_error_line, true);
+		    } catch (Error e) {
+		        log_error (e.message);
+		    }
+		    
+        	return true;
 		}
-		//script += "sudo apt-get update";
-		
-		write_file("ppa.list",ppa_list);
-		//write_file("ppa-restore.sh",script);
-		
-		//chmod("ppa-restore.sh","u+x");
-		
-		stdout.printf(_("File saved") + ": ppa.list\n");
+		catch (Error e) {
+			log_error (e.message);
+			return false;
+		}
+	}
+
+	private void apt_read_error_line(){
+		try{
+			err_line = dis_err.read_line (null);
+		    while (err_line != null) {
+		        if (gui_mode){
+					stderr_lines.add(err_line); //save
+				}
+				else{
+					stderr.printf(err_line + "\n"); //print
+				}
+				
+		        err_line = dis_err.read_line (null); //read next
+			}
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}	
+	}
+
+	private void apt_read_output_line(){
+		try{
+			out_line = dis_out.read_line (null);
+		    while (out_line != null) {
+				if (gui_mode){
+					if (rex_aptget_download.match (out_line, 0, out match)){
+						progress_count = int.parse(match.fetch(1).strip());
+						status_line = match.fetch(2).strip();
+					}
+				}
+				else{
+					stdout.printf(out_line + "\n"); //print
+				}
+
+				out_line = dis_out.read_line (null);  //read next
+			}
+
+			is_running = false;
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}	
 	}
 	
-	private bool restore_ppa(){
-		string ppa_list = "ppa.list";
-		
-		var f = File.new_for_path(ppa_list);
-		if (!f.query_exists()){
-			stderr.printf("[" + _("Error") + "] " + _("File not found in current directory") + ": ppa.list\n");
-			return false;
-		}	
-		
-		int count_success = 0;
-		int count_total = 0;
-		foreach(string line in read_file(ppa_list).split("\n")){
-			if (line.strip() == "") { continue; }
-			string ppa = line.strip();
+	
+	/* APT Cache */
+	
+	public bool backup_apt_cache(){
+		string archives_dir = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + "archives";
 
-			count_total++;
-			
-			stdout.printf(_("Adding") + " '%s'\n".printf(ppa));
-			stdout.flush();
-			
-			int exit_code = Posix.system("sudo apt-add-repository -y %s".printf(ppa));
-
-			if (exit_code == 0){
-				count_success++;
-			}
-
-			stdout.printf("\n");
-		}			
-		
-		Posix.system("sudo apt-get update");
-		
-		stdout.printf("%d/%d ".printf(count_success, count_total) + _("PPA added successfully") + "\n");
-		
-		return true;
-	}
-
-	private bool restore_packages(bool no_prompt){
-		stdout.printf(_("Checking installed packages"));
-		stdout.flush();
-		var pkg_list_installed = list_installed();	
-		stdout.printf(": %d\n".printf(pkg_list_installed.size));
-		stdout.flush();
-		
-		stdout.printf(_("Checking available packages"));
-		stdout.flush();
-		var pkg_list_all = list_all();
-		stdout.printf(": %d\n\n".printf(pkg_list_all.size));
-		stdout.flush();
-		
-		string pkg_list = "packages.list";
-		
-		var f = File.new_for_path(pkg_list);
-		if (!f.query_exists()){
-			stderr.printf("[" + _("Error") + "] " + _("File not found in current directory") + ": packages.list\n");
-			return false;
-		}
-		
-		string list_found = "";
-		string list_missing = "";
-		int count_found = 0;
-		int count_missing = 0;
-		foreach(string line in read_file(pkg_list).split("\n")){
-			if (line.strip() == "") { continue; }
-			string pkg_name = line.strip();
-			
-			bool found = false;
-			foreach(Package pkg in pkg_list_installed){
-				if (pkg.name == pkg_name){
-					found = true;
-					break;
-				}
-			}
-			if (found){
-				continue;
-			}
-			
-			found = false;
-			foreach(Package pkg in pkg_list_all){
-				if (pkg.name == pkg_name){
-					found = true;
-					count_found++;
-					list_found += " %s".printf(pkg_name);
-					break;
-				}
-			}
-			
-			if (!found){
-				count_missing++;
-				list_missing += " %s".printf(pkg_name);
-			}
-		}	
-		
-		list_found = list_found.strip();
-		list_missing = list_missing.strip();
-		
-		if (count_missing > 0){
-			stdout.printf(_("Following packages are not available") + ":\n%s\n\n".printf(list_missing));
-			stdout.flush();
-		}
-		
-		if (count_found > 0){
-			stdout.printf(_("Following packages will be installed") + ":\n%s\n\n".printf(list_found));
-			stdout.flush();
-
-			Posix.system("sudo apt-get%s install %s".printf((no_prompt)? " -y" : "", list_found));
-		}
-		else{
-			stdout.printf(_("Selected packages are already installed") + "\n");
-			stdout.flush();
-		}
-
-		return true;
-	}
-
-	private bool backup_apt_cache(){
-		string archives_dir = "archives";
-		int exit_code;
 		try {
 			//create 'archives' directory
 			var f = File.new_for_path(archives_dir);
@@ -534,12 +698,23 @@ done
 				f.make_directory_with_parents();
 			}
 			
-			//run rsync
-			string cmd = "rsync -ai --numeric-ids";
+			string cmd = "rsync -ai --numeric-ids --list-only";
 			cmd += " --exclude=lock --exclude=partial/";
-			cmd += " %s %s".printf("/var/cache/apt/archives/", "archives/");
-			Process.spawn_command_line_sync(cmd, null, null, out exit_code);
-			
+			cmd += " %s %s".printf("/var/cache/apt/archives/", archives_dir + "/");
+
+			if (gui_mode){
+				//run rsync to get total count
+				string txt = execute_command_sync_get_output(cmd);
+				progress_total = txt.split("\n").length;
+
+				//run rsync
+				run_rsync(cmd.replace(" --list-only",""));
+			}
+			else{
+				int status = Posix.system(cmd);
+				return (status == 0);
+			}
+
 			return true;
 		}
 		catch (Error e){
@@ -548,41 +723,151 @@ done
 		}
 	}
 	
-	private bool restore_apt_cache(){
-		string archives_dir = "archives";
-		int exit_code;
+	public bool restore_apt_cache(){
+		string archives_dir = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + "archives";
+
+		//check 'archives' directory
+		var f = File.new_for_path(archives_dir);
+		if (!f.query_exists()){
+			log_error(_("Cache backup not found in backup directory"));
+			return false;
+		}
 		
-		try {
-			//check 'archives' directory
-			var f = File.new_for_path(archives_dir);
-			if (!f.query_exists()){
-				stderr.printf("[" + _("Error") + "] " + _("Cache backup not found in current directory") + "\n");
-				return false;
-			}
+		string cmd = "rsync -ai --numeric-ids --list-only";
+		cmd += " --exclude=lock --exclude=partial/";
+		cmd += " %s %s".printf(archives_dir + "/","/var/cache/apt/archives/");
+		
+		if (gui_mode){
+			//run rsync to get total count
+			string txt = execute_command_sync_get_output(cmd);
+			progress_total = txt.split("\n").length;
 			
 			//run rsync
-			string cmd = "sudo rsync -ai --numeric-ids";
-			cmd += " --exclude=lock --exclude=partial/";
-			cmd += " %s %s".printf("archives/","/var/cache/apt/archives/");
-			Process.spawn_command_line_sync(cmd, null, null, out exit_code);
-			
-			return true;
+			return run_rsync(cmd.replace(" --list-only",""));
 		}
-		catch (Error e){
+		else{
+			int status = Posix.system(cmd);
+			return (status == 0);
+		}
+	}
+	
+	
+	private bool run_rsync (string cmd){
+		string[] argv = new string[1];
+		argv[0] = create_temp_bash_script(cmd);
+		
+		Pid child_pid;
+		int input_fd;
+		int output_fd;
+		int error_fd;
+
+		try {
+			//execute script file
+			Process.spawn_async_with_pipes(
+			    null, //working dir
+			    argv, //argv
+			    null, //environment
+			    SpawnFlags.SEARCH_PATH,
+			    null,   // child_setup
+			    out child_pid,
+			    out input_fd,
+			    out output_fd,
+			    out error_fd);
+			
+			is_running = true;
+			
+			proc_id = child_pid;
+
+			//create stream readers
+			UnixInputStream uis_out = new UnixInputStream(output_fd, false);
+			UnixInputStream uis_err = new UnixInputStream(error_fd, false);
+			dis_out = new DataInputStream(uis_out);
+			dis_err = new DataInputStream(uis_err);
+			dis_out.newline_type = DataStreamNewlineType.ANY;
+			dis_err.newline_type = DataStreamNewlineType.ANY;
+			
+			progress_count = 0;
+			//stdout_lines = new Gee.ArrayList<string>();
+			//stderr_lines = new Gee.ArrayList<string>();
+			
+        	try {
+				//start thread for reading output stream
+			    Thread.create<void> (rysnc_read_output_line, true);
+		    } catch (Error e) {
+		        log_error (e.message);
+		    }
+		    
+		    try {
+				//start thread for reading error stream
+			    Thread.create<void> (rysnc_read_error_line, true);
+		    } catch (Error e) {
+		        log_error (e.message);
+		    }
+		    
+        	return true;
+		}
+		catch (Error e) {
 			log_error (e.message);
 			return false;
 		}
 	}
 
-	private bool take_ownership(){
+	private void rysnc_read_error_line(){
+		try{
+			err_line = dis_err.read_line (null);
+		    while (err_line != null) {
+		        stderr.printf(err_line + "\n"); //print
+		        err_line = dis_err.read_line (null); //read next
+			}
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}	
+	}
+	
+	private void rysnc_read_output_line(){
+		try{
+			out_line = dis_out.read_line (null);
+		    while (out_line != null) {
+				if (gui_mode){
+					progress_count += 1; //count
+					if (out_line.contains(" ")){
+						status_line = out_line.split(" ")[1].strip(); //package name
+					}
+				}
+				else{
+					stdout.printf(out_line + "\n"); //print
+				}
+				
+				out_line = dis_out.read_line (null);  //read next
+			}
+
+			is_running = false;
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}	
+	}
+	
+	/* Misc */
+	
+	public bool take_ownership(){
 		string home = Environment.get_home_dir();
 		string user = get_user_login();
 
 		try {
-			string cmd = "sudo chown %s -R %s".printf(user,home);
+			string cmd = "chown %s -R %s".printf(user,home);
 			int exit_code;
 			Process.spawn_command_line_sync(cmd, null, null, out exit_code);
-			return true;
+			
+			if (exit_code == 0){
+				log_msg(_("Ownership changed to '%s' for files in directory '%s'").printf(user,home));
+				return true;
+			}
+			else{
+				log_msg(_("Failed to change file ownership"));
+				return false;
+			}
 		}
 		catch (Error e){
 			log_error (e.message);
@@ -590,7 +875,7 @@ done
 		}
 	}
 	
-	private void exit_app(){
+	public void exit_app(){
 		try{
 			var f = File.new_for_path(temp_dir);
 			if (f.query_exists()){
@@ -601,10 +886,32 @@ done
 			log_error (e.message);
 		}
 	}
-
 }
 
 public class Package : GLib.Object{
 	public string name = "";
 	public string description = "";
+	public string server = "";
+	public string repo = "";
+	public bool is_selected = false;
+	public bool is_available = false;
+	public bool is_installed = false;
+	public bool is_top = false;
+	public bool is_default = false;
+	public bool is_manual = false;
+	
+	public Package(string _name){
+		name = _name;
+	}
+}
+
+public class Ppa : GLib.Object{
+	public string name = "";
+	public string description = "";
+	public bool is_selected = false;
+	public bool is_installed = false;
+	
+	public Ppa(string _name){
+		name = _name;
+	}
 }
