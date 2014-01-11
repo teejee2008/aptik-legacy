@@ -287,6 +287,7 @@ public class MainWindow : Window {
 		tv_packages.get_selection().mode = SelectionMode.MULTIPLE;
 		tv_packages.headers_clickable = true;
 		tv_packages.set_rules_hint (true);
+		tv_packages.set_tooltip_column(3);
 		
 		//sw_packages
 		sw_packages = new ScrolledWindow(null, null);
@@ -298,11 +299,12 @@ public class MainWindow : Window {
 		//col_pkg_select ----------------------
 		
 		TreeViewColumn col_pkg_select = new TreeViewColumn();
+		tv_packages.append_column(col_pkg_select);
+
 		CellRendererToggle cell_pkg_select = new CellRendererToggle ();
 		cell_pkg_select.activatable = true;
 		col_pkg_select.pack_start (cell_pkg_select, false);
-		tv_packages.append_column(col_pkg_select);
-
+		
 		col_pkg_select.set_cell_data_func (cell_pkg_select, (cell_layout, cell, model, iter) => {
 			bool selected;
 			model.get (iter, 0, out selected, -1);
@@ -321,19 +323,29 @@ public class MainWindow : Window {
 			model.set (iter, 0, !selected);
 			pkg.is_selected = !selected;
 		});
+
+		//col_pkg_status ----------------------
+		
+		col_pkg_status = new TreeViewColumn();
+		//col_pkg_status.title = _("");
+		col_pkg_status.resizable = true;
+		tv_packages.append_column(col_pkg_status);
+		
+		CellRendererPixbuf cell_pkg_status = new CellRendererPixbuf ();
+		col_pkg_status.pack_start (cell_pkg_status, false);
+		col_pkg_status.set_attributes(cell_pkg_status, "pixbuf", 2);
 		
 		//col_pkg_name ----------------------
 		
 		TreeViewColumn col_pkg_name = new TreeViewColumn();
 		col_pkg_name.title = _("Package");
 		col_pkg_name.resizable = true;
-		//col_pkg_name.clickable = true;
+		tv_packages.append_column(col_pkg_name);
 
 		CellRendererText cell_pkg_name = new CellRendererText ();
 		cell_pkg_name.ellipsize = Pango.EllipsizeMode.END;
 		col_pkg_name.pack_start (cell_pkg_name, false);
-		tv_packages.append_column(col_pkg_name);
-		
+
 		col_pkg_name.set_cell_data_func (cell_pkg_name, (cell_layout, cell, model, iter) => {
 			Package pkg;
 			model.get (iter, 1, out pkg, -1);
@@ -345,13 +357,12 @@ public class MainWindow : Window {
 		TreeViewColumn col_pkg_desc = new TreeViewColumn();
 		col_pkg_desc.title = _("Description");
 		col_pkg_desc.resizable = true;
-		//col_pkg_desc.clickable = true;
+		tv_packages.append_column(col_pkg_desc);
 
 		CellRendererText cell_pkg_desc = new CellRendererText ();
 		cell_pkg_desc.ellipsize = Pango.EllipsizeMode.END;
 		col_pkg_desc.pack_start (cell_pkg_desc, false);
-		tv_packages.append_column(col_pkg_desc);
-		
+
 		col_pkg_desc.set_cell_data_func (cell_pkg_desc, (cell_layout, cell, model, iter) => {
 			Package pkg;
 			model.get (iter, 1, out pkg, -1);
@@ -412,6 +423,7 @@ public class MainWindow : Window {
 		tv_ppa.get_selection().mode = SelectionMode.MULTIPLE;
 		tv_ppa.headers_clickable = true;
 		tv_ppa.set_rules_hint (true);
+		tv_ppa.set_tooltip_column(3);
 		
 		//sw_ppa
 		sw_ppa = new ScrolledWindow(null, null);
@@ -447,55 +459,46 @@ public class MainWindow : Window {
 			model.set (iter, 0, !selected);
 			ppa.is_selected = !selected;
 		});
+
+		//col_ppa_status ----------------------
+		
+		col_ppa_status = new TreeViewColumn();
+		//col_ppa_status.title = _("");
+		col_ppa_status.resizable = true;
+		tv_ppa.append_column(col_ppa_status);
+		
+		CellRendererPixbuf cell_ppa_status = new CellRendererPixbuf ();
+		col_ppa_status.pack_start (cell_ppa_status, false);
+		col_ppa_status.set_attributes(cell_ppa_status, "pixbuf", 2);
 		
 		//col_ppa_name ----------------------
 		
 		TreeViewColumn col_ppa_name = new TreeViewColumn();
 		col_ppa_name.title = _("PPA");
 		col_ppa_name.resizable = true;
-		//col_ppa_name.clickable = true;
+		tv_ppa.append_column(col_ppa_name);
 
 		CellRendererText cell_ppa_name = new CellRendererText ();
 		cell_ppa_name.ellipsize = Pango.EllipsizeMode.END;
 		col_ppa_name.pack_start (cell_ppa_name, false);
-		tv_ppa.append_column(col_ppa_name);
-		
+
 		col_ppa_name.set_cell_data_func (cell_ppa_name, (cell_layout, cell, model, iter) => {
 			Ppa ppa;
 			model.get (iter, 1, out ppa, -1);
 			(cell as Gtk.CellRendererText).text = ppa.name;
 		});
-
-		/*//col_ppa_status ----------------------
 		
-		col_ppa_status = new TreeViewColumn();
-		col_ppa_status.title = _("Status");
-		col_ppa_status.resizable = true;
-		//col_ppa_status.clickable = true;
-
-		CellRendererText cell_ppa_status = new CellRendererText ();
-		cell_ppa_status.ellipsize = Pango.EllipsizeMode.END;
-		col_ppa_status.pack_start (cell_ppa_status, false);
-		tv_ppa.append_column(col_ppa_status);
-		
-		col_ppa_status.set_cell_data_func (cell_ppa_status, (cell_layout, cell, model, iter) => {
-			Ppa ppa;
-			model.get (iter, 1, out ppa, -1);
-			(cell as Gtk.CellRendererText).text = (ppa.is_installed ? _("Enabled") : "");
-		});*/
-
 		//col_ppa_desc ----------------------
 		
 		TreeViewColumn col_ppa_desc = new TreeViewColumn();
 		col_ppa_desc.title = _("Packages");
 		col_ppa_desc.resizable = true;
-		//col_ppa_desc.clickable = true;
-
+		tv_ppa.append_column(col_ppa_desc);
+		
 		CellRendererText cell_ppa_desc = new CellRendererText ();
 		cell_ppa_desc.ellipsize = Pango.EllipsizeMode.END;
 		col_ppa_desc.pack_start (cell_ppa_desc, false);
-		tv_ppa.append_column(col_ppa_desc);
-		
+
 		col_ppa_desc.set_cell_data_func (cell_ppa_desc, (cell_layout, cell, model, iter) => {
 			Ppa ppa;
 			model.get (iter, 1, out ppa, -1);
@@ -549,7 +552,7 @@ public class MainWindow : Window {
 	}
 		
 	private void tv_packages_refresh(){
-		ListStore model = new ListStore(2, typeof(bool), typeof(Package));
+		ListStore model = new ListStore(4, typeof(bool), typeof(Package), typeof(Gdk.Pixbuf), typeof(string));
 
 		var pkg_list = new ArrayList<Package>();
 		foreach(Package pkg in pkg_list_user.values) {
@@ -559,12 +562,47 @@ public class MainWindow : Window {
 			return strcmp(a.name,b.name);
 		};
 		pkg_list.sort(func);
+
+		//status icons
+		Gdk.Pixbuf pix_installed = null;
+		Gdk.Pixbuf pix_missing = null;
+		Gdk.Pixbuf pix_unavailable = null;
+		Gdk.Pixbuf pix_status = null;
 		
+		try{
+			pix_installed = new Gdk.Pixbuf.from_file(App.share_dir + "/aptik/images/item-green.png");
+			pix_missing = new Gdk.Pixbuf.from_file(App.share_dir + "/aptik/images/item-gray.png");
+			pix_unavailable  = new Gdk.Pixbuf.from_file(App.share_dir + "/aptik/images/item-red.png");
+		}
+        catch(Error e){
+	        log_error (e.message);
+	    }
+	    
 		TreeIter iter;
+		string tt = "";
 		foreach(Package pkg in pkg_list) {
+			//check status
+			if (pkg.is_installed){
+				pix_status = pix_installed;
+				tt = _("Installed");
+			}
+			else{
+				if (pkg.is_available){
+					pix_status = pix_missing;
+					tt = _("Available, Not Installed");
+				}
+				else{
+					pix_status = pix_unavailable;
+					tt = _("Not Available, Cannot be installed");
+				}
+			}
+
+			//add row
 			model.append(out iter);
 			model.set (iter, 0, pkg.is_selected);
 			model.set (iter, 1, pkg);
+			model.set (iter, 2, pix_status);
+			model.set (iter, 3, tt);
 		}
 			
 		tv_packages.set_model(model);
@@ -572,8 +610,9 @@ public class MainWindow : Window {
 	}
 
 	private void tv_ppa_refresh(){
-		ListStore model = new ListStore(2, typeof(bool), typeof(Ppa));
+		ListStore model = new ListStore(4, typeof(bool), typeof(Ppa), typeof(Gdk.Pixbuf), typeof(string));
 		
+		//sort ppa list
 		var ppa_list = new ArrayList<Ppa>();
 		foreach(Ppa ppa in ppa_list_user.values) {
 			ppa_list.add(ppa);
@@ -582,12 +621,47 @@ public class MainWindow : Window {
 			return strcmp(a.name,b.name);
 		};
 		ppa_list.sort(func);
-			
+		
+		//status icons
+		Gdk.Pixbuf pix_enabled = null;
+		Gdk.Pixbuf pix_missing = null;
+		Gdk.Pixbuf pix_unused = null;
+		Gdk.Pixbuf pix_status = null;
+
+		try{
+			pix_enabled = new Gdk.Pixbuf.from_file (App.share_dir + "/aptik/images/item-green.png");
+			pix_missing = new Gdk.Pixbuf.from_file (App.share_dir + "/aptik/images/item-gray.png");
+			pix_unused = new Gdk.Pixbuf.from_file (App.share_dir + "/aptik/images/item-yellow.png");
+		}
+        catch(Error e){
+	        log_error (e.message);
+	    }
+	    
 		TreeIter iter;
+		string tt = "";
 		foreach(Ppa ppa in ppa_list) {
+			//check status
+			if(ppa.is_installed){
+				if (ppa.description.length > 0){
+					pix_status = pix_enabled;
+					tt = _("Enabled (%d installed packages)").printf(ppa.description.split(" ").length);
+				}
+				else{
+					pix_status = pix_unused;
+					tt = _("Enabled (%d installed packages)").printf(0);
+				}
+			}
+			else{
+				pix_status = pix_missing;
+				tt = _("Not Added");
+			}
+			
+			//add row
 			model.append(out iter);
 			model.set (iter, 0, ppa.is_selected);
 			model.set (iter, 1, ppa);
+			model.set (iter, 2, pix_status);
+			model.set (iter, 3, tt);
 		}
 			
 		tv_ppa.set_model(model);
@@ -624,7 +698,6 @@ public class MainWindow : Window {
 			return false;
 		}
 	}
-
 
 	/* PPA */
 

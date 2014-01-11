@@ -21,7 +21,7 @@ install:
 	mkdir -p "$(DESTDIR)$(mandir)"
 	mkdir -p "$(DESTDIR)$(man1dir)"
 	mkdir -p "$(DESTDIR)$(launcherdir)"
-	#mkdir -p "$(DESTDIR)$(sharedir)/aptik"
+	mkdir -p "$(DESTDIR)$(sharedir)/aptik"
 	mkdir -p "$(DESTDIR)$(sharedir)/pixmaps"
 	#mkdir -p "$(DESTDIR)$(localedir)/it_IT/LC_MESSAGES"
 	
@@ -30,8 +30,8 @@ install:
 	install -m 0755 aptik-gtk "$(DESTDIR)$(bindir)"
 	
 	#shared files
-	#cp -dpr --no-preserve=ownership -t "$(DESTDIR)$(sharedir)/aptik" ./share/aptik/*
-	#chmod --recursive 0755 $(DESTDIR)$(sharedir)/aptik/*
+	cp -dpr --no-preserve=ownership -t "$(DESTDIR)$(sharedir)/aptik" ./share/aptik/*
+	chmod --recursive 0755 $(DESTDIR)$(sharedir)/aptik/*
 	
 	#launcher
 	install -m 0755 aptik.desktop "$(DESTDIR)$(launcherdir)"
@@ -49,7 +49,7 @@ uninstall:
 	rm -f "$(DESTDIR)$(bindir)/aptik-gtk"
 	
 	#shared files
-	#rm -rf "$(DESTDIR)$(sharedir)/aptik"
+	rm -rf "$(DESTDIR)$(sharedir)/aptik"
 	
 	#launcher
 	rm -f "$(DESTDIR)$(launcherdir)/aptik.desktop"

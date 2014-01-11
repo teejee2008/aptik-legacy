@@ -75,12 +75,17 @@ public class AptikConsole : GLib.Object{
 		msg += "  --list-user          " + _("List top-level packages installed by user") + "\n";
 		msg += "  --list-default       " + _("List default packages for linux distribution") + "\n";
 		msg += "  --list-ppa           " + _("List Personal Package Archives (PPAs)") + "\n";
+		msg += "  --list-themes        " + _("List themes in /usr/share/themes") + "\n";
+		msg += "  --list-icons         " + _("List icon themes in /usr/share/icons") + "\n";
+		
 		msg += "  --backup-ppa         " + _("Create a backup list of PPAs") + "\n";
 		msg += "  --backup-packages    " + _("Create a backup list of packages installed by user") + "\n";
+		msg += "  --backup-cache       " + _("Backup downloaded packages from APT cache") + "\n";		
+		
 		msg += "  --restore-ppa        " + _("Restore PPAs from file 'ppa.list'") + "\n";
 		msg += "  --restore-packages   " + _("Reinstall missing packages from file 'packages.list'") + "\n";
-		msg += "  --backup-cache       " + _("Backup downloaded packages from APT cache") + "\n";
 		msg += "  --restore-cache      " + _("Restore packages to APT cache") + "\n";
+
 		msg += "  --take-ownership     " + _("Take ownership of files in your home directory") + "\n";
 		msg += "  --backup-dir         " + _("Backup directory (defaults to current directory)") + "\n";
 		msg += "  --[show-]desc        " + _("Show package description if available") + "\n";
@@ -153,6 +158,14 @@ public class AptikConsole : GLib.Object{
 					print_ppa_list(App.list_ppa(), show_desc);
 					break;
 
+				case "--list-themes":
+					print_theme_list(App.list_themes());
+					break;
+
+				case "--list-icons":
+					print_theme_list(App.list_icons());
+					break;
+					
 				case "--backup-ppa":
 				case "--backup-ppas":
 					string file_name = "ppa.list";
@@ -177,6 +190,14 @@ public class AptikConsole : GLib.Object{
 					}
 					break;
 
+				case "--backup-cache":
+				case "--backup-apt-cache":
+					App.backup_apt_cache();
+					while(App.is_running){
+						Thread.usleep ((ulong) 0.3 * 1000000);
+					}
+					break;
+					
 				case "--restore-ppa":
 				case "--restore-ppas":
 					restore_ppa();
@@ -186,15 +207,7 @@ public class AptikConsole : GLib.Object{
 				case "--restore-packages":
 					restore_packages(no_prompt);
 					break;
-				
-				case "--backup-cache":
-				case "--backup-apt-cache":
-					App.backup_apt_cache();
-					while(App.is_running){
-						Thread.usleep ((ulong) 0.3 * 1000000);
-					}
-					break;
-				
+
 				case "--restore-cache":
 				case "--restore-apt-cache":
 					App.restore_apt_cache();
@@ -292,6 +305,19 @@ public class AptikConsole : GLib.Object{
 			foreach(Ppa ppa in ppa_list){
 				log_msg(fmt.printf(ppa.name));
 			}
+		}
+	}
+
+	public void print_theme_list(Gee.ArrayList<Theme> theme_list){
+		int max_length = 0;
+		foreach(Theme theme in theme_list){
+			if (theme.name.length > max_length){
+				max_length = theme.name.length;
+			}
+		}
+		string fmt = "%%-%ds".printf(max_length + 2);
+		foreach(Theme theme in theme_list){
+			log_msg(fmt.printf(theme.name));
 		}
 	}
 	

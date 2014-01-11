@@ -51,6 +51,7 @@ const string LOCALE_DIR = "/usr/share/locale";
 public class Main : GLib.Object{
 	public string temp_dir = "";
 	public string backup_dir = "";
+	public string share_dir = "/usr/share";
 	public bool gui_mode = false;//TODO:Remove
 
 	public string err_line;
@@ -684,8 +685,7 @@ done
 			log_error (e.message);
 		}	
 	}
-	
-	
+
 	/* APT Cache */
 	
 	public bool backup_apt_cache(){
@@ -849,6 +849,85 @@ done
 		}	
 	}
 	
+	/* Themes */
+	
+	public Gee.ArrayList<Theme> list_themes(){
+		var theme_list = new Gee.ArrayList<Theme>();
+		
+		try{
+			string share_path = "/usr/share/themes";
+			var directory = File.new_for_path(share_path);
+			var enumerator = directory.enumerate_children(FileAttribute.STANDARD_NAME, 0);
+			FileInfo info;
+			
+			while ((info = enumerator.next_file()) != null) {
+				if (info.get_file_type() == FileType.DIRECTORY){
+					string theme_name = info.get_name();
+					string theme_path = share_path + "/" + theme_name;
+					
+					switch (theme_name.down()){
+						case "default":
+						case "emacs":
+						case "highcontrast":
+							continue;
+					}
+					
+					Theme theme = new Theme(theme_name, false);
+					theme.path = theme_path;
+					theme.is_selected = true;
+					theme.is_installed = true;
+					theme_list.add(theme);
+				}
+			}
+		}
+        catch(Error e){
+	        log_error (e.message);
+	    }
+	    
+	    return theme_list;
+	}
+
+	public Gee.ArrayList<Theme> list_icons(){
+		var theme_list = new Gee.ArrayList<Theme>();
+		
+		try{
+			string share_path = "/usr/share/icons";
+			var directory = File.new_for_path(share_path);
+			var enumerator = directory.enumerate_children(FileAttribute.STANDARD_NAME, 0);
+			FileInfo info;
+			
+			while ((info = enumerator.next_file()) != null) {
+				if (info.get_file_type() == FileType.DIRECTORY){
+					string theme_name = info.get_name();
+					string theme_path = share_path + "/" + theme_name;
+					
+					switch (theme_name.down()){
+						case "default":
+						case "mini":
+						case "large":
+						case "hicolor":
+						case "locolor":
+						case "scalable":
+						case "highcontrast":
+						case "gnome":
+							continue;
+					}
+					
+					Theme theme = new Theme(theme_name, true);
+					theme.path = theme_path;
+					theme.is_selected = true;
+					theme.is_installed = true;
+					theme_list.add(theme);
+				}
+			}
+		}
+        catch(Error e){
+	        log_error (e.message);
+	    }
+	    
+	    return theme_list;
+	}
+	
 	/* Misc */
 	
 	public bool take_ownership(){
@@ -913,5 +992,25 @@ public class Ppa : GLib.Object{
 	
 	public Ppa(string _name){
 		name = _name;
+	}
+}
+
+public class Theme : GLib.Object{
+	public string name = "";
+	public string description = "";
+	public string path = "";
+	public bool is_selected = false;
+	public bool is_installed = false;
+	public bool is_icon_theme = false;
+	
+	public Theme(string _name, bool _is_icon_theme){
+		name = _name;
+		is_icon_theme = _is_icon_theme;
+		if (is_icon_theme){
+			path = "/usr/share/themes/" + name;
+		}
+		else{
+			path = "/usr/share/icons/" + name;
+		}
 	}
 }
