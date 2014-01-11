@@ -39,7 +39,8 @@ public class MainWindow : Window {
 	private Box vbox_actions;
 	private Box vbox_packages;
 	private Box vbox_ppa;
-
+	private Box vbox_theme;
+	
 	private Grid grid_backup_buttons;
 	private Grid grid_option_buttons;
 	
@@ -60,23 +61,35 @@ public class MainWindow : Window {
 	
 	private Button btn_restore_cache;
 	private Button btn_backup_cache;
+	
+	private Button btn_restore_theme;
+	private Button btn_restore_theme_exec;
+	private Button btn_backup_theme;
+	private Button btn_backup_theme_exec;
+	private Button btn_backup_theme_cancel;
+	
 	private Button btn_take_ownership;
 
 	private TreeView tv_packages;
 	private TreeView tv_ppa;
+	private TreeView tv_theme;
 	private TreeViewColumn col_ppa_status;
 	private TreeViewColumn col_pkg_status;
+	private TreeViewColumn col_theme_status;
 	
 	private ScrolledWindow sw_packages;
 	private ScrolledWindow sw_ppa;
+	private ScrolledWindow sw_theme;
 	private ProgressBar progressbar;
 	private Label lbl_status;
 	private Label lbl_packages_message;
 	private Label lbl_ppa_message;
+	private Label lbl_theme_message;
 	
 	private Gee.HashMap<string,Package> pkg_list_user;
 	private Gee.HashMap<string,Package> pkg_list_all;
 	private Gee.HashMap<string,Ppa> ppa_list_user;
+	private Gee.ArrayList<Theme> theme_list_user;
 	private string list_found;
 	private string list_missing;
 	string summary = "";
@@ -225,8 +238,31 @@ public class MainWindow : Window {
 		btn_restore_cache.clicked.connect(btn_restore_cache_clicked);
 		grid_backup_buttons.attach(btn_restore_cache,2,row,1,1);
 
+        //lbl_backup_theme
+		Label lbl_backup_theme = new Label (_("Themes and Icons"));
+		lbl_backup_theme.set_use_markup(true);
+		lbl_backup_theme.halign = Align.START;
+		lbl_backup_theme.hexpand = true;
+		grid_backup_buttons.attach(lbl_backup_theme,0,++row,1,1);
+		
+		//btn_backup_theme
+		btn_backup_theme = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		btn_backup_theme.set_size_request(50,-1);
+		btn_backup_theme.set_tooltip_text(_("Backup themes and icons from /usr/share"));
+		grid_backup_buttons.attach(btn_backup_theme,1,row,1,1);
+		
+		btn_backup_theme.clicked.connect(btn_backup_theme_clicked);
+
+		//btn_restore_theme
+		btn_restore_theme = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		btn_restore_theme.set_size_request(50,-1);
+		btn_restore_theme.set_tooltip_text(_("Restore themes and icons to /usr/share"));
+		grid_backup_buttons.attach(btn_restore_theme,2,row,1,1);
+		
+		btn_restore_theme.clicked.connect(btn_restore_theme_clicked);
+		
         // lbl_header_tools
-		Label lbl_header_tools = new Label ("<b>" + _("More Options") + "</b>");
+		Label lbl_header_tools = new Label ("<b>" + _("Options") + "</b>");
 		lbl_header_tools.set_use_markup(true);
 		lbl_header_tools.halign = Align.START;
 		lbl_header_tools.margin_top = 6;
@@ -528,6 +564,143 @@ public class MainWindow : Window {
 			notebook.page = 0;
 		});
 		
+		//select theme ---------------------------------------------
+		
+		//lbl_theme
+		Label lbl_theme = new Label (_("Theme"));
+
+        //vbox_theme
+        vbox_theme = new Box (Gtk.Orientation.VERTICAL, 6);
+        vbox_theme.margin = 6;
+        notebook.append_page (vbox_theme, lbl_theme);
+        
+        //lbl_header_theme
+		Label lbl_header_theme = new Label ("<b>" + _("Backup Themes and Icons") + "</b>");
+		lbl_header_theme.set_use_markup(true);
+		lbl_header_theme.halign = Align.START;
+		lbl_header_theme.margin_top = 6;
+		//lbl_header_theme.margin_bottom = 6;
+		//vbox_theme.pack_start (lbl_header_theme, false, true, 0);
+		
+        //lbl_theme
+		lbl_theme_message = new Label (_("Select the themes to backup"));
+		lbl_theme_message.set_use_markup(true);
+		lbl_theme_message.halign = Align.START;
+		vbox_theme.pack_start (lbl_theme_message, false, true, 0);
+		
+		//theme treeview --------------------------------------------------
+		
+		//tv_theme
+		tv_theme = new TreeView();
+		tv_theme.get_selection().mode = SelectionMode.MULTIPLE;
+		tv_theme.headers_clickable = true;
+		tv_theme.set_rules_hint (true);
+		tv_theme.set_tooltip_column(3);
+		
+		//sw_theme
+		sw_theme = new ScrolledWindow(null, null);
+		sw_theme.set_shadow_type (ShadowType.ETCHED_IN);
+		sw_theme.add (tv_theme);
+		sw_theme.expand = true;
+		vbox_theme.add(sw_theme);
+
+		//col_theme_select ----------------------
+		
+		TreeViewColumn col_theme_select = new TreeViewColumn();
+		col_theme_select.title = " " + _("") + " ";
+		CellRendererToggle cell_theme_select = new CellRendererToggle ();
+		cell_theme_select.activatable = true;
+		col_theme_select.pack_start (cell_theme_select, false);
+		tv_theme.append_column(col_theme_select);
+
+		col_theme_select.set_cell_data_func (cell_theme_select, (cell_layout, cell, model, iter) => {
+			bool selected;
+			model.get (iter, 0, out selected, -1);
+			(cell as Gtk.CellRendererToggle).active = selected;
+		});
+		
+		cell_theme_select.toggled.connect((path) => {
+			TreeIter iter;
+			ListStore model = (ListStore)tv_theme.model;
+			bool selected;
+			Theme theme;
+
+			model.get_iter_from_string (out iter, path);
+			model.get (iter, 0, out selected);
+			model.get (iter, 1, out theme);
+			model.set (iter, 0, !selected);
+			theme.is_selected = !selected;
+		});
+
+		//col_theme_status ----------------------
+		
+		col_theme_status = new TreeViewColumn();
+		//col_theme_status.title = _("");
+		col_theme_status.resizable = true;
+		tv_theme.append_column(col_theme_status);
+		
+		CellRendererPixbuf cell_theme_status = new CellRendererPixbuf ();
+		col_theme_status.pack_start (cell_theme_status, false);
+		col_theme_status.set_attributes(cell_theme_status, "pixbuf", 2);
+		
+		//col_theme_name ----------------------
+		
+		TreeViewColumn col_theme_name = new TreeViewColumn();
+		col_theme_name.title = _("Theme");
+		col_theme_name.resizable = true;
+		tv_theme.append_column(col_theme_name);
+
+		CellRendererText cell_theme_name = new CellRendererText ();
+		cell_theme_name.ellipsize = Pango.EllipsizeMode.END;
+		col_theme_name.pack_start (cell_theme_name, false);
+
+		col_theme_name.set_cell_data_func (cell_theme_name, (cell_layout, cell, model, iter) => {
+			Theme theme;
+			model.get (iter, 1, out theme, -1);
+			(cell as Gtk.CellRendererText).text = theme.name;
+		});
+
+		//col_theme_desc ----------------------
+		
+		TreeViewColumn col_theme_desc = new TreeViewColumn();
+		col_theme_desc.title = _("Path");
+		col_theme_desc.resizable = true;
+		tv_theme.append_column(col_theme_desc);
+
+		CellRendererText cell_theme_desc = new CellRendererText ();
+		cell_theme_desc.ellipsize = Pango.EllipsizeMode.END;
+		col_theme_desc.pack_start (cell_theme_desc, false);
+
+		col_theme_desc.set_cell_data_func (cell_theme_desc, (cell_layout, cell, model, iter) => {
+			Theme theme;
+			model.get (iter, 1, out theme, -1);
+			(cell as Gtk.CellRendererText).text = (theme.zip_file_path.length > 0) ? theme.zip_file_path : theme.system_path;
+		});
+		
+		//hbox_theme_actions
+		Box hbox_theme_actions = new Box (Orientation.HORIZONTAL, 6);
+        vbox_theme.add (hbox_theme_actions);
+        
+		//btn_backup_theme_exec
+		btn_backup_theme_exec = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		btn_backup_theme_exec.no_show_all = true;
+		hbox_theme_actions.pack_start (btn_backup_theme_exec, true, true, 0);
+		btn_backup_theme_exec.clicked.connect(btn_backup_theme_exec_clicked);
+
+		//btn_restore_theme_exec
+		btn_restore_theme_exec = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		btn_restore_theme_exec.no_show_all = true;
+		hbox_theme_actions.pack_start (btn_restore_theme_exec, true, true, 0);
+		btn_restore_theme_exec.clicked.connect(btn_restore_theme_exec_clicked);
+		
+		//btn_backup_theme_cancel
+		btn_backup_theme_cancel = new Gtk.Button.with_label (" " + _("Cancel") + " ");
+		hbox_theme_actions.pack_start (btn_backup_theme_cancel, true, true, 0);
+		btn_backup_theme_cancel.clicked.connect(()=>{ 
+			notebook.page = 0;
+		});
+		
+
         //lbl_status
 		lbl_status = new Label ("");
 		lbl_status.halign = Align.START;
@@ -667,6 +840,47 @@ public class MainWindow : Window {
 		tv_ppa.set_model(model);
 		tv_ppa.columns_autosize();
 	}
+
+	private void tv_theme_refresh(){
+		ListStore model = new ListStore(4, typeof(bool), typeof(Theme), typeof(Gdk.Pixbuf), typeof(string));
+		
+		//status icons
+		Gdk.Pixbuf pix_enabled = null;
+		Gdk.Pixbuf pix_missing = null;
+		Gdk.Pixbuf pix_status = null;
+
+		try{
+			pix_enabled = new Gdk.Pixbuf.from_file (App.share_dir + "/aptik/images/item-green.png");
+			pix_missing = new Gdk.Pixbuf.from_file (App.share_dir + "/aptik/images/item-gray.png");
+		}
+        catch(Error e){
+	        log_error (e.message);
+	    }
+	    
+		TreeIter iter;
+		string tt = "";
+		foreach(Theme theme in theme_list_user) {
+			//check status
+			if(theme.is_installed){
+				pix_status = pix_enabled;
+				tt = _("Installed");
+			}
+			else{
+				pix_status = pix_missing;
+				tt = _("Not Installed");
+			}
+			
+			//add row
+			model.append(out iter);
+			model.set (iter, 0, theme.is_selected);
+			model.set (iter, 1, theme);
+			model.set (iter, 2, pix_status);
+			model.set (iter, 3, tt);
+		}
+			
+		tv_theme.set_model(model);
+		tv_theme.columns_autosize();
+	}
 	
 	private bool check_backup_folder(){
 		if ((App.backup_dir != null) && dir_exists (App.backup_dir)){
@@ -698,6 +912,26 @@ public class MainWindow : Window {
 			return false;
 		}
 	}
+
+	private bool check_backup_subfolder(string folder_name){
+		if (check_backup_folder()){
+			string folder = App.backup_dir + folder_name;
+			var f = File.new_for_path(folder);
+			if (!f.query_exists()){
+				string title = "Folder Not Found";
+				string msg = _("Folder not found in backup directory") + " - %s".printf(folder_name);
+				gtk_messagebox(title, msg, this, true);
+				return false;
+			}
+			else{
+				return true;
+			}
+		}
+		else{
+			return false;
+		}
+	}
+
 
 	/* PPA */
 
@@ -1008,7 +1242,6 @@ public class MainWindow : Window {
 		is_running = false;
 	}
 	
-
 	/* APT Cache */
 	
 	private void btn_backup_cache_clicked(){
@@ -1055,6 +1288,80 @@ public class MainWindow : Window {
 		lbl_status.label = message + ": %s".printf(App.status_line);
 		gtk_do_events();
 		Thread.usleep ((ulong) 0.1 * 1000000);
+	}
+	
+	/* Themes */
+	
+	private void btn_backup_theme_clicked(){
+		progress_hide();
+				
+		if (!check_backup_folder()) { return; }
+
+		gtk_set_busy(true, this);
+		
+		theme_list_user = App.list_all_themes();
+		tv_theme_refresh();
+		btn_backup_theme_exec.visible = true;
+		btn_restore_theme_exec.visible = false;
+		lbl_theme_message.label = _("Select the themes to backup");
+		notebook.page = 3;
+		
+		gtk_set_busy(false, this);
+	}
+	
+	private void btn_backup_theme_exec_clicked(){
+		if (!check_backup_folder()) { return; }
+
+		progress_begin("Zipping themes...");
+		
+		foreach(Theme theme in theme_list_user){
+			if (theme.is_selected){
+				App.zip_theme(theme);
+				while(App.is_running){
+					update_progress("Zipping");
+				}
+			}
+		}
+
+		progress_end(_("Finished"));
+
+		notebook.page = 0;
+	}
+
+	private void btn_restore_theme_clicked(){
+		progress_hide();
+
+		gtk_set_busy(true, this);
+		
+		if (check_backup_subfolder("themes") || check_backup_subfolder("icons") ){
+			theme_list_user = App.read_themes();
+			tv_theme_refresh();
+			btn_backup_theme_exec.visible = false;
+			btn_restore_theme_exec.visible = true;
+			lbl_theme_message.label = _("Select the themes to restore");
+			notebook.page = 3;
+		}
+		
+		gtk_set_busy(false, this);
+	}
+
+	private void btn_restore_theme_exec_clicked(){
+		if (!check_backup_folder()) { return; }
+
+		progress_begin("Unzipping themes...");
+		
+		foreach(Theme theme in theme_list_user){
+			if (theme.is_selected){
+				App.unzip_theme(theme);
+				while(App.is_running){
+					update_progress("Unzipping");
+				}
+			}
+		}
+
+		progress_end(_("Finished"));
+
+		notebook.page = 0;
 	}
 	
 	/* Misc */

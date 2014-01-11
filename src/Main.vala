@@ -851,6 +851,14 @@ done
 	
 	/* Themes */
 	
+	public Gee.ArrayList<Theme> list_all_themes(){
+		var theme_list = list_themes();
+		foreach(Theme theme in list_icons()){
+			theme_list.add(theme);
+		}
+		return theme_list;
+	}
+	
 	public Gee.ArrayList<Theme> list_themes(){
 		var theme_list = new Gee.ArrayList<Theme>();
 		
@@ -873,7 +881,7 @@ done
 					}
 					
 					Theme theme = new Theme(theme_name, false);
-					theme.path = theme_path;
+					theme.system_path = theme_path;
 					theme.is_selected = true;
 					theme.is_installed = true;
 					theme_list.add(theme);
@@ -914,7 +922,7 @@ done
 					}
 					
 					Theme theme = new Theme(theme_name, true);
-					theme.path = theme_path;
+					theme.system_path = theme_path;
 					theme.is_selected = true;
 					theme.is_installed = true;
 					theme_list.add(theme);
@@ -926,6 +934,207 @@ done
 	    }
 	    
 	    return theme_list;
+	}
+	
+	public Gee.ArrayList<Theme> read_themes(){
+		var themes_list = new Gee.ArrayList<Theme>();
+		var themes_installed = list_all_themes();
+		
+		foreach(string folder_name in new string[] {"themes","icons"}){
+			 
+			string themes_dir = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + folder_name;
+
+			//check directory
+			var f = File.new_for_path(themes_dir);
+			if (!f.query_exists()){
+				log_error(_("Themes not found in backup directory"));
+				return themes_list;
+			}//TODO:use func
+
+			try{
+				var directory = File.new_for_path(themes_dir);
+				var enumerator = directory.enumerate_children(FileAttribute.STANDARD_NAME, 0);
+				FileInfo info;
+				
+				while ((info = enumerator.next_file()) != null) {
+					if (info.get_file_type() == FileType.REGULAR){
+						string zip_file_path = "%s/%s".printf(themes_dir, info.get_name());
+						string theme_name = info.get_name().replace(".tar.gz","");
+
+						Theme theme = new Theme(theme_name, (folder_name == "themes") ? false : true);
+						theme.zip_file_path = zip_file_path;
+						theme.is_selected = true;
+						foreach (Theme th in themes_installed){
+							if (th.name == theme_name){
+								theme.is_installed = true;
+								break;
+							}
+						}
+						themes_list.add(theme);
+					}
+				}
+			}
+			catch(Error e){
+				log_error (e.message);
+			}
+	    }
+		
+		return themes_list;
+	}
+	
+	public bool zip_theme(Theme theme){
+		string theme_dir = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + (theme.is_icon_theme ? "icons" : "themes");
+		string theme_dir_system = "/usr/share/%s".printf(theme.is_icon_theme ? "icons" : "themes");
+		string file_name = theme.name + ".tar.gz";
+		string zip_file = theme_dir + "/" + file_name;
+		
+		try {
+			//create theme directory
+			var f = File.new_for_path(theme_dir);
+			if (!f.query_exists()){
+				f.make_directory_with_parents();
+			}
+			
+			string cmd = "tar -czvf '%s' -C '%s' '%s'".printf(zip_file, theme_dir_system, theme.name);
+
+			if (gui_mode){
+				//get total count
+				progress_total = (int) get_file_count(theme.system_path);
+				status_line = theme.system_path;
+				
+				//zip it
+				run_gzip(cmd);
+			}
+			else{
+				int status = Posix.system(cmd);
+				return (status == 0);
+			}
+
+			return true;
+		}
+		catch (Error e){
+			log_error (e.message);
+			return false;
+		}
+	}
+	
+	public bool unzip_theme(Theme theme){
+		string theme_dir_system = "/usr/share/%s".printf(theme.is_icon_theme ? "icons" : "themes");
+		
+		//check file
+		if (!file_exists(theme.zip_file_path)){
+			log_error(_("File not found") + ": '%s'".printf(theme.zip_file_path));
+			return false;
+		}
+		
+		string cmd = "tar -xzvf '%s' --directory='%s'".printf(theme.zip_file_path, theme_dir_system);
+
+		if (gui_mode){
+			//get total count
+			string txt = execute_command_sync_get_output(cmd.replace("-xzvf","-tvf"));
+			progress_total = txt.split("\n").length;
+			status_line = theme.system_path;
+			
+			//unzip it
+			return run_gzip(cmd);
+		}
+		else{
+			int status = Posix.system(cmd);
+			return (status == 0);
+		}
+	}
+	
+	private bool run_gzip (string cmd){
+		string[] argv = new string[1];
+		argv[0] = create_temp_bash_script(cmd);
+		
+		Pid child_pid;
+		int input_fd;
+		int output_fd;
+		int error_fd;
+
+		try {
+			//execute script file
+			Process.spawn_async_with_pipes(
+			    null, //working dir
+			    argv, //argv
+			    null, //environment
+			    SpawnFlags.SEARCH_PATH,
+			    null,   // child_setup
+			    out child_pid,
+			    out input_fd,
+			    out output_fd,
+			    out error_fd);
+			
+			is_running = true;
+			
+			proc_id = child_pid;
+
+			//create stream readers
+			UnixInputStream uis_out = new UnixInputStream(output_fd, false);
+			UnixInputStream uis_err = new UnixInputStream(error_fd, false);
+			dis_out = new DataInputStream(uis_out);
+			dis_err = new DataInputStream(uis_err);
+			dis_out.newline_type = DataStreamNewlineType.ANY;
+			dis_err.newline_type = DataStreamNewlineType.ANY;
+			
+			progress_count = 0;
+			//stdout_lines = new Gee.ArrayList<string>();
+			//stderr_lines = new Gee.ArrayList<string>();
+			
+        	try {
+				//start thread for reading output stream
+			    Thread.create<void> (gzip_read_output_line, true);
+		    } catch (Error e) {
+		        log_error (e.message);
+		    }
+		    
+		    try {
+				//start thread for reading error stream
+			    Thread.create<void> (gzip_read_error_line, true);
+		    } catch (Error e) {
+		        log_error (e.message);
+		    }
+		    
+        	return true;
+		}
+		catch (Error e) {
+			log_error (e.message);
+			return false;
+		}
+	}
+
+	private void gzip_read_error_line(){
+		try{
+			err_line = dis_err.read_line (null);
+		    while (err_line != null) {
+		        stderr.printf(err_line + "\n"); //print
+		        err_line = dis_err.read_line (null); //read next
+			}
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}	
+	}
+	
+	private void gzip_read_output_line(){
+		try{
+			out_line = dis_out.read_line (null);
+		    while (out_line != null) {
+				if (gui_mode){
+					progress_count += 1; //count
+				}
+				else{
+					stdout.printf(out_line + "\n"); //print
+				}
+				out_line = dis_out.read_line (null);  //read next
+			}
+
+			is_running = false;
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}	
 	}
 	
 	/* Misc */
@@ -998,7 +1207,8 @@ public class Ppa : GLib.Object{
 public class Theme : GLib.Object{
 	public string name = "";
 	public string description = "";
-	public string path = "";
+	public string system_path = "";
+	public string zip_file_path = "";
 	public bool is_selected = false;
 	public bool is_installed = false;
 	public bool is_icon_theme = false;
@@ -1006,11 +1216,5 @@ public class Theme : GLib.Object{
 	public Theme(string _name, bool _is_icon_theme){
 		name = _name;
 		is_icon_theme = _is_icon_theme;
-		if (is_icon_theme){
-			path = "/usr/share/themes/" + name;
-		}
-		else{
-			path = "/usr/share/icons/" + name;
-		}
 	}
 }
