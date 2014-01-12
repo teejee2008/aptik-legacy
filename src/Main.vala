@@ -180,6 +180,7 @@ public class Main : GLib.Object{
 			Package pkg = new Package(pkg_name);
 			pkg.description = pkg_desc;
 			pkg.is_installed = true;
+			pkg.is_available = true;
 			pkg_list[pkg.name] = pkg;
 		}
 
@@ -244,6 +245,8 @@ public class Main : GLib.Object{
 			Package pkg = new Package(pkg_name);
 			pkg.description = pkg_desc;
 			pkg.is_top = true;
+			pkg.is_installed = true;
+			pkg.is_available = true;
 			pkg_list[pkg.name] = pkg;
 		}
 		
@@ -261,6 +264,8 @@ public class Main : GLib.Object{
 			
 			Package pkg = new Package(line.strip());
 			pkg.is_default = true;
+			pkg.is_installed = true;
+			pkg.is_available = true;
 			pkg_list[pkg.name] = pkg;
 		}
 
@@ -996,13 +1001,9 @@ done
 			}
 			
 			string cmd = "tar -czvf '%s' -C '%s' '%s'".printf(zip_file, theme_dir_system, theme.name);
-
+			status_line = theme.system_path;
+			
 			if (gui_mode){
-				//get total count
-				progress_total = (int) get_file_count(theme.system_path);
-				status_line = theme.system_path;
-				
-				//zip it
 				run_gzip(cmd);
 			}
 			else{
@@ -1028,14 +1029,9 @@ done
 		}
 		
 		string cmd = "tar -xzvf '%s' --directory='%s'".printf(theme.zip_file_path, theme_dir_system);
-
+		status_line = theme.zip_file_path;
+		
 		if (gui_mode){
-			//get total count
-			string txt = execute_command_sync_get_output(cmd.replace("-xzvf","-tvf"));
-			progress_total = txt.split("\n").length;
-			status_line = theme.system_path;
-			
-			//unzip it
 			return run_gzip(cmd);
 		}
 		else{
@@ -1078,7 +1074,7 @@ done
 			dis_out.newline_type = DataStreamNewlineType.ANY;
 			dis_err.newline_type = DataStreamNewlineType.ANY;
 			
-			progress_count = 0;
+			//progress_count = 0;
 			//stdout_lines = new Gee.ArrayList<string>();
 			//stderr_lines = new Gee.ArrayList<string>();
 			

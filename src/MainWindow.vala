@@ -46,18 +46,23 @@ public class MainWindow : Window {
 	
 	private Notebook notebook;
 	private FileChooserButton fcb_backup;
-
+	private Button btn_about;
+	
 	private Button btn_restore_ppa;
 	private Button btn_restore_ppa_exec;
 	private Button btn_backup_ppa;
 	private Button btn_backup_ppa_exec;
 	private Button btn_backup_ppa_cancel;
+	private Button btn_backup_ppa_select_all;
+	private Button btn_backup_ppa_select_none;
 	
 	private Button btn_restore_packages;
 	private Button btn_restore_packages_exec;
 	private Button btn_backup_packages;
 	private Button btn_backup_packages_exec;
 	private Button btn_backup_packages_cancel;
+	private Button btn_backup_packages_select_all;
+	private Button btn_backup_packages_select_none;
 	
 	private Button btn_restore_cache;
 	private Button btn_backup_cache;
@@ -67,6 +72,8 @@ public class MainWindow : Window {
 	private Button btn_backup_theme;
 	private Button btn_backup_theme_exec;
 	private Button btn_backup_theme_cancel;
+	private Button btn_backup_theme_select_all;
+	private Button btn_backup_theme_select_none;
 	
 	private Button btn_take_ownership;
 
@@ -85,6 +92,7 @@ public class MainWindow : Window {
 	private Label lbl_packages_message;
 	private Label lbl_ppa_message;
 	private Label lbl_theme_message;
+	private Image img_status_progress;
 	
 	private Gee.HashMap<string,Package> pkg_list_user;
 	private Gee.HashMap<string,Package> pkg_list_all;
@@ -95,13 +103,14 @@ public class MainWindow : Window {
 	string summary = "";
 
 	bool is_running;
+	bool is_restore_view = false;
 	
 	public MainWindow () {
 		this.title = AppName + " v" + AppVersion;// + " by " + AppAuthor + " (" + "teejeetech.blogspot.in" + ")";
         window_position = WindowPosition.CENTER;
         //resizable = false;
         destroy.connect (Gtk.main_quit);
-        set_default_size (500, 400);	
+        set_default_size (520, 400);	
 
         //set app icon
 		try{
@@ -172,7 +181,7 @@ public class MainWindow : Window {
         int row = -1;
         
         //lbl_backup_ppa
-		Label lbl_backup_ppa = new Label (_("Software Sources (Third Party PPAs)"));
+		Label lbl_backup_ppa = new Label (_("Software Sources ~ Third Party PPAs"));
 		lbl_backup_ppa.set_use_markup(true);
 		lbl_backup_ppa.halign = Align.START;
 		lbl_backup_ppa.hexpand = true;
@@ -195,7 +204,7 @@ public class MainWindow : Window {
 		btn_restore_ppa.clicked.connect(btn_restore_ppa_clicked);
 		
         //lbl_backup_packages
-		Label lbl_backup_packages = new Label (_("Software Selections (Manual Packages)"));
+		Label lbl_backup_packages = new Label (_("Software Selections ~ Manually Installed Packages"));
 		lbl_backup_packages.set_use_markup(true);
 		lbl_backup_packages.halign = Align.START;
 		lbl_backup_packages.hexpand = true;
@@ -218,7 +227,7 @@ public class MainWindow : Window {
 		btn_restore_packages.clicked.connect(btn_restore_packages_clicked);
 
         //lbl_backup_cache
-		Label lbl_backup_cache = new Label (_("Downloaded Packages (APT Cache)"));
+		Label lbl_backup_cache = new Label (_("Downloaded Packages ~ APT Cache"));
 		lbl_backup_cache.set_use_markup(true);
 		lbl_backup_cache.halign = Align.START;
 		lbl_backup_cache.hexpand = true;
@@ -291,7 +300,17 @@ public class MainWindow : Window {
 		btn_take_ownership.set_tooltip_text(_("Take ownership of files in your home directory"));
 		btn_take_ownership.clicked.connect(btn_take_ownership_clicked);
 		grid_option_buttons.attach(btn_take_ownership,1,row,1,1);
+
+		//btn_about
+		btn_about = new Gtk.Button.with_label (" " + _("Application Info") + " ");
+		btn_about.set_size_request(150,-1);
+		btn_about.set_tooltip_text(_("About Aptik"));
+		btn_about.clicked.connect(btn_about_clicked);
 		
+		Box hbox_about = new Box(Orientation.HORIZONTAL,0);
+		hbox_about.pack_start (btn_about, true, false, 0);
+		vbox_actions.pack_end (hbox_about, false, false, 0);
+
         //select packages ---------------------------------------------
 		
 		//lbl_packages
@@ -343,8 +362,10 @@ public class MainWindow : Window {
 		
 		col_pkg_select.set_cell_data_func (cell_pkg_select, (cell_layout, cell, model, iter) => {
 			bool selected;
-			model.get (iter, 0, out selected, -1);
+			Package pkg;
+			model.get (iter, 0, out selected, 1, out pkg,-1);
 			(cell as Gtk.CellRendererToggle).active = selected;
+			(cell as Gtk.CellRendererToggle).sensitive = !is_restore_view || (pkg.is_available && !pkg.is_installed);
 		});
 		
 		cell_pkg_select.toggled.connect((path) => {
@@ -408,7 +429,47 @@ public class MainWindow : Window {
 		//hbox_pkg_actions
 		Box hbox_pkg_actions = new Box (Orientation.HORIZONTAL, 6);
         vbox_packages.add (hbox_pkg_actions);
-        
+
+		//btn_backup_packages_select_all
+		btn_backup_packages_select_all = new Gtk.Button.with_label (" " + _("Select All") + " ");
+		hbox_pkg_actions.pack_start (btn_backup_packages_select_all, true, true, 0);
+		btn_backup_packages_select_all.clicked.connect(()=>{ 
+			foreach(Package pkg in pkg_list_user.values){
+				if (is_restore_view){
+					if (pkg.is_available && !pkg.is_installed){
+						pkg.is_selected = true;
+					}
+					else{
+						//no change
+					}
+				}
+				else{
+					pkg.is_selected = true;
+				}
+			}
+			tv_packages_refresh();
+		});
+		
+		//btn_backup_packages_select_none
+		btn_backup_packages_select_none = new Gtk.Button.with_label (" " + _("Select None") + " ");
+		hbox_pkg_actions.pack_start (btn_backup_packages_select_none, true, true, 0);
+		btn_backup_packages_select_none.clicked.connect(()=>{ 
+			foreach(Package pkg in pkg_list_user.values){
+				if (is_restore_view){
+					if (pkg.is_available && !pkg.is_installed){
+						pkg.is_selected = false;
+					}
+					else{
+						//no change
+					}
+				}
+				else{
+					pkg.is_selected = false;
+				}
+			}
+			tv_packages_refresh();
+		});
+		
 		//btn_backup_packages_exec
 		btn_backup_packages_exec = new Gtk.Button.with_label (" " + _("Backup") + " ");
 		btn_backup_packages_exec.no_show_all = true;
@@ -479,8 +540,10 @@ public class MainWindow : Window {
 
 		col_ppa_select.set_cell_data_func (cell_ppa_select, (cell_layout, cell, model, iter) => {
 			bool selected;
-			model.get (iter, 0, out selected, -1);
+			Ppa ppa;
+			model.get (iter, 0, out selected, 1, out ppa, -1);
 			(cell as Gtk.CellRendererToggle).active = selected;
+			(cell as Gtk.CellRendererToggle).sensitive = !is_restore_view || !ppa.is_installed;
 		});
 		
 		cell_ppa_select.toggled.connect((path) => {
@@ -544,7 +607,47 @@ public class MainWindow : Window {
 		//hbox_ppa_actions
 		Box hbox_ppa_actions = new Box (Orientation.HORIZONTAL, 6);
         vbox_ppa.add (hbox_ppa_actions);
-        
+
+		//btn_backup_ppa_select_all
+		btn_backup_ppa_select_all = new Gtk.Button.with_label (" " + _("Select All") + " ");
+		hbox_ppa_actions.pack_start (btn_backup_ppa_select_all, true, true, 0);
+		btn_backup_ppa_select_all.clicked.connect(()=>{ 
+			foreach(Ppa ppa in ppa_list_user.values){
+				if (is_restore_view){
+					if (!ppa.is_installed){
+						ppa.is_selected = true;
+					}
+					else{
+						//no change
+					}
+				}
+				else{
+					ppa.is_selected = true;
+				}
+			}
+			tv_ppa_refresh();
+		});
+		
+		//btn_backup_ppa_select_none
+		btn_backup_ppa_select_none = new Gtk.Button.with_label (" " + _("Select None") + " ");
+		hbox_ppa_actions.pack_start (btn_backup_ppa_select_none, true, true, 0);
+		btn_backup_ppa_select_none.clicked.connect(()=>{ 
+			foreach(Ppa ppa in ppa_list_user.values){
+				if (is_restore_view){
+					if (!ppa.is_installed){
+						ppa.is_selected = false;
+					}
+					else{
+						//no change
+					}
+				}
+				else{
+					ppa.is_selected = false;
+				}
+			}
+			tv_ppa_refresh();
+		});
+		
 		//btn_backup_ppa_exec
 		btn_backup_ppa_exec = new Gtk.Button.with_label (" " + _("Backup") + " ");
 		btn_backup_ppa_exec.no_show_all = true;
@@ -615,8 +718,10 @@ public class MainWindow : Window {
 
 		col_theme_select.set_cell_data_func (cell_theme_select, (cell_layout, cell, model, iter) => {
 			bool selected;
-			model.get (iter, 0, out selected, -1);
+			Theme theme;
+			model.get (iter, 0, out selected, 1, out theme, -1);
 			(cell as Gtk.CellRendererToggle).active = selected;
+			(cell as Gtk.CellRendererToggle).sensitive = !is_restore_view || !theme.is_installed;
 		});
 		
 		cell_theme_select.toggled.connect((path) => {
@@ -680,7 +785,47 @@ public class MainWindow : Window {
 		//hbox_theme_actions
 		Box hbox_theme_actions = new Box (Orientation.HORIZONTAL, 6);
         vbox_theme.add (hbox_theme_actions);
-        
+
+		//btn_backup_theme_select_all
+		btn_backup_theme_select_all = new Gtk.Button.with_label (" " + _("Select All") + " ");
+		hbox_theme_actions.pack_start (btn_backup_theme_select_all, true, true, 0);
+		btn_backup_theme_select_all.clicked.connect(()=>{ 
+			foreach(Theme theme in theme_list_user){
+				if (is_restore_view){
+					if (!theme.is_installed){
+						theme.is_selected = true;
+					}
+					else{
+						//no change
+					}
+				}
+				else{
+					theme.is_selected = true;
+				}
+			}
+			tv_theme_refresh();
+		});
+		
+		//btn_backup_theme_select_none
+		btn_backup_theme_select_none = new Gtk.Button.with_label (" " + _("Select None") + " ");
+		hbox_theme_actions.pack_start (btn_backup_theme_select_none, true, true, 0);
+		btn_backup_theme_select_none.clicked.connect(()=>{
+			foreach(Theme theme in theme_list_user){
+				if (is_restore_view){
+					if (!theme.is_installed){
+						theme.is_selected = false;
+					}
+					else{
+						//no change
+					}
+				}
+				else{
+					theme.is_selected = false;
+				}
+			}
+			tv_theme_refresh();
+		});
+		
 		//btn_backup_theme_exec
 		btn_backup_theme_exec = new Gtk.Button.with_label (" " + _("Backup") + " ");
 		btn_backup_theme_exec.no_show_all = true;
@@ -757,16 +902,16 @@ public class MainWindow : Window {
 			//check status
 			if (pkg.is_installed){
 				pix_status = pix_installed;
-				tt = _("Installed");
+				tt = _("Package is Installed");
 			}
 			else{
 				if (pkg.is_available){
 					pix_status = pix_missing;
-					tt = _("Available, Not Installed");
+					tt = _("Package is Available, Not Installed");
 				}
 				else{
 					pix_status = pix_unavailable;
-					tt = _("Not Available, Cannot be installed");
+					tt = _("Package is Not Available in software repositories");
 				}
 			}
 
@@ -817,16 +962,16 @@ public class MainWindow : Window {
 			if(ppa.is_installed){
 				if (ppa.description.length > 0){
 					pix_status = pix_enabled;
-					tt = _("Enabled (%d installed packages)").printf(ppa.description.split(" ").length);
+					tt = _("PPA is Enabled (%d installed packages)").printf(ppa.description.split(" ").length);
 				}
 				else{
 					pix_status = pix_unused;
-					tt = _("Enabled (%d installed packages)").printf(0);
+					tt = _("PPA is Enabled (%d installed packages)").printf(0);
 				}
 			}
 			else{
 				pix_status = pix_missing;
-				tt = _("Not Added");
+				tt = _("PPA is Not Added");
 			}
 			
 			//add row
@@ -932,27 +1077,96 @@ public class MainWindow : Window {
 		}
 	}
 
+	private void btn_about_clicked (){
+		var dialog = new Gtk.AboutDialog();
+		dialog.set_destroy_with_parent (true);
+		dialog.set_transient_for (this);
+		dialog.set_modal (true);
+		
+		//dialog.artists = {"", ""};
+		dialog.authors = {"Tony George"};
+		dialog.documenters = null; 
+		dialog.translator_credits = ""; 
+		//dialog.add_credit_section("Sponsors", "yy");
+		
+		dialog.program_name = AppName;
+		dialog.comments = _("System migration toolkit for Ubuntu-based distributions");
+		dialog.copyright = "Copyright © 2014 Tony George (teejee2008@gmail.com)";
+		dialog.version = AppVersion;
+		
+		try{
+			dialog.logo = new Gdk.Pixbuf.from_file (App.share_dir + """/pixmaps/aptik.png""");
+		}
+        catch(Error e){
+	        log_error (e.message);
+	    }
 
-	/* PPA */
+		dialog.license = "This program is free for personal and commercial use and comes with absolutely no warranty. You use this program entirely at your own risk. The author will not be liable for any damages arising from the use of this program.";
+		dialog.wrap_license = true;
 
-	private void btn_backup_ppa_clicked(){
-		progress_hide();
+		dialog.website = "http://teejeetech.blogspot.in";
+		dialog.website_label = "http://teejeetech.in";
+
+		dialog.response.connect ((response_id) => {
+			if (response_id == Gtk.ResponseType.CANCEL || response_id == Gtk.ResponseType.DELETE_EVENT) {
+				dialog.hide_on_delete ();
+			}
+		});
+
+		dialog.present ();
+	}
 	
+	/* PPA */
+	
+	private void btn_backup_ppa_clicked(){
 		if (!check_backup_folder()) { return; }
 		
-		gtk_set_busy(true, this);
+		progress_begin(_("Checking installed PPAs..."));
+		
+		try {
+			is_running = true;
+			Thread.create<void> (btn_backup_ppa_clicked_thread, true);
+		} catch (ThreadError e) {
+			is_running = false;
+			log_error (e.message);
+		}
 
+		while(is_running){
+			Thread.usleep ((ulong) 200000);
+			progressbar.pulse();
+			gtk_do_events();
+		}
+		
+		progress_hide();
+	}
+	
+	private void btn_backup_ppa_clicked_thread(){
 		ppa_list_user = App.list_ppa();
+		is_restore_view = false;
 		tv_ppa_refresh();
 		btn_backup_ppa_exec.visible = true;
 		btn_restore_ppa_exec.visible = false;
 		lbl_ppa_message.label = _("Select the PPAs to backup");
 		notebook.page = 2;
-
-		gtk_set_busy(false, this);
+		is_running = false;
 	}
 	
 	private void btn_backup_ppa_exec_clicked(){
+		//check if no action required
+		bool none_selected = true;
+		foreach(Ppa ppa in ppa_list_user.values){
+			if (ppa.is_selected){
+				none_selected = false;
+				break;
+			}
+		}
+		if (none_selected){
+			string title = _("No PPA Selected");
+			string msg = _("Select the PPAs to backup");
+			gtk_messagebox(title, msg, this, false);
+			return;
+		}
+		
 		gtk_set_busy(true, this);
 		
 		if (save_ppa_list_selected(true)){
@@ -962,25 +1176,57 @@ public class MainWindow : Window {
 		gtk_set_busy(false, this);
 	}
 		
-	
-	private void btn_restore_ppa_clicked(){
-		progress_hide();
-
-		gtk_set_busy(true, this);
 		
-		if (check_backup_file("ppa.list")){
-			ppa_list_user = App.read_ppa_list();
-			tv_ppa_refresh();
-			btn_backup_ppa_exec.visible = false;
-			btn_restore_ppa_exec.visible = true;
-			lbl_ppa_message.label = _("Select the PPAs to restore");
-			notebook.page = 2;
+	private void btn_restore_ppa_clicked(){
+		if (!check_backup_folder()) { return; }
+		if (!check_backup_file("ppa.list")) { return; }
+		
+		progress_begin(_("Checking installed PPAs..."));
+		
+		try {
+			is_running = true;
+			Thread.create<void> (btn_restore_ppa_clicked_thread, true);
+		} catch (ThreadError e) {
+			is_running = false;
+			log_error (e.message);
 		}
 
-		gtk_set_busy(false, this);
+		while(is_running){
+			Thread.usleep ((ulong) 200000);
+			progressbar.pulse();
+			gtk_do_events();
+		}
+		
+		progress_hide();
+	}
+	
+	private void btn_restore_ppa_clicked_thread(){
+		ppa_list_user = App.read_ppa_list();
+		is_restore_view = true;
+		tv_ppa_refresh();
+		btn_backup_ppa_exec.visible = false;
+		btn_restore_ppa_exec.visible = true;
+		lbl_ppa_message.label = _("Select the PPAs to restore");
+		notebook.page = 2;
+		is_running = false;
 	}
 
 	private void btn_restore_ppa_exec_clicked(){
+		//check if no action required
+		bool none_selected = true;
+		foreach(Ppa ppa in ppa_list_user.values){
+			if (ppa.is_selected && !ppa.is_installed){
+				none_selected = false;
+				break;
+			}
+		}
+		if (none_selected){
+			string title = _("Nothing To Do");
+			string msg = _("Selected PPAs are already enabled on this system");
+			gtk_messagebox(title, msg, this, false);
+			return;
+		}
+		
 		//save ppa.list
 		string file_name = "ppa.list";
 		progress_begin(_("Saving") + " '%s'".printf(file_name));
@@ -1065,25 +1311,56 @@ public class MainWindow : Window {
 	}
 	
 	/* Packages */
-	
+
 	private void btn_backup_packages_clicked(){
-		progress_hide();
-				
 		if (!check_backup_folder()) { return; }
 
-		gtk_set_busy(true, this);
+		progress_begin(_("Checking installed packages..."));
 		
+		try {
+			is_running = true;
+			Thread.create<void> (btn_backup_packages_clicked_thread, true);
+		} catch (ThreadError e) {
+			is_running = false;
+			log_error (e.message);
+		}
+
+		while(is_running){
+			Thread.usleep ((ulong) 200000);
+			progressbar.pulse();
+			gtk_do_events();
+		}
+		
+		progress_hide();
+	}
+	
+	private void btn_backup_packages_clicked_thread(){
 		pkg_list_user = App.list_manual();
+		is_restore_view = false;
 		tv_packages_refresh();
 		btn_backup_packages_exec.visible = true;
 		btn_restore_packages_exec.visible = false;
 		lbl_packages_message.label = _("Select the packages to backup");
 		notebook.page = 1;
-		
-		gtk_set_busy(false, this);
+		is_running = false;
 	}
 	
 	private void btn_backup_packages_exec_clicked(){
+		//check if no action required
+		bool none_selected = true;
+		foreach(Package pkg in pkg_list_user.values){
+			if (pkg.is_selected){
+				none_selected = false;
+				break;
+			}
+		}
+		if (none_selected){
+			string title = _("No Packages Selected");
+			string msg = _("Select the packages to backup");
+			gtk_messagebox(title, msg, this, false);
+			return;
+		}
+		
 		gtk_set_busy(true, this);
 		
 		save_package_list_installed();
@@ -1131,24 +1408,56 @@ public class MainWindow : Window {
 	
 	
 	private void btn_restore_packages_clicked(){
-		progress_hide();
-
-		gtk_set_busy(true, this);
+		if (!check_backup_folder()) { return; }
+		if (!check_backup_file("packages.list")) { return; }
 		
-		if (check_backup_file("packages.list")){
-			pkg_list_all = App.list_all();
-			pkg_list_user = App.read_package_list(pkg_list_all);
-			tv_packages_refresh();
-			btn_backup_packages_exec.visible = false;
-			btn_restore_packages_exec.visible = true;
-			lbl_packages_message.label = _("Select the packages to restore");
-			notebook.page = 1;
+		progress_begin(_("Checking installed and available packages..."));
+		
+		try {
+			is_running = true;
+			Thread.create<void> (btn_restore_packages_clicked_thread, true);
+		} catch (ThreadError e) {
+			is_running = false;
+			log_error (e.message);
+		}
+
+		while(is_running){
+			Thread.usleep ((ulong) 200000);
+			progressbar.pulse();
+			gtk_do_events();
 		}
 		
-		gtk_set_busy(false, this);
+		progress_hide();
+	}
+	
+	private void btn_restore_packages_clicked_thread(){
+		pkg_list_all = App.list_all();
+		pkg_list_user = App.read_package_list(pkg_list_all);
+		is_restore_view = true;
+		tv_packages_refresh();
+		btn_backup_packages_exec.visible = false;
+		btn_restore_packages_exec.visible = true;
+		lbl_packages_message.label = _("Select the packages to restore");
+		notebook.page = 1;
+		is_running = false;
 	}
 
 	private void btn_restore_packages_exec_clicked(){
+		//check if no action required
+		bool none_selected = true;
+		foreach(Package pkg in pkg_list_user.values){
+			if (pkg.is_selected && pkg.is_available && !pkg.is_installed){
+				none_selected = false;
+				break;
+			}
+		}
+		if (none_selected){
+			string title = _("Nothing To Do");
+			string msg = _("Selected packages are already installed on this system");
+			gtk_messagebox(title, msg, this, false);
+			return;
+		}
+		
 		//save packages.list
 		string file_name = "packages.list";
 		progress_begin(_("Saving") + " '%s'".printf(file_name));
@@ -1299,6 +1608,7 @@ public class MainWindow : Window {
 
 		gtk_set_busy(true, this);
 		
+		is_restore_view = false;
 		theme_list_user = App.list_all_themes();
 		tv_theme_refresh();
 		btn_backup_theme_exec.visible = true;
@@ -1310,10 +1620,33 @@ public class MainWindow : Window {
 	}
 	
 	private void btn_backup_theme_exec_clicked(){
-		if (!check_backup_folder()) { return; }
-
+		//check if no action required
+		bool none_selected = true;
+		foreach(Theme theme in theme_list_user){
+			if (theme.is_selected){
+				none_selected = false;
+				break;
+			}
+		}
+		if (none_selected){
+			string title = _("No Themes Selected");
+			string msg = _("Select the themes to backup");
+			gtk_messagebox(title, msg, this, false);
+			return;
+		}
+		
 		progress_begin("Zipping themes...");
 		
+		//get total file count
+		App.progress_total = 0;
+		App.progress_count = 0;
+		foreach(Theme theme in theme_list_user){
+			if (theme.is_selected){
+				App.progress_total += (int) get_file_count(theme.system_path);
+			}
+		}
+
+		//zip themes
 		foreach(Theme theme in theme_list_user){
 			if (theme.is_selected){
 				App.zip_theme(theme);
@@ -1334,6 +1667,7 @@ public class MainWindow : Window {
 		gtk_set_busy(true, this);
 		
 		if (check_backup_subfolder("themes") || check_backup_subfolder("icons") ){
+			is_restore_view = true;
 			theme_list_user = App.read_themes();
 			tv_theme_refresh();
 			btn_backup_theme_exec.visible = false;
@@ -1346,12 +1680,37 @@ public class MainWindow : Window {
 	}
 
 	private void btn_restore_theme_exec_clicked(){
-		if (!check_backup_folder()) { return; }
-
-		progress_begin("Unzipping themes...");
-		
+		//check if no action required
+		bool none_selected = true;
 		foreach(Theme theme in theme_list_user){
-			if (theme.is_selected){
+			if (theme.is_selected && !theme.is_installed){
+				none_selected = false;
+				break;
+			}
+		}
+		if (none_selected){
+			string title = _("Nothing To Do");
+			string msg = _("Selected themes are already installed on this system");
+			gtk_messagebox(title, msg, this, false);
+			return;
+		}
+		
+		progress_begin("Unzipping themes...");
+
+		//get total file count
+		App.progress_total = 0;
+		App.progress_count = 0;
+		foreach(Theme theme in theme_list_user){
+			if (theme.is_selected && !theme.is_installed){
+				string cmd = "tar -tvf '%s'".printf(theme.zip_file_path);
+				string txt = execute_command_sync_get_output(cmd);
+				App.progress_total += txt.split("\n").length;
+			}
+		}
+		
+		//unzip themes
+		foreach(Theme theme in theme_list_user){
+			if (theme.is_selected && !theme.is_installed){
 				App.unzip_theme(theme);
 				while(App.is_running){
 					update_progress("Unzipping");
@@ -1384,29 +1743,36 @@ public class MainWindow : Window {
 	}
 
 	private void progress_begin(string message = ""){
+		btn_about.visible = false;
 		lbl_status.visible = true;
 		progressbar.visible = true;
-		lbl_status.label = message;
 		progressbar.fraction = 0.0;
+		lbl_status.label = message;
 		notebook.sensitive = false;
+		gtk_set_busy(true, this);
 		gtk_do_events();
 	}
 	
 	private void progress_hide(string message = ""){
+		btn_about.visible = true;
 		lbl_status.visible = false;
 		progressbar.visible = false;
-		lbl_status.label = message;
 		progressbar.fraction = 0.0;
+		lbl_status.label = message;
 		notebook.sensitive = true;
+		gtk_set_busy(false, this);
 		gtk_do_events();
 	}
 	
 	private void progress_end(string message = ""){
+		btn_about.visible = false;
 		lbl_status.visible = true;
 		progressbar.visible = true;
-		lbl_status.label = message;
 		progressbar.fraction = 1.0;
+		lbl_status.label = message;
 		notebook.sensitive = true;
+		gtk_set_busy(false, this);
 		gtk_do_events();
 	}
+
 }
