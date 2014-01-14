@@ -92,8 +92,7 @@ public class MainWindow : Window {
 	private Label lbl_packages_message;
 	private Label lbl_ppa_message;
 	private Label lbl_theme_message;
-	private Image img_status_progress;
-	
+
 	private Gee.HashMap<string,Package> pkg_list_user;
 	private Gee.HashMap<string,Package> pkg_list_all;
 	private Gee.HashMap<string,Ppa> ppa_list_user;
@@ -110,7 +109,7 @@ public class MainWindow : Window {
         window_position = WindowPosition.CENTER;
         //resizable = false;
         destroy.connect (Gtk.main_quit);
-        set_default_size (520, 400);	
+        set_default_size (450, 400);	
 
         //set app icon
 		try{
@@ -181,7 +180,8 @@ public class MainWindow : Window {
         int row = -1;
         
         //lbl_backup_ppa
-		Label lbl_backup_ppa = new Label (_("Software Sources ~ Third Party PPAs"));
+		Label lbl_backup_ppa = new Label (_("Software Sources (PPAs)"));
+		lbl_backup_ppa.set_tooltip_text(_("Software Sources (Third Party PPAs)"));
 		lbl_backup_ppa.set_use_markup(true);
 		lbl_backup_ppa.halign = Align.START;
 		lbl_backup_ppa.hexpand = true;
@@ -190,7 +190,7 @@ public class MainWindow : Window {
 		//btn_backup_ppa
 		btn_backup_ppa = new Gtk.Button.with_label (" " + _("Backup") + " ");
 		btn_backup_ppa.set_size_request(50,-1);
-		btn_backup_ppa.set_tooltip_text(_("Create a backup list of PPAs"));
+		btn_backup_ppa.set_tooltip_text(_("Backup the list of installed PPAs"));
 		grid_backup_buttons.attach(btn_backup_ppa,1,row,1,1);
 
 		btn_backup_ppa.clicked.connect(btn_backup_ppa_clicked);
@@ -198,13 +198,14 @@ public class MainWindow : Window {
 		//btn_restore_ppa
 		btn_restore_ppa = new Gtk.Button.with_label (" " + _("Restore") + " ");
 		btn_restore_ppa.set_size_request(50,-1);
-		btn_restore_ppa.set_tooltip_text(_("Restore PPAs from file 'ppa.list'"));
+		btn_restore_ppa.set_tooltip_text(_("Add missing PPAs"));
 		grid_backup_buttons.attach(btn_restore_ppa,2,row,1,1);
 		
 		btn_restore_ppa.clicked.connect(btn_restore_ppa_clicked);
 		
         //lbl_backup_packages
-		Label lbl_backup_packages = new Label (_("Software Selections ~ Manually Installed Packages"));
+		Label lbl_backup_packages = new Label (_("Software Selections"));
+		lbl_backup_packages.set_tooltip_text(_("Software Selections (Manually Installed Packages)"));
 		lbl_backup_packages.set_use_markup(true);
 		lbl_backup_packages.halign = Align.START;
 		lbl_backup_packages.hexpand = true;
@@ -213,7 +214,7 @@ public class MainWindow : Window {
 		//btn_backup_packages
 		btn_backup_packages = new Gtk.Button.with_label (" " + _("Backup") + " ");
 		btn_backup_packages.set_size_request(50,-1);
-		btn_backup_packages.set_tooltip_text(_("Create a backup list of packages which were manually installed by user"));
+		btn_backup_packages.set_tooltip_text(_("Backup the list of packages manually installed by user"));
 		grid_backup_buttons.attach(btn_backup_packages,1,row,1,1);
 		
 		btn_backup_packages.clicked.connect(btn_backup_packages_clicked);
@@ -221,13 +222,14 @@ public class MainWindow : Window {
 		//btn_restore_packages
 		btn_restore_packages = new Gtk.Button.with_label (" " + _("Restore") + " ");
 		btn_restore_packages.set_size_request(50,-1);
-		btn_restore_packages.set_tooltip_text(_("Reinstall missing packages from file 'packages.list'"));
+		btn_restore_packages.set_tooltip_text(_("Re-install missing packages"));
 		grid_backup_buttons.attach(btn_restore_packages,2,row,1,1);
 		
 		btn_restore_packages.clicked.connect(btn_restore_packages_clicked);
 
         //lbl_backup_cache
-		Label lbl_backup_cache = new Label (_("Downloaded Packages ~ APT Cache"));
+		Label lbl_backup_cache = new Label (_("Downloaded Packages (APT Cache)"));
+		lbl_backup_cache.set_tooltip_text(_("Downloaded Packages (APT Cache)"));
 		lbl_backup_cache.set_use_markup(true);
 		lbl_backup_cache.halign = Align.START;
 		lbl_backup_cache.hexpand = true;
@@ -243,12 +245,13 @@ public class MainWindow : Window {
 		//btn_restore_cache
 		btn_restore_cache = new Gtk.Button.with_label (" " + _("Restore") + " ");
 		btn_restore_cache.set_size_request(80,-1);
-		btn_restore_cache.set_tooltip_text(_("Restore packages to APT cache"));
+		btn_restore_cache.set_tooltip_text(_("Restore downloaded packages to APT cache"));
 		btn_restore_cache.clicked.connect(btn_restore_cache_clicked);
 		grid_backup_buttons.attach(btn_restore_cache,2,row,1,1);
 
         //lbl_backup_theme
 		Label lbl_backup_theme = new Label (_("Themes and Icons"));
+		lbl_backup_theme.set_tooltip_text(_("Themes and Icons"));
 		lbl_backup_theme.set_use_markup(true);
 		lbl_backup_theme.halign = Align.START;
 		lbl_backup_theme.hexpand = true;
@@ -288,12 +291,12 @@ public class MainWindow : Window {
         row = -1;
         
         //lbl_take_ownership
-		Label lbl_take_ownership = new Label (_("Take ownership of files in your home directory"));
+		Label lbl_take_ownership = new Label (_("Fix Ownership of files in Home directory"));
 		lbl_take_ownership.set_use_markup(true);
 		lbl_take_ownership.halign = Align.START;
 		lbl_take_ownership.hexpand = true;
 		grid_option_buttons.attach(lbl_take_ownership,0,++row,1,1);
-		
+
 		//btn_take_ownership
 		btn_take_ownership = new Gtk.Button.with_label (" " + _("Take Ownership") + " ");
 		btn_take_ownership.set_size_request(172,-1);
@@ -1280,12 +1283,13 @@ public class MainWindow : Window {
 			dialog.show_all();
 			dialog.set_log_msg(log_msg);
 			dialog.run();
-			progress_end(_("Finished with errors"));
 		}
-		else{
-			progress_end(_("Finished"));
-		}
-		
+
+		string title = "Finished";
+		string msg = "PPAs added successfully";
+		gtk_messagebox(title, msg, this, false);
+			
+		progress_hide();
 		notebook.page = 0;
 	}
 
@@ -1558,15 +1562,23 @@ public class MainWindow : Window {
 
 		string archives_dir = App.backup_dir + "archives";
 		
-		progress_begin("Copying packages...");
+		progress_begin(_("Copying packages") + "...");
 		
 		App.backup_apt_cache();
 		
 		while(App.is_running){
-			update_progress("Copying");
+			update_progress(_("Copying"));
 		}
+		
+		progress_end(_("Finished"));
+		
+		string title = _("Finished");
+		string msg = _("Packages copied successfully") + ".\n";
+		msg += _("%ld packages in backup").printf(get_file_count(archives_dir));
+		gtk_messagebox(title, msg, this, false);
 
-		progress_end(_("Finished") + " ~ %ld ".printf(get_file_count(archives_dir)) + _("packages in backup") + " ~");
+		progress_hide();
+		notebook.page = 0;
 	}
 
 	private void btn_restore_cache_clicked(){
@@ -1576,20 +1588,28 @@ public class MainWindow : Window {
 		string archives_dir = App.backup_dir + "archives";
 		var f = File.new_for_path(archives_dir);
 		if (!f.query_exists()){
-			string title = "Files Not Found";
+			string title = _("Files Not Found");
 			string msg = _("Cache backup not found in backup directory");
 			gtk_messagebox(title, msg, this, true);
 			return;
 		}
 		
-		progress_begin("Copying packages...");
+		progress_begin(_("Copying packages") + "...");
 		
 		App.restore_apt_cache();
 		while(App.is_running){
-			update_progress("Copying");
+			update_progress(_("Copying"));
 		}
+		
+		progress_end(_("Finished"));
+		
+		string title = _("Finished");
+		string msg = _("Packages copied successfully") + ".\n";
+		msg += _("%ld packages in cache").printf(get_file_count("/var/cache/apt/archives") - 2); //excluding 'lock' and 'partial'
+		gtk_messagebox(title, msg, this, false);
 
-		progress_end(_("Finished") + " ~ %ld ".printf(get_file_count("/var/cache/apt/archives")) + _("packages in cache") + " ~");
+		progress_hide();
+		notebook.page = 0;
 	}
 	
 	private void update_progress(string message){
@@ -1635,7 +1655,7 @@ public class MainWindow : Window {
 			return;
 		}
 		
-		progress_begin("Zipping themes...");
+		progress_begin(_("Zipping themes") + "...");
 		
 		//get total file count
 		App.progress_total = 0;
@@ -1651,13 +1671,16 @@ public class MainWindow : Window {
 			if (theme.is_selected){
 				App.zip_theme(theme);
 				while(App.is_running){
-					update_progress("Zipping");
+					update_progress(_("Zipping"));
 				}
 			}
 		}
 
-		progress_end(_("Finished"));
+		string title = _("Finished");
+		string msg = _("Backups created successfully");
+		gtk_messagebox(title, msg, this, false);
 
+		progress_hide();
 		notebook.page = 0;
 	}
 
@@ -1690,12 +1713,12 @@ public class MainWindow : Window {
 		}
 		if (none_selected){
 			string title = _("Nothing To Do");
-			string msg = _("Selected themes are already installed on this system");
+			string msg = _("Selected themes are already installed");
 			gtk_messagebox(title, msg, this, false);
 			return;
 		}
 		
-		progress_begin("Unzipping themes...");
+		progress_begin(_("Unzipping themes") + "...");
 
 		//get total file count
 		App.progress_total = 0;
@@ -1713,32 +1736,56 @@ public class MainWindow : Window {
 			if (theme.is_selected && !theme.is_installed){
 				App.unzip_theme(theme);
 				while(App.is_running){
-					update_progress("Unzipping");
+					update_progress(_("Unzipping"));
 				}
 			}
 		}
 
-		progress_end(_("Finished"));
+		string title = _("Finished");
+		string msg = _("Themes restored successfully");
+		gtk_messagebox(title, msg, this, false);
 
+		progress_hide();
 		notebook.page = 0;
 	}
 	
 	/* Misc */
 	
 	private void btn_take_ownership_clicked(){
-		progressbar.visible = false;
-		lbl_status.visible = false;
+		progress_hide();
+		
+		string user = get_user_login();
+		string home = "/home/" + user;
+		
+		string title = _("Change Ownership");
+		string msg = _("Owner will be changed to '%s' for files in directory '%s'").printf(user,home);
+		msg += "\n\n" + _("Continue?");
+		
+		var dlg = new Gtk.MessageDialog.with_markup(null, Gtk.DialogFlags.MODAL, Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, msg);
+		dlg.set_title(title);
+		dlg.set_default_size (200, -1);
+		dlg.set_transient_for(this);
+		dlg.set_modal(true);
+		int response = dlg.run();
+		dlg.destroy();
+		gtk_do_events();
+		
+		if (response == Gtk.ResponseType.YES){
+			gtk_set_busy(true,this);
 			
-		bool is_success = App.take_ownership();
-		if (is_success) {
-			string title = "Success";
-			string msg = _("Ownership changed to '%s' for files in directory '%s'").printf(get_user_login(),Environment.get_home_dir());
-			gtk_messagebox(title, msg, this, false);
-		}
-		else{
-			string title = "Error";
-			string msg = _("Failed to change file ownership");
-			gtk_messagebox(title, msg, this, true);
+			bool is_success = App.take_ownership();
+			if (is_success) {
+				title = _("Success");
+				msg = _("Owner changed to '%s' for files in directory '%s'").printf(user,home);
+				gtk_messagebox(title, msg, this, false);
+			}
+			else{
+				title = _("Error");
+				msg = _("Failed to change file ownership");
+				gtk_messagebox(title, msg, this, true);
+			}
+			
+			gtk_set_busy(false,this);
 		}
 	}
 

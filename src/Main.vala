@@ -1136,9 +1136,9 @@ done
 	/* Misc */
 	
 	public bool take_ownership(){
-		string home = Environment.get_home_dir();
 		string user = get_user_login();
-
+		string home = "/home/" + user;
+		
 		try {
 			string cmd = "chown %s -R %s".printf(user,home);
 			int exit_code;
