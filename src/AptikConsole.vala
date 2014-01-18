@@ -46,7 +46,7 @@ public class AptikConsole : GLib.Object{
 		
 		LOG_TIMESTAMP = false;
 		
-		App = new Main(args);
+		App = new Main(args,false);
 		
 		var console =  new AptikConsole();
 		bool is_success = console.parse_arguments(args);
@@ -367,7 +367,7 @@ public class AptikConsole : GLib.Object{
 		foreach(Ppa ppa in ppa_list.values){
 			if (ppa.is_selected && !ppa.is_installed){
 				log_msg(_("Adding") + " '%s'\n".printf(ppa.name));
-
+				
 				int exit_code = Posix.system("apt-add-repository -y ppa:%s".printf(ppa.name));
 				if (exit_code == 0){
 					count_success++;

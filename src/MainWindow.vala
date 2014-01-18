@@ -109,7 +109,7 @@ public class MainWindow : Window {
         window_position = WindowPosition.CENTER;
         //resizable = false;
         destroy.connect (Gtk.main_quit);
-        set_default_size (450, 400);	
+        set_default_size (480, 400);	
 
         //set app icon
 		try{
@@ -868,6 +868,7 @@ public class MainWindow : Window {
 		progressbar.margin_bottom = 3;
 		progressbar.margin_left = 3;
 		progressbar.margin_right = 3;
+		progressbar.set_size_request(-1,25);
 		//progressbar.pulse_step = 0.2;
 		vbox_main.pack_start (progressbar, false, true, 0);
 	}
@@ -1245,14 +1246,16 @@ public class MainWindow : Window {
 		int ret_val;
 		string log_msg = "";
 		
+		string log_dir = App.create_log_dir();
+		
 		foreach(Ppa ppa in ppa_list_user.values){
 			if (ppa.is_selected && !ppa.is_installed){
 				lbl_status.label = _("Adding PPA") + ": %s".printf(ppa.name);
 				gtk_do_events();
 				
 				try{
-					cmd = "add-apt-repository -y ppa:%s".printf(ppa.name);
-					Process.spawn_command_line_sync(cmd, out std_out, out std_err, out ret_val);
+					cmd = "add-apt-repository -y ppa:%s | tee -a '%s/%s.log'".printf(ppa.name,log_dir,ppa.name);
+					ret_val = execute_command_script_sync(cmd,out std_out,out std_err);
 					if (ret_val != 0){
 						log_msg += std_err + "\n";
 					}
@@ -1473,17 +1476,29 @@ public class MainWindow : Window {
 		//show summary window
 		int response = show_package_installation_summary();
 		if (response == Gtk.ResponseType.YES){
-			App.download_packages(list_found);
-			while (App.is_running){
-				update_progress("Downloading");
-			}
-			progress_end("Finished");
-		}
-		else{
-			progress_hide();
+			//App.download_packages(list_found);
+			//while (App.is_running){
+				//update_progress("Downloading");
+			//}
+
+			progress_begin(_("Installing packages..."));
+			
+			iconify();
+			gtk_do_events();
+			
+			string cmd = "apt-get install -y %s".printf(list_found);
+			cmd += "\n\necho '" + _("Finished installing packages") + ".'";
+			cmd += "\necho '" + _("Close window to exit...") + "'";
+			cmd += "\nread dummy";
+			execute_command_script_in_terminal_sync(create_temp_bash_script(cmd));
+			//success/error will be displayed by apt-get in terminal
+			
+			deiconify();
+			gtk_do_events();
 		}
 		
-		//TODO: run install in terminal
+		notebook.page = 0;
+		progress_hide();
 	}
 	
 	private int show_package_installation_summary(){
@@ -1540,9 +1555,11 @@ public class MainWindow : Window {
 		string txt = execute_command_sync_get_output(cmd);
 
 		summary = "";
-		summary += ("Following packages are NOT available") + "\n";
-		summary += list_missing + "\n\n";
-
+		if (list_missing.strip().length > 0){
+			summary += ("Following packages are NOT available") + "\n";
+			summary += list_missing + "\n\n";
+		}
+		
 		foreach(string line in txt.split("\n")){
 			if (line.has_prefix("Inst ")||line.has_prefix("Conf ")||line.has_prefix("Remv ")){
 				//skip
@@ -1738,6 +1755,7 @@ public class MainWindow : Window {
 				while(App.is_running){
 					update_progress(_("Unzipping"));
 				}
+				App.update_permissions(theme.system_path);
 			}
 		}
 
@@ -1753,12 +1771,9 @@ public class MainWindow : Window {
 	
 	private void btn_take_ownership_clicked(){
 		progress_hide();
-		
-		string user = get_user_login();
-		string home = "/home/" + user;
-		
+
 		string title = _("Change Ownership");
-		string msg = _("Owner will be changed to '%s' for files in directory '%s'").printf(user,home);
+		string msg = _("Owner will be changed to '%s' (uid=%d) for files in directory '%s'").printf(App.user_login,App.user_uid,App.user_home);
 		msg += "\n\n" + _("Continue?");
 		
 		var dlg = new Gtk.MessageDialog.with_markup(null, Gtk.DialogFlags.MODAL, Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, msg);
@@ -1776,7 +1791,7 @@ public class MainWindow : Window {
 			bool is_success = App.take_ownership();
 			if (is_success) {
 				title = _("Success");
-				msg = _("Owner changed to '%s' for files in directory '%s'").printf(user,home);
+				msg = _("You are now the owner of all files in your home directory");
 				gtk_messagebox(title, msg, this, false);
 			}
 			else{

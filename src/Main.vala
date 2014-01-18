@@ -46,14 +46,17 @@ public const string AppAuthorEmail = "teejee2008@gmail.com";
 const string GETTEXT_PACKAGE = "";
 const string LOCALE_DIR = "/usr/share/locale";
 
-//extern void exit(int exit_code);
+extern void exit(int exit_code);
 
 public class Main : GLib.Object{
 	public string temp_dir = "";
 	public string backup_dir = "";
 	public string share_dir = "/usr/share";
 	public bool gui_mode = false;//TODO:Remove
-
+	public string user_login = "";
+	public string user_home = "";
+	public int user_uid = -1;
+			
 	public string err_line;
 	public string out_line;
 	public string status_line;
@@ -71,20 +74,63 @@ public class Main : GLib.Object{
 	private Regex rex_pkg_installed;
 	private MatchInfo match;
 			
-	public Main(string[] args){
+	public Main(string[] args, bool _gui_mode){
+		
+		gui_mode = _gui_mode;
+		
+		//check dependencies
+		string message;
+		if (!check_dependencies(out message)){
+			if (gui_mode){
+				string title = _("Missing Dependencies");
+				gtk_messagebox(title, message, null, true);
+			}
+			exit(0);
+		}
+
 		try{
+			//create temp dir
 			temp_dir = get_temp_file_path();
-			
 			var f = File.new_for_path(temp_dir);
 			if (f.query_exists()){
 				Posix.system("sudo rm -rf %s".printf(temp_dir));
 			}
 			f.make_directory_with_parents();
-
-			rex_aptget_download = new Regex("""([^%]*)%[ \t]*\[([^\]]*)\]""");
+			
+			//initialize regex variables
+			rex_aptget_download = new Regex("""([0-9]*)%[ \t]*\[([^\]]*)\]""");
 		}
 		catch (Error e) {
 			log_error (e.message);
+		}
+		
+		//get user info
+		user_login = get_user_login();
+		user_home = "/home/" + user_login;
+		user_uid = get_user_id(user_login);
+	}
+
+	public bool check_dependencies(out string msg){
+		msg = "";
+		
+		string[] dependencies = { "rsync","aptitude","apt-get","gzip","grep","find","chown","rm" };  
+
+		string path;
+		foreach(string cmd_tool in dependencies){
+			path = get_cmd_path (cmd_tool);
+			if ((path == null) || (path.length == 0)){
+				msg += " * " + cmd_tool + "\n";
+			}
+		}
+		
+		if (msg.length > 0){
+			msg = _("Commands listed below are not available on this system") + ":\n\n" + msg + "\n";
+			msg += _("Please install required packages and try running Aptik again");
+			log_msg(msg);
+			return false;
+		}
+		else{
+			return true;
 		}
 	}
 	
@@ -100,6 +146,12 @@ public class Main : GLib.Object{
 		else{
 			return true;
 		}
+	}
+	
+	public string create_log_dir(){
+		string log_dir = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + "logs_" + timestamp3();
+		create_dir(log_dir);
+		return log_dir;
 	}
 	
 	/* Package selections */
@@ -404,7 +456,7 @@ public class Main : GLib.Object{
 
 	public bool download_packages (string pkg_list){
 		string[] argv = new string[1];
-		argv[0] = create_temp_bash_script("apt-get install -d -y %s".printf(pkg_list));
+		argv[0] = create_temp_bash_script("apt-get install -d -y %s 2>&1".printf(pkg_list));
 		
 		Pid child_pid;
 		int input_fd;
@@ -437,6 +489,7 @@ public class Main : GLib.Object{
 			dis_err.newline_type = DataStreamNewlineType.ANY;
 			
 			progress_count = 0;
+			progress_total = 100;
 			//stdout_lines = new Gee.ArrayList<string>();
 			stderr_lines = new Gee.ArrayList<string>();
 			
@@ -653,7 +706,8 @@ done
 			err_line = dis_err.read_line (null);
 		    while (err_line != null) {
 		        if (gui_mode){
-					stderr_lines.add(err_line); //save
+					//stderr_lines.add(err_line); //save
+					log_msg("nomatch:errline=" + err_line);
 				}
 				else{
 					stderr.printf(err_line + "\n"); //print
@@ -675,6 +729,9 @@ done
 					if (rex_aptget_download.match (out_line, 0, out match)){
 						progress_count = int.parse(match.fetch(1).strip());
 						status_line = match.fetch(2).strip();
+					}
+					else{
+						log_msg("nomatch:outline=" + out_line);
 					}
 				}
 				else{
@@ -868,7 +925,8 @@ done
 		var theme_list = new Gee.ArrayList<Theme>();
 		
 		try{
-			string share_path = "/usr/share/themes";
+			string theme_type = "theme";
+			string share_path = "/usr/share/%ss".printf(theme_type);
 			var directory = File.new_for_path(share_path);
 			var enumerator = directory.enumerate_children(FileAttribute.STANDARD_NAME, 0);
 			FileInfo info;
@@ -876,8 +934,6 @@ done
 			while ((info = enumerator.next_file()) != null) {
 				if (info.get_file_type() == FileType.DIRECTORY){
 					string theme_name = info.get_name();
-					string theme_path = share_path + "/" + theme_name;
-					
 					switch (theme_name.down()){
 						case "default":
 						case "emacs":
@@ -885,8 +941,7 @@ done
 							continue;
 					}
 					
-					Theme theme = new Theme(theme_name, false);
-					theme.system_path = theme_path;
+					Theme theme = new Theme(theme_name, theme_type);
 					theme.is_selected = true;
 					theme.is_installed = true;
 					theme_list.add(theme);
@@ -904,7 +959,8 @@ done
 		var theme_list = new Gee.ArrayList<Theme>();
 		
 		try{
-			string share_path = "/usr/share/icons";
+			string theme_type = "icon";
+			string share_path = "/usr/share/%ss".printf(theme_type);
 			var directory = File.new_for_path(share_path);
 			var enumerator = directory.enumerate_children(FileAttribute.STANDARD_NAME, 0);
 			FileInfo info;
@@ -912,8 +968,6 @@ done
 			while ((info = enumerator.next_file()) != null) {
 				if (info.get_file_type() == FileType.DIRECTORY){
 					string theme_name = info.get_name();
-					string theme_path = share_path + "/" + theme_name;
-					
 					switch (theme_name.down()){
 						case "default":
 						case "mini":
@@ -926,8 +980,7 @@ done
 							continue;
 					}
 					
-					Theme theme = new Theme(theme_name, true);
-					theme.system_path = theme_path;
+					Theme theme = new Theme(theme_name, theme_type);
 					theme.is_selected = true;
 					theme.is_installed = true;
 					theme_list.add(theme);
@@ -945,9 +998,9 @@ done
 		var themes_list = new Gee.ArrayList<Theme>();
 		var themes_installed = list_all_themes();
 		
-		foreach(string folder_name in new string[] {"themes","icons"}){
+		foreach(string theme_type in new string[] {"theme","icon"}){
 			 
-			string themes_dir = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + folder_name;
+			string themes_dir = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + "%ss".printf(theme_type);
 
 			//check directory
 			var f = File.new_for_path(themes_dir);
@@ -966,11 +1019,11 @@ done
 						string zip_file_path = "%s/%s".printf(themes_dir, info.get_name());
 						string theme_name = info.get_name().replace(".tar.gz","");
 
-						Theme theme = new Theme(theme_name, (folder_name == "themes") ? false : true);
+						Theme theme = new Theme(theme_name, theme_type);
 						theme.zip_file_path = zip_file_path;
 						theme.is_selected = true;
 						foreach (Theme th in themes_installed){
-							if (th.name == theme_name){
+							if ((th.name == theme_name) && (th.type == theme_type)){
 								theme.is_installed = true;
 								break;
 							}
@@ -988,8 +1041,8 @@ done
 	}
 	
 	public bool zip_theme(Theme theme){
-		string theme_dir = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + (theme.is_icon_theme ? "icons" : "themes");
-		string theme_dir_system = "/usr/share/%s".printf(theme.is_icon_theme ? "icons" : "themes");
+		string theme_dir = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + "%ss".printf(theme.type);
+		string theme_dir_system = "/usr/share/%ss".printf(theme.type);
 		string file_name = theme.name + ".tar.gz";
 		string zip_file = theme_dir + "/" + file_name;
 		
@@ -1020,7 +1073,7 @@ done
 	}
 	
 	public bool unzip_theme(Theme theme){
-		string theme_dir_system = "/usr/share/%s".printf(theme.is_icon_theme ? "icons" : "themes");
+		string theme_dir_system = "/usr/share/%ss".printf(theme.type);
 		
 		//check file
 		if (!file_exists(theme.zip_file_path)){
@@ -1037,6 +1090,31 @@ done
 		else{
 			int status = Posix.system(cmd);
 			return (status == 0);
+		}
+	}
+	
+	public bool update_permissions(string path){
+		try {
+			int exit_code;
+			string cmd;
+			
+			cmd = "find '%s' -type d -exec chmod 755 '{}' ';'".printf(path);
+			Process.spawn_command_line_sync(cmd, null, null, out exit_code);
+			if (exit_code != 0){
+				return false;
+			}
+			
+			cmd = "find '%s' -type f -exec chmod 644 '{}' ';'".printf(path);
+			Process.spawn_command_line_sync(cmd, null, null, out exit_code);
+			if (exit_code != 0){
+				return false;
+			}
+			
+			return true;
+		}
+		catch (Error e){
+			log_error (e.message);
+			return false;
 		}
 	}
 	
@@ -1136,16 +1214,13 @@ done
 	/* Misc */
 	
 	public bool take_ownership(){
-		string user = get_user_login();
-		string home = "/home/" + user;
-		
 		try {
-			string cmd = "chown %s -R %s".printf(user,home);
+			string cmd = "chown %s -R %s".printf(user_login,user_home);
 			int exit_code;
 			Process.spawn_command_line_sync(cmd, null, null, out exit_code);
 			
 			if (exit_code == 0){
-				log_msg(_("Ownership changed to '%s' for files in directory '%s'").printf(user,home));
+				log_msg(_("Ownership changed to '%s' for files in directory '%s'").printf(user_login,user_home));
 				return true;
 			}
 			else{
@@ -1207,10 +1282,11 @@ public class Theme : GLib.Object{
 	public string zip_file_path = "";
 	public bool is_selected = false;
 	public bool is_installed = false;
-	public bool is_icon_theme = false;
+	public string type = "";
 	
-	public Theme(string _name, bool _is_icon_theme){
+	public Theme(string _name, string _type){
 		name = _name;
-		is_icon_theme = _is_icon_theme;
+		type = _type;
+		system_path = "/usr/share/%ss/%s".printf(type, name);
 	}
 }

@@ -1543,6 +1543,22 @@ namespace TeeJee.ProcessManagement{
 		
 		return user_name;
 	}
+
+	public int get_user_id(string user_login){
+		/* 
+		Returns UID of specified user.
+		*/
+		
+		int uid = -1;
+		string cmd = "id %s -u".printf(user_login);
+		string txt = execute_command_sync_get_output(cmd);
+		if ((txt != null) && (txt.length > 0)){
+			uid = int.parse(txt);
+		}
+		
+		return uid;
+	}
+	
 	
 	public string get_app_path (){
 				
@@ -2123,6 +2139,14 @@ namespace TeeJee.Misc {
 		
 		Time t = Time.local (time_t ());
 		return t.format ("%H:%M:%S");
+	}
+
+	public string timestamp3 (){	
+			
+		/* Returns a formatted timestamp string */
+		
+		Time t = Time.local (time_t ());
+		return t.format ("%Y-%d-%m %H-%M-%S");
 	}
 	
 	public string format_file_size (int64 size){

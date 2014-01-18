@@ -37,8 +37,6 @@ using TeeJee.Multimedia;
 using TeeJee.System;
 using TeeJee.Misc;
 
-extern void exit(int exit_code);
-
 public class AptikGtk : GLib.Object{
 
 	public static int main (string[] args) {
@@ -54,8 +52,7 @@ public class AptikGtk : GLib.Object{
 			exit(0);
 		}
 		
-		App = new Main(args);
-		App.gui_mode = true;
+		App = new Main(args, true);
 
 		var window = new MainWindow ();
 		window.destroy.connect(Gtk.main_quit);
