@@ -105,7 +105,7 @@ public class MainWindow : Window {
 	bool is_restore_view = false;
 	
 	public MainWindow () {
-		this.title = AppName + " v" + AppVersion;// + " by " + AppAuthor + " (" + "teejeetech.blogspot.in" + ")";
+		title = AppName + " v" + AppVersion;// + " by " + AppAuthor + " (" + "teejeetech.blogspot.in" + ")";
         window_position = WindowPosition.CENTER;
         //resizable = false;
         destroy.connect (Gtk.main_quit);
@@ -490,6 +490,7 @@ public class MainWindow : Window {
 		hbox_pkg_actions.pack_start (btn_backup_packages_cancel, true, true, 0);
 		btn_backup_packages_cancel.clicked.connect(()=>{ 
 			notebook.page = 0;
+			title = AppName + " v" + AppVersion;
 		});
 
 		//select ppa ---------------------------------------------
@@ -668,6 +669,7 @@ public class MainWindow : Window {
 		hbox_ppa_actions.pack_start (btn_backup_ppa_cancel, true, true, 0);
 		btn_backup_ppa_cancel.clicked.connect(()=>{ 
 			notebook.page = 0;
+			title = AppName + " v" + AppVersion;
 		});
 		
 		//select theme ---------------------------------------------
@@ -846,6 +848,7 @@ public class MainWindow : Window {
 		hbox_theme_actions.pack_start (btn_backup_theme_cancel, true, true, 0);
 		btn_backup_theme_cancel.clicked.connect(()=>{ 
 			notebook.page = 0;
+			title = AppName + " v" + AppVersion;
 		});
 		
 
@@ -1151,6 +1154,7 @@ public class MainWindow : Window {
 		btn_backup_ppa_exec.visible = true;
 		btn_restore_ppa_exec.visible = false;
 		lbl_ppa_message.label = _("Select the PPAs to backup");
+		title = "Backup Software Sources";
 		notebook.page = 2;
 		is_running = false;
 	}
@@ -1175,6 +1179,7 @@ public class MainWindow : Window {
 		
 		if (save_ppa_list_selected(true)){
 			notebook.page = 0;
+			title = AppName + " v" + AppVersion;
 		}
 		
 		gtk_set_busy(false, this);
@@ -1211,6 +1216,7 @@ public class MainWindow : Window {
 		btn_backup_ppa_exec.visible = false;
 		btn_restore_ppa_exec.visible = true;
 		lbl_ppa_message.label = _("Select the PPAs to restore");
+		title = "Restore Software Sources";
 		notebook.page = 2;
 		is_running = false;
 	}
@@ -1294,6 +1300,7 @@ public class MainWindow : Window {
 			
 		progress_hide();
 		notebook.page = 0;
+		title = AppName + " v" + AppVersion;
 	}
 
 	private bool save_ppa_list_selected(bool show_on_success){
@@ -1348,6 +1355,7 @@ public class MainWindow : Window {
 		btn_backup_packages_exec.visible = true;
 		btn_restore_packages_exec.visible = false;
 		lbl_packages_message.label = _("Select the packages to backup");
+		title = "Backup Software Selections";
 		notebook.page = 1;
 		is_running = false;
 	}
@@ -1373,6 +1381,7 @@ public class MainWindow : Window {
 		save_package_list_installed();
 		if (save_package_list_selected(true)){
 			notebook.page = 0;
+			title = AppName + " v" + AppVersion;
 		}
 		
 		gtk_set_busy(false, this);
@@ -1445,6 +1454,7 @@ public class MainWindow : Window {
 		btn_backup_packages_exec.visible = false;
 		btn_restore_packages_exec.visible = true;
 		lbl_packages_message.label = _("Select the packages to restore");
+		title = "Restore Software Selections";
 		notebook.page = 1;
 		is_running = false;
 	}
@@ -1497,8 +1507,9 @@ public class MainWindow : Window {
 			gtk_do_events();
 		}
 		
-		notebook.page = 0;
 		progress_hide();
+		notebook.page = 0;
+		title = AppName + " v" + AppVersion;
 	}
 	
 	private int show_package_installation_summary(){
@@ -1651,6 +1662,7 @@ public class MainWindow : Window {
 		btn_backup_theme_exec.visible = true;
 		btn_restore_theme_exec.visible = false;
 		lbl_theme_message.label = _("Select the themes to backup");
+		title = "Backup Themes";
 		notebook.page = 3;
 		
 		gtk_set_busy(false, this);
@@ -1699,6 +1711,7 @@ public class MainWindow : Window {
 
 		progress_hide();
 		notebook.page = 0;
+		title = AppName + " v" + AppVersion;
 	}
 
 	private void btn_restore_theme_clicked(){
@@ -1713,6 +1726,7 @@ public class MainWindow : Window {
 			btn_backup_theme_exec.visible = false;
 			btn_restore_theme_exec.visible = true;
 			lbl_theme_message.label = _("Select the themes to restore");
+			title = "Restore Themes";
 			notebook.page = 3;
 		}
 		
@@ -1765,6 +1779,7 @@ public class MainWindow : Window {
 
 		progress_hide();
 		notebook.page = 0;
+		title = AppName + " v" + AppVersion;
 	}
 	
 	/* Misc */
