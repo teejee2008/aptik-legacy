@@ -933,7 +933,7 @@ done
 			string theme_type = "theme";
 			string share_path = "/usr/share/%ss".printf(theme_type);
 			var directory = File.new_for_path(share_path);
-			var enumerator = directory.enumerate_children(FileAttribute.STANDARD_NAME, 0);
+			var enumerator = directory.enumerate_children("standard::*", 0);
 			FileInfo info;
 			
 			while ((info = enumerator.next_file()) != null) {
@@ -967,7 +967,7 @@ done
 			string theme_type = "icon";
 			string share_path = "/usr/share/%ss".printf(theme_type);
 			var directory = File.new_for_path(share_path);
-			var enumerator = directory.enumerate_children(FileAttribute.STANDARD_NAME, 0);
+			var enumerator = directory.enumerate_children("standard::*", 0);
 			FileInfo info;
 			
 			while ((info = enumerator.next_file()) != null) {
@@ -1028,7 +1028,7 @@ done
 
 		try{
 			var directory = File.new_for_path(themes_dir);
-			var enumerator = directory.enumerate_children(FileAttribute.STANDARD_NAME, 0);
+			var enumerator = directory.enumerate_children("standard::*", 0);
 			FileInfo info;
 			
 			while ((info = enumerator.next_file()) != null) {

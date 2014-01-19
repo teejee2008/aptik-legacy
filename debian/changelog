@@ -1,5 +1,5 @@
 aptik (1.2.1) quantal; urgency=low
 
-  * Added Gtk frontend
+  * Fixed build for Ubuntu 12.04 (precise)
   
- -- Tony George <tony.george.kol@gmail.com>  Sun, 29 Dec 2013 10:00:00 +0530
+ -- Tony George <tony.george.kol@gmail.com>  Sun, 19 Jan 2014 10:00:00 +0530
