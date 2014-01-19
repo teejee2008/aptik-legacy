@@ -52,7 +52,7 @@ public class Main : GLib.Object{
 	public string temp_dir = "";
 	public string backup_dir = "";
 	public string share_dir = "/usr/share";
-	public bool gui_mode = false;//TODO:Remove
+	public bool gui_mode = false;
 	public string user_login = "";
 	public string user_home = "";
 	public int user_uid = -1;
@@ -87,7 +87,12 @@ public class Main : GLib.Object{
 			}
 			exit(0);
 		}
-
+		
+		//initialize backup_dir as current directory for CLI mode
+		if (!gui_mode){
+			backup_dir = Environment.get_current_dir() + "/";
+		}
+		
 		try{
 			//create temp dir
 			temp_dir = get_temp_file_path();
@@ -136,8 +141,8 @@ public class Main : GLib.Object{
 	
 	/* Common */
 	
-	private bool check_backup_file(string file_name){
-		string backup_file = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + file_name;
+	public bool check_backup_file(string file_name){
+		string backup_file = backup_dir + file_name;
 		var f = File.new_for_path(backup_file);
 		if (!f.query_exists()){
 			log_error(_("File not found in backup directory") + ": '%s'".printf(file_name));
@@ -149,7 +154,7 @@ public class Main : GLib.Object{
 	}
 	
 	public string create_log_dir(){
-		string log_dir = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + "logs_" + timestamp3();
+		string log_dir = backup_dir + "logs/" + timestamp3();
 		create_dir(log_dir);
 		return log_dir;
 	}
@@ -519,7 +524,7 @@ public class Main : GLib.Object{
 	
 	public Gee.HashMap<string,Ppa> list_ppa(){
 		var ppa_list = new Gee.HashMap<string,Ppa>();
-		var pkg_list_installed = App.list_installed(true);
+		var pkg_list_installed = list_installed(true);
 		
 		string sh =
 """
@@ -556,7 +561,7 @@ done
 
 	public bool save_ppa_list_selected(Gee.HashMap<string,Ppa> ppa_list_to_save){
 		string file_name = "ppa.list";
-		string ppa_list_file = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + file_name;
+		string ppa_list_file = backup_dir + file_name;
 
 		var ppa_list = new ArrayList<Ppa>();
 		foreach(Ppa ppa in ppa_list_to_save.values) {
@@ -591,7 +596,7 @@ done
 
 	public Gee.HashMap<string,Ppa> read_ppa_list(){
 		string file_name = "ppa.list";
-		string ppa_list_file = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + file_name;
+		string ppa_list_file = backup_dir + file_name;
 		var ppa_list = new Gee.HashMap<string,Ppa>();
 		
 		//check file
@@ -751,7 +756,7 @@ done
 	/* APT Cache */
 	
 	public bool backup_apt_cache(){
-		string archives_dir = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + "archives";
+		string archives_dir = backup_dir + "archives";
 
 		try {
 			//create 'archives' directory
@@ -773,7 +778,7 @@ done
 				run_rsync(cmd.replace(" --list-only",""));
 			}
 			else{
-				int status = Posix.system(cmd);
+				int status = Posix.system(cmd.replace(" --list-only",""));
 				return (status == 0);
 			}
 
@@ -786,7 +791,7 @@ done
 	}
 	
 	public bool restore_apt_cache(){
-		string archives_dir = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + "archives";
+		string archives_dir = backup_dir + "archives";
 
 		//check 'archives' directory
 		var f = File.new_for_path(archives_dir);
@@ -795,7 +800,7 @@ done
 			return false;
 		}
 		
-		string cmd = "rsync -ai --numeric-ids --list-only";
+		string cmd = "sudo rsync -ai --numeric-ids --list-only";
 		cmd += " --exclude=lock --exclude=partial/";
 		cmd += " %s %s".printf(archives_dir + "/","/var/cache/apt/archives/");
 		
@@ -808,7 +813,7 @@ done
 			return run_rsync(cmd.replace(" --list-only",""));
 		}
 		else{
-			int status = Posix.system(cmd);
+			int status = Posix.system(cmd.replace(" --list-only",""));
 			return (status == 0);
 		}
 	}
@@ -993,55 +998,67 @@ done
 	    
 	    return theme_list;
 	}
-	
-	public Gee.ArrayList<Theme> read_themes(){
+
+	public Gee.ArrayList<Theme> get_all_themes_from_backup(){
+		var themes_list = new Gee.ArrayList<Theme>();
+
+		foreach(Theme theme in get_themes_from_backup("theme")){
+			themes_list.add(theme);
+	    }
+
+		foreach(Theme theme in get_themes_from_backup("icon")){
+			themes_list.add(theme);
+	    }
+	    
+		return themes_list;
+	}
+
+	public Gee.ArrayList<Theme> get_themes_from_backup(string theme_type){
 		var themes_list = new Gee.ArrayList<Theme>();
 		var themes_installed = list_all_themes();
-		
-		foreach(string theme_type in new string[] {"theme","icon"}){
-			 
-			string themes_dir = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + "%ss".printf(theme_type);
 
-			//check directory
-			var f = File.new_for_path(themes_dir);
-			if (!f.query_exists()){
-				log_error(_("Themes not found in backup directory"));
-				return themes_list;
-			}//TODO:use func
+		string themes_dir = backup_dir + "%ss".printf(theme_type);
 
-			try{
-				var directory = File.new_for_path(themes_dir);
-				var enumerator = directory.enumerate_children(FileAttribute.STANDARD_NAME, 0);
-				FileInfo info;
-				
-				while ((info = enumerator.next_file()) != null) {
-					if (info.get_file_type() == FileType.REGULAR){
-						string zip_file_path = "%s/%s".printf(themes_dir, info.get_name());
-						string theme_name = info.get_name().replace(".tar.gz","");
+		//check directory
+		var f = File.new_for_path(themes_dir);
+		if (!f.query_exists()){
+			log_error(_("Themes not found in backup directory"));
+			return themes_list;
+		}//TODO:use func
 
-						Theme theme = new Theme(theme_name, theme_type);
-						theme.zip_file_path = zip_file_path;
-						theme.is_selected = true;
-						foreach (Theme th in themes_installed){
-							if ((th.name == theme_name) && (th.type == theme_type)){
-								theme.is_installed = true;
-								break;
-							}
+		try{
+			var directory = File.new_for_path(themes_dir);
+			var enumerator = directory.enumerate_children(FileAttribute.STANDARD_NAME, 0);
+			FileInfo info;
+			
+			while ((info = enumerator.next_file()) != null) {
+				if (info.get_file_type() == FileType.REGULAR){
+					string zip_file_path = "%s/%s".printf(themes_dir, info.get_name());
+					string theme_name = info.get_name().replace(".tar.gz","");
+
+					Theme theme = new Theme(theme_name, theme_type);
+					theme.zip_file_path = zip_file_path;
+					theme.is_selected = true;
+					foreach (Theme th in themes_installed){
+						if ((th.name == theme_name) && (th.type == theme_type)){
+							theme.is_installed = true;
+							break;
 						}
-						themes_list.add(theme);
 					}
+					themes_list.add(theme);
 				}
 			}
-			catch(Error e){
-				log_error (e.message);
-			}
-	    }
-		
+		}
+		catch(Error e){
+			log_error (e.message);
+		}
+
 		return themes_list;
 	}
 	
+	
 	public bool zip_theme(Theme theme){
-		string theme_dir = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + "%ss".printf(theme.type);
+		string theme_dir = backup_dir + "%ss".printf(theme.type);
 		string theme_dir_system = "/usr/share/%ss".printf(theme.type);
 		string file_name = theme.name + ".tar.gz";
 		string zip_file = theme_dir + "/" + file_name;
@@ -1060,7 +1077,16 @@ done
 				run_gzip(cmd);
 			}
 			else{
-				int status = Posix.system(cmd);
+				stdout.printf("%-60s".printf(_("Archiving") + " '%s'".printf(theme.system_path)));
+				stdout.flush();
+				
+				int status = Posix.system(cmd + " 1> /dev/null");
+				if (status==0){
+					stdout.printf("[ OK ]\n");
+				}
+				else{
+					stdout.printf("[ status=%d ]\n".printf(status));
+				}
 				return (status == 0);
 			}
 
@@ -1081,14 +1107,23 @@ done
 			return false;
 		}
 		
-		string cmd = "tar -xzvf '%s' --directory='%s'".printf(theme.zip_file_path, theme_dir_system);
+		string cmd = "sudo tar -xzvf '%s' --directory='%s'".printf(theme.zip_file_path, theme_dir_system);
 		status_line = theme.zip_file_path;
 		
 		if (gui_mode){
 			return run_gzip(cmd);
 		}
 		else{
-			int status = Posix.system(cmd);
+			stdout.printf("%-60s".printf(_("Extracting") + " '%s'".printf(theme.system_path)));
+			stdout.flush();
+			
+			int status = Posix.system(cmd + " 1> /dev/null");
+			if (status==0){
+				stdout.printf("[ OK ]\n");
+			}
+			else{
+				stdout.printf("[ status=%d ]\n".printf(status));
+			}
 			return (status == 0);
 		}
 	}
@@ -1098,13 +1133,13 @@ done
 			int exit_code;
 			string cmd;
 			
-			cmd = "find '%s' -type d -exec chmod 755 '{}' ';'".printf(path);
+			cmd = "sudo find '%s' -type d -exec chmod 755 '{}' ';'".printf(path);
 			Process.spawn_command_line_sync(cmd, null, null, out exit_code);
 			if (exit_code != 0){
 				return false;
 			}
 			
-			cmd = "find '%s' -type f -exec chmod 644 '{}' ';'".printf(path);
+			cmd = "sudo find '%s' -type f -exec chmod 644 '{}' ';'".printf(path);
 			Process.spawn_command_line_sync(cmd, null, null, out exit_code);
 			if (exit_code != 0){
 				return false;

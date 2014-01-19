@@ -69,23 +69,27 @@ public class AptikConsole : GLib.Object{
 		msg += "\n";
 		msg += _("Options") + ":\n";
 		msg += "\n";
-		msg += "  --list-all           " + _("List available packages") + "\n";
+		msg += "  --list-available     " + _("List available packages") + "\n";
 		msg += "  --list-installed     " + _("List installed packages") + "\n";
 		msg += "  --list-top           " + _("List top-level installed packages") + "\n";
-		msg += "  --list-user          " + _("List top-level packages installed by user") + "\n";
+		msg += "  --list-manual        " + _("List top-level packages installed by user") + "\n";
 		msg += "  --list-default       " + _("List default packages for linux distribution") + "\n";
-		msg += "  --list-ppa           " + _("List Personal Package Archives (PPAs)") + "\n";
+		msg += "  --list-ppa           " + _("List PPAs") + "\n";
 		msg += "  --list-themes        " + _("List themes in /usr/share/themes") + "\n";
 		msg += "  --list-icons         " + _("List icon themes in /usr/share/icons") + "\n";
 		
-		msg += "  --backup-ppa         " + _("Create a backup list of PPAs") + "\n";
-		msg += "  --backup-packages    " + _("Create a backup list of packages installed by user") + "\n";
+		msg += "  --backup-ppa         " + _("Backup list of PPAs") + "\n";
+		msg += "  --backup-packages    " + _("Backup list of manual and installed packages") + "\n";
 		msg += "  --backup-cache       " + _("Backup downloaded packages from APT cache") + "\n";		
+		msg += "  --backup-themes      " + _("Backup themes from /usr/share/themes") + "\n";
+		msg += "  --backup-icons       " + _("Backup icons from /usr/share/icons") + "\n";
 		
 		msg += "  --restore-ppa        " + _("Restore PPAs from file 'ppa.list'") + "\n";
-		msg += "  --restore-packages   " + _("Reinstall missing packages from file 'packages.list'") + "\n";
-		msg += "  --restore-cache      " + _("Restore packages to APT cache") + "\n";
-
+		msg += "  --restore-packages   " + _("Restore packages from file 'packages.list'") + "\n";
+		msg += "  --restore-cache      " + _("Restore downloaded packages to APT cache") + "\n";
+		msg += "  --restore-themes     " + _("Restore themes to /usr/share/themes") + "\n";
+		msg += "  --restore-icons      " + _("Restore icons to /usr/share/icons") + "\n";
+		
 		msg += "  --take-ownership     " + _("Take ownership of files in your home directory") + "\n";
 		msg += "  --backup-dir         " + _("Backup directory (defaults to current directory)") + "\n";
 		msg += "  --[show-]desc        " + _("Show package description if available") + "\n";
@@ -116,7 +120,7 @@ public class AptikConsole : GLib.Object{
 					break;
 				case "--backup-dir":
 					k += 1;
-					App.backup_dir = args[k];
+					App.backup_dir = args[k] + (args[k].has_suffix("/") ? "" : "/");
 					break;
 				case "-y":
 				case "--yes":
@@ -129,14 +133,15 @@ public class AptikConsole : GLib.Object{
 					return true;
 			}
 		}
-
+			
 		//parse commands
 		for (int k = 1; k < args.length; k++) // Oth arg is app path 
 		{
 			switch (args[k].down()){
-				case "--list-all":
+				case "--list-available":
 					print_package_list(App.list_available(), show_desc);
 					break;
+					
 				case "--list-installed":
 					print_package_list(App.list_installed(false), show_desc);
 					break;
@@ -198,6 +203,28 @@ public class AptikConsole : GLib.Object{
 					}
 					break;
 					
+				case "--backup-themes":
+					foreach(Theme theme in App.list_themes()){
+						if (theme.is_selected){
+							App.zip_theme(theme);
+							while(App.is_running){
+								Thread.usleep ((ulong) 0.3 * 1000000);
+							}
+						}
+					}
+					break;
+					
+				case "--backup-icons":
+					foreach(Theme theme in App.list_icons()){
+						if (theme.is_selected){
+							App.zip_theme(theme);
+							while(App.is_running){
+								Thread.usleep ((ulong) 0.3 * 1000000);
+							}
+						}
+					}
+					break;
+					
 				case "--restore-ppa":
 				case "--restore-ppas":
 					restore_ppa();
@@ -213,6 +240,30 @@ public class AptikConsole : GLib.Object{
 					App.restore_apt_cache();
 					while(App.is_running){
 						Thread.usleep ((ulong) 0.3 * 1000000);
+					}
+					break;
+					
+				case "--restore-themes":
+					foreach(Theme theme in App.get_themes_from_backup("theme")){
+						if (theme.is_selected && !theme.is_installed){
+							App.unzip_theme(theme);
+							while(App.is_running){
+								Thread.usleep ((ulong) 0.3 * 1000000);
+							}
+							App.update_permissions(theme.system_path);
+						}
+					}
+					break;
+
+				case "--restore-icons":
+					foreach(Theme theme in App.get_themes_from_backup("icon")){
+						if (theme.is_selected && !theme.is_installed){
+							App.unzip_theme(theme);
+							while(App.is_running){
+								Thread.usleep ((ulong) 0.3 * 1000000);
+							}
+							App.update_permissions(theme.system_path);
+						}
 					}
 					break;
 					
@@ -322,6 +373,10 @@ public class AptikConsole : GLib.Object{
 	}
 	
 	public bool restore_packages(bool no_prompt){
+		if (!App.check_backup_file("packages.list")){
+			return false;
+		}
+		
 		string list_found = "";
 		string list_missing = "";
 
@@ -350,7 +405,7 @@ public class AptikConsole : GLib.Object{
 		
 		if (list_found.length > 0){
 			log_msg(_("Following packages will be installed") + ":\n%s\n".printf(list_found));
-			Posix.system("apt-get%s install %s".printf((no_prompt)? " -y" : "", list_found));
+			Posix.system("sudo apt-get%s install %s".printf((no_prompt)? " -y" : "", list_found));
 		}
 		else{
 			log_msg(_("Selected packages are already installed"));
@@ -360,27 +415,29 @@ public class AptikConsole : GLib.Object{
 	}
 
 	public bool restore_ppa(){
+		if (!App.check_backup_file("ppa.list")){
+			return false;
+		}
+		
 		var ppa_list = App.read_ppa_list();
 		
-		int count_success = 0;
-		int count_total = 0;
+		bool run_apt_update = false;
 		foreach(Ppa ppa in ppa_list.values){
 			if (ppa.is_selected && !ppa.is_installed){
-				log_msg(_("Adding") + " '%s'\n".printf(ppa.name));
+				log_msg(_("Adding PPA") + " '%s'".printf(ppa.name));
 				
-				int exit_code = Posix.system("apt-add-repository -y ppa:%s".printf(ppa.name));
-				if (exit_code == 0){
-					count_success++;
-				}
-				count_total++;
+				Posix.system("sudo apt-add-repository -y ppa:%s".printf(ppa.name));
+				//exit code is not reliable (always 0?)
 				
+				run_apt_update = true;
 				log_msg("");
 			}
 		}			
 		
-		Posix.system("apt-get -y update");
-		
-		log_msg("\n%d / %d ".printf(count_success, count_total) + _("PPAs added successfully") + "\n");
+		if (run_apt_update){
+			log_msg(_("Updating Package Information..."));
+			Posix.system("sudo apt-get -y update");
+		}
 		
 		return true;
 	}

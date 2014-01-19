@@ -97,19 +97,21 @@ public class MainWindow : Window {
 	private Gee.HashMap<string,Package> pkg_list_all;
 	private Gee.HashMap<string,Ppa> ppa_list_user;
 	private Gee.ArrayList<Theme> theme_list_user;
-	private string list_found;
-	private string list_missing;
+	private string list_install;
+	private string list_unknown;
 	string summary = "";
 
 	bool is_running;
 	bool is_restore_view = false;
+	int def_width = 480;
+	int def_height = 400;
 	
 	public MainWindow () {
 		title = AppName + " v" + AppVersion;// + " by " + AppAuthor + " (" + "teejeetech.blogspot.in" + ")";
         window_position = WindowPosition.CENTER;
         //resizable = false;
         destroy.connect (Gtk.main_quit);
-        set_default_size (480, 400);	
+        set_default_size (def_width, def_height);	
 
         //set app icon
 		try{
@@ -214,7 +216,7 @@ public class MainWindow : Window {
 		//btn_backup_packages
 		btn_backup_packages = new Gtk.Button.with_label (" " + _("Backup") + " ");
 		btn_backup_packages.set_size_request(50,-1);
-		btn_backup_packages.set_tooltip_text(_("Backup the list of packages manually installed by user"));
+		btn_backup_packages.set_tooltip_text(_("Backup the list of installed packages"));
 		grid_backup_buttons.attach(btn_backup_packages,1,row,1,1);
 		
 		btn_backup_packages.clicked.connect(btn_backup_packages_clicked);
@@ -222,7 +224,7 @@ public class MainWindow : Window {
 		//btn_restore_packages
 		btn_restore_packages = new Gtk.Button.with_label (" " + _("Restore") + " ");
 		btn_restore_packages.set_size_request(50,-1);
-		btn_restore_packages.set_tooltip_text(_("Re-install missing packages"));
+		btn_restore_packages.set_tooltip_text(_("Install missing packages"));
 		grid_backup_buttons.attach(btn_restore_packages,2,row,1,1);
 		
 		btn_restore_packages.clicked.connect(btn_restore_packages_clicked);
@@ -260,7 +262,7 @@ public class MainWindow : Window {
 		//btn_backup_theme
 		btn_backup_theme = new Gtk.Button.with_label (" " + _("Backup") + " ");
 		btn_backup_theme.set_size_request(50,-1);
-		btn_backup_theme.set_tooltip_text(_("Backup themes and icons from /usr/share"));
+		btn_backup_theme.set_tooltip_text(_("Backup themes and icons"));
 		grid_backup_buttons.attach(btn_backup_theme,1,row,1,1);
 		
 		btn_backup_theme.clicked.connect(btn_backup_theme_clicked);
@@ -268,7 +270,7 @@ public class MainWindow : Window {
 		//btn_restore_theme
 		btn_restore_theme = new Gtk.Button.with_label (" " + _("Restore") + " ");
 		btn_restore_theme.set_size_request(50,-1);
-		btn_restore_theme.set_tooltip_text(_("Restore themes and icons to /usr/share"));
+		btn_restore_theme.set_tooltip_text(_("Restore themes and icons"));
 		grid_backup_buttons.attach(btn_restore_theme,2,row,1,1);
 		
 		btn_restore_theme.clicked.connect(btn_restore_theme_clicked);
@@ -336,6 +338,8 @@ public class MainWindow : Window {
 		lbl_packages_message = new Label (_("Select the packages to backup"));
 		lbl_packages_message.set_use_markup(true);
 		lbl_packages_message.halign = Align.START;
+		lbl_packages_message.xalign = (float) 0.0;
+		lbl_packages_message.wrap = true;
 		vbox_packages.pack_start (lbl_packages_message, false, true, 0);
 		
 		//package treeview --------------------------------------------------
@@ -489,8 +493,7 @@ public class MainWindow : Window {
 		btn_backup_packages_cancel = new Gtk.Button.with_label (" " + _("Cancel") + " ");
 		hbox_pkg_actions.pack_start (btn_backup_packages_cancel, true, true, 0);
 		btn_backup_packages_cancel.clicked.connect(()=>{ 
-			notebook.page = 0;
-			title = AppName + " v" + AppVersion;
+			show_home_page();
 		});
 
 		//select ppa ---------------------------------------------
@@ -668,8 +671,7 @@ public class MainWindow : Window {
 		btn_backup_ppa_cancel = new Gtk.Button.with_label (" " + _("Cancel") + " ");
 		hbox_ppa_actions.pack_start (btn_backup_ppa_cancel, true, true, 0);
 		btn_backup_ppa_cancel.clicked.connect(()=>{ 
-			notebook.page = 0;
-			title = AppName + " v" + AppVersion;
+			show_home_page();
 		});
 		
 		//select theme ---------------------------------------------
@@ -847,8 +849,7 @@ public class MainWindow : Window {
 		btn_backup_theme_cancel = new Gtk.Button.with_label (" " + _("Cancel") + " ");
 		hbox_theme_actions.pack_start (btn_backup_theme_cancel, true, true, 0);
 		btn_backup_theme_cancel.clicked.connect(()=>{ 
-			notebook.page = 0;
-			title = AppName + " v" + AppVersion;
+			show_home_page();
 		});
 		
 
@@ -1123,6 +1124,13 @@ public class MainWindow : Window {
 		dialog.present ();
 	}
 	
+	private void show_home_page(){
+		notebook.page = 0;
+		resize(def_width, def_height);	
+		title = AppName + " v" + AppVersion;
+		progress_hide();
+	}
+	
 	/* PPA */
 	
 	private void btn_backup_ppa_clicked(){
@@ -1149,6 +1157,13 @@ public class MainWindow : Window {
 	
 	private void btn_backup_ppa_clicked_thread(){
 		ppa_list_user = App.list_ppa();
+		//un-select unused PPAs
+		foreach(Ppa ppa in ppa_list_user.values){
+			if (ppa.description.length == 0){
+				ppa.is_selected = false;
+			}
+		}
+		
 		is_restore_view = false;
 		tv_ppa_refresh();
 		btn_backup_ppa_exec.visible = true;
@@ -1178,8 +1193,7 @@ public class MainWindow : Window {
 		gtk_set_busy(true, this);
 		
 		if (save_ppa_list_selected(true)){
-			notebook.page = 0;
-			title = AppName + " v" + AppVersion;
+			show_home_page();
 		}
 		
 		gtk_set_busy(false, this);
@@ -1237,44 +1251,49 @@ public class MainWindow : Window {
 			return;
 		}
 		
+		progress_begin(_("Adding PPAs..."));
+		
 		//save ppa.list
 		string file_name = "ppa.list";
-		progress_begin(_("Saving") + " '%s'".printf(file_name));
 		bool is_success = save_ppa_list_selected(false);	
 		if (!is_success){
-			progress_end(_("Failed to write")  + " '%s'".printf(file_name));
+			string title = _("Error");
+			string msg = _("Failed to write")  + " '%s'".printf(file_name);
+			gtk_messagebox(title, msg, this, false);
+			return;
 		}
 
 		int count = 0;
+		int count_total = 0;
 		string cmd = "";
 		string std_out;
 		string std_err;
 		int ret_val;
 		string log_msg = "";
 		
-		string log_dir = App.create_log_dir();
-		
+		//get total count
 		foreach(Ppa ppa in ppa_list_user.values){
 			if (ppa.is_selected && !ppa.is_installed){
-				lbl_status.label = _("Adding PPA") + ": %s".printf(ppa.name);
+				count_total++;
+			}
+		}
+		
+		//add PPAs
+		foreach(Ppa ppa in ppa_list_user.values){
+			if (ppa.is_selected && !ppa.is_installed){
+				lbl_status.label = _("Adding PPA") + " '%s'".printf(ppa.name);
 				gtk_do_events();
 				
-				try{
-					cmd = "add-apt-repository -y ppa:%s | tee -a '%s/%s.log'".printf(ppa.name,log_dir,ppa.name);
-					ret_val = execute_command_script_sync(cmd,out std_out,out std_err);
-					if (ret_val != 0){
-						log_msg += std_err + "\n";
-					}
+				cmd = "add-apt-repository -y ppa:%s".printf(ppa.name);
+				ret_val = execute_command_script_sync(cmd,out std_out,out std_err);
+				if (ret_val != 0){
+					log_error(std_err);
 				}
-				catch(Error e){
-					lbl_status.label = _("Error executing command: add-apt-repository");
-					gtk_do_events();
-					return;
-				}
+				gtk_do_events();
 			}
 			
 			count++;
-			progressbar.fraction = count / (ppa_list_user.size * 1.0);
+			progressbar.fraction = count / (count_total * 1.0);
 			gtk_do_events();
 		}
 		
@@ -1287,20 +1306,11 @@ public class MainWindow : Window {
 			gtk_do_events();
 		}
 
-		if (log_msg.length > 0){
-			var dialog = new LogWindow();
-			dialog.show_all();
-			dialog.set_log_msg(log_msg);
-			dialog.run();
-		}
-
 		string title = "Finished";
 		string msg = "PPAs added successfully";
 		gtk_messagebox(title, msg, this, false);
 			
-		progress_hide();
-		notebook.page = 0;
-		title = AppName + " v" + AppVersion;
+		show_home_page();
 	}
 
 	private bool save_ppa_list_selected(bool show_on_success){
@@ -1310,8 +1320,9 @@ public class MainWindow : Window {
 		
 		if (is_success){
 			if (show_on_success){
-				string title = "Backup Created";
-				string msg = _("File saved") + " '%s'".printf(file_name);
+				string title = _("Finished");
+				string msg = _("Backup created successfully") + ".\n";
+				msg += _("List saved with file name") + " '%s'".printf(file_name);
 				gtk_messagebox(title, msg, this, false);
 			}
 		}
@@ -1349,14 +1360,28 @@ public class MainWindow : Window {
 	}
 	
 	private void btn_backup_packages_clicked_thread(){
-		pkg_list_user = App.list_manual();
+		var list_manual = App.list_manual();
+		var list_top = App.list_top();
+		//unselect all
+		foreach(Package pkg in list_top.values){
+			list_top[pkg.name].is_selected = false;
+		}
+		//select manual
+		foreach(Package pkg in list_manual.values){
+			list_top[pkg.name].is_selected = true;
+		}
+		pkg_list_user = list_top;
+		
 		is_restore_view = false;
 		tv_packages_refresh();
 		btn_backup_packages_exec.visible = true;
 		btn_restore_packages_exec.visible = false;
-		lbl_packages_message.label = _("Select the packages to backup");
+		lbl_packages_message.label = _("Select the packages to backup") + ". " + 
+			("By default, all packages included with the distribution are unselected and extra packages installed by user are selected") + ".";
 		title = "Backup Software Selections";
+		
 		notebook.page = 1;
+		resize(650, 500);	
 		is_running = false;
 	}
 	
@@ -1380,8 +1405,7 @@ public class MainWindow : Window {
 		
 		save_package_list_installed();
 		if (save_package_list_selected(true)){
-			notebook.page = 0;
-			title = AppName + " v" + AppVersion;
+			show_home_page();
 		}
 		
 		gtk_set_busy(false, this);
@@ -1394,8 +1418,9 @@ public class MainWindow : Window {
 		
 		if (is_success){
 			if (show_on_success){
-				string title = "Backup Created";
-				string msg = _("File saved") + " '%s'".printf(file_name);
+				string title = _("Finished");
+				string msg = _("Backup created successfully") + ".\n";
+				msg += _("List saved with file name") + " '%s'".printf(file_name);
 				gtk_messagebox(title, msg, this, false);
 			}
 		}
@@ -1456,6 +1481,7 @@ public class MainWindow : Window {
 		lbl_packages_message.label = _("Select the packages to restore");
 		title = "Restore Software Selections";
 		notebook.page = 1;
+		resize(650, 500);
 		is_running = false;
 	}
 
@@ -1470,7 +1496,7 @@ public class MainWindow : Window {
 		}
 		if (none_selected){
 			string title = _("Nothing To Do");
-			string msg = _("Selected packages are already installed on this system");
+			string msg = _("There are no packages selected for installation");
 			gtk_messagebox(title, msg, this, false);
 			return;
 		}
@@ -1483,10 +1509,32 @@ public class MainWindow : Window {
 			progress_end(_("Failed to write")  + " '%s'".printf(file_name));
 		}
 		
-		//show summary window
-		int response = show_package_installation_summary();
+		//check list of packages to install
+		get_package_installation_summary();
+		if (list_install.length == 0){
+			string title = _("Nothing To Do");
+			string msg = "";
+			if (list_unknown.length > 0){
+				msg += _("Following packages are NOT available") + ":\n\n" + list_unknown + "\n\n";
+			}
+			msg += _("There are no packages selected for installation");
+			gtk_messagebox(title, msg, this, false);
+			return;
+		}
+		
+		//show summary prompt
+		var dialog = new LogWindow();
+		dialog.set_transient_for(this);
+		dialog.show_all();
+		dialog.set_title(_("Install Summary"));
+		dialog.set_log_msg(summary);
+		dialog.set_prompt_msg(_("Continue with installation?"));
+		dialog.show_yes_no();
+		int response = dialog.run();
+		dialog.destroy();
+
 		if (response == Gtk.ResponseType.YES){
-			//App.download_packages(list_found);
+			//App.download_packages(list_install);
 			//while (App.is_running){
 				//update_progress("Downloading");
 			//}
@@ -1496,7 +1544,7 @@ public class MainWindow : Window {
 			iconify();
 			gtk_do_events();
 			
-			string cmd = "apt-get install -y %s".printf(list_found);
+			string cmd = "apt-get install -y %s".printf(list_install);
 			cmd += "\n\necho '" + _("Finished installing packages") + ".'";
 			cmd += "\necho '" + _("Close window to exit...") + "'";
 			cmd += "\nread dummy";
@@ -1507,18 +1555,15 @@ public class MainWindow : Window {
 			gtk_do_events();
 		}
 		
-		progress_hide();
-		notebook.page = 0;
-		title = AppName + " v" + AppVersion;
+		show_home_page();
 	}
 	
-	private int show_package_installation_summary(){
-		
+	private void get_package_installation_summary(){
 		lbl_status.label = _("Checking available packages...");
 		
 		try {
 			is_running = true;
-			Thread.create<void> (show_package_installation_summary_thread, true);
+			Thread.create<void> (get_package_installation_summary_thread, true);
 		} catch (ThreadError e) {
 			is_running = false;
 			log_error (e.message);
@@ -1529,46 +1574,34 @@ public class MainWindow : Window {
 			progressbar.pulse();
 			gtk_do_events();
 		}
-
-		var dialog = new LogWindow();
-		dialog.set_transient_for(this);
-		dialog.show_all();
-		dialog.set_title(_("Install Summary"));
-		dialog.set_log_msg(summary);
-		dialog.set_prompt_msg(_("Continue with installation?"));
-		dialog.show_yes_no();
-		int response = dialog.run();
-		dialog.destroy();
-		
-		return response;
 	}
 	
-	private void show_package_installation_summary_thread(){
-		list_found = "";
-		list_missing = "";
+	private void get_package_installation_summary_thread(){
+		list_install = "";
+		list_unknown = "";
 		summary = "";
 
 		foreach(Package pkg in pkg_list_user.values){
 			if (pkg.is_selected && pkg.is_available && !pkg.is_installed){
-				list_found += " %s".printf(pkg.name);
+				list_install += " %s".printf(pkg.name);
 			}
 		}
 		foreach(Package pkg in pkg_list_user.values){
 			if (pkg.is_selected && !pkg.is_available && !pkg.is_installed){
-				list_missing += " %s".printf(pkg.name);
+				list_unknown += " %s".printf(pkg.name);
 			}
 		}
 		
-		list_found = list_found.strip();
-		list_missing = list_missing.strip();
+		list_install = list_install.strip();
+		list_unknown = list_unknown.strip();
 
-		string cmd = "apt-get install -s %s".printf(list_found);
+		string cmd = "apt-get install -s %s".printf(list_install);
 		string txt = execute_command_sync_get_output(cmd);
 
 		summary = "";
-		if (list_missing.strip().length > 0){
+		if (list_unknown.strip().length > 0){
 			summary += ("Following packages are NOT available") + "\n";
-			summary += list_missing + "\n\n";
+			summary += list_unknown + "\n\n";
 		}
 		
 		foreach(string line in txt.split("\n")){
@@ -1684,7 +1717,7 @@ public class MainWindow : Window {
 			return;
 		}
 		
-		progress_begin(_("Zipping themes") + "...");
+		progress_begin(_("Archiving themes") + "...");
 		
 		//get total file count
 		App.progress_total = 0;
@@ -1700,7 +1733,7 @@ public class MainWindow : Window {
 			if (theme.is_selected){
 				App.zip_theme(theme);
 				while(App.is_running){
-					update_progress(_("Zipping"));
+					update_progress(_("Archiving"));
 				}
 			}
 		}
@@ -1709,9 +1742,7 @@ public class MainWindow : Window {
 		string msg = _("Backups created successfully");
 		gtk_messagebox(title, msg, this, false);
 
-		progress_hide();
-		notebook.page = 0;
-		title = AppName + " v" + AppVersion;
+		show_home_page();
 	}
 
 	private void btn_restore_theme_clicked(){
@@ -1721,7 +1752,7 @@ public class MainWindow : Window {
 		
 		if (check_backup_subfolder("themes") || check_backup_subfolder("icons") ){
 			is_restore_view = true;
-			theme_list_user = App.read_themes();
+			theme_list_user = App.get_all_themes_from_backup();
 			tv_theme_refresh();
 			btn_backup_theme_exec.visible = false;
 			btn_restore_theme_exec.visible = true;
@@ -1749,7 +1780,7 @@ public class MainWindow : Window {
 			return;
 		}
 		
-		progress_begin(_("Unzipping themes") + "...");
+		progress_begin(_("Extracting themes") + "...");
 
 		//get total file count
 		App.progress_total = 0;
@@ -1767,7 +1798,7 @@ public class MainWindow : Window {
 			if (theme.is_selected && !theme.is_installed){
 				App.unzip_theme(theme);
 				while(App.is_running){
-					update_progress(_("Unzipping"));
+					update_progress(_("Extracting"));
 				}
 				App.update_permissions(theme.system_path);
 			}
@@ -1777,9 +1808,7 @@ public class MainWindow : Window {
 		string msg = _("Themes restored successfully");
 		gtk_messagebox(title, msg, this, false);
 
-		progress_hide();
-		notebook.page = 0;
-		title = AppName + " v" + AppVersion;
+		show_home_page();
 	}
 	
 	/* Misc */

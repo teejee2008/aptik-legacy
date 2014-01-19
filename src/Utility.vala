@@ -2146,7 +2146,7 @@ namespace TeeJee.Misc {
 		/* Returns a formatted timestamp string */
 		
 		Time t = Time.local (time_t ());
-		return t.format ("%Y-%d-%m %H-%M-%S");
+		return t.format ("%Y-%d-%m_%H-%M-%S");
 	}
 	
 	public string format_file_size (int64 size){
