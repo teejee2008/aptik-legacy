@@ -1855,6 +1855,22 @@ namespace TeeJee.System{
 		
 		return "Unknown";
 	}
+
+	public bool check_internet_connectivity(){
+		int exit_code = -1;
+		string std_err;
+		string std_out;
+
+		try {
+			string cmd = "ping -c 1 google.com";
+			Process.spawn_command_line_sync(cmd, out std_out, out std_err, out exit_code);
+		}
+		catch (Error e){
+	        log_error (e.message);
+	    }
+		
+	    return (exit_code == 0);
+	}
 	
 	public bool shutdown (){
 				

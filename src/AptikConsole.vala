@@ -180,6 +180,7 @@ public class AptikConsole : GLib.Object{
 					}
 					else{
 						log_error(_("Failed to write") + " '%s'".printf(file_name));
+						return false;
 					}
 					break;
 					
@@ -192,6 +193,7 @@ public class AptikConsole : GLib.Object{
 					}
 					else{
 						log_error(_("Failed to write") + " '%s'".printf(file_name));
+						return false;
 					}
 					break;
 
@@ -227,11 +229,19 @@ public class AptikConsole : GLib.Object{
 					
 				case "--restore-ppa":
 				case "--restore-ppas":
+					if (!check_internet_connectivity()){
+						log_msg(_("Error") + ": " +  _("Internet connection is not active. Please check the connection and try again."));
+						return false;
+					}
 					restore_ppa();
 					break;
-					
+
 				case "--restore-package":
 				case "--restore-packages":
+					if (!check_internet_connectivity()){
+						log_msg(_("Error") + ": " +  _("Internet connection is not active. Please check the connection and try again."));
+						return false;
+					}
 					restore_packages(no_prompt);
 					break;
 

@@ -1250,7 +1250,14 @@ public class MainWindow : Window {
 			gtk_messagebox(title, msg, this, false);
 			return;
 		}
-		
+
+		if (!check_internet_connectivity()){
+			string title = _("Error");
+			string msg = _("Internet connection is not active. Please check the connection and try again.");
+			gtk_messagebox(title, msg, this, false);
+			return;
+		}
+					
 		progress_begin(_("Adding PPAs..."));
 		
 		//save ppa.list
@@ -1497,6 +1504,13 @@ public class MainWindow : Window {
 		if (none_selected){
 			string title = _("Nothing To Do");
 			string msg = _("There are no packages selected for installation");
+			gtk_messagebox(title, msg, this, false);
+			return;
+		}
+
+		if (!check_internet_connectivity()){
+			string title = _("Error");
+			string msg = _("Internet connection is not active. Please check the connection and try again.");
 			gtk_messagebox(title, msg, this, false);
 			return;
 		}
