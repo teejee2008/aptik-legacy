@@ -10,7 +10,7 @@ Homepage: http://teejeetech.blogspot.in/
 
 Package: aptik
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libgtk-3-0, libgee2, rsync, aptitude
+Depends: ${shlibs:Depends}, ${misc:Depends}, libgtk-3-0, libgee2, rsync, aptitude, gksu
 #Recommends: 
 Description: Utility to simplify re-installation of software packages
  Command line utility to simplify re-installation of software packages
