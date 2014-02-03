@@ -459,67 +459,6 @@ public class Main : GLib.Object{
 		return pkg_list;
 	}
 
-	public bool download_packages (string pkg_list){
-		string[] argv = new string[1];
-		argv[0] = create_temp_bash_script("apt-get install -d -y %s 2>&1".printf(pkg_list));
-		
-		Pid child_pid;
-		int input_fd;
-		int output_fd;
-		int error_fd;
-
-		try {
-			//execute script file
-			Process.spawn_async_with_pipes(
-			    null, //working dir
-			    argv, //argv
-			    null, //environment
-			    SpawnFlags.SEARCH_PATH,
-			    null,   // child_setup
-			    out child_pid,
-			    out input_fd,
-			    out output_fd,
-			    out error_fd);
-			
-			is_running = true;
-			
-			proc_id = child_pid;
-
-			//create stream readers
-			UnixInputStream uis_out = new UnixInputStream(output_fd, false);
-			UnixInputStream uis_err = new UnixInputStream(error_fd, false);
-			dis_out = new DataInputStream(uis_out);
-			dis_err = new DataInputStream(uis_err);
-			dis_out.newline_type = DataStreamNewlineType.ANY;
-			dis_err.newline_type = DataStreamNewlineType.ANY;
-			
-			progress_count = 0;
-			progress_total = 100;
-			//stdout_lines = new Gee.ArrayList<string>();
-			stderr_lines = new Gee.ArrayList<string>();
-			
-        	try {
-				//start thread for reading output stream
-			    Thread.create<void> (apt_read_output_line, true);
-		    } catch (Error e) {
-		        log_error (e.message);
-		    }
-		    
-		    try {
-				//start thread for reading error stream
-			    Thread.create<void> (apt_read_error_line, true);
-		    } catch (Error e) {
-		        log_error (e.message);
-		    }
-		    
-        	return true;
-		}
-		catch (Error e) {
-			log_error (e.message);
-			return false;
-		}
-	}
-
 	/* PPA */
 	
 	public Gee.HashMap<string,Ppa> list_ppa(){
@@ -710,14 +649,7 @@ done
 		try{
 			err_line = dis_err.read_line (null);
 		    while (err_line != null) {
-		        if (gui_mode){
-					//stderr_lines.add(err_line); //save
-					log_msg("nomatch:errline=" + err_line);
-				}
-				else{
-					stderr.printf(err_line + "\n"); //print
-				}
-				
+		        log_msg(err_line);
 		        err_line = dis_err.read_line (null); //read next
 			}
 		}
@@ -730,19 +662,6 @@ done
 		try{
 			out_line = dis_out.read_line (null);
 		    while (out_line != null) {
-				if (gui_mode){
-					if (rex_aptget_download.match (out_line, 0, out match)){
-						progress_count = int.parse(match.fetch(1).strip());
-						status_line = match.fetch(2).strip();
-					}
-					else{
-						log_msg("nomatch:outline=" + out_line);
-					}
-				}
-				else{
-					stdout.printf(out_line + "\n"); //print
-				}
-
 				out_line = dis_out.read_line (null);  //read next
 			}
 

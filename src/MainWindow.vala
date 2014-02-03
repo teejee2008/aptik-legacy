@@ -1040,8 +1040,8 @@ public class MainWindow : Window {
 			return true;
 		}
 		else{
-			string title = "Backup Directory Not Selected";
-			string msg = "Please select the backup directory";
+			string title = _("Backup Directory Not Selected");
+			string msg = _("Please select the backup directory");
 			gtk_messagebox(title, msg, this, false);
 			return false;
 		}
@@ -1052,7 +1052,7 @@ public class MainWindow : Window {
 			string backup_file = App.backup_dir + file_name;
 			var f = File.new_for_path(backup_file);
 			if (!f.query_exists()){
-				string title = "File Not Found";
+				string title = _("File Not Found");
 				string msg = _("File not found in backup directory") + " - %s".printf(file_name);
 				gtk_messagebox(title, msg, this, true);
 				return false;
@@ -1071,7 +1071,7 @@ public class MainWindow : Window {
 			string folder = App.backup_dir + folder_name;
 			var f = File.new_for_path(folder);
 			if (!f.query_exists()){
-				string title = "Folder Not Found";
+				string title = _("Folder Not Found");
 				string msg = _("Folder not found in backup directory") + " - %s".printf(folder_name);
 				gtk_messagebox(title, msg, this, true);
 				return false;
@@ -1169,7 +1169,7 @@ public class MainWindow : Window {
 		btn_backup_ppa_exec.visible = true;
 		btn_restore_ppa_exec.visible = false;
 		lbl_ppa_message.label = _("Select the PPAs to backup");
-		title = "Backup Software Sources";
+		title = _("Backup Software Sources");
 		notebook.page = 2;
 		is_running = false;
 	}
@@ -1230,7 +1230,7 @@ public class MainWindow : Window {
 		btn_backup_ppa_exec.visible = false;
 		btn_restore_ppa_exec.visible = true;
 		lbl_ppa_message.label = _("Select the PPAs to restore");
-		title = "Restore Software Sources";
+		title = _("Restore Software Sources");
 		notebook.page = 2;
 		is_running = false;
 	}
@@ -1313,8 +1313,8 @@ public class MainWindow : Window {
 			gtk_do_events();
 		}
 
-		string title = "Finished";
-		string msg = "PPAs added successfully";
+		string title = _("Finished");
+		string msg = _("PPAs added successfully");
 		gtk_messagebox(title, msg, this, false);
 			
 		show_home_page();
@@ -1385,7 +1385,7 @@ public class MainWindow : Window {
 		btn_restore_packages_exec.visible = false;
 		lbl_packages_message.label = _("Select the packages to backup") + ". " + 
 			("By default, all packages included with the distribution are unselected and extra packages installed by user are selected") + ".";
-		title = "Backup Software Selections";
+		title = _("Backup Software Selections");
 		
 		notebook.page = 1;
 		resize(650, 500);	
@@ -1486,7 +1486,7 @@ public class MainWindow : Window {
 		btn_backup_packages_exec.visible = false;
 		btn_restore_packages_exec.visible = true;
 		lbl_packages_message.label = _("Select the packages to restore");
-		title = "Restore Software Selections";
+		title = _("Restore Software Selections");
 		notebook.page = 1;
 		resize(650, 500);
 		is_running = false;
@@ -1548,11 +1548,6 @@ public class MainWindow : Window {
 		dialog.destroy();
 
 		if (response == Gtk.ResponseType.YES){
-			//App.download_packages(list_install);
-			//while (App.is_running){
-				//update_progress("Downloading");
-			//}
-
 			progress_begin(_("Installing packages..."));
 			
 			iconify();
@@ -1614,7 +1609,7 @@ public class MainWindow : Window {
 
 		summary = "";
 		if (list_unknown.strip().length > 0){
-			summary += ("Following packages are NOT available") + "\n";
+			summary += _("Following packages are NOT available") + "\n";
 			summary += list_unknown + "\n\n";
 		}
 		
@@ -1709,7 +1704,7 @@ public class MainWindow : Window {
 		btn_backup_theme_exec.visible = true;
 		btn_restore_theme_exec.visible = false;
 		lbl_theme_message.label = _("Select the themes to backup");
-		title = "Backup Themes";
+		title = _("Backup Themes");
 		notebook.page = 3;
 		
 		gtk_set_busy(false, this);
@@ -1771,7 +1766,7 @@ public class MainWindow : Window {
 			btn_backup_theme_exec.visible = false;
 			btn_restore_theme_exec.visible = true;
 			lbl_theme_message.label = _("Select the themes to restore");
-			title = "Restore Themes";
+			title = _("Restore Themes");
 			notebook.page = 3;
 		}
 		
