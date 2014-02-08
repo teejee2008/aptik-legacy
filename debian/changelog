@@ -1,4 +1,4 @@
-aptik (1.2.3) quantal; urgency=low
+aptik (1.2.3) saucy; urgency=low
 
   * Added dependency: gksu
   

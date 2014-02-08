@@ -345,6 +345,11 @@ public class Main : GLib.Object{
 	}
 
 	public bool save_package_list_selected(Gee.HashMap<string,Package> package_list){
+		
+		/* Saves the package names to file.
+		 * Unselected package names are commented with #
+		 * */
+		
 		string file_name = "packages.list";
 		string list_file = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + file_name;
 

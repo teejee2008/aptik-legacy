@@ -160,7 +160,7 @@ public class MainWindow : Window {
 		}
 		vbox_actions.pack_start (fcb_backup, false, true, 0);
 
-		fcb_backup.file_set.connect(()=>{
+		fcb_backup.selection_changed.connect(()=>{
 			App.backup_dir = fcb_backup.get_filename() + "/";
 		});
 
@@ -1421,7 +1421,23 @@ public class MainWindow : Window {
 	private bool save_package_list_selected(bool show_on_success){
 		string file_name = "packages.list";
 		
-		bool is_success = App.save_package_list_selected(pkg_list_user);
+		//filter the list of packages
+		var pkg_list = new Gee.HashMap<string,Package>();
+		if (is_restore_view){
+			pkg_list = pkg_list_user;
+		}
+		else{
+			//remove unselected default packages
+			var pkg_list_def = App.list_default();
+			foreach(Package pkg in pkg_list_user.values){
+				if (pkg.is_selected || (pkg_list_def.has_key(pkg.name) == false)){
+					pkg_list[pkg.name] = pkg;
+				}
+			}
+		}
+
+		//save it
+		bool is_success = App.save_package_list_selected(pkg_list);
 		
 		if (is_success){
 			if (show_on_success){
