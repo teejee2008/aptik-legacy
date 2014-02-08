@@ -1,5 +1,7 @@
-aptik (1.2.3) saucy; urgency=low
+aptik (1.2.4) saucy; urgency=low
 
-  * Added dependency: gksu
+  * Unselected default packages will not be saved to backup file
   
- -- Tony George <tony.george.kol@gmail.com>  Mon, 03 Feb 2014 10:00:00 +0530
+  * Fixed an issue with selection of backup folder on Ubuntu 12.04
+  
+ -- Tony George <tony.george.kol@gmail.com>  Sat, 08 Feb 2014 10:00:00 +0530
