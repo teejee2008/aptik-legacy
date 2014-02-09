@@ -1888,7 +1888,7 @@ namespace TeeJee.System{
 		}
 	}
 	
-	public bool exo_open_folder (string dir_path){
+	public bool exo_open_folder (string dir_path, bool xdg_open_try_first = true){
 				
 		/* Tries to open the given directory in a file manager */
 
@@ -1901,11 +1901,14 @@ namespace TeeJee.System{
 		
 		string path;
 		
-		path = get_cmd_path ("xdg-open");
-		if ((path != null)&&(path != "")){
-			return execute_command_script_async ("xdg-open \"" + dir_path + "\"");
+		if (xdg_open_try_first){
+			//try using xdg-open
+			path = get_cmd_path ("xdg-open");
+			if ((path != null)&&(path != "")){
+				return execute_command_script_async ("xdg-open \"" + dir_path + "\"");
+			}
 		}
-
+		
 		path = get_cmd_path ("nemo");
 		if ((path != null)&&(path != "")){
 			return execute_command_script_async ("nemo \"" + dir_path + "\"");
@@ -1929,6 +1932,14 @@ namespace TeeJee.System{
 		path = get_cmd_path ("marlin");
 		if ((path != null)&&(path != "")){
 			return execute_command_script_async ("marlin \"" + dir_path + "\"");
+		}
+
+		if (xdg_open_try_first == false){
+			//try using xdg-open
+			path = get_cmd_path ("xdg-open");
+			if ((path != null)&&(path != "")){
+				return execute_command_script_async ("xdg-open \"" + dir_path + "\"");
+			}
 		}
 		
 		return false;

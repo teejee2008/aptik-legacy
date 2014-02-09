@@ -69,32 +69,32 @@ public class AptikConsole : GLib.Object{
 		msg += "\n";
 		msg += _("Options") + ":\n";
 		msg += "\n";
-		msg += "  --list-available     " + _("List available packages") + "\n";
-		msg += "  --list-installed     " + _("List installed packages") + "\n";
-		msg += "  --list-top           " + _("List top-level installed packages") + "\n";
-		msg += "  --list-manual        " + _("List top-level packages installed by user") + "\n";
-		msg += "  --list-default       " + _("List default packages for linux distribution") + "\n";
-		msg += "  --list-ppa           " + _("List PPAs") + "\n";
-		msg += "  --list-themes        " + _("List themes in /usr/share/themes") + "\n";
-		msg += "  --list-icons         " + _("List icon themes in /usr/share/icons") + "\n";
+		msg += "  --list-available      " + _("List available packages") + "\n";
+		msg += "  --list-installed      " + _("List installed packages") + "\n";
+		msg += "  --list-top            " + _("List top-level installed packages") + "\n";
+		msg += "  --list-{manual|extra} " + _("List top-level packages installed by user") + "\n";
+		msg += "  --list-default        " + _("List default packages for linux distribution") + "\n";
+		msg += "  --list-ppa            " + _("List PPAs") + "\n";
+		msg += "  --list-themes         " + _("List themes in /usr/share/themes") + "\n";
+		msg += "  --list-icons          " + _("List icon themes in /usr/share/icons") + "\n";
 		
-		msg += "  --backup-ppa         " + _("Backup list of PPAs") + "\n";
-		msg += "  --backup-packages    " + _("Backup list of manual and installed packages") + "\n";
-		msg += "  --backup-cache       " + _("Backup downloaded packages from APT cache") + "\n";		
-		msg += "  --backup-themes      " + _("Backup themes from /usr/share/themes") + "\n";
-		msg += "  --backup-icons       " + _("Backup icons from /usr/share/icons") + "\n";
+		msg += "  --backup-ppa          " + _("Backup list of PPAs") + "\n";
+		msg += "  --backup-packages     " + _("Backup list of manual and installed packages") + "\n";
+		msg += "  --backup-cache        " + _("Backup downloaded packages from APT cache") + "\n";		
+		msg += "  --backup-themes       " + _("Backup themes from /usr/share/themes") + "\n";
+		msg += "  --backup-icons        " + _("Backup icons from /usr/share/icons") + "\n";
 		
-		msg += "  --restore-ppa        " + _("Restore PPAs from file 'ppa.list'") + "\n";
-		msg += "  --restore-packages   " + _("Restore packages from file 'packages.list'") + "\n";
-		msg += "  --restore-cache      " + _("Restore downloaded packages to APT cache") + "\n";
-		msg += "  --restore-themes     " + _("Restore themes to /usr/share/themes") + "\n";
-		msg += "  --restore-icons      " + _("Restore icons to /usr/share/icons") + "\n";
+		msg += "  --restore-ppa         " + _("Restore PPAs from file 'ppa.list'") + "\n";
+		msg += "  --restore-packages    " + _("Restore packages from file 'packages.list'") + "\n";
+		msg += "  --restore-cache       " + _("Restore downloaded packages to APT cache") + "\n";
+		msg += "  --restore-themes      " + _("Restore themes to /usr/share/themes") + "\n";
+		msg += "  --restore-icons       " + _("Restore icons to /usr/share/icons") + "\n";
 		
-		msg += "  --take-ownership     " + _("Take ownership of files in your home directory") + "\n";
-		msg += "  --backup-dir         " + _("Backup directory (defaults to current directory)") + "\n";
-		msg += "  --[show-]desc        " + _("Show package description if available") + "\n";
-		msg += "  --yes                " + _("Assume Yes for all prompts") + "\n";
-		msg += "  --h[elp]             " + _("Show all options") + "\n";
+		msg += "  --take-ownership      " + _("Take ownership of files in your home directory") + "\n";
+		msg += "  --backup-dir          " + _("Backup directory (defaults to current directory)") + "\n";
+		msg += "  --[show-]desc         " + _("Show package description if available") + "\n";
+		msg += "  --yes                 " + _("Assume Yes for all prompts") + "\n";
+		msg += "  --h[elp]              " + _("Show all options") + "\n";
 		msg += "\n";
 		return msg;
 	}
