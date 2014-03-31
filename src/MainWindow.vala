@@ -830,7 +830,28 @@ public class MainWindow : Window {
 			model.get (iter, 1, out config, -1);
 			(cell as Gtk.CellRendererText).text = config.name;
 		});
+		
+		TreeViewColumn col_config_size = new TreeViewColumn();
+		col_config_size.title = _("Size");
+		col_config_size.resizable = true;
+		tv_config.append_column(col_config_size);
 
+		CellRendererText cell_config_size = new CellRendererText ();
+		cell_config_size.xalign = (float) 1.0;
+		col_config_size.pack_start (cell_config_size, false);
+
+		col_config_size.set_cell_data_func (cell_config_size, (cell_layout, cell, model, iter) => {
+			AppConfig config;
+			model.get (iter, 1, out config, -1);
+			(cell as Gtk.CellRendererText).text = config.size;
+			if (config.size.contains("M") || config.size.contains("G")){
+				(cell as Gtk.CellRendererText).foreground = "red";
+			}
+			else{
+				(cell as Gtk.CellRendererText).foreground = null;
+			}
+		});
+		
 		//col_config_desc ----------------------
 		
 		TreeViewColumn col_config_desc = new TreeViewColumn();
@@ -2518,12 +2539,12 @@ public class MainWindow : Window {
 	}
 	
 	private void progress_hide(string message = ""){
-		progressbar.fraction = 0.0;
-		lbl_status.label = message;
-
 		lbl_status.visible = false;
-		progressbar.visible = false;
-		
+		progressbar.visible = false;	
+			
+		//progressbar.fraction = 0.0; //not required, gives warnings
+		//lbl_status.label = message;
+
 		notebook.sensitive = true;
 		toolbar_top.sensitive = true;
 		//toolbar_bottom.visible = true; //depends

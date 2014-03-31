@@ -276,6 +276,30 @@ namespace TeeJee.FileSystem{
 		return long.parse(std_out);
 	}
 
+	public long get_file_size(string path){
+				
+		/* Returns size of files and directories in KB*/
+		
+		string cmd = "";
+		string output = "";
+		
+		cmd = "du -s \"%s\"".printf(path);
+		output = execute_command_sync_get_output(cmd);
+		return long.parse(output.split("\t")[0]);
+	}
+
+	public string get_file_size_formatted(string path){
+				
+		/* Returns size of files and directories in KB*/
+		
+		string cmd = "";
+		string output = "";
+		
+		cmd = "du -s -h \"%s\"".printf(path);
+		output = execute_command_sync_get_output(cmd);
+		return output.split("\t")[0].strip();
+	}
+	
 	public int chmod (string file, string permission){
 				
 		/* Change file permissions */

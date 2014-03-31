@@ -1312,6 +1312,7 @@ done
 
 		try
 		{
+			//list all items in home except .config and .local
 			File f_home = File.new_for_path (base_path);
 	        FileEnumerator enumerator = f_home.enumerate_children ("standard::*", 0);
 	        FileInfo file;
@@ -1320,69 +1321,44 @@ done
 				string item = base_path + "/" + name;
 				if (!name.has_prefix(".")){ continue; }
 				if (name == ".config"){ continue; }
-				if (!dir_exists(item)) { continue; }
-				
+				if (name == ".local"){ continue; }
+
 				AppConfig entry = new AppConfig("~/%s".printf(name));
+				entry.size = get_file_size_formatted(item);
+				entry.description = get_config_dir_description(entry.name);
 				app_config_list.add(entry);
 				
 				switch(name){
-					case ".mozilla":
-						entry.description = "Firefox Web Browser";
-						break;
-					case ".opera":
-						entry.description = "Opera Web Browser";
-						break;
-					case ".fonts":
-						entry.description = "Local Fonts";
-						break;
-					case ".themes":
-						entry.description = "Local Themes";
+					case ".cache":
+						entry.is_selected = false;
 						break;
 				}
 	        }
 	        
+	        //list all items in .config
 	        File f_home_config = File.new_for_path (base_path + "/.config");
 	        enumerator = f_home_config.enumerate_children ("standard::*", 0);
 	        while ((file = enumerator.next_file ()) != null) {
 				string name = file.get_name();
 				string item = base_path + "/.config/" + name;
-				if (!dir_exists(item)) { continue; }
-				
+
 				AppConfig entry = new AppConfig("~/.config/%s".printf(name));
+				entry.size = get_file_size_formatted(item);
+				entry.description = get_config_dir_description(entry.name);
 				app_config_list.add(entry);
-				
-				switch(name){
-					case "chromium":
-						entry.description = "Chromium Web Browser";
-						break;
-					case "autostart":
-						entry.description = "Startup Applications";
-						break;
-				}
 	        }
 	        
-	        f_home = File.new_for_path (base_path);
-	        enumerator = f_home.enumerate_children ("standard::*", 0);
+	        //list all items in .local/share
+	        var f_home_local = File.new_for_path (base_path + "/.local/share");
+	        enumerator = f_home_local.enumerate_children ("standard::*", 0);
 	        while ((file = enumerator.next_file ()) != null) {
 				string name = file.get_name();
-				string item = base_path + "/" + name;
-				if (!name.has_prefix(".")){ continue; }
-				if (dir_exists(item)) { continue; }
-				
-				AppConfig entry = new AppConfig("~/%s".printf(name));
+				string item = base_path + "/.local/share/" + name;
+
+				AppConfig entry = new AppConfig("~/.local/share/%s".printf(name));
+				entry.size = get_file_size_formatted(item);
+				entry.description = get_config_dir_description(entry.name);
 				app_config_list.add(entry);
-				
-				switch(name){
-					case ".bash_history":
-						entry.description = "Bash Command History";
-						break;
-					case ".bashrc":
-						entry.description = "Bash Init Script";
-						break;
-					case ".bash_logout":
-						entry.description = "Bash Logout Script";
-						break;
-				}
 	        }
         }
         catch(Error e){
@@ -1420,6 +1396,15 @@ done
 						name = rel_path.split("/")[1];
 						entry = new AppConfig("~/.config/%s".printf(name));
 					}
+					else if (rel_path.split("/")[0] == ".local"){
+						if (rel_path.split("/")[1] == "share"){
+							name = rel_path.split("/")[2];
+							entry = new AppConfig("~/.local/share/%s".printf(name));
+						}
+						else{
+							continue;
+						}
+					}
 					else{
 						name = rel_path.split("/")[0];
 						entry = new AppConfig("~/%s".printf(name));
@@ -1434,6 +1419,7 @@ done
 					}
 					
 					if (!found){
+						entry.description = get_config_dir_description(entry.name);
 						app_config_list.add(entry);
 					}
 				}
@@ -1450,6 +1436,37 @@ done
 		app_config_list.sort(entry_compare);
 		
 		return app_config_list;
+	}
+	
+	public string get_config_dir_description(string name){
+		switch(name){
+			case "~/.mozilla":
+				return _("Firefox Web Browser");
+			case "~/.cache":
+				return "";
+			case "~/.opera":
+				return _("Opera Web Browser");
+			case "~/.fonts":
+				return _("Local Fonts");
+			case "~/.themes":
+				return _("Local Themes");
+			case "~/.bash_history":
+				return _("Bash Command History");
+			case "~/.bashrc":
+				return _("Bash Init Script");
+			case "~/.bash_logout":
+				return _("Bash Logout Script");
+			case "~/.config/fonts":
+				return _("Local Fonts");
+			case "~/.config/themes":
+				return _("Local Themes");
+			case "~/.config/chromium":
+				return _("Chromium Web Browser");
+			case "~/.config/autostart":
+				return _("Startup Applications");
+			default:
+				return "";
+		}
 	}
 	
 	public bool restore_app_settings(Gee.ArrayList<AppConfig> config_list){
@@ -1621,7 +1638,8 @@ public class AppConfig : GLib.Object{
 	public string name = "";
 	public string description = "";
 	public bool is_selected = true;
-	
+	public string size = "";
+
 	public AppConfig(string dir_name){
 		name = dir_name;
 	}
@@ -1639,5 +1657,4 @@ public class AppConfig : GLib.Object{
 			return str.strip();
 		}
 	}
-	
 }
