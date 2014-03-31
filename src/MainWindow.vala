@@ -856,14 +856,14 @@ public class MainWindow : Window {
 		//btn_restore_config_exec
 		btn_restore_config_exec = new Gtk.Button.with_label (" " + _("Restore") + " ");
 		btn_restore_config_exec.no_show_all = true;
-		btn_restore_config_exec.set_tooltip_text(_("Selected directories will be over-written with files from backup. Use the 'Reset' button to delete the restored files in case of issues."));
+		btn_restore_config_exec.set_tooltip_text(_("Restore the settings for an application (Eg: Chromium Browser) by replacing the settings directory (~/.config/chromium) with files from backup. Use the 'Reset' button to delete the restored files in case of issues."));
 		hbox_config_actions.pack_start (btn_restore_config_exec, true, true, 0);
 		btn_restore_config_exec.clicked.connect(btn_restore_config_exec_clicked);
 
 		//btn_reset_config_exec
 		btn_reset_config_exec = new Gtk.Button.with_label (" " + _("Reset") + " ");
 		btn_reset_config_exec.no_show_all = true;
-		btn_reset_config_exec.set_tooltip_text(_("Selected directories will be deleted to reset application settings. The settings directory will be created automatically with default configuration files on the next run of the application."));
+		btn_reset_config_exec.set_tooltip_text(_("Reset the settings for an application (Eg: Chromium Browser) by deleting the settings directory (~/.config/chromium). The directory will be created automatically with default configuration files on the next run of the application."));
 		hbox_config_actions.pack_start (btn_reset_config_exec, true, true, 0);
 		btn_reset_config_exec.clicked.connect(btn_reset_config_exec_clicked);
 		
@@ -2285,7 +2285,7 @@ public class MainWindow : Window {
 		
 		//prompt for confirmation
 		string title = _("Warning");
-		string msg = btn_restore_config_exec.get_tooltip_text() + "\n\n" + ("Do you want to continue?");
+		string msg = _("Selected directories will be replaced with files from backup.") + "\n" + ("Do you want to continue?");
 		var dlg = new Gtk.MessageDialog.with_markup(null, Gtk.DialogFlags.MODAL, Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, msg);
 		dlg.set_title(title);
 		dlg.set_default_size (200, -1);
@@ -2340,7 +2340,7 @@ public class MainWindow : Window {
 		
 		//prompt for confirmation
 		string title = _("Warning");
-		string msg = btn_reset_config_exec.get_tooltip_text() + "\n\n" + ("Do you want to continue?");
+		string msg = _("Selected directories will be deleted.") + "\n" + ("Do you want to continue?");
 		var dlg = new Gtk.MessageDialog.with_markup(null, Gtk.DialogFlags.MODAL, Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, msg);
 		dlg.set_title(title);
 		dlg.set_default_size (200, -1);
