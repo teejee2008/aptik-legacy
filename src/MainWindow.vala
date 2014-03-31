@@ -1051,7 +1051,6 @@ public class MainWindow : Window {
 		//progressbar
 		progressbar = new ProgressBar();
 		progressbar.no_show_all = true;
-		progressbar.visible = false;
 		progressbar.margin_bottom = 3;
 		progressbar.margin_left = 3;
 		progressbar.margin_right = 3;
@@ -1237,7 +1236,8 @@ public class MainWindow : Window {
 	
 	private void notebook_switch_page (Widget page, uint new_page) {
 		uint old_page = notebook.page;
-
+		if (old_page == -1) { return; }
+		
 		if (new_page == 0){
 			toolbar_top.visible = true;
 			toolbar_bottom.visible = true;

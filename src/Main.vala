@@ -1582,18 +1582,23 @@ done
 			Gtk.IconTheme icon_theme = Gtk.IconTheme.get_default();
 			pix_icon = icon_theme.load_icon (icon_name, icon_size, 0);
 		} catch (Error e) {
-			log_error (e.message);
+			//log_error (e.message);
 		}
-
+		
+		string fallback_icon_file_path = App.share_dir + "/%s/%s".printf(icon_directory, fallback_icon_file_name);
+		
 		if (pix_icon == null){ 
 			try {
-				string fallback_icon_file_path = App.share_dir + "/%s/%s".printf(icon_directory, fallback_icon_file_name);
 				pix_icon = new Gdk.Pixbuf.from_file_at_size (fallback_icon_file_path, icon_size, icon_size);
 			} catch (Error e) {
 				log_error (e.message);
 			}
 		}
-
+		
+		if (pix_icon == null){ 
+			log_error (_("Missing Icon") + ": '%s', '%s'".printf(icon_name, fallback_icon_file_path));
+		}
+		
 		return pix_icon; 
 	}
 }
