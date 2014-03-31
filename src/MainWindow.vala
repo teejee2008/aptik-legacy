@@ -1700,10 +1700,8 @@ public class MainWindow : Window {
 				gtk_do_events();
 				
 				cmd = "add-apt-repository -y ppa:%s".printf(ppa.name);
-				ret_val = execute_command_script_sync(cmd,out std_out,out std_err);
-				if (ret_val != 0){
-					log_error(std_err);
-				}
+				Posix.system(cmd);
+
 				gtk_do_events();
 			}
 			
@@ -1720,10 +1718,59 @@ public class MainWindow : Window {
 			update_progress(status);
 		}
 
-		string title = _("Finished");
-		string msg = _("PPAs added successfully");
-		gtk_messagebox(title, msg, this, false);
+		//verify
+		status = _("Checking installed PPAs...");
+		progress_begin(status);
+		var ppa_list_new = App.list_ppa();
+		
+		string error_log = "";
+		string error_list = "";
+		foreach(Ppa ppa in ppa_list_user.values){
+			if (ppa.is_selected && !ppa.is_installed){
+				if (!ppa_list_new.has_key(ppa.name)){
+					
+					error_list += "%s\n".printf(ppa.name);
+					error_log += ">> %s\n".printf(ppa.name);
+					
+					try {
+						Process.spawn_command_line_sync(cmd, out std_out, out std_err, out ret_val);
+					}
+					catch (Error e){
+						log_error (e.message);
+					}
+					
+					error_log += "\n\n%s\n%s\n".printf(std_out, std_err);
+				}
+			}
+		}
+		
+		//show message
+		if (error_log.length == 0){
+			string title = _("Finished");
+			string msg = _("PPAs added successfully");
+			gtk_messagebox(title, msg, this, false);
+		}
+		else{
+			//remove extra empty lines
+			while (error_log.contains("\n\n\n")){
+				error_log = error_log.replace("\n\n\n","\n\n");
+			}
 			
+			var dialog = new LogWindow();
+			dialog.set_transient_for(this);
+			dialog.show_all();
+			dialog.set_title(_("Finished with Errors"));
+			dialog.set_log_msg(_("Following PPAs could not be added") + ":\n%s\n%s\n".printf(error_list, error_log));
+			int response = dialog.run();
+			dialog.destroy();
+			
+			/*
+			string title = _("Finished with Errors");
+			string msg = _("Following PPAs could not be added") + ":\n\n%s".printf(error_log);
+			gtk_messagebox(title, msg, this, false);* 
+			*/
+		}
+		
 		show_home_page();
 	}
 

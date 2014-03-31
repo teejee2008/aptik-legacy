@@ -1176,7 +1176,7 @@ namespace TeeJee.ProcessManagement{
 	
 	/* Convenience functions for executing commands and managing processes */
 
-	public int execute_command_sync (string cmd){
+	public int execute_command_sync(string cmd){
 		
 		/* Executes single command synchronously and returns exit code 
 		 * Pipes and multiple commands are not supported */
@@ -1190,25 +1190,51 @@ namespace TeeJee.ProcessManagement{
 	        log_error (e.message);
 	        return -1;
 	    }
+	    
+	    /*
+	    try {
+			int exit_code;
+			string std_out, std_err;
+			Process.spawn_command_line_sync(cmd, out std_out, out std_err, out exit_code);
+	        return exitCode;
+		}
+		catch (Error e){
+	        log_error (e.message);
+	        return -1;
+	    }
+	    */
 	}
 	
-	public string execute_command_sync_get_output (string cmd){
-				
-		/* Executes single command synchronously and returns console output 
+	public string execute_command_sync_get_output(string cmd){
+		
+		/* Executes single command synchronously and returns std_out
 		 * Pipes and multiple commands are not supported */
 		
+		int exit_code;
+		string std_out, std_err;
+			
 		try {
-			int exitCode;
-			string std_out;
-			Process.spawn_command_line_sync(cmd, out std_out, null, out exitCode);
+			Process.spawn_command_line_sync(cmd, out std_out, out std_err, out exit_code);
 	        return std_out;
 		}
 		catch (Error e){
 	        log_error (e.message);
 	        return "";
 	    }
-	}
+	    
+	    /*
+	    int exit_code;
+		string std_out, std_err;
 
+	    try {
+			Process.spawn_command_line_sync(cmd, out std_out, out std_err, out exit_code);
+		}
+		catch (Error e){
+	        log_error (e.message);
+	    }
+	    */
+	}
+	
 	public bool execute_command_script_async (string cmd){
 				
 		/* Creates a temporary bash script with given commands and executes it asynchronously 
