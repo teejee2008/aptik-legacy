@@ -1572,21 +1572,29 @@ done
 	}
 
 	public Gdk.Pixbuf? get_app_icon(int icon_size){
+		return get_shared_icon("aptik","aptik.png",icon_size,"pixmaps");
+	}
+	
+	public Gdk.Pixbuf? get_shared_icon(string icon_name, string fallback_icon_file_name, int icon_size, string icon_directory = "aptik/images"){
+		Gdk.Pixbuf pix_icon = null;
+		
 		try {
 			Gtk.IconTheme icon_theme = Gtk.IconTheme.get_default();
-			Gdk.Pixbuf theme_icon = icon_theme.load_icon ("aptik", icon_size, 0);
-			if (theme_icon != null){ 
-				return theme_icon; 
-			}
-			else{
-				Gdk.Pixbuf def_icon = new Gdk.Pixbuf.from_file (App.share_dir + """/pixmaps/aptik.png""");
-				return def_icon;
-			}
+			pix_icon = icon_theme.load_icon (icon_name, icon_size, 0);
 		} catch (Error e) {
 			log_error (e.message);
 		}
-		
-		return null;
+
+		if (pix_icon == null){ 
+			try {
+				string fallback_icon_file_path = App.share_dir + "/%s/%s".printf(icon_directory, fallback_icon_file_name);
+				pix_icon = new Gdk.Pixbuf.from_file_at_size (fallback_icon_file_path, icon_size, icon_size);
+			} catch (Error e) {
+				log_error (e.message);
+			}
+		}
+
+		return pix_icon; 
 	}
 }
 
