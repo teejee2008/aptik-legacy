@@ -195,7 +195,9 @@ public class Main : GLib.Object{
 	        log_error (e.message);
 	    }
 	    
-	    log_msg(_("App config saved") + ": '%s'".printf(app_conf_path));
+	    if (gui_mode){
+			log_msg(_("App config saved") + ": '%s'".printf(app_conf_path));
+		}
 	}
 	
 	public void load_app_config(){
@@ -217,8 +219,10 @@ public class Main : GLib.Object{
 		}
 		donation_counter = json_get_int(config,"donation_counter",0);
 		donation_disable = json_get_bool(config,"donation_disable",false);
-
-		log_msg(_("App config loaded") + ": '%s'".printf(this.app_conf_path));
+		
+		if (gui_mode){
+			log_msg(_("App config loaded") + ": '%s'".printf(this.app_conf_path));
+		}
 	}
 	
 	/* Properties */
@@ -1322,7 +1326,8 @@ done
 				if (!name.has_prefix(".")){ continue; }
 				if (name == ".config"){ continue; }
 				if (name == ".local"){ continue; }
-
+				if (name.has_suffix(".lock")){ continue; }
+				
 				AppConfig entry = new AppConfig("~/%s".printf(name));
 				entry.size = get_file_size_formatted(item);
 				entry.description = get_config_dir_description(entry.name);
@@ -1341,7 +1346,8 @@ done
 	        while ((file = enumerator.next_file ()) != null) {
 				string name = file.get_name();
 				string item = base_path + "/.config/" + name;
-
+				if (name.has_suffix(".lock")){ continue; }
+				
 				AppConfig entry = new AppConfig("~/.config/%s".printf(name));
 				entry.size = get_file_size_formatted(item);
 				entry.description = get_config_dir_description(entry.name);
@@ -1354,7 +1360,8 @@ done
 	        while ((file = enumerator.next_file ()) != null) {
 				string name = file.get_name();
 				string item = base_path + "/.local/share/" + name;
-
+				if (name.has_suffix(".lock")){ continue; }
+				
 				AppConfig entry = new AppConfig("~/.local/share/%s".printf(name));
 				entry.size = get_file_size_formatted(item);
 				entry.description = get_config_dir_description(entry.name);
@@ -1532,6 +1539,24 @@ done
 		return true;
 	}
 
+	public bool reset_app_settings(Gee.ArrayList<AppConfig> config_list){
+		string cmd;
+		string base_dir_target = user_home;
+		
+		//delete existing target folders
+		foreach(AppConfig config in config_list){
+			if (config.is_selected){
+				string dir = config.name.replace("~", base_dir_target);
+				if (dir_exists(dir)){
+					cmd = "rm -rf \"%s\"".printf(dir);
+					execute_command_sync(cmd);
+				}
+			}
+		}
+
+		return true;
+	}
+
 	public void update_ownership(Gee.ArrayList<AppConfig> config_list){
 		//update ownership
 		foreach(AppConfig config in config_list){
@@ -1650,7 +1675,7 @@ public class Theme : GLib.Object{
 public class AppConfig : GLib.Object{
 	public string name = "";
 	public string description = "";
-	public bool is_selected = true;
+	public bool is_selected = false;
 	public string size = "";
 
 	public AppConfig(string dir_name){

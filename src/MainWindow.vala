@@ -73,6 +73,7 @@ public class MainWindow : Window {
 
 	private Button btn_restore_config;
 	private Button btn_restore_config_exec;
+	private Button btn_reset_config_exec;
 	private Button btn_backup_config;
 	private Button btn_backup_config_exec;
 	private Button btn_backup_config_cancel;
@@ -855,8 +856,16 @@ public class MainWindow : Window {
 		//btn_restore_config_exec
 		btn_restore_config_exec = new Gtk.Button.with_label (" " + _("Restore") + " ");
 		btn_restore_config_exec.no_show_all = true;
+		btn_restore_config_exec.set_tooltip_text(_("Selected directories will be over-written with files from backup. Use the 'Reset' button to delete the restored files in case of issues."));
 		hbox_config_actions.pack_start (btn_restore_config_exec, true, true, 0);
 		btn_restore_config_exec.clicked.connect(btn_restore_config_exec_clicked);
+
+		//btn_reset_config_exec
+		btn_reset_config_exec = new Gtk.Button.with_label (" " + _("Reset") + " ");
+		btn_reset_config_exec.no_show_all = true;
+		btn_reset_config_exec.set_tooltip_text(_("Selected directories will be deleted to reset application settings. The settings directory will be created automatically with default configuration files on the next run of the application."));
+		hbox_config_actions.pack_start (btn_reset_config_exec, true, true, 0);
+		btn_reset_config_exec.clicked.connect(btn_reset_config_exec_clicked);
 		
 		//btn_backup_config_cancel
 		btn_backup_config_cancel = new Gtk.Button.with_label (" " + _("Cancel") + " ");
@@ -1730,7 +1739,9 @@ public class MainWindow : Window {
 				if (!ppa_list_new.has_key(ppa.name)){
 					
 					error_list += "%s\n".printf(ppa.name);
-					error_log += ">> %s\n".printf(ppa.name);
+					
+					cmd = "sudo add-apt-repository -y ppa:%s".printf(ppa.name);
+					error_log += ">> %s\n".printf(cmd);
 					
 					try {
 						Process.spawn_command_line_sync(cmd, out std_out, out std_err, out ret_val);
@@ -1763,12 +1774,6 @@ public class MainWindow : Window {
 			dialog.set_log_msg(_("Following PPAs could not be added") + ":\n%s\n%s\n".printf(error_list, error_log));
 			int response = dialog.run();
 			dialog.destroy();
-			
-			/*
-			string title = _("Finished with Errors");
-			string msg = _("Following PPAs could not be added") + ":\n\n%s".printf(error_log);
-			gtk_messagebox(title, msg, this, false);* 
-			*/
 		}
 		
 		show_home_page();
@@ -2193,6 +2198,7 @@ public class MainWindow : Window {
 		tv_config_refresh();
 		btn_backup_config_exec.visible = true;
 		btn_restore_config_exec.visible = false;
+		btn_reset_config_exec.visible = false;
 		lbl_config_message.label = _("Select the directories to backup");
 		title = _("Backup Application Settings");
 		
@@ -2247,6 +2253,7 @@ public class MainWindow : Window {
 			tv_config_refresh();
 			btn_backup_config_exec.visible = false;
 			btn_restore_config_exec.visible = true;
+			btn_reset_config_exec.visible = true;
 			lbl_config_message.label = _("Select the directories to restore");
 			title = _("Restore Application Settings");
 			
@@ -2276,6 +2283,22 @@ public class MainWindow : Window {
 		string status = _("Preparing") + "...";
 		progress_begin(status);
 		
+		//prompt for confirmation
+		string title = _("Warning");
+		string msg = btn_restore_config_exec.get_tooltip_text() + "\n\n" + ("Do you want to continue?");
+		var dlg = new Gtk.MessageDialog.with_markup(null, Gtk.DialogFlags.MODAL, Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, msg);
+		dlg.set_title(title);
+		dlg.set_default_size (200, -1);
+		dlg.set_transient_for(this);
+		dlg.set_modal(true);
+		int response = dlg.run();
+		dlg.destroy();
+
+		if (response == Gtk.ResponseType.NO){
+			progress_hide("Cancelled");
+			return;
+		}
+		
 		//extract
 		App.restore_app_settings(config_list_user);
 		while(App.is_running){
@@ -2288,12 +2311,64 @@ public class MainWindow : Window {
 		
 		//finish
 		progress_hide("Finished");
-		string title = _("Finished");
-		string msg = _("Application settings restored successfully");
+		title = _("Finished");
+		msg = _("Application settings restored successfully");
 		gtk_messagebox(title, msg, this, false);
 
 		show_home_page();
 	}
+
+	private void btn_reset_config_exec_clicked(){
+		//check if no action required
+		bool none_selected = true;
+		foreach(AppConfig conf in config_list_user){
+			if (conf.is_selected){
+				none_selected = false;
+				break;
+			}
+		}
+		if (none_selected){
+			string title = _("Nothing To Do");
+			string msg = _("Please select the directories to reset");
+			gtk_messagebox(title, msg, this, false);
+			return;
+		}
+		
+		//begin
+		string status = _("Preparing") + "...";
+		progress_begin(status);
+		
+		//prompt for confirmation
+		string title = _("Warning");
+		string msg = btn_reset_config_exec.get_tooltip_text() + "\n\n" + ("Do you want to continue?");
+		var dlg = new Gtk.MessageDialog.with_markup(null, Gtk.DialogFlags.MODAL, Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, msg);
+		dlg.set_title(title);
+		dlg.set_default_size (200, -1);
+		dlg.set_transient_for(this);
+		dlg.set_modal(true);
+		int response = dlg.run();
+		dlg.destroy();
+
+		if (response == Gtk.ResponseType.NO){
+			progress_hide("Cancelled");
+			return;
+		}
+		
+		//extract
+		App.reset_app_settings(config_list_user);
+		while(App.is_running){
+			update_progress(_("Deleting"));
+		}
+		
+		//finish
+		progress_hide("Finished");
+		title = _("Finished");
+		msg = _("Selected directories were deleted successfully");
+		gtk_messagebox(title, msg, this, false);
+
+		show_home_page();
+	}
+
 
 	/* Themes */
 	
