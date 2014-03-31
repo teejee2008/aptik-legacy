@@ -43,7 +43,8 @@ public class MainWindow : Window {
 	
 	private Grid grid_backup_buttons;
 
-	private Toolbar toolbar;
+	private Toolbar toolbar_top;
+	private Toolbar toolbar_bottom;
 	private ToolButton btn_donate;
 	private ToolButton btn_about;
 	
@@ -85,8 +86,6 @@ public class MainWindow : Window {
 	private Button btn_backup_theme_cancel;
 	private Button btn_backup_theme_select_all;
 	private Button btn_backup_theme_select_none;
-	
-	private Button btn_take_ownership;
 
 	private TreeView tv_packages;
 	private TreeView tv_ppa;
@@ -118,38 +117,41 @@ public class MainWindow : Window {
 
 	bool is_running;
 	bool is_restore_view = false;
-	int def_width = 480;
-	int def_height = 400;
-	int icon_size = 22;
+	bool toolbar_mode_backup = true;
+	
+	int def_width = 500;
+	int def_height = 500;
+	
+	int ex_width = 600;
+	int ex_height = 500;
+	
+	int icon_size_toolbar = 32;
+	int icon_size_list = 22;
+	int button_width = 85;
+	int button_height = 15;
 	
 	public MainWindow () {
-		title = AppName + " v" + AppVersion;// + " by " + AppAuthor + " (" + "teejeetech.blogspot.in" + ")";
+		title = AppName + " v" + AppVersion;
         window_position = WindowPosition.CENTER;
         //resizable = false;
         destroy.connect (Gtk.main_quit);
         set_default_size (def_width, def_height);	
+		icon = App.get_app_icon(16);
 
-        //set app icon
-		try{
-			this.icon = new Gdk.Pixbuf.from_file ("""/usr/share/pixmaps/aptik.png""");
-		}
-        catch(Error e){
-	        log_error (e.message);
-	    }
-	    
 	    //vboxMain
         vbox_main = new Box (Orientation.VERTICAL, 0);
         vbox_main.margin = 3;
         add (vbox_main);
 
         //add toolbar
-        //init_toolbar();
+        init_toolbar_top();
         
 		//notebook
 		notebook = new Notebook ();
 		//notebook.show_tabs = true;
 		notebook.show_tabs = false;
 		vbox_main.pack_start (notebook, true, true, 0);
+		notebook.switch_page.connect(notebook_switch_page);
 		
         //actions ---------------------------------------------
 		
@@ -183,7 +185,6 @@ public class MainWindow : Window {
 
 		fcb_backup.selection_changed.connect(()=>{
 			App.backup_dir = fcb_backup.get_file().get_path() + "/";
-			log_msg("\napp_dir=%s\nselected=%s".printf(App.backup_dir,fcb_backup.get_file().get_path()));//TODO: remove
 		});
 
 		//btn_open_backup_dir
@@ -217,7 +218,11 @@ public class MainWindow : Window {
 
         try{
 			row++;
-			var pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/aptik/images/ppa.svg",icon_size,icon_size);
+			Gtk.IconTheme icon_theme = Gtk.IconTheme.get_default();
+			Gdk.Pixbuf pix = icon_theme.load_icon ("x-system-software-sources", icon_size_list, 0);
+			if (pix == null){
+				pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/aptik/images/ppa.svg",icon_size_list,icon_size_list);
+			}
 			var img = new Gtk.Image.from_pixbuf(pix);
 			grid_backup_buttons.attach(img,0,row,1,1);
 		}
@@ -235,7 +240,7 @@ public class MainWindow : Window {
 		
 		//btn_backup_ppa
 		btn_backup_ppa = new Gtk.Button.with_label (" " + _("Backup") + " ");
-		btn_backup_ppa.set_size_request(80,-1);
+		btn_backup_ppa.set_size_request(button_width,button_height);
 		btn_backup_ppa.set_tooltip_text(_("Backup the list of installed PPAs"));
 		grid_backup_buttons.attach(btn_backup_ppa,2,row,1,1);
 
@@ -243,7 +248,7 @@ public class MainWindow : Window {
 		
 		//btn_restore_ppa
 		btn_restore_ppa = new Gtk.Button.with_label (" " + _("Restore") + " ");
-		btn_restore_ppa.set_size_request(80,-1);
+		btn_restore_ppa.set_size_request(button_width,button_height);
 		btn_restore_ppa.set_tooltip_text(_("Add missing PPAs"));
 		grid_backup_buttons.attach(btn_restore_ppa,3,row,1,1);
 		
@@ -251,7 +256,11 @@ public class MainWindow : Window {
 
         try{
 			row++;
-			var pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/aptik/images/cache.svg",icon_size,icon_size);
+			Gtk.IconTheme icon_theme = Gtk.IconTheme.get_default();
+			Gdk.Pixbuf pix = icon_theme.load_icon ("download", icon_size_list, 0);
+			if (pix == null){
+				pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/aptik/images/cache.svg",icon_size_list,icon_size_list);
+			}
 			var img = new Gtk.Image.from_pixbuf(pix);
 			grid_backup_buttons.attach(img,0,row,1,1);
 		}
@@ -269,21 +278,25 @@ public class MainWindow : Window {
 		
 		//btn_backup_cache
 		btn_backup_cache = new Gtk.Button.with_label (" " + _("Backup") + " ");
-		btn_backup_cache.set_size_request(80,-1);
+		btn_backup_cache.set_size_request(button_width,button_height);
 		btn_backup_cache.set_tooltip_text(_("Backup downloaded packages from APT cache"));
 		btn_backup_cache.clicked.connect(btn_backup_cache_clicked);
 		grid_backup_buttons.attach(btn_backup_cache,2,row,1,1);
 		
 		//btn_restore_cache
 		btn_restore_cache = new Gtk.Button.with_label (" " + _("Restore") + " ");
-		btn_restore_cache.set_size_request(80,-1);
+		btn_restore_cache.set_size_request(button_width,button_height);
 		btn_restore_cache.set_tooltip_text(_("Restore downloaded packages to APT cache"));
 		btn_restore_cache.clicked.connect(btn_restore_cache_clicked);
 		grid_backup_buttons.attach(btn_restore_cache,3,row,1,1);
 
         try{
 			row++;
-			var pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/aptik/images/package.svg",icon_size,icon_size);
+			Gtk.IconTheme icon_theme = Gtk.IconTheme.get_default();
+			Gdk.Pixbuf pix = icon_theme.load_icon ("gnome-package", icon_size_list, 0);
+			if (pix == null){
+				pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/aptik/images/package.svg",icon_size_list,icon_size_list);
+			}
 			var img = new Gtk.Image.from_pixbuf(pix);
 			grid_backup_buttons.attach(img,0,row,1,1);
 		}
@@ -301,15 +314,16 @@ public class MainWindow : Window {
 		
 		//btn_backup_packages
 		btn_backup_packages = new Gtk.Button.with_label (" " + _("Backup") + " ");
-		btn_backup_packages.set_size_request(80,-1);
+		btn_backup_packages.set_size_request(button_width,button_height);
 		btn_backup_packages.set_tooltip_text(_("Backup the list of installed packages"));
+		btn_backup_packages.vexpand = false;
 		grid_backup_buttons.attach(btn_backup_packages,2,row,1,1);
 		
 		btn_backup_packages.clicked.connect(btn_backup_packages_clicked);
 
 		//btn_restore_packages
 		btn_restore_packages = new Gtk.Button.with_label (" " + _("Restore") + " ");
-		btn_restore_packages.set_size_request(80,-1);
+		btn_restore_packages.set_size_request(button_width,button_height);
 		btn_restore_packages.set_tooltip_text(_("Install missing packages"));
 		grid_backup_buttons.attach(btn_restore_packages,3,row,1,1);
 		
@@ -318,7 +332,11 @@ public class MainWindow : Window {
 
         try{
 			row++;
-			var pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/aptik/images/config.svg",icon_size,icon_size);
+			Gtk.IconTheme icon_theme = Gtk.IconTheme.get_default();
+			Gdk.Pixbuf pix = icon_theme.load_icon ("gnome-settings", icon_size_list, 0);
+			if (pix == null){
+				pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/aptik/images/config.svg",icon_size_list,icon_size_list);
+			}
 			var img = new Gtk.Image.from_pixbuf(pix);
 			grid_backup_buttons.attach(img,0,row,1,1);
 		}
@@ -336,7 +354,7 @@ public class MainWindow : Window {
 		
 		//btn_backup_config
 		btn_backup_config = new Gtk.Button.with_label (" " + _("Backup") + " ");
-		btn_backup_config.set_size_request(80,-1);
+		btn_backup_config.set_size_request(button_width,button_height);
 		btn_backup_config.set_tooltip_text(_("Backup application settings"));
 		grid_backup_buttons.attach(btn_backup_config,2,row,1,1);
 
@@ -344,7 +362,7 @@ public class MainWindow : Window {
 		
 		//btn_restore_config
 		btn_restore_config = new Gtk.Button.with_label (" " + _("Restore") + " ");
-		btn_restore_config.set_size_request(80,-1);
+		btn_restore_config.set_size_request(button_width,button_height);
 		btn_restore_config.set_tooltip_text(_("Restore application settings"));
 		grid_backup_buttons.attach(btn_restore_config,3,row,1,1);
 		
@@ -353,7 +371,11 @@ public class MainWindow : Window {
 		
         try{
 			row++;
-			var pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/aptik/images/theme.svg",icon_size,icon_size);
+			Gtk.IconTheme icon_theme = Gtk.IconTheme.get_default();
+			Gdk.Pixbuf pix = icon_theme.load_icon ("preferences-theme", icon_size_list, 0);
+			if (pix == null){
+				pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/aptik/images/theme.svg",icon_size_list,icon_size_list);
+			}
 			var img = new Gtk.Image.from_pixbuf(pix);
 			grid_backup_buttons.attach(img,0,row,1,1);
 		}
@@ -371,7 +393,7 @@ public class MainWindow : Window {
 		
 		//btn_backup_theme
 		btn_backup_theme = new Gtk.Button.with_label (" " + _("Backup") + " ");
-		btn_backup_theme.set_size_request(80,-1);
+		btn_backup_theme.set_size_request(button_width,button_height);
 		btn_backup_theme.set_tooltip_text(_("Backup themes and icons"));
 		grid_backup_buttons.attach(btn_backup_theme,2,row,1,1);
 		
@@ -379,14 +401,14 @@ public class MainWindow : Window {
 
 		//btn_restore_theme
 		btn_restore_theme = new Gtk.Button.with_label (" " + _("Restore") + " ");
-		btn_restore_theme.set_size_request(80,-1);
+		btn_restore_theme.set_size_request(button_width,button_height);
 		btn_restore_theme.set_tooltip_text(_("Restore themes and icons"));
 		grid_backup_buttons.attach(btn_restore_theme,3,row,1,1);
 		
 		btn_restore_theme.clicked.connect(btn_restore_theme_clicked);
 
 		//bottom toolbar
-		init_toolbar();
+		init_toolbar_bottom();
 
         //select packages ---------------------------------------------
 		
@@ -868,8 +890,6 @@ public class MainWindow : Window {
 		btn_backup_config_cancel.clicked.connect(()=>{ 
 			show_home_page();
 		});
-		
-
 
 		//select theme ---------------------------------------------
 		
@@ -1066,28 +1086,28 @@ public class MainWindow : Window {
 		vbox_main.pack_start (progressbar, false, true, 0);
 	}
 	
-	public void init_toolbar(){
-        //toolbar
-		toolbar = new Gtk.Toolbar ();
-		toolbar.toolbar_style = ToolbarStyle.BOTH;
-		vbox_main.add(toolbar);
+	public void init_toolbar_bottom(){
+        //toolbar_bottom
+		toolbar_bottom = new Gtk.Toolbar();
+		toolbar_bottom.toolbar_style = ToolbarStyle.BOTH;
+		vbox_main.add(toolbar_bottom);
 
 		//separator
 		var separator = new Gtk.SeparatorToolItem();
 		separator.set_draw (false);
 		separator.set_expand (true);
-		toolbar.add(separator);
-	
+		toolbar_bottom.add(separator);
+
 		//btn_donate
         btn_donate = new Gtk.ToolButton.from_stock ("gtk-missing-image");
 		btn_donate.label = _("Donate");
 		btn_donate.set_tooltip_text (_("Donate"));
-        toolbar.add(btn_donate);
+        toolbar_bottom.add(btn_donate);
 		
 		btn_donate.clicked.connect(btn_donate_clicked);
 		
 		try{
-			var pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/aptik/images/donate.svg",24,24);
+			var pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/aptik/images/donate.svg",icon_size_toolbar,icon_size_toolbar);
 			var img = new Gtk.Image.from_pixbuf(pix);
 			btn_donate.set_icon_widget(img);
 		}
@@ -1099,12 +1119,12 @@ public class MainWindow : Window {
         btn_about = new Gtk.ToolButton.from_stock ("gtk-about");
 		btn_about.label = _("About");
 		btn_about.set_tooltip_text (_("Application Info"));
-        toolbar.add(btn_about);
+        toolbar_bottom.add(btn_about);
 
         btn_about.clicked.connect (btn_about_clicked);
 
 		try{
-			var pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/aptik/images/help-info.svg",24,24);
+			var pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/aptik/images/help-info.svg",icon_size_toolbar,icon_size_toolbar);
 			var img = new Gtk.Image.from_pixbuf(pix);
 			btn_about.set_icon_widget(img);
 		}
@@ -1112,6 +1132,209 @@ public class MainWindow : Window {
 	        log_error (e.message);
 	    }
 	    
+	}
+
+	public void init_toolbar_top(){
+        //toolbar
+		toolbar_top = new Gtk.Toolbar();
+		toolbar_top.toolbar_style = ToolbarStyle.BOTH;
+		toolbar_top.set_icon_size(IconSize.SMALL_TOOLBAR);
+		toolbar_top.get_style_context().add_class(Gtk.STYLE_CLASS_PRIMARY_TOOLBAR);
+		vbox_main.add(toolbar_top);
+
+		//btn_backup_mode
+        var btn_backup_mode = new Gtk.ToolButton.from_stock ("gtk-missing-image");
+		btn_backup_mode.label = _("Backup >>");
+		btn_backup_mode.set_tooltip_text (_("Backup"));
+		toolbar_mode_backup = true;
+        toolbar_top.add(btn_backup_mode);
+		 
+		btn_backup_mode.clicked.connect(()=>{
+			toolbar_mode_backup = !toolbar_mode_backup;
+			if (toolbar_mode_backup){
+				btn_backup_mode.label = _("Backup >>");
+			}
+			else{
+				btn_backup_mode.label = _("Restore >>");
+			}
+		});
+		
+		try{
+			Gtk.IconTheme icon_theme = Gtk.IconTheme.get_default();
+			Gdk.Pixbuf pix = icon_theme.load_icon ("aptik", icon_size_toolbar, 0);
+			if (pix == null){
+				pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/pixmaps/aptik.png",icon_size_toolbar,icon_size_toolbar);
+			}
+			var img = new Gtk.Image.from_pixbuf(pix);
+			btn_backup_mode.set_icon_widget(img);
+		}
+        catch(Error e){
+	        log_error (e.message);
+	    }
+	    
+		//btn_ppa
+        var btn_ppa = new Gtk.ToolButton.from_stock("x-system-software-sources");
+        btn_ppa.set_size_request(30,-1);
+        
+		btn_ppa.label = _("PPA");
+		btn_ppa.set_tooltip_text (_("Software Sources"));
+        toolbar_top.add(btn_ppa);
+		
+		btn_ppa.clicked.connect(()=>{
+			if (toolbar_mode_backup){
+				btn_backup_ppa_clicked();
+			}
+			else{
+				btn_restore_ppa_clicked();
+			}
+		});
+		
+		try{
+			Gtk.IconTheme icon_theme = Gtk.IconTheme.get_default();
+			Gdk.Pixbuf pix = icon_theme.load_icon ("x-system-software-sources", icon_size_toolbar, 0);
+			if (pix == null){
+				pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/aptik/images/ppa.svg",icon_size_toolbar,icon_size_toolbar);
+			}
+			var img = new Gtk.Image.from_pixbuf(pix);
+			btn_ppa.set_icon_widget(img);
+		}
+        catch(Error e){
+	        log_error (e.message);
+	    }
+
+		//btn_cache
+        var btn_cache = new Gtk.ToolButton.from_stock("download");
+		btn_cache.label = _("Cache");
+		btn_cache.set_tooltip_text (_("Downloaded Packages"));
+        toolbar_top.add(btn_cache);
+		
+		btn_cache.clicked.connect(()=>{
+			if (toolbar_mode_backup){
+				btn_backup_cache_clicked();
+			}
+			else{
+				btn_restore_cache_clicked();
+			}
+		});
+		
+		try{
+			Gtk.IconTheme icon_theme = Gtk.IconTheme.get_default();
+			Gdk.Pixbuf pix = icon_theme.load_icon ("download", icon_size_toolbar, 0);
+			if (pix == null){
+				pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/aptik/images/cache.svg",icon_size_toolbar,icon_size_toolbar);
+			}
+			var img = new Gtk.Image.from_pixbuf(pix);
+			btn_cache.set_icon_widget(img);
+		}
+        catch(Error e){
+	        log_error (e.message);
+	    }
+
+		//btn_package
+        var btn_package = new Gtk.ToolButton.from_stock("gnome-package");
+		btn_package.label = _("Packages");
+		btn_package.set_tooltip_text (_("Installed Packages"));
+        toolbar_top.add(btn_package);
+		
+		btn_package.clicked.connect(()=>{
+			if (toolbar_mode_backup){
+				btn_backup_packages_clicked();
+			}
+			else{
+				btn_restore_packages_clicked();
+			}
+		});
+		
+		try{
+			Gtk.IconTheme icon_theme = Gtk.IconTheme.get_default();
+			Gdk.Pixbuf pix = icon_theme.load_icon ("gnome-package", icon_size_toolbar, 0);
+			if (pix == null){
+				pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/aptik/images/package.svg",icon_size_toolbar,icon_size_toolbar);
+			}
+			var img = new Gtk.Image.from_pixbuf(pix);
+			btn_package.set_icon_widget(img);
+		}
+        catch(Error e){
+	        log_error (e.message);
+	    }
+
+		//btn_config
+        var btn_config = new Gtk.ToolButton.from_stock("gnome-settings");
+		btn_config.label = _("Settings");
+		btn_config.set_tooltip_text (_("Application Settings"));
+        toolbar_top.add(btn_config);
+		
+		btn_config.clicked.connect(()=>{
+			if (toolbar_mode_backup){
+				btn_backup_config_clicked();
+			}
+			else{
+				btn_restore_config_clicked();
+			}
+		});
+		
+		try{
+			Gtk.IconTheme icon_theme = Gtk.IconTheme.get_default();
+			Gdk.Pixbuf pix = icon_theme.load_icon ("gnome-settings", icon_size_toolbar, 0);
+			if (pix == null){
+				pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/aptik/images/config.svg",icon_size_toolbar,icon_size_toolbar);
+			}
+			var img = new Gtk.Image.from_pixbuf(pix);
+			btn_config.set_icon_widget(img);
+		}
+        catch(Error e){
+	        log_error (e.message);
+	    }
+	    
+		//btn_theme
+        var btn_theme = new Gtk.ToolButton.from_stock("preferences-theme");
+		btn_theme.label = _("Themes");
+		btn_theme.set_tooltip_text (_("Themes & Icons"));
+        toolbar_top.add(btn_theme);
+		
+		btn_theme.clicked.connect(()=>{
+			if (toolbar_mode_backup){
+				btn_backup_theme_clicked();
+			}
+			else{
+				btn_restore_theme_clicked();
+			}
+		});
+		
+		try{
+			Gtk.IconTheme icon_theme = Gtk.IconTheme.get_default();
+			Gdk.Pixbuf pix = icon_theme.load_icon ("preferences-theme", icon_size_toolbar, 0);
+			if (pix == null){
+				pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/aptik/images/theme.svg",icon_size_toolbar,icon_size_toolbar);
+			}
+			var img = new Gtk.Image.from_pixbuf(pix);
+			btn_theme.set_icon_widget(img);
+		}
+        catch(Error e){
+	        log_error (e.message);
+	    }
+	}
+	
+	private void notebook_switch_page (Widget page, uint new_page) {
+		uint old_page = notebook.page;
+
+		if (new_page == 0){
+			toolbar_top.visible = true;
+			toolbar_bottom.visible = true;
+			toolbar_top.sensitive = true;
+			resize(def_width, def_height);	
+			title = AppName + " v" + AppVersion;
+			progress_hide();
+		}
+		else {
+			toolbar_top.visible = false;
+			toolbar_bottom.visible = false;
+			resize(ex_width, ex_height);
+		}
+	}
+	
+	private void show_home_page(){
+		notebook.page = 0;
 	}
 	
 	private void tv_packages_refresh(){
@@ -1376,13 +1599,7 @@ public class MainWindow : Window {
 		dialog.comments = _("System migration toolkit for Ubuntu-based distributions");
 		dialog.copyright = "Copyright © 2014 Tony George (%s)".printf(AppAuthorEmail);
 		dialog.version = AppVersion;
-		
-		try{
-			dialog.logo = new Gdk.Pixbuf.from_file (App.share_dir + """/pixmaps/aptik.png""");
-		}
-        catch(Error e){
-	        log_error (e.message);
-	    }
+		dialog.logo = App.get_app_icon(128);
 
 		dialog.license = "This program is free for personal and commercial use and comes with absolutely no warranty. You use this program entirely at your own risk. The author will not be liable for any damages arising from the use of this program.";
 		dialog.wrap_license = true;
@@ -1399,14 +1616,7 @@ public class MainWindow : Window {
 		dialog.present ();
 	}
 	
-	private void show_home_page(){
-		notebook.page = 0;
-		toolbar.visible = true;
-		resize(def_width, def_height);	
-		title = AppName + " v" + AppVersion;
-		progress_hide();
-	}
-	
+
 	/* PPA */
 	
 	private void btn_backup_ppa_clicked(){
@@ -1445,8 +1655,9 @@ public class MainWindow : Window {
 		btn_restore_ppa_exec.visible = false;
 		lbl_ppa_message.label = _("Select the PPAs to backup");
 		title = _("Backup Software Sources");
+		
 		notebook.page = 2;
-		toolbar.visible = false;
+		
 		is_running = false;
 	}
 	
@@ -1506,8 +1717,9 @@ public class MainWindow : Window {
 		btn_restore_ppa_exec.visible = true;
 		lbl_ppa_message.label = _("Select the PPAs to restore");
 		title = _("Restore Software Sources");
+		
 		notebook.page = 2;
-		toolbar.visible = false;
+
 		is_running = false;
 	}
 
@@ -1669,12 +1881,11 @@ public class MainWindow : Window {
 		btn_backup_packages_exec.visible = true;
 		btn_restore_packages_exec.visible = false;
 		lbl_packages_message.label = _("Select packages to backup") + ". " + 
-			("Extra packages installed by you are selected by default") + ".";
+			("Extra packages installed by user are selected by default") + ".";
 		title = _("Backup Software Selections");
 		
 		notebook.page = 1;
-		toolbar.visible = false;
-		resize(650, 500);	
+	
 		is_running = false;
 	}
 	
@@ -1788,9 +1999,9 @@ public class MainWindow : Window {
 		btn_restore_packages_exec.visible = true;
 		lbl_packages_message.label = _("Select the packages to restore");
 		title = _("Restore Software Selections");
+		
 		notebook.page = 1;
-		toolbar.visible = false;
-		resize(650, 500);
+
 		is_running = false;
 	}
 
@@ -1822,7 +2033,10 @@ public class MainWindow : Window {
 		progress_begin(_("Saving") + " '%s'".printf(file_name));
 		bool is_success = save_package_list_selected(false);	
 		if (!is_success){
-			progress_end(_("Failed to write")  + " '%s'".printf(file_name));
+			string title = _("Error");
+			string msg = _("Failed to write file")  + ": '%s'".printf(file_name);
+			gtk_messagebox(title, msg, this, true);
+			return;
 		}
 		
 		//check list of packages to install
@@ -2014,8 +2228,8 @@ public class MainWindow : Window {
 		btn_restore_config_exec.visible = false;
 		lbl_config_message.label = _("Select the directories to backup");
 		title = _("Backup Application Settings");
+		
 		notebook.page = 3;
-		toolbar.visible = false;
 
 		gtk_set_busy(false, this);
 	}
@@ -2068,8 +2282,8 @@ public class MainWindow : Window {
 			btn_restore_config_exec.visible = true;
 			lbl_config_message.label = _("Select the directories to restore");
 			title = _("Restore Application Settings");
+			
 			notebook.page = 3;
-			toolbar.visible = false;
 		}
 		
 		gtk_set_busy(false, this);
@@ -2130,9 +2344,9 @@ public class MainWindow : Window {
 		btn_restore_theme_exec.visible = false;
 		lbl_theme_message.label = _("Select the themes to backup");
 		title = _("Backup Themes");
-		notebook.page = 4;
-		toolbar.visible = false;
 		
+		notebook.page = 4;
+
 		gtk_set_busy(false, this);
 	}
 	
@@ -2194,8 +2408,8 @@ public class MainWindow : Window {
 			btn_restore_theme_exec.visible = true;
 			lbl_theme_message.label = _("Select the themes to restore");
 			title = _("Restore Themes");
+			
 			notebook.page = 4;
-			toolbar.visible = false;
 		}
 		
 		gtk_set_busy(false, this);
@@ -2288,35 +2502,47 @@ public class MainWindow : Window {
 	}
 
 	private void progress_begin(string message = ""){
-		App.progress_total = 0;
 		lbl_status.visible = true;
 		progressbar.visible = true;
+		
+		App.progress_total = 0;
 		progressbar.fraction = 0.0;
 		lbl_status.label = message;
+
 		notebook.sensitive = false;
-		toolbar.visible = false;
+		toolbar_top.sensitive = false;
+		toolbar_bottom.visible = false;
+		
 		gtk_set_busy(true, this);
 		gtk_do_events();
 	}
 	
 	private void progress_hide(string message = ""){
-		lbl_status.visible = false;
-		progressbar.visible = false;
 		progressbar.fraction = 0.0;
 		lbl_status.label = message;
+
+		lbl_status.visible = false;
+		progressbar.visible = false;
+		
 		notebook.sensitive = true;
-		//toolbar.visible = true;
+		toolbar_top.sensitive = true;
+		//toolbar_bottom.visible = true; //depends
+		
 		gtk_set_busy(false, this);
 		gtk_do_events();
 	}
 	
 	private void progress_end(string message = ""){
+		progressbar.fraction = 1.0;
+		lbl_status.label = message;	
+			
 		lbl_status.visible = true;
 		progressbar.visible = true;
-		progressbar.fraction = 1.0;
-		lbl_status.label = message;
+
 		notebook.sensitive = true;
-		//toolbar.visible = true;
+		toolbar_top.sensitive = true;
+		//toolbar_bottom.visible = true; //depends
+		
 		gtk_set_busy(false, this);
 		gtk_do_events();
 	}

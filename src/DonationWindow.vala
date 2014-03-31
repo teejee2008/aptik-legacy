@@ -59,8 +59,7 @@ public class DonationWindow : Dialog {
 		
 		//lbl_message
 		Label lbl_message = new Gtk.Label("");
-		//string msg = _("Did you find this software useful?\n\nYou can buy me a coffee or make a donation via PayPal to show your support. Or just drop me an email and say Hi.\n\nThis application is free and will continue to remain that way. Your contributions will help in developing it further and making it more awesome!\n\nFeel free to drop me a mail if you find any issues or if you have suggestions for improvement.\n\nRegards,\nTony George\nteejeetech@gmail.com");
-		string msg = _("Did you find this software useful?\nPlease consider making a donation to show your support.\n\nThis application is free and will continue to remain that way. Your contributions will help in keeping this project alive and developing it further.\n\nFeel free to mail me if you find any issues or if you need any changes in this application. I can be reached at teejeetech@gmail.com.\n\nRegards,\nTony George");
+		string msg = _("Did you find this software useful?\n\nYou can buy me a coffee or make a donation via PayPal to show your support. Or just drop me an email and say Hi.\n\nThis application is free and will continue to remain that way. Your contributions will help in developing it further and making it more awesome!\n\nFeel free to mail me if you find any issues or if you need any changes in this application. I can be reached at teejeetech@gmail.com.\n\n~ Tony George");
 		lbl_message.label = msg;
 		lbl_message.wrap = true;
 		vbox_main.pack_start(lbl_message,true,true,0);
@@ -76,7 +75,7 @@ public class DonationWindow : Dialog {
 		Button btn_donate = new Button.with_label("   " + _("Donate via PayPal") + "   ");
 		vbox_actions.add(btn_donate);
 		btn_donate.clicked.connect(()=>{
-			xdg_open("https://www.paypal.com/cgi-bin/webscr?business=teejee2009@gmail.com&cmd=_xclick&currency_code=USD&amount=10&item_name=Conky%20Manager%20Donation");
+			xdg_open("https://www.paypal.com/cgi-bin/webscr?business=teejee2009@gmail.com&cmd=_xclick&currency_code=USD&amount=10&item_name=Aptik%20Donation");
 		});
 
 		//btn_send_email
