@@ -17,14 +17,15 @@ long_line_behaviour=1
 long_line_column=80
 
 [files]
-current_page=2
-FILE_NAME_0=45825;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FUtility.vala;0;4
-FILE_NAME_1=1668;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FMain.vala;0;4
-FILE_NAME_2=32804;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FMainWindow.vala;0;4
-FILE_NAME_3=0;Make;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2Fmakefile;0;4
-FILE_NAME_4=0;Conf;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fdebian%2Fcontrol;0;4
-FILE_NAME_5=12;None;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fdebian%2Fchangelog;0;4
-FILE_NAME_6=2589;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FAptikConsole.vala;0;4
+current_page=1
+FILE_NAME_0=47982;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FUtility.vala;0;4
+FILE_NAME_1=33104;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FMain.vala;0;4
+FILE_NAME_2=17510;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FMainWindow.vala;0;4
+FILE_NAME_3=583;Make;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2Fmakefile;0;4
+FILE_NAME_4=970;Conf;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fdebian%2Fcontrol;0;4
+FILE_NAME_5=271;None;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fdebian%2Fchangelog;0;4
+FILE_NAME_6=3943;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FAptikConsole.vala;0;4
+FILE_NAME_7=2958;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FDonationWindow.vala;0;4
 
 [VTE]
 last_dir=/home/teejee

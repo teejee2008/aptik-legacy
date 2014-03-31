@@ -9,7 +9,7 @@ CFLAGS = --std=c99
 
 all:
 	valac -X -D'GETTEXT_PACKAGE="aptik"' --Xcc="-lm" --thread "Main.vala" "Utility.vala" "AptikConsole.vala" -o aptik --pkg glib-2.0 --pkg gio-unix-2.0 --pkg posix --pkg gtk+-3.0 --pkg gee-1.0 --pkg libsoup-2.4 --pkg json-glib-1.0
-	valac -X -D'GETTEXT_PACKAGE="aptik"' --Xcc="-lm" --thread "Main.vala" "Utility.vala" "AptikGtk.vala" "MainWindow.vala" "LogWindow.vala" -o aptik-gtk --pkg glib-2.0 --pkg gio-unix-2.0 --pkg posix --pkg gtk+-3.0 --pkg gee-1.0 --pkg libsoup-2.4 --pkg json-glib-1.0
+	valac -X -D'GETTEXT_PACKAGE="aptik"' --Xcc="-lm" --thread "Main.vala" "Utility.vala" "AptikGtk.vala" "MainWindow.vala" "LogWindow.vala" "DonationWindow.vala" -o aptik-gtk --pkg glib-2.0 --pkg gio-unix-2.0 --pkg posix --pkg gtk+-3.0 --pkg gee-1.0 --pkg libsoup-2.4 --pkg json-glib-1.0
 
 clean:
 	rm -rf *.o aptik

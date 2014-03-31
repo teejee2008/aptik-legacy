@@ -1465,7 +1465,24 @@ namespace TeeJee.ProcessManagement{
 		return execute_command_sync ("kill -CONT %d".printf(procID));
 	}
 
+	public void command_kill(string cmd_name, string cmd){
+				
+		/* Kills a specific command */
+
+		string txt = execute_command_sync_get_output ("ps w -C %s".printf(cmd_name));
+		//use 'ps ew -C conky' for all users
 		
+		string pid = "";
+		foreach(string line in txt.split("\n")){
+			if (line.index_of(cmd) != -1){
+				pid = line.strip().split(" ")[0];
+				Posix.kill ((Pid) int.parse(pid), 15);
+				log_debug(_("Stopped") + ": [PID=" + pid + "] ");
+			}
+		}
+	}
+	
+	
 	public void process_set_priority (Pid procID, int prio){
 				
 		/* Set process priority */
@@ -1887,6 +1904,15 @@ namespace TeeJee.System{
 			return false;
 		}
 	}
+
+	public bool xdg_open (string file){
+		string path;
+		path = get_cmd_path ("xdg-open");
+		if ((path != null)&&(path != "")){
+			return execute_command_script_async ("xdg-open \"" + file + "\"");
+		}
+		return false;
+	}
 	
 	public bool exo_open_folder (string dir_path, bool xdg_open_try_first = true){
 				
@@ -1970,6 +1996,27 @@ namespace TeeJee.System{
 		
 		string s = "notify-send -t %d -u %s -i %s \"%s\" \"%s\"".printf(durationMillis, urgency, "gtk-dialog-info", title, message);
 		return execute_command_sync (s);
+	}
+
+	public bool set_directory_ownership(string dir_name, string login_name){
+		try {
+			string cmd = "chown %s -R %s".printf(login_name, dir_name);
+			int exit_code;
+			Process.spawn_command_line_sync(cmd, null, null, out exit_code);
+			
+			if (exit_code == 0){
+				//log_msg(_("Ownership changed to '%s' for files in directory '%s'").printf(login_name, dir_name));
+				return true;
+			}
+			else{
+				log_error(_("Failed to set ownership") + ": %s, %s".printf(login_name, dir_name));
+				return false;
+			}
+		}
+		catch (Error e){
+			log_error (e.message);
+			return false;
+		}
 	}
 }
 
@@ -2210,6 +2257,26 @@ namespace TeeJee.Misc {
 			millis += double.parse(arr[2]);
 		}
 		return millis;
+	}
+	
+	public string escape_html(string html){
+		return html
+		.replace("&","&amp;")
+		.replace("\"","&quot;")
+		//.replace(" ","&nbsp;") //pango markup throws an error with &nbsp;
+		.replace("<","&lt;")
+		.replace(">","&gt;")
+		;
+	}
+	
+	public string unescape_html(string html){
+		return html
+		.replace("&amp;","&")
+		.replace("&quot;","\"")
+		//.replace("&nbsp;"," ") //pango markup throws an error with &nbsp;
+		.replace("&lt;","<")
+		.replace("&gt;",">")
+		;
 	}
 }
 

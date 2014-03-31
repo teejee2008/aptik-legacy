@@ -41,7 +41,7 @@ public Main App;
 public const string AppName = "Aptik";
 public const string AppVersion = "1.3";
 public const string AppAuthor = "Tony George";
-public const string AppAuthorEmail = "teejee2008@gmail.com";
+public const string AppAuthorEmail = "teejeetech@gmail.com";
 
 const string GETTEXT_PACKAGE = "";
 const string LOCALE_DIR = "/usr/share/locale";
@@ -52,6 +52,9 @@ public class Main : GLib.Object{
 	public string temp_dir = "";
 	public string backup_dir = "";
 	public string share_dir = "/usr/share";
+	public string app_conf_path = "";
+	public string app_settings_zip_name = "app-settings.tar.gz";
+	
 	public bool gui_mode = false;
 	public string user_login = "";
 	public string user_home = "";
@@ -73,10 +76,23 @@ public class Main : GLib.Object{
 	private Regex rex_aptget_download;
 	private Regex rex_pkg_installed;
 	private MatchInfo match;
-			
+
+	public int donation_counter = 0;
+	public bool donation_disable = false;
+	public int donation_reshow_frequency = 5;
+	
 	public Main(string[] args, bool _gui_mode){
 		
 		gui_mode = _gui_mode;
+		
+		//config file
+		string home = Environment.get_home_dir();
+		app_conf_path = home + "/.config/aptik.json";
+		
+		//load settings if GUI mode
+		if (gui_mode){
+			load_app_config();
+		}
 		
 		//check dependencies
 		string message;
@@ -157,6 +173,60 @@ public class Main : GLib.Object{
 		string log_dir = backup_dir + "logs/" + timestamp3();
 		create_dir(log_dir);
 		return log_dir;
+	}
+
+	public void save_app_config(){
+		var config = new Json.Object();
+
+		config.set_string_member("backup_dir", backup_dir);
+		config.set_string_member("donation_counter", donation_counter.to_string());
+		config.set_string_member("donation_disable", donation_disable.to_string());
+		
+		var json = new Json.Generator();
+		json.pretty = true;
+		json.indent = 2;
+		var node = new Json.Node(NodeType.OBJECT);
+		node.set_object(config);
+		json.set_root(node);
+		
+		try{
+			json.to_file(this.app_conf_path);
+		} catch (Error e) {
+	        log_error (e.message);
+	    }
+	    
+	    log_msg(_("App config saved") + ": '%s'".printf(app_conf_path));
+	}
+	
+	public void load_app_config(){
+		var f = File.new_for_path(app_conf_path);
+		if (!f.query_exists()) { return; }
+		
+		var parser = new Json.Parser();
+        try{
+			parser.load_from_file(this.app_conf_path);
+		} catch (Error e) {
+	        log_error (e.message);
+	    }
+        var node = parser.get_root();
+        var config = node.get_object();
+        
+        string val = json_get_string(config,"backup_dir","");
+        if ((val.length > 0)&&(dir_exists(val))){
+			backup_dir = val;
+		}
+		donation_counter = json_get_int(config,"donation_counter",0);
+		donation_disable = json_get_bool(config,"donation_disable",false);
+
+		log_msg(_("App config loaded") + ": '%s'".printf(this.app_conf_path));
+	}
+	
+	/* Properties */
+	
+	public string app_settings_zip_file{
+		owned get{
+			return  backup_dir + app_settings_zip_name;
+		}
 	}
 	
 	/* Package selections */
@@ -598,7 +668,9 @@ done
 		int input_fd;
 		int output_fd;
 		int error_fd;
-
+		
+		
+		
 		try {
 			//execute script file
 			Process.spawn_async_with_pipes(
@@ -625,6 +697,7 @@ done
 			dis_err.newline_type = DataStreamNewlineType.ANY;
 			
 			progress_count = 0;
+			progress_total = 0;
 			//stdout_lines = new Gee.ArrayList<string>();
 			stderr_lines = new Gee.ArrayList<string>();
 			
@@ -1156,6 +1229,7 @@ done
 		    while (out_line != null) {
 				if (gui_mode){
 					progress_count += 1; //count
+					status_line = out_line;
 				}
 				else{
 					stdout.printf(out_line + "\n"); //print
@@ -1169,23 +1243,59 @@ done
 			log_error (e.message);
 		}	
 	}
+
+	/* App Settings */
 	
-	/* Misc */
-	
-	public bool take_ownership(){
+	public bool backup_app_settings(Gee.ArrayList<AppConfig> config_list){
+		string cmd;
+		
 		try {
-			string cmd = "chown %s -R %s".printf(user_login,user_home);
-			int exit_code;
-			Process.spawn_command_line_sync(cmd, null, null, out exit_code);
+			string dir_list = "";
+			foreach(AppConfig config in config_list){
+				if (config.is_selected){
+					dir_list += " '%s'".printf(config.name.replace("~/",""));
+				}
+			}
 			
-			if (exit_code == 0){
-				log_msg(_("Ownership changed to '%s' for files in directory '%s'").printf(user_login,user_home));
-				return true;
+			string zip_file = app_settings_zip_file;
+			
+			//delete zip file
+			var f = File.new_for_path(zip_file);
+			if (f.query_exists()){
+				f.delete();
+			}
+			
+			//get total file count
+			progress_total = 0;
+			progress_count = 0;
+			foreach(AppConfig config in config_list){
+				if (config.is_selected){
+					progress_total += (int) get_file_count(config.path);
+				}
+			}
+
+			//zip selected folders
+			cmd = "tar -czvf '%s' -C '%s' %s".printf(zip_file, user_home, dir_list);
+			status_line = "";
+			
+			if (gui_mode){
+				run_gzip(cmd);
 			}
 			else{
-				log_msg(_("Failed to change file ownership"));
-				return false;
+				stdout.printf(_("Saving Application Settings..."));
+				stdout.flush();
+				
+				int status = Posix.system(cmd + " 1> /dev/null");
+				if (status==0){
+					stdout.printf("[ OK ]\n");
+				}
+				else{
+					stdout.printf("[ status=%d ]\n".printf(status));
+				}
+				return (status == 0);
 			}
+
+			return true;
 		}
 		catch (Error e){
 			log_error (e.message);
@@ -1193,8 +1303,247 @@ done
 		}
 	}
 	
+	public Gee.ArrayList<AppConfig> list_app_config_directories_from_home(){
+		return list_app_config_directories_from_path(user_home);
+	}
+	
+	public Gee.ArrayList<AppConfig> list_app_config_directories_from_path(string base_path){
+		var app_config_list = new Gee.ArrayList<AppConfig>();
+
+		try
+		{
+			File f_home = File.new_for_path (base_path);
+	        FileEnumerator enumerator = f_home.enumerate_children ("standard::*", 0);
+	        FileInfo file;
+	        while ((file = enumerator.next_file ()) != null) {
+				string name = file.get_name();
+				string item = base_path + "/" + name;
+				if (!name.has_prefix(".")){ continue; }
+				if (name == ".config"){ continue; }
+				if (!dir_exists(item)) { continue; }
+				
+				AppConfig entry = new AppConfig("~/%s".printf(name));
+				app_config_list.add(entry);
+				
+				switch(name){
+					case ".mozilla":
+						entry.description = "Firefox Web Browser";
+						break;
+					case ".opera":
+						entry.description = "Opera Web Browser";
+						break;
+					case ".fonts":
+						entry.description = "Local Fonts";
+						break;
+					case ".themes":
+						entry.description = "Local Themes";
+						break;
+				}
+	        }
+	        
+	        File f_home_config = File.new_for_path (base_path + "/.config");
+	        enumerator = f_home_config.enumerate_children ("standard::*", 0);
+	        while ((file = enumerator.next_file ()) != null) {
+				string name = file.get_name();
+				string item = base_path + "/.config/" + name;
+				if (!dir_exists(item)) { continue; }
+				
+				AppConfig entry = new AppConfig("~/.config/%s".printf(name));
+				app_config_list.add(entry);
+				
+				switch(name){
+					case "chromium":
+						entry.description = "Chromium Web Browser";
+						break;
+					case "autostart":
+						entry.description = "Startup Applications";
+						break;
+				}
+	        }
+	        
+	        f_home = File.new_for_path (base_path);
+	        enumerator = f_home.enumerate_children ("standard::*", 0);
+	        while ((file = enumerator.next_file ()) != null) {
+				string name = file.get_name();
+				string item = base_path + "/" + name;
+				if (!name.has_prefix(".")){ continue; }
+				if (dir_exists(item)) { continue; }
+				
+				AppConfig entry = new AppConfig("~/%s".printf(name));
+				app_config_list.add(entry);
+				
+				switch(name){
+					case ".bash_history":
+						entry.description = "Bash Command History";
+						break;
+					case ".bashrc":
+						entry.description = "Bash Init Script";
+						break;
+					case ".bash_logout":
+						entry.description = "Bash Logout Script";
+						break;
+				}
+	        }
+        }
+        catch(Error e){
+	        log_error (e.message);
+	    }
+
+		//sort the list
+		CompareFunc<AppConfig> entry_compare = (a, b) => {
+			return strcmp(a.path,b.path);
+		};
+		app_config_list.sort(entry_compare);
+		
+		return app_config_list;
+	}
+	
+	public Gee.ArrayList<AppConfig> list_app_config_directories_from_backup(){
+		var app_config_list = new Gee.ArrayList<AppConfig>();
+		
+		string lines = execute_command_sync_get_output("tar -tzvf '%s'".printf(app_settings_zip_file));
+		string rel_path, name;
+		Regex rex;
+		MatchInfo match;
+		AppConfig entry;
+		
+		foreach(string line in lines.split("\n")){
+			if (line.split(" ").length < 5) { continue; }
+
+			try{
+				rex = new Regex("""[^ ]*[ ]*[^ ]*[ ]*[^ ]*[ ]*[^ ]*[ ]*[^ ]*[ ]*([^ ]*)""");
+				if (rex.match (line, 0, out match)){
+					
+					rel_path = match.fetch(1).strip();
+					
+					if (rel_path.split("/")[0] == ".config"){
+						name = rel_path.split("/")[1];
+						entry = new AppConfig("~/.config/%s".printf(name));
+					}
+					else{
+						name = rel_path.split("/")[0];
+						entry = new AppConfig("~/%s".printf(name));
+					}
+					
+					bool found = false;
+					foreach(AppConfig config in app_config_list){
+						if (config.path == entry.path){
+							found = true;
+							break;
+						}
+					}
+					
+					if (!found){
+						app_config_list.add(entry);
+					}
+				}
+			}
+			catch(Error e){
+				log_error (e.message);
+			}
+		} 
+
+		//sort the list
+		CompareFunc<AppConfig> entry_compare = (a, b) => {
+			return strcmp(a.path,b.path);
+		};
+		app_config_list.sort(entry_compare);
+		
+		return app_config_list;
+	}
+	
+	public bool restore_app_settings(Gee.ArrayList<AppConfig> config_list){
+		string cmd;
+		string base_dir_target = user_home;
+		
+		//check zip file
+		if (!file_exists(app_settings_zip_file)){
+			log_error(_("File not found") + ": '%s'".printf(app_settings_zip_file));
+			return false;
+		}
+	
+		//delete existing target folders
+		foreach(AppConfig config in config_list){
+			if (config.is_selected){
+				string dir = config.name.replace("~", base_dir_target);
+				if (dir_exists(dir)){
+					cmd = "rm -rf \"%s\"".printf(dir);
+					execute_command_sync(cmd);
+				}
+			}
+		}
+
+		//create base_dir_target
+		create_dir(base_dir_target);
+		
+		//create list of selected items to extract from zip file
+		string dir_list = "";
+		foreach(AppConfig config in config_list){
+			if (config.is_selected){
+				dir_list += " '%s'".printf(config.name.replace("~/",""));
+			}
+		}
+		
+		//get file count before unzipping
+		progress_total = 0;
+		progress_count = 0;
+		cmd = "tar -tzvf '%s' -C '%s' %s".printf(app_settings_zip_file, base_dir_target, dir_list);
+		string txt = execute_command_sync_get_output(cmd);
+		progress_total += txt.split("\n").length;
+
+		//unzip selected items to home directory
+		cmd = "tar -xzvf '%s' -C '%s' %s".printf(app_settings_zip_file, base_dir_target, dir_list);
+		status_line = "";
+		
+		if (gui_mode){
+			run_gzip(cmd);
+		}
+		else{
+			stdout.printf(_("Restoring Application Settings..."));
+			stdout.flush();
+			
+			int status = Posix.system(cmd + " 1> /dev/null");
+			if (status == 0){
+				stdout.printf("[ OK ]\n");
+			}
+			else{
+				stdout.printf("[ status=%d ]\n".printf(status));
+			}
+			return (status == 0);
+		}
+
+		return true;
+	}
+
+	public void update_ownership(Gee.ArrayList<AppConfig> config_list){
+		//update ownership
+		foreach(AppConfig config in config_list){
+			if (config.is_selected){
+				set_directory_ownership(config.name.replace("~", user_home), user_login);
+			}
+		}
+	}
+	
+	/* Misc */
+	
+	public bool take_ownership(){
+		bool is_success = set_directory_ownership(user_home, user_login);
+		if (is_success){
+			log_msg(_("Ownership changed to '%s' for files in directory '%s'").printf(user_login, user_home));
+			return true;
+		}
+		else{
+			log_msg(_("Failed to change file ownership"));
+			return false;
+		}
+	}
+
 	public void exit_app(){
+
+		save_app_config();
+		
 		try{
+			//delete temporary files
 			var f = File.new_for_path(temp_dir);
 			if (f.query_exists()){
 				f.delete();
@@ -1248,4 +1597,29 @@ public class Theme : GLib.Object{
 		type = _type;
 		system_path = "/usr/share/%ss/%s".printf(type, name);
 	}
+}
+
+public class AppConfig : GLib.Object{
+	public string name = "";
+	public string description = "";
+	public bool is_selected = true;
+	
+	public AppConfig(string dir_name){
+		name = dir_name;
+	}
+	
+	public string path{
+		owned get{
+			string str = name.replace("~",App.user_home);
+			return str.strip();
+		}
+	}
+	
+	public string pattern{
+		owned get{
+			string str = path + "/**";
+			return str.strip();
+		}
+	}
+	
 }
