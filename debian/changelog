@@ -1,9 +1,9 @@
-aptik (1.3) saucy; urgency=low
+aptik (1.4) saucy; urgency=low
 
-  * Fix for backup folder selection issue on Ubuntu 12.04
+  * Added option to backup & restore application settings
   
-  * Added button to open backup dir
+  * Hardcoded icons replaced with icons from system theme
   
-  * Updated status tooltips and icons for package treeview
+  * Fixed an issue where restoring PPAs would fail without error message 
   
- -- Tony George <tony.george.kol@gmail.com>  Sun, 09 Feb 2014 10:00:00 +0530
+ -- Tony George <tony.george.kol@gmail.com>  Tue, 01 Apr 2014 10:00:00 +0530
