@@ -1326,6 +1326,7 @@ done
 				if (!name.has_prefix(".")){ continue; }
 				if (name == ".config"){ continue; }
 				if (name == ".local"){ continue; }
+				if (name == ".gvfs"){ continue; }
 				if (name.has_suffix(".lock")){ continue; }
 				
 				AppConfig entry = new AppConfig("~/%s".printf(name));
