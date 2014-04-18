@@ -141,7 +141,6 @@ public class MainWindow : Window {
 
 	    //vboxMain
         vbox_main = new Box (Orientation.VERTICAL, 0);
-        vbox_main.margin = 3;
         add (vbox_main);
 
         //add toolbar
