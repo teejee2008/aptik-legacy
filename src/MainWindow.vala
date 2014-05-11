@@ -1512,16 +1512,17 @@ public class MainWindow : Window {
 	}
 	
 	private void btn_about_clicked (){
-		var dialog = new Gtk.AboutDialog();
-		dialog.set_destroy_with_parent (true);
+		var dialog = new AboutWindow();
 		dialog.set_transient_for (this);
-		dialog.set_modal (true);
-		
-		//dialog.artists = {"", ""};
-		dialog.authors = {"Tony George"};
+
+		dialog.authors = {
+			"Tony George:teejeetech@gmail.com"
+		};
+
+		dialog.translators = null;
 		dialog.documenters = null; 
-		dialog.translator_credits = ""; 
-		//dialog.add_credit_section("Sponsors", "yy");
+		dialog.artists = null;
+		dialog.donations = null;
 		
 		dialog.program_name = AppName;
 		dialog.comments = _("System migration toolkit for Ubuntu-based distributions");
@@ -1530,18 +1531,11 @@ public class MainWindow : Window {
 		dialog.logo = App.get_app_icon(128);
 
 		dialog.license = "This program is free for personal and commercial use and comes with absolutely no warranty. You use this program entirely at your own risk. The author will not be liable for any damages arising from the use of this program.";
-		dialog.wrap_license = true;
+		dialog.website = "http://teejeetech.in";
+		dialog.website_label = "http://teejeetech.blogspot.in";
 
-		dialog.website = "http://teejeetech.blogspot.in";
-		dialog.website_label = "TeeJeeTech.in";
-
-		dialog.response.connect ((response_id) => {
-			if (response_id == Gtk.ResponseType.CANCEL || response_id == Gtk.ResponseType.DELETE_EVENT) {
-				dialog.hide_on_delete ();
-			}
-		});
-
-		dialog.present ();
+		dialog.initialize();
+		dialog.show_all();
 	}
 	
 
