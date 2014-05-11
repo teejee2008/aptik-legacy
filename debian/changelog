@@ -1,4 +1,4 @@
-aptik (1.4.2) trusty; urgency=low
+aptik (1.4.3) trusty; urgency=low
 
   * Added option to backup & restore application settings
   

@@ -19,14 +19,15 @@ long_line_column=80
 [files]
 current_page=1
 FILE_NAME_0=29368;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FUtility.vala;0;4
-FILE_NAME_1=1185;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FMain.vala;0;4
-FILE_NAME_2=0;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FMainWindow.vala;0;4
-FILE_NAME_3=558;Make;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2Fmakefile;0;4
+FILE_NAME_1=1232;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FMain.vala;0;4
+FILE_NAME_2=63365;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FMainWindow.vala;0;4
+FILE_NAME_3=897;Make;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2Fmakefile;0;4
 FILE_NAME_4=970;Conf;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fdebian%2Fcontrol;0;4
-FILE_NAME_5=12;None;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fdebian%2Fchangelog;0;4
+FILE_NAME_5=249;None;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fdebian%2Fchangelog;0;4
 FILE_NAME_6=3943;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FAptikConsole.vala;0;4
 FILE_NAME_7=3138;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FDonationWindow.vala;0;4
 FILE_NAME_8=0;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Faptik%2Fsrc%2FLogWindow.vala;0;4
+FILE_NAME_9=25532;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Fconky-manager%2Fsrc%2FMainWindow.vala;0;4
 
 [VTE]
 last_dir=/home/teejee
