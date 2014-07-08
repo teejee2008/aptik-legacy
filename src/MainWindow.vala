@@ -570,7 +570,7 @@ public class MainWindow : Window {
 		//col_ppa_select ----------------------
 		
 		TreeViewColumn col_ppa_select = new TreeViewColumn();
-		col_ppa_select.title = " " + _("") + " ";
+		col_ppa_select.title = "";
 		CellRendererToggle cell_ppa_select = new CellRendererToggle ();
 		cell_ppa_select.activatable = true;
 		col_ppa_select.pack_start (cell_ppa_select, false);
@@ -741,7 +741,7 @@ public class MainWindow : Window {
 		//col_config_select ----------------------
 		
 		TreeViewColumn col_config_select = new TreeViewColumn();
-		col_config_select.title = " " + _("") + " ";
+		col_config_select.title = "";
 		CellRendererToggle cell_config_select = new CellRendererToggle ();
 		cell_config_select.activatable = true;
 		col_config_select.pack_start (cell_config_select, false);
@@ -908,7 +908,7 @@ public class MainWindow : Window {
 		//col_theme_select ----------------------
 		
 		TreeViewColumn col_theme_select = new TreeViewColumn();
-		col_theme_select.title = " " + _("") + " ";
+		col_theme_select.title = "";
 		CellRendererToggle cell_theme_select = new CellRendererToggle ();
 		cell_theme_select.activatable = true;
 		col_theme_select.pack_start (cell_theme_select, false);
@@ -1519,7 +1519,10 @@ public class MainWindow : Window {
 			"Tony George:teejeetech@gmail.com"
 		};
 
-		dialog.translators = null;
+		dialog.translators = {
+			"giulux (Italian)"
+		}; 
+		
 		dialog.documenters = null; 
 		dialog.artists = null;
 		dialog.donations = null;

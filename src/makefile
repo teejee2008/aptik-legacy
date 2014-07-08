@@ -23,7 +23,7 @@ install:
 	mkdir -p "$(DESTDIR)$(launcherdir)"
 	mkdir -p "$(DESTDIR)$(sharedir)/aptik"
 	mkdir -p "$(DESTDIR)$(sharedir)/pixmaps"
-	#mkdir -p "$(DESTDIR)$(localedir)/it_IT/LC_MESSAGES"
+	mkdir -p "$(DESTDIR)$(localedir)/it_IT/LC_MESSAGES"
 	
 	#binary
 	install -m 0755 aptik "$(DESTDIR)$(bindir)"
@@ -40,7 +40,7 @@ install:
 	install -m 0755 ./share/pixmaps/aptik.png "$(DESTDIR)$(sharedir)/pixmaps/"
 	
 	#translations
-	#msgfmt --check --verbose -o "$(DESTDIR)$(localedir)/it_IT/LC_MESSAGES/aptik.mo" ../po/aptik-it.po
+	msgfmt --check --verbose -o "$(DESTDIR)$(localedir)/it_IT/LC_MESSAGES/aptik.mo" ../po/aptik-it.po
 
 uninstall:
 
@@ -58,4 +58,4 @@ uninstall:
 	rm -f "$(DESTDIR)$(sharedir)/pixmaps/aptik.png"
 	
 	#translations
-	#rm -f $(DESTDIR)$(localedir)/*/LC_MESSAGES/aptik.mo
+	rm -f $(DESTDIR)$(localedir)/*/LC_MESSAGES/aptik.mo
