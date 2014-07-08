@@ -1681,92 +1681,60 @@ public class MainWindow : Window {
 			return;
 		}
 
-		int count = 0;
-		int count_total = 0;
 		string cmd = "";
 		string std_out;
 		string std_err;
 		int ret_val;
 
-		//get total count
-		foreach(Ppa ppa in ppa_list_user.values){
-			if (ppa.is_selected && !ppa.is_installed){
-				count_total++;
-			}
-		}
-		
 		//add PPAs
+		cmd += "echo ''\n";
 		foreach(Ppa ppa in ppa_list_user.values){
 			if (ppa.is_selected && !ppa.is_installed){
-				lbl_status.label = _("Adding PPA") + " '%s'".printf(ppa.name);
-				gtk_do_events();
-				
-				cmd = "add-apt-repository -y ppa:%s".printf(ppa.name);
-				Posix.system(cmd);
-
-				gtk_do_events();
+				cmd += "add-apt-repository -y ppa:%s\n".printf(ppa.name);
+				cmd += "echo ''\n";
 			}
-			
-			count++;
-			progressbar.fraction = count / (count_total * 1.0);
-			gtk_do_events();
 		}
 		
-		status = _("Updating Package Information...");
-		progress_begin(status);
+		iconify();
+		gtk_do_events();
+		
+		cmd += "echo ''\n";
+		cmd += "echo '" + _("Updating Package Information...") + "'\n";
+		cmd += "echo ''\n";
+		cmd += "apt-get update\n"; //> /dev/null 2>&1
+		cmd += "echo ''\n";
+		cmd += "\n\necho '" + _("Finished adding PPAs") + "'";
+		cmd += "\necho '" + _("Close window to exit...") + "'";
+		cmd += "\nread dummy";
+		execute_command_script_in_terminal_sync(create_temp_bash_script(cmd));
 
-		App.run_apt_update();
-		while(App.is_running){
-			update_progress(status);
-		}
+		deiconify();
+		gtk_do_events();
 
 		//verify
 		status = _("Checking installed PPAs...");
 		progress_begin(status);
 		var ppa_list_new = App.list_ppa();
 		
-		string error_log = "";
 		string error_list = "";
 		foreach(Ppa ppa in ppa_list_user.values){
 			if (ppa.is_selected && !ppa.is_installed){
 				if (!ppa_list_new.has_key(ppa.name)){
-					
 					error_list += "%s\n".printf(ppa.name);
-					
-					cmd = "sudo add-apt-repository -y ppa:%s".printf(ppa.name);
-					error_log += ">> %s\n".printf(cmd);
-					
-					try {
-						Process.spawn_command_line_sync(cmd, out std_out, out std_err, out ret_val);
-					}
-					catch (Error e){
-						log_error (e.message);
-					}
-					
-					error_log += "\n\n%s\n%s\n".printf(std_out, std_err);
 				}
 			}
 		}
 		
 		//show message
-		if (error_log.length == 0){
+		if (error_list.length == 0){
 			string title = _("Finished");
 			string msg = _("PPAs added successfully");
 			gtk_messagebox(title, msg, this, false);
 		}
 		else{
-			//remove extra empty lines
-			while (error_log.contains("\n\n\n")){
-				error_log = error_log.replace("\n\n\n","\n\n");
-			}
-			
-			var dialog = new LogWindow();
-			dialog.set_transient_for(this);
-			dialog.show_all();
-			dialog.set_title(_("Finished with Errors"));
-			dialog.set_log_msg(_("Following PPAs could not be added") + ":\n%s\n%s\n".printf(error_list, error_log));
-			int response = dialog.run();
-			dialog.destroy();
+			string title = _("Finished with Errors");
+			string msg = _("Following PPAs could not be added") + ":\n\n%s\n".printf(error_list);
+			gtk_messagebox(title, msg, this, false);
 		}
 		
 		show_home_page();
