@@ -1698,7 +1698,7 @@ public class MainWindow : Window {
 			}
 		}
 		
-		iconify();
+		//iconify();
 		gtk_do_events();
 		
 		cmd += "echo ''\n";
@@ -1711,7 +1711,7 @@ public class MainWindow : Window {
 		cmd += "\nread dummy";
 		execute_command_script_in_terminal_sync(create_temp_bash_script(cmd));
 
-		deiconify();
+		//deiconify();
 		gtk_do_events();
 
 		//verify
@@ -2002,7 +2002,7 @@ public class MainWindow : Window {
 		if (response == Gtk.ResponseType.YES){
 			progress_begin(_("Installing packages..."));
 			
-			iconify();
+			//iconify();
 			gtk_do_events();
 			
 			string cmd = "apt-get install -y %s".printf(list_install);
@@ -2012,7 +2012,7 @@ public class MainWindow : Window {
 			execute_command_script_in_terminal_sync(create_temp_bash_script(cmd));
 			//success/error will be displayed by apt-get in terminal
 			
-			deiconify();
+			//deiconify();
 			gtk_do_events();
 		}
 		
