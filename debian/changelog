@@ -1,6 +1,10 @@
 aptik (1.4.4) trusty; urgency=medium
 
   * Fixed: PPA restore fails on Mint 17
+
+  * Fixed: Unselected missing packages were listed in install summary
+  
+  * Main window will not be minimized before restore
   
   * Added Italian translation
   

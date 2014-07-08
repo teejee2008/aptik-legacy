@@ -522,6 +522,7 @@ public class Main : GLib.Object{
 			//check if available/installed/top/default/manual
 			if (pkg_list_all.has_key(pkg_name)){
 				Package pkg_ref = pkg_list_all[pkg_name];
+				
 				//copy description and flags
 				pkg.description = pkg_ref.description;
 				pkg.is_available = pkg_ref.is_available;
@@ -529,9 +530,14 @@ public class Main : GLib.Object{
 				pkg.is_top = pkg_ref.is_top;
 				pkg.is_default = pkg_ref.is_default;
 				pkg.is_manual = pkg_ref.is_manual;
+	
+				//un-select missing packages
+				if (!pkg.is_available){
+					pkg.is_selected = false;
+				}
 			}
 			else{
-				//pkg is NOT available/installed/top/default/manual
+				//pkg is NOT available/installed/top/default/manual??
 			}
 		}
 		

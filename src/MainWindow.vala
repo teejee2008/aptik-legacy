@@ -1929,6 +1929,7 @@ public class MainWindow : Window {
 	private void btn_restore_packages_clicked_thread(){
 		pkg_list_all = App.list_all();
 		pkg_list_user = App.read_package_list(pkg_list_all);
+
 		is_restore_view = true;
 		tv_packages_refresh();
 		btn_backup_packages_exec.visible = false;
