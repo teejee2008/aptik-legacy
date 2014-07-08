@@ -1,9 +1,7 @@
-aptik (1.4.3) trusty; urgency=low
+aptik (1.4.4) trusty; urgency=medium
 
-  * Added option to backup & restore application settings
+  * Fixed: PPA restore fails on Mint 17
   
-  * Hardcoded icons replaced with icons from system theme
+  * Added Italian translation
   
-  * Fixed an issue where restoring PPAs would fail without error message 
-  
- -- Tony George <tony.george.kol@gmail.com>  Tue, 01 Apr 2014 10:00:00 +0530
+ -- Tony George <tony.george.kol@gmail.com>  Tue, 08 Jul 2014 10:00:00 +0530
