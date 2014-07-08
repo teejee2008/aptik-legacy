@@ -49,6 +49,8 @@ const string LOCALE_DIR = "/usr/share/locale";
 extern void exit(int exit_code);
 
 public class Main : GLib.Object{
+	public static string DEFAULT_PKG_LIST_FILE = "/var/log/installer/initial-status.gz";
+	
 	public string temp_dir = "";
 	public string backup_dir = "";
 	public string share_dir = "/usr/share";
@@ -387,17 +389,19 @@ public class Main : GLib.Object{
 	public Gee.HashMap<string,Package> list_default(){
 		var pkg_list = new Gee.HashMap<string,Package>();
 		
-		string txt = "";
-		execute_command_script_sync("gzip -dc /var/log/installer/initial-status.gz | sed -n 's/^Package: //p' | sort | uniq", out txt, null);
-		
-		foreach(string line in txt.split("\n")){
-			if (line.strip() == "") { continue; }
+		if (file_exists(DEFAULT_PKG_LIST_FILE)){
+			string txt = "";
+			execute_command_script_sync("gzip -dc '%s' | sed -n 's/^Package: //p' | sort | uniq".printf(DEFAULT_PKG_LIST_FILE), out txt, null);
 			
-			Package pkg = new Package(line.strip());
-			pkg.is_default = true;
-			pkg.is_installed = true;
-			pkg.is_available = true;
-			pkg_list[pkg.name] = pkg;
+			foreach(string line in txt.split("\n")){
+				if (line.strip() == "") { continue; }
+				
+				Package pkg = new Package(line.strip());
+				pkg.is_default = true;
+				pkg.is_installed = true;
+				pkg.is_available = true;
+				pkg_list[pkg.name] = pkg;
+			}
 		}
 
 		return pkg_list;
@@ -537,7 +541,9 @@ public class Main : GLib.Object{
 				}
 			}
 			else{
-				//pkg is NOT available/installed/top/default/manual??
+				//pkg is NOT available/installed/top/default/manual
+				//pkg is listed in backup file but not installed or available on the current system
+				pkg.is_selected = false;
 			}
 		}
 		

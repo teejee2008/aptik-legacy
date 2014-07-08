@@ -1793,20 +1793,35 @@ public class MainWindow : Window {
 		var list_top = App.list_top();
 		var list_default = App.list_default();
 		
-		//unselect all
-		foreach(Package pkg in list_top.values){
-			list_top[pkg.name].is_selected = false;
-		}
-		//select manual
-		foreach(Package pkg in list_manual.values){
-			if (list_top.has_key(pkg.name)){
+		if (list_default.size == 0){
+			string title = _("File Missing");
+			string msg = _("The list of default packages is missing on this system") + ":\n'%s'\n\n".printf(App.DEFAULT_PKG_LIST_FILE);
+			msg += _("It is not possible to determine whether a package was installed by you, or whether it was installed along with the Linux distribution.") + "\n\n";
+			msg += _("All top-level installed packages have been selected by default.") + " ";
+			msg += _("Please un-select the packages that are not required.") + "\n";
+			gtk_messagebox(title, msg, this, false);
+			
+			//select all
+			foreach(Package pkg in list_top.values){
 				list_top[pkg.name].is_selected = true;
 			}
 		}
-		//set default flag
-		foreach(Package pkg in list_default.values){
-			if (list_top.has_key(pkg.name)){
-				list_top[pkg.name].is_default = true;
+		else{
+			//unselect all
+			foreach(Package pkg in list_top.values){
+				list_top[pkg.name].is_selected = false;
+			}
+			//select manual
+			foreach(Package pkg in list_manual.values){
+				if (list_top.has_key(pkg.name)){
+					list_top[pkg.name].is_selected = true;
+				}
+			}
+			//set default flag
+			foreach(Package pkg in list_default.values){
+				if (list_top.has_key(pkg.name)){
+					list_top[pkg.name].is_default = true;
+				}
 			}
 		}
 		
@@ -1816,8 +1831,13 @@ public class MainWindow : Window {
 		tv_packages_refresh();
 		btn_backup_packages_exec.visible = true;
 		btn_restore_packages_exec.visible = false;
-		lbl_packages_message.label = _("Select packages to backup") + ". " + 
+		
+		lbl_packages_message.label = _("Select packages to backup");
+		if (list_default.size > 0){
+			 lbl_packages_message.label += ". " + 
 			("Extra packages installed by user are selected by default") + ".";
+		}
+		
 		title = _("Backup Software Selections");
 		
 		notebook.page = 1;
@@ -2015,9 +2035,9 @@ public class MainWindow : Window {
 			
 			//deiconify();
 			gtk_do_events();
+			
+			show_home_page();
 		}
-		
-		show_home_page();
 	}
 	
 	private void get_package_installation_summary(){
