@@ -1,11 +1,11 @@
-prefix = /usr
-bindir = $(prefix)/bin
-sharedir = $(prefix)/share
-localedir = $(sharedir)/locale
-launcherdir = $(sharedir)/applications
-mandir = $(sharedir)/man
-man1dir = $(mandir)/man1
-CFLAGS = --std=c99
+prefix=/usr
+bindir=$(prefix)/bin
+sharedir=$(prefix)/share
+localedir=$(sharedir)/locale
+launcherdir=$(sharedir)/applications
+mandir=$(sharedir)/man
+man1dir=$(mandir)/man1
+CFLAGS=--std=c99
 
 all:
 	valac -X -D'GETTEXT_PACKAGE="aptik"' --Xcc="-lm" --thread "Main.vala" "Utility.vala" "AptikConsole.vala" -o aptik --pkg glib-2.0 --pkg gio-unix-2.0 --pkg posix --pkg gtk+-3.0 --pkg gee-1.0 --pkg libsoup-2.4 --pkg json-glib-1.0
@@ -15,7 +15,6 @@ clean:
 	rm -rf *.o aptik
 
 install:
-	mkdir -p "$(DESTDIR)"
 	mkdir -p "$(DESTDIR)$(bindir)"
 	mkdir -p "$(DESTDIR)$(sharedir)"
 	mkdir -p "$(DESTDIR)$(mandir)"

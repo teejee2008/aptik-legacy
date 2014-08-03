@@ -1,6 +1,6 @@
-./installer/aptik-latest-i386.run
-./installer/aptik-latest-amd64.run
-./installer/amd64
-./installer/i386
-./src/aptik
-./src/aptik-gtk
+src/aptik
+src/aptik-gtk
+installer/amd64
+installer/i386
+installer/*.deb
+installer/*.run
