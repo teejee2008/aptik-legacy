@@ -27,6 +27,7 @@ install:
 	#binary
 	install -m 0755 aptik "$(DESTDIR)$(bindir)"
 	install -m 0755 aptik-gtk "$(DESTDIR)$(bindir)"
+	install -m 0755 aptik-uninstall "$(DESTDIR)$(bindir)"
 	
 	#shared files
 	cp -dpr --no-preserve=ownership -t "$(DESTDIR)$(sharedir)/aptik" ./share/aptik/*
@@ -46,6 +47,7 @@ uninstall:
 	#binary
 	rm -f "$(DESTDIR)$(bindir)/aptik"
 	rm -f "$(DESTDIR)$(bindir)/aptik-gtk"
+	rm -f "$(DESTDIR)$(bindir)/aptik-uninstall"
 	
 	#shared files
 	rm -rf "$(DESTDIR)$(sharedir)/aptik"

@@ -61,7 +61,22 @@ CD_POP() {
 	fi
 }
 
+BACKUP_IFS(){
+	IFS_backup="${IFS}"
+}
+
+SET_IFS_NEWLINE(){
+	IFS=$'\n'
+}
+
+RESET_IFS() {
+	if [ ! -z "${IFS_backup}" ]; then
+		IFS="${IFS_backup}"
+	fi
+}
+
 EXIT(){
+	RESET_IFS
 	CD_POP
 	exit $1
 }
@@ -98,15 +113,19 @@ RUN_AS_ADMIN() {
 CD_PUSH
 CHECK_COLOR_SUPPORT
 RUN_AS_ADMIN
+BACKUP_IFS
 
 if ! command -v apt-get >/dev/null 2>&1; then
-	MSG_ERROR "This application can be used only on Debian-based systems!"
+	MSG_ERROR "'apt-get' not found"
+	MSG_ERROR "This application can be used only on Debian-based systems"
 	WAIT_FOR_INPUT
 	EXIT 1
 fi
-	
+
+SET_IFS_NEWLINE
+
 MSG_INFO "Expanding directories..."
-for f in `find ./ -type d -exec echo {} \;`; do
+for f in `find ./ -type d -exec echo "{}" \;`; do
     directory=`echo "$f" | sed -r 's/^.{2}//'`
     mkdir -p -m 755 "/$directory"
     echo "/$directory"
@@ -114,12 +133,14 @@ done
 echo ""
 
 MSG_INFO "Installing files..."
-for f in `find ./ -type f \( ! -iname "install.sh" \) -exec echo {} \;`; do
+for f in `find ./ -type f \( ! -iname "install.sh" \) -exec echo "{}" \;`; do
     file=`echo "$f" | sed -r 's/^.{2}//'`
     install -m 0755 "./$file" "/$file"
     echo "/$file"
 done
 echo ""
+
+RESET_IFS
 
 if [ -f /etc/debian_version ]; then
 	if command -v apt-get >/dev/null 2>&1; then
@@ -128,24 +149,18 @@ if [ -f /etc/debian_version ]; then
 		for i in "${debian_depends[@]}"; do
 		  MSG_INFO "Installing: $i"
 		  apt-get -y install $i
+		  echo ""
 		done
 	fi
 fi
 echo ""
 
-if [ $? -eq 0 ]; then
-	MSG_INFO "Installed successfully."
-	echo ""
-	MSG_INFO "Start ${app_fullname} using the shortcut in the Applications Menu"
-	MSG_INFO "or by running the command: sudo ${app_name}"	
-	MSG_INFO "If it fails to start, check and install following packages:"
-	MSG_WARN "Required: ${generic_depends[@]}"
-	#MSG_WARN "Optional: ${generic_recommends[@]}"
-	WAIT_FOR_INPUT
-	EXIT 0
-else
-	MSG_ERROR "Install completed with errors"
-	EXIT 1
-fi
-
-CD_POP
+MSG_INFO "Install completed."
+echo ""
+MSG_INFO "Start ${app_fullname} using the shortcut in the Applications Menu"
+MSG_INFO "or by running the command: sudo ${app_name}"	
+MSG_INFO "If it fails to start, check and install following packages:"
+MSG_WARNING "Required: ${generic_depends[@]}"
+#MSG_WARNING "Optional: ${generic_recommends[@]}"
+WAIT_FOR_INPUT
+EXIT 0
