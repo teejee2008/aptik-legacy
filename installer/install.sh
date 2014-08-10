@@ -28,26 +28,41 @@ CHECK_COLOR_SUPPORT() {
 }
 
 MSG_INFO() {
+	add_newline=''
+	if [ "$2" == 0 ]; then
+		add_newline='-n'
+	fi
+	
 	if [ $COLORS_SUPPORTED -eq 0 ]; then
-        echo -e "[${Yellow}*${Reset}] ${Green}$1${Reset}"
+        echo -e ${add_newline} "[${Yellow}*${Reset}] ${Green}$1${Reset}"
     else
-        echo -e "[*] $1"
+        echo -e ${add_newline} "[*] $1"
     fi
 }
 
 MSG_WARNING() {
+	add_newline=''
+	if [ "$2" == 0 ]; then
+		add_newline='-n'
+	fi
+	
 	if [ $COLORS_SUPPORTED -eq 0 ]; then
-        echo -e "[${Red}!${Reset}] ${Yellow}$1${Reset}"
+        echo -e ${add_newline} "[${Red}!${Reset}] ${Yellow}$1${Reset}"
     else
-        echo -e "[!] $1"
+        echo -e ${add_newline} "[!] $1"
     fi
 }
 
 MSG_ERROR() {
+	add_newline=''
+	if [ "$2" == 0 ]; then
+		add_newline='-n'
+	fi
+	
     if [ $COLORS_SUPPORTED -eq 0 ]; then
-        echo -e "[${Red}X${Reset}] ${Yellow}$1${Reset}"
+        echo -e ${add_newline} "[${Red}X${Reset}] ${Yellow}$1${Reset}"
     else
-        echo -e "[X] $1"
+        echo -e ${add_newline} "[X] $1"
     fi
 }
 
@@ -142,8 +157,22 @@ echo ""
 
 RESET_IFS
 
-if [ -f /etc/debian_version ]; then
-	if command -v apt-get >/dev/null 2>&1; then
+install_dependencies=y
+
+if command -v apt-get >/dev/null 2>&1; then
+
+	if [ -f /etc/debian_version ]; then
+		install_dependencies=y
+	else
+		MSG_INFO "Found 'apt-get' package manager" 
+		MSG_INFO "Install dependencies with 'apt-get'? (y/n):" "0"
+		read install_dependencies
+		if [ "$install_dependencies" == "" ]; then
+			install_dependencies=y
+		fi
+	fi
+	
+	if [ "$install_dependencies" == "y" ]; then
 		MSG_INFO "Installing Debian packages..."
 		echo ""
 		for i in "${debian_depends[@]}"; do
@@ -157,10 +186,12 @@ echo ""
 
 MSG_INFO "Install completed."
 echo ""
-MSG_INFO "Start ${app_fullname} using the shortcut in the Applications Menu"
-MSG_INFO "or by running the command: sudo ${app_name}"	
-MSG_INFO "If it fails to start, check and install following packages:"
-MSG_WARNING "Required: ${generic_depends[@]}"
-#MSG_WARNING "Optional: ${generic_recommends[@]}"
+echo "******************************************************************"
+echo "Start ${app_fullname} using the shortcut in the Applications Menu"
+echo "or by running the command: sudo ${app_name}"	
+echo "If it fails to start, check and install the following packages:"
+echo "Required: ${generic_depends[@]}"
+echo "Optional: (none)"
+echo "******************************************************************"
 WAIT_FOR_INPUT
 EXIT 0
