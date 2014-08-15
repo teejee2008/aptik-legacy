@@ -1,15 +1,5 @@
-aptik (1.5) trusty; urgency=medium
+aptik (1.5.1) trusty; urgency=medium
 
-  * Fixed: PPA restore fails on Mint 17
+  * Updated installer and added uninstaller
 
-  * Fixed: Unselected missing packages were listed in install summary
-  
-  * Added a warning if the list of default packages is missing
-  
-  * Main window will not be minimized before restore
-  
-  * Keep the restore window open after user cancels package restore
-  
-  * Added Italian translation
-  
- -- Tony George <tony.george.kol@gmail.com>  Tue, 08 Jul 2014 10:00:00 +0530
+ -- Tony George <tony.george.kol@gmail.com>  Tue, 15 Aug 2014 10:00:00 +0530
