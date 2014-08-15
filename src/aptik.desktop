@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Aptik
 MimeType=
-Exec=gksu aptik-gtk 
+Exec=aptik-launcher
 Type=Application
 GenericName=System Migration Utility
 Terminal=false

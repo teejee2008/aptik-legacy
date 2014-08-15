@@ -115,7 +115,7 @@ public class Main : GLib.Object{
 			temp_dir = get_temp_file_path();
 			var f = File.new_for_path(temp_dir);
 			if (f.query_exists()){
-				Posix.system("sudo rm -rf %s".printf(temp_dir));
+				Posix.system("rm -rf %s".printf(temp_dir));
 			}
 			f.make_directory_with_parents();
 			
@@ -812,7 +812,7 @@ done
 			return false;
 		}
 		
-		string cmd = "sudo rsync -ai --numeric-ids --list-only";
+		string cmd = "rsync -ai --numeric-ids --list-only";
 		cmd += " --exclude=lock --exclude=partial/";
 		cmd += " %s %s".printf(archives_dir + "/","/var/cache/apt/archives/");
 		
@@ -1119,7 +1119,7 @@ done
 			return false;
 		}
 		
-		string cmd = "sudo tar -xzvf '%s' --directory='%s'".printf(theme.zip_file_path, theme_dir_system);
+		string cmd = "tar -xzvf '%s' --directory='%s'".printf(theme.zip_file_path, theme_dir_system);
 		status_line = theme.zip_file_path;
 		
 		if (gui_mode){
@@ -1145,13 +1145,13 @@ done
 			int exit_code;
 			string cmd;
 			
-			cmd = "sudo find '%s' -type d -exec chmod 755 '{}' ';'".printf(path);
+			cmd = "find '%s' -type d -exec chmod 755 '{}' ';'".printf(path);
 			Process.spawn_command_line_sync(cmd, null, null, out exit_code);
 			if (exit_code != 0){
 				return false;
 			}
 			
-			cmd = "sudo find '%s' -type f -exec chmod 644 '{}' ';'".printf(path);
+			cmd = "find '%s' -type f -exec chmod 644 '{}' ';'".printf(path);
 			Process.spawn_command_line_sync(cmd, null, null, out exit_code);
 			if (exit_code != 0){
 				return false;
