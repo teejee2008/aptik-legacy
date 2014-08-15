@@ -45,6 +45,12 @@ public class AptikConsole : GLib.Object{
 		
 		LOG_TIMESTAMP = false;
 		
+		if (!user_is_admin()){
+			log_msg(_("Aptik needs admin access to backup and restore packages."));
+			log_msg(_("Please run the application as admin (using 'sudo' or 'su')"));
+			exit(0);
+		}
+		
 		App = new Main(args,false);
 		
 		var console =  new AptikConsole();
