@@ -38,6 +38,7 @@ using TeeJee.Misc;
 
 public Main App;
 public const string AppName = "Aptik";
+public const string AppShortName = "aptik";
 public const string AppVersion = "1.5";
 public const string AppAuthor = "Tony George";
 public const string AppAuthorEmail = "teejeetech@gmail.com";
@@ -1606,37 +1607,6 @@ done
 		catch (Error e) {
 			log_error (e.message);
 		}
-	}
-
-	public Gdk.Pixbuf? get_app_icon(int icon_size){
-		return get_shared_icon("aptik","aptik.png",icon_size,"pixmaps");
-	}
-	
-	public Gdk.Pixbuf? get_shared_icon(string icon_name, string fallback_icon_file_name, int icon_size, string icon_directory = "aptik/images"){
-		Gdk.Pixbuf pix_icon = null;
-		
-		try {
-			Gtk.IconTheme icon_theme = Gtk.IconTheme.get_default();
-			pix_icon = icon_theme.load_icon (icon_name, icon_size, 0);
-		} catch (Error e) {
-			//log_error (e.message);
-		}
-		
-		string fallback_icon_file_path = App.share_dir + "/%s/%s".printf(icon_directory, fallback_icon_file_name);
-		
-		if (pix_icon == null){ 
-			try {
-				pix_icon = new Gdk.Pixbuf.from_file_at_size (fallback_icon_file_path, icon_size, icon_size);
-			} catch (Error e) {
-				log_error (e.message);
-			}
-		}
-		
-		if (pix_icon == null){ 
-			log_error (_("Missing Icon") + ": '%s', '%s'".printf(icon_name, fallback_icon_file_path));
-		}
-		
-		return pix_icon; 
 	}
 }
 

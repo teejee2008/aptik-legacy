@@ -136,7 +136,7 @@ public class MainWindow : Window {
         //resizable = false;
         destroy.connect (Gtk.main_quit);
         set_default_size (def_width, def_height);	
-		icon = App.get_app_icon(16);
+		icon = get_app_icon(16);
 
 	    //vboxMain
         vbox_main = new Box (Orientation.VERTICAL, 0);
@@ -216,8 +216,7 @@ public class MainWindow : Window {
         int row = -1;
         
 		row++;
-		var pix = App.get_shared_icon("x-system-software-sources","ppa.svg",icon_size_list);
-		var img = new Gtk.Image.from_pixbuf(pix);
+		var img = get_shared_icon("x-system-software-sources","ppa.svg",icon_size_list);
 		grid_backup_buttons.attach(img,0,row,1,1);
 
         //lbl_backup_ppa
@@ -245,8 +244,7 @@ public class MainWindow : Window {
 		btn_restore_ppa.clicked.connect(btn_restore_ppa_clicked);
 
 		row++;
-		pix = App.get_shared_icon("download","cache.svg",icon_size_list);
-		img = new Gtk.Image.from_pixbuf(pix);
+		img = get_shared_icon("download","cache.svg",icon_size_list);
 		grid_backup_buttons.attach(img,0,row,1,1);
 
 	    //lbl_backup_cache
@@ -272,8 +270,7 @@ public class MainWindow : Window {
 		grid_backup_buttons.attach(btn_restore_cache,3,row,1,1);
 
 		row++;
-		pix = App.get_shared_icon("gnome-package","package.svg",icon_size_list);
-		img = new Gtk.Image.from_pixbuf(pix);
+		img = get_shared_icon("gnome-package","package.svg",icon_size_list);
 		grid_backup_buttons.attach(img,0,row,1,1);
 
         //lbl_backup_packages
@@ -302,8 +299,7 @@ public class MainWindow : Window {
 		btn_restore_packages.clicked.connect(btn_restore_packages_clicked);
 
 		row++;
-		pix = App.get_shared_icon("gnome-settings","config.svg",icon_size_list);
-		img = new Gtk.Image.from_pixbuf(pix);
+		img = get_shared_icon("gnome-settings","config.svg",icon_size_list);
 		grid_backup_buttons.attach(img,0,row,1,1);
 
         //lbl_backup_config
@@ -331,8 +327,7 @@ public class MainWindow : Window {
 		btn_restore_config.clicked.connect(btn_restore_config_clicked);
 		
 		row++;
-		pix = App.get_shared_icon("preferences-theme","theme.svg",icon_size_list);
-		img = new Gtk.Image.from_pixbuf(pix);
+		img = get_shared_icon("preferences-theme","theme.svg",icon_size_list);
 		grid_backup_buttons.attach(img,0,row,1,1);
 
         //lbl_backup_theme
@@ -1082,35 +1077,19 @@ public class MainWindow : Window {
         btn_donate = new Gtk.ToolButton.from_stock ("gtk-missing-image");
 		btn_donate.label = _("Donate");
 		btn_donate.set_tooltip_text (_("Donate"));
+		btn_donate.icon_widget = get_shared_icon("donate","donate.svg",32);
         toolbar_bottom.add(btn_donate);
 		
 		btn_donate.clicked.connect(btn_donate_clicked);
-		
-		try{
-			var pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/aptik/images/donate.svg",icon_size_toolbar,icon_size_toolbar);
-			var img = new Gtk.Image.from_pixbuf(pix);
-			btn_donate.set_icon_widget(img);
-		}
-        catch(Error e){
-	        log_error (e.message);
-	    }
 
 		//btn_about
         btn_about = new Gtk.ToolButton.from_stock ("gtk-about");
 		btn_about.label = _("About");
 		btn_about.set_tooltip_text (_("Application Info"));
+		btn_about.icon_widget = get_shared_icon("","help-info.svg",32);
         toolbar_bottom.add(btn_about);
 
         btn_about.clicked.connect (btn_about_clicked);
-
-		try{
-			var pix = new Gdk.Pixbuf.from_file_at_size(App.share_dir + "/aptik/images/help-info.svg",icon_size_toolbar,icon_size_toolbar);
-			var img = new Gtk.Image.from_pixbuf(pix);
-			btn_about.set_icon_widget(img);
-		}
-        catch(Error e){
-	        log_error (e.message);
-	    }
 	    
 	}
 
@@ -1139,8 +1118,7 @@ public class MainWindow : Window {
 			}
 		});
 		
-		var pix = App.get_shared_icon("aptik","aptik.png",icon_size_toolbar);
-		var img = new Gtk.Image.from_pixbuf(pix);
+		var img = get_shared_icon("aptik","aptik.png",icon_size_toolbar);
 		btn_backup_mode.set_icon_widget(img);
 
 		//btn_ppa
@@ -1160,8 +1138,7 @@ public class MainWindow : Window {
 			}
 		});
 
-		pix = App.get_shared_icon("x-system-software-sources","ppa.svg",icon_size_toolbar);
-		img = new Gtk.Image.from_pixbuf(pix);
+		img = get_shared_icon("x-system-software-sources","ppa.svg",icon_size_toolbar);
 		btn_ppa.set_icon_widget(img);
 
 		//btn_cache
@@ -1179,8 +1156,7 @@ public class MainWindow : Window {
 			}
 		});
 
-		pix = App.get_shared_icon("download","cache.svg",icon_size_toolbar);
-		img = new Gtk.Image.from_pixbuf(pix);
+		img = get_shared_icon("download","cache.svg",icon_size_toolbar);
 		btn_cache.set_icon_widget(img);
 
 		//btn_package
@@ -1198,8 +1174,7 @@ public class MainWindow : Window {
 			}
 		});
 
-		pix = App.get_shared_icon("gnome-package","package.svg",icon_size_toolbar);
-		img = new Gtk.Image.from_pixbuf(pix);
+		img = get_shared_icon("gnome-package","package.svg",icon_size_toolbar);
 		btn_package.set_icon_widget(img);
 
 		//btn_config
@@ -1217,8 +1192,7 @@ public class MainWindow : Window {
 			}
 		});
 
-		pix = App.get_shared_icon("gnome-settings","config.svg",icon_size_toolbar);
-		img = new Gtk.Image.from_pixbuf(pix);
+		img = get_shared_icon("gnome-settings","config.svg",icon_size_toolbar);
 		btn_config.set_icon_widget(img);
 
 		//btn_theme
@@ -1236,8 +1210,7 @@ public class MainWindow : Window {
 			}
 		});
 
-		pix = App.get_shared_icon("preferences-theme","theme.svg",icon_size_toolbar);
-		img = new Gtk.Image.from_pixbuf(pix);
+		img = get_shared_icon("preferences-theme","theme.svg",icon_size_toolbar);
 		btn_theme.set_icon_widget(img);
 	}
 	
@@ -1530,7 +1503,7 @@ public class MainWindow : Window {
 		dialog.comments = _("System migration toolkit for Ubuntu-based distributions");
 		dialog.copyright = "Copyright © 2014 Tony George (%s)".printf(AppAuthorEmail);
 		dialog.version = AppVersion;
-		dialog.logo = App.get_app_icon(128);
+		dialog.logo = get_app_icon(128);
 
 		dialog.license = "This program is free for personal and commercial use and comes with absolutely no warranty. You use this program entirely at your own risk. The author will not be liable for any damages arising from the use of this program.";
 		dialog.website = "http://teejeetech.in";
