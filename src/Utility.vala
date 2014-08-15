@@ -167,6 +167,19 @@ namespace TeeJee.FileSystem{
 		
 		return ( FileUtils.test(filePath, GLib.FileTest.EXISTS) && FileUtils.test(filePath, GLib.FileTest.IS_REGULAR));
 	}
+
+	public void file_copy (string src_file, string dest_file){
+		try{
+			var file_src = File.new_for_path (src_file);
+			if (file_src.query_exists()) { 
+				var file_dest = File.new_for_path (dest_file);
+				file_src.copy(file_dest,FileCopyFlags.OVERWRITE,null,null);
+			}
+		}
+		catch(Error e){
+	        log_error (e.message);
+		}
+	}
 	
 	public bool dir_exists (string filePath){
 		
@@ -382,14 +395,29 @@ namespace TeeJee.JSON{
 }
 
 namespace TeeJee.ProcessManagement{
-	
 	using TeeJee.Logging;
 	using TeeJee.FileSystem;
 	using TeeJee.Misc;
 	
-	/* Convenience functions for executing commands and managing processes */
+	public string TEMP_DIR;
 
-	public int execute_command_sync(string cmd){
+	/* Convenience functions for executing commands and managing processes */
+	
+    public static void init_tmp(){
+		string std_out, std_err;
+		
+		TEMP_DIR = Environment.get_tmp_dir() + "/" + AppShortName;
+		create_dir(TEMP_DIR);
+		
+		execute_command_script_sync("echo 'ok'",out std_out,out std_err);
+		if ((std_out == null)||(std_out.strip() != "ok")){
+			TEMP_DIR = Environment.get_home_dir() + "/.temp/" + AppShortName;
+			execute_command_sync("rm -rf '%s'".printf(TEMP_DIR));
+			create_dir(TEMP_DIR);
+		}
+	}
+
+	public int execute_command_sync (string cmd){
 		
 		/* Executes single command synchronously and returns exit code 
 		 * Pipes and multiple commands are not supported */
@@ -403,51 +431,25 @@ namespace TeeJee.ProcessManagement{
 	        log_error (e.message);
 	        return -1;
 	    }
-	    
-	    /*
-	    try {
-			int exit_code;
-			string std_out, std_err;
-			Process.spawn_command_line_sync(cmd, out std_out, out std_err, out exit_code);
-	        return exitCode;
-		}
-		catch (Error e){
-	        log_error (e.message);
-	        return -1;
-	    }
-	    */
 	}
 	
-	public string execute_command_sync_get_output(string cmd){
-		
+	public string execute_command_sync_get_output (string cmd){
+				
 		/* Executes single command synchronously and returns std_out
 		 * Pipes and multiple commands are not supported */
 		
-		int exit_code;
-		string std_out, std_err;
-			
 		try {
-			Process.spawn_command_line_sync(cmd, out std_out, out std_err, out exit_code);
+			int exitCode;
+			string std_out;
+			Process.spawn_command_line_sync(cmd, out std_out, null, out exitCode);
 	        return std_out;
 		}
 		catch (Error e){
 	        log_error (e.message);
 	        return "";
 	    }
-	    
-	    /*
-	    int exit_code;
-		string std_out, std_err;
-
-	    try {
-			Process.spawn_command_line_sync(cmd, out std_out, out std_err, out exit_code);
-		}
-		catch (Error e){
-	        log_error (e.message);
-	    }
-	    */
 	}
-	
+
 	public bool execute_command_script_async (string cmd){
 				
 		/* Creates a temporary bash script with given commands and executes it asynchronously 
@@ -500,7 +502,7 @@ namespace TeeJee.ProcessManagement{
 				
 		/* Generates temporary file path */
 		
-		return Environment.get_tmp_dir () + "/" + timestamp2() + (new Rand()).next_int().to_string();
+		return TEMP_DIR + "/" + timestamp2() + (new Rand()).next_int().to_string();
 	}
 	
 	public int execute_command_script_sync (string script, out string std_out, out string std_err){
@@ -519,7 +521,7 @@ namespace TeeJee.ProcessManagement{
 			int exit_code;
 			
 			Process.spawn_sync (
-			    Environment.get_tmp_dir (), //working dir
+			    TEMP_DIR, //working dir
 			    argv, //argv
 			    null, //environment
 			    SpawnFlags.SEARCH_PATH,
@@ -550,7 +552,7 @@ namespace TeeJee.ProcessManagement{
 			argv[2] = script;
 		
 			Process.spawn_sync (
-			    Environment.get_tmp_dir (), //working dir
+			    TEMP_DIR, //working dir
 			    argv, //argv
 			    null, //environment
 			    SpawnFlags.SEARCH_PATH,
@@ -1155,24 +1157,41 @@ namespace TeeJee.System{
 				
 		/* Return the names of the current Desktop environment */
 		
-		string s = execute_command_sync_get_output("ps -C xfdesktop");
-		if (s.split("\n").length > 2) {
-			return "Xfce";
-		}
+		int pid = -1;
 		
-		s = execute_command_sync_get_output("ps -C wingpanel");
-		if (s.split("\n").length > 2) {
-			return "Elementary";
-		}
-		
-		s = execute_command_sync_get_output("ps -C cinnamon");
-		if (s.split("\n").length > 2) {
+		pid = get_pid_by_name("cinnamon");
+		if (pid > 0){
 			return "Cinnamon";
 		}
 		
-		s = execute_command_sync_get_output("ps -C unity-panel-service");
-		if (s.split("\n").length > 2) {
+		pid = get_pid_by_name("xfdesktop");
+		if (pid > 0){
+			return "Xfce";
+		}
+
+		pid = get_pid_by_name("lxsession");
+		if (pid > 0){
+			return "LXDE";
+		}
+
+		pid = get_pid_by_name("gnome-shell");
+		if (pid > 0){
+			return "Gnome";
+		}
+		
+		pid = get_pid_by_name("wingpanel");
+		if (pid > 0){
+			return "Elementary";
+		}
+		
+		pid = get_pid_by_name("unity-panel-service");
+		if (pid > 0){
 			return "Unity";
+		}
+
+		pid = get_pid_by_name("plasma-desktop");
+		if (pid > 0){
+			return "KDE";
 		}
 		
 		return "Unknown";
@@ -1295,14 +1314,66 @@ namespace TeeJee.System{
 		return false;
 	}
 
-	public int notify_send (string title, string message, int durationMillis, string urgency){
+	public bool exo_open_url (string url){
+				
+		/* Tries to open the given text file in a text editor */
+		
+		string path;
+		
+		path = get_cmd_path ("exo-open");
+		if ((path != null)&&(path != "")){
+			return execute_command_script_async ("exo-open \"" + url + "\"");
+		}
+
+		path = get_cmd_path ("firefox");
+		if ((path != null)&&(path != "")){
+			return execute_command_script_async ("firefox \"" + url + "\"");
+		}
+
+		path = get_cmd_path ("chromium-browser");
+		if ((path != null)&&(path != "")){
+			return execute_command_script_async ("chromium-browser \"" + url + "\"");
+		}
+		
+		return false;
+	}
+	
+	private DateTime dt_last_notification = null;
+	private const int NOTIFICATION_INTERVAL = 3;
+	
+	public int notify_send (string title, string message, int durationMillis, string urgency, string dialog_type = "info"){
 				
 		/* Displays notification bubble on the desktop */
-		
-		string s = "notify-send -t %d -u %s -i %s \"%s\" \"%s\"".printf(durationMillis, urgency, "gtk-dialog-info", title, message);
-		return execute_command_sync (s);
-	}
 
+		int retVal = 0;
+		
+		switch (dialog_type){
+			case "error":
+			case "info":
+			case "warning":
+				//ok
+				break;
+			default:
+				dialog_type = "info";
+				break;
+		}
+		
+		long seconds = 9999;
+		if (dt_last_notification != null){
+			DateTime dt_end = new DateTime.now_local();
+			TimeSpan elapsed = dt_end.difference(dt_last_notification);
+			seconds = (long)(elapsed * 1.0 / TimeSpan.SECOND);
+		}
+	
+		if (seconds > NOTIFICATION_INTERVAL){
+			string s = "notify-send -t %d -u %s -i %s \"%s\" \"%s\"".printf(durationMillis, urgency, "gtk-dialog-" + dialog_type, title, message);
+			retVal = execute_command_sync (s);
+			dt_last_notification = new DateTime.now_local();
+		}
+
+		return retVal;
+	}
+	
 	public bool set_directory_ownership(string dir_name, string login_name){
 		try {
 			string cmd = "chown %s -R %s".printf(login_name, dir_name);
@@ -1323,6 +1394,7 @@ namespace TeeJee.System{
 			return false;
 		}
 	}
+
 }
 
 namespace TeeJee.Misc {
