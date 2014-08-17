@@ -51,6 +51,8 @@ public class AptikConsole : GLib.Object{
 			exit(0);
 		}
 		
+		init_tmp();
+		
 		App = new Main(args,false);
 		
 		var console =  new AptikConsole();

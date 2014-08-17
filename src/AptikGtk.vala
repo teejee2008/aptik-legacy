@@ -43,6 +43,8 @@ public class AptikGtk : GLib.Object{
 		
 		Gtk.init(ref args);
 		
+		init_tmp();
+		
 		if (!user_is_admin()){
 			string msg = _("Aptik needs admin access to backup and restore packages.") + "\n";
 			msg += _("Please run the application as admin ('gksu aptik-gtk')");
