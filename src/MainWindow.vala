@@ -120,7 +120,7 @@ public class MainWindow : Window {
 	bool toolbar_mode_backup = true;
 	
 	int def_width = 500;
-	int def_height = 500;
+	int def_height = 450;
 	
 	int ex_width = 600;
 	int ex_height = 500;
@@ -143,7 +143,7 @@ public class MainWindow : Window {
         add (vbox_main);
 
         //add toolbar
-        init_toolbar_top();
+        //init_toolbar_top();
         
 		//notebook
 		notebook = new Notebook ();
@@ -1657,8 +1657,6 @@ public class MainWindow : Window {
 		}
 
 		string cmd = "";
-		string std_out;
-		string std_err;
 		int ret_val;
 
 		//add PPAs
@@ -1767,7 +1765,7 @@ public class MainWindow : Window {
 		
 		if (list_default.size == 0){
 			string title = _("File Missing");
-			string msg = _("The list of default packages is missing on this system") + ":\n'%s'\n\n".printf(App.DEFAULT_PKG_LIST_FILE);
+			string msg = _("The list of default packages is missing on this system") + ":\n'%s'\n\n".printf(Main.DEFAULT_PKG_LIST_FILE);
 			msg += _("It is not possible to determine whether a package was installed by you, or whether it was installed along with the Linux distribution.") + "\n\n";
 			msg += _("All top-level installed packages have been selected by default.") + " ";
 			msg += _("Please un-select the packages that are not required.") + "\n";
