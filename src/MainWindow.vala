@@ -104,9 +104,7 @@ public class MainWindow : Window {
 	private ComboBox cmb_pkg_type;
 	private ComboBox cmb_pkg_level;
 	private ComboBox cmb_pkg_status;
-	private Label lbl_infobar;
-	private InfoBar infobar;
-	
+
 	private Gee.HashMap<string,Package> pkg_list_user;
 	private Gee.HashMap<string,Package> pkg_list_all;
 	private Gee.HashMap<string,Ppa> ppa_list_user;
@@ -125,9 +123,7 @@ public class MainWindow : Window {
 	int icon_size_list = 22;
 	int button_width = 85;
 	int button_height = 15;
-	
-	uint timer_infobar = -1;
-	
+
 	public MainWindow () {
 		title = AppName + " v" + AppVersion;
         window_position = WindowPosition.CENTER;
@@ -146,22 +142,6 @@ public class MainWindow : Window {
 		vbox_main.pack_start (notebook, true, true, 0);
 		notebook.switch_page.connect(notebook_switch_page);
 
-        //infobar
-		infobar = new InfoBar();
-		infobar.set_show_close_button(true);
-		infobar.set_no_show_all(true);
-		infobar.set_message_type(MessageType.INFO);
-		vbox_main.add (infobar);
-		
-		Container content = infobar.get_content_area ();
-		lbl_infobar = new Label("");
-		lbl_infobar.margin_left = 5;
-		content.add (lbl_infobar);
-
-		infobar.response.connect((response_id)=>{
-			infobar.hide();
-		});
-		
         //actions ---------------------------------------------
 		
 		//lbl_actions
@@ -1191,28 +1171,9 @@ public class MainWindow : Window {
 	}
 	
 	private void show_home_page(){
-		if (timer_infobar != -1){
-			Source.remove(timer_infobar);
-		}
-		if (infobar.visible){
-			infobar.hide();
-		}
 		notebook.page = 0;
 	}
-	
-	private void show_infobar_message(string message){
-		lbl_infobar.label = message;
-		infobar.show();
-		lbl_infobar.show();
-		
-		timer_infobar = Timeout.add(5000, ()=>{
-			if (infobar.visible){
-				infobar.hide();
-			}
-			return true;
-		});
-	}
-	
+
 	private void tv_packages_refresh(){
 		ListStore model = new ListStore(4, typeof(bool), typeof(Package), typeof(Gdk.Pixbuf), typeof(string));
 
@@ -1645,12 +1606,9 @@ public class MainWindow : Window {
 		tv_ppa_refresh();
 		btn_backup_ppa_exec.visible = true;
 		btn_restore_ppa_exec.visible = false;
-		string message = _("Select the PPAs to backup");
 		title = _("Backup Software Sources");
 		
 		notebook.page = 2;
-		show_infobar_message(message);
-		
 		is_running = false;
 	}
 	
@@ -1708,12 +1666,11 @@ public class MainWindow : Window {
 		tv_ppa_refresh();
 		btn_backup_ppa_exec.visible = false;
 		btn_restore_ppa_exec.visible = true;
-		string message = _("Select the PPAs to restore");
+
 		title = _("Restore Software Sources");
 		
 		notebook.page = 2;
-		show_infobar_message(message);
-		
+
 		is_running = false;
 	}
 
@@ -1886,14 +1843,9 @@ public class MainWindow : Window {
 		cmb_pkg_level_refresh();
 
 		cmb_pkg_status.hide();
-		
-		string message = _("Select packages to backup");
-		if (!App.default_list_missing){
-			 message += ". " + ("Extra packages installed by user are selected by default") + ".";
-		}
+
 		title = _("Backup Software Selections");
-		
-		show_infobar_message(message);
+
 		notebook.page = 1;
 		
 		//fix for column header resize issue
@@ -2010,8 +1962,7 @@ public class MainWindow : Window {
 		is_restore_view = true;
 		btn_backup_packages_exec.visible = false;
 		btn_restore_packages_exec.visible = true;
-		
-		string message = _("Select the packages to restore");
+
 		title = _("Restore Software Selections");
 		
 		tv_packages_refresh();
@@ -2023,8 +1974,7 @@ public class MainWindow : Window {
 		cmb_pkg_status_refresh();
 		
 		notebook.page = 1;
-		show_infobar_message(message);
-		
+
 		//fix for column header resize issue
 		gtk_do_events();
 		cmb_pkg_status.active = 1;
@@ -2203,12 +2153,10 @@ public class MainWindow : Window {
 		btn_backup_config_exec.visible = true;
 		btn_restore_config_exec.visible = false;
 		btn_reset_config_exec.visible = false;
-		string message = _("Select the directories to backup");
 		title = _("Backup Application Settings");
 		
 		notebook.page = 3;
-		show_infobar_message(message);
-		
+
 		gtk_set_busy(false, this);
 	}
 	
@@ -2259,11 +2207,10 @@ public class MainWindow : Window {
 			btn_backup_config_exec.visible = false;
 			btn_restore_config_exec.visible = true;
 			btn_reset_config_exec.visible = true;
-			string message = _("Select the directories to restore");
+
 			title = _("Restore Application Settings");
 			
 			notebook.page = 3;
-			show_infobar_message(message);
 		}
 		
 		gtk_set_busy(false, this);
@@ -2390,12 +2337,10 @@ public class MainWindow : Window {
 		tv_theme_refresh();
 		btn_backup_theme_exec.visible = true;
 		btn_restore_theme_exec.visible = false;
-		string message = _("Select the themes to backup");
 		title = _("Backup Themes");
 		
 		notebook.page = 4;
-		show_infobar_message(message);
-		
+
 		gtk_set_busy(false, this);
 	}
 	
@@ -2455,11 +2400,9 @@ public class MainWindow : Window {
 			tv_theme_refresh();
 			btn_backup_theme_exec.visible = false;
 			btn_restore_theme_exec.visible = true;
-			string message = _("Select the themes to restore");
 			title = _("Restore Themes");
 			
 			notebook.page = 4;
-			show_infobar_message(message);
 		}
 		
 		gtk_set_busy(false, this);
