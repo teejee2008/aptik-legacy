@@ -94,16 +94,19 @@ public class MainWindow : Window {
 	private TreeViewColumn col_ppa_status;
 	private TreeViewColumn col_pkg_status;
 	private TreeViewColumn col_theme_status;
-	
+	private TreeModelFilter filter_packages;
+			
 	private ScrolledWindow sw_packages;
 	private ScrolledWindow sw_ppa;
 	private ScrolledWindow sw_theme;
 	private ProgressBar progressbar;
 	private Label lbl_status;
-	private Label lbl_packages_message;
-	private Label lbl_ppa_message;
-	private Label lbl_theme_message;
-	private Label lbl_config_message;
+	private Entry txt_filter;
+	private ComboBox cmb_pkg_type;
+	private ComboBox cmb_pkg_level;
+	private ComboBox cmb_pkg_status;
+	private Label lbl_infobar;
+	private InfoBar infobar;
 	
 	private Gee.HashMap<string,Package> pkg_list_user;
 	private Gee.HashMap<string,Package> pkg_list_all;
@@ -130,6 +133,8 @@ public class MainWindow : Window {
 	int button_width = 85;
 	int button_height = 15;
 	
+	uint timer_infobar = -1;
+	
 	public MainWindow () {
 		title = AppName + " v" + AppVersion;
         window_position = WindowPosition.CENTER;
@@ -141,16 +146,31 @@ public class MainWindow : Window {
 	    //vboxMain
         vbox_main = new Box (Orientation.VERTICAL, 0);
         add (vbox_main);
-
+		
         //add toolbar
         //init_toolbar_top();
-        
+
 		//notebook
 		notebook = new Notebook ();
-		//notebook.show_tabs = true;
 		notebook.show_tabs = false;
 		vbox_main.pack_start (notebook, true, true, 0);
 		notebook.switch_page.connect(notebook_switch_page);
+
+        //infobar
+		infobar = new InfoBar();
+		infobar.set_show_close_button(true);
+		infobar.set_no_show_all(true);
+		infobar.set_message_type(MessageType.INFO);
+		vbox_main.add (infobar);
+		
+		Container content = infobar.get_content_area ();
+		lbl_infobar = new Label("");
+		lbl_infobar.margin_left = 5;
+		content.add (lbl_infobar);
+
+		infobar.response.connect((response_id)=>{
+			infobar.hide();
+		});
 		
         //actions ---------------------------------------------
 		
@@ -366,14 +386,90 @@ public class MainWindow : Window {
         vbox_packages = new Box (Gtk.Orientation.VERTICAL, 6);
         vbox_packages.margin = 6;
         notebook.append_page (vbox_packages, lbl_packages);
-        
-        //lbl_packages
-		lbl_packages_message = new Label (_("Select the packages to backup"));
-		lbl_packages_message.set_use_markup(true);
-		lbl_packages_message.halign = Align.START;
-		lbl_packages_message.xalign = (float) 0.0;
-		lbl_packages_message.wrap = true;
-		vbox_packages.pack_start (lbl_packages_message, false, true, 0);
+
+        //hbox_filter
+        Box hbox_filter = new Box (Orientation.HORIZONTAL, 6);
+        hbox_filter.margin_left = 3;
+        hbox_filter.margin_right = 3;
+		vbox_packages.pack_start (hbox_filter, false, true, 0);
+		
+        //filter
+		Label lbl_filter = new Label(_("Filter"));
+		hbox_filter.add (lbl_filter);
+		
+		txt_filter = new Entry();
+		txt_filter.hexpand = true;
+		hbox_filter.add (txt_filter);
+		
+		txt_filter.changed.connect(()=>{ 
+			filter_packages.refilter(); 
+		});
+
+		//cmb_pkg_type
+		cmb_pkg_type = new ComboBox();
+		hbox_filter.add (cmb_pkg_type);
+
+		CellRendererText cell_pkg_type = new CellRendererText();
+        cmb_pkg_type.pack_start(cell_pkg_type, false );
+        cmb_pkg_type.set_cell_data_func (cell_pkg_type, (cell_pkg_type, cell, model, iter) => {
+			string type;
+			model.get (iter, 0, out type,-1);
+			(cell as Gtk.CellRendererText).text = type;
+		});
+
+		cmb_pkg_type.changed.connect(()=>{ 
+			filter_packages.refilter(); 
+		});
+
+		//cmb_pkg_level
+		cmb_pkg_level = new ComboBox();
+		hbox_filter.add (cmb_pkg_level);
+
+		CellRendererText cell_pkg_level = new CellRendererText();
+        cmb_pkg_level.pack_start(cell_pkg_level, false );
+        cmb_pkg_level.set_cell_data_func (cell_pkg_level, (cell_pkg_level, cell, model, iter) => {
+			string level;
+			model.get (iter, 0, out level,-1);
+			(cell as Gtk.CellRendererText).text = level;
+		});
+
+		cmb_pkg_level.changed.connect(()=>{ 
+			filter_packages.refilter(); 
+		});
+		
+		//cmb_pkg_status
+		cmb_pkg_status = new ComboBox();
+		hbox_filter.add (cmb_pkg_status);
+
+		CellRendererText cell_pkg_restore_status = new CellRendererText();
+        cmb_pkg_status.pack_start(cell_pkg_restore_status, false );
+        cmb_pkg_status.set_cell_data_func (cell_pkg_restore_status, (cell_pkg_restore_status, cell, model, iter) => {
+			string status;
+			model.get (iter, 0, out status,-1);
+			(cell as Gtk.CellRendererText).text = status;
+		});
+
+		cmb_pkg_status.changed.connect(()=>{ 
+			filter_packages.refilter(); 
+		});
+
+		//tooltips -------------------------------------------------------------
+		
+		string tt = "";
+		string pkg_note = "<b>Note:</b> Since default packages are already included with your Linux distribution\nand dependency packages are installed automatically,\nyou only need to backup <b>top-level</b> and <b>extra</b> packages";
+		
+		tt = _("<b>All</b> - All default and extra packages") + "\n" + _("<b>Default</b> - Default packages (installed with distribution)")+ "\n" + _("<b>Extra</b> - Extra packages (installed by user)");
+		cmb_pkg_type.set_tooltip_markup(tt + "\n\n" + pkg_note);
+		
+		tt = _("<b>All</b> - All top-level packages and dependencies") + "\n" + _("<b>Top-Level</b> - Top-level packages (not required by other packages)")+ "\n" + _("<b>Dependencies</b> - Dependency packages (required by other packages)");
+		cmb_pkg_level.set_tooltip_markup(tt + "\n\n" + pkg_note);
+		
+		pkg_note = "<b>Note:</b> For missing packages, check if the required PPAs have been added to the system";
+		tt = _("<b>All</b> - All packages in backup list") + "\n" + _("<b>Installed</b> - Installed packages") + "\n" + _("<b>Available</b> - Packages which are available but not installed") + "\n" + _("<b>Missing</b> - Packages which are not installed and not available");
+		cmb_pkg_status.set_tooltip_markup(tt + "\n\n" + pkg_note);
+		
+		tt = _("Search package name and description");
+		txt_filter.set_tooltip_markup(tt);
 		
 		//package treeview --------------------------------------------------
 		
@@ -409,16 +505,19 @@ public class MainWindow : Window {
 		});
 		
 		cell_pkg_select.toggled.connect((path) => {
-			TreeIter iter;
-			ListStore model = (ListStore)tv_packages.model;
+			TreeModel model = filter_packages;
+			ListStore store = (ListStore) filter_packages.child_model;
 			bool selected;
 			Package pkg;
-
+			
+			TreeIter iter, child_iter;
 			model.get_iter_from_string (out iter, path);
-			model.get (iter, 0, out selected);
-			model.get (iter, 1, out pkg);
-			model.set (iter, 0, !selected);
+			model.get (iter, 0, out selected, 1, out pkg, -1);
+
 			pkg.is_selected = !selected;
+
+			filter_packages.convert_iter_to_child_iter(out child_iter, iter);
+			store.set(child_iter, 0, pkg.is_selected, -1);
 		});
 
 		//col_pkg_status ----------------------
@@ -511,13 +610,13 @@ public class MainWindow : Window {
 		});
 		
 		//btn_backup_packages_exec
-		btn_backup_packages_exec = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		btn_backup_packages_exec = new Gtk.Button.with_label (" <b>" + _("Backup") + "</b> ");
 		btn_backup_packages_exec.no_show_all = true;
 		hbox_pkg_actions.pack_start (btn_backup_packages_exec, true, true, 0);
 		btn_backup_packages_exec.clicked.connect(btn_backup_packages_exec_clicked);
 
 		//btn_restore_packages_exec
-		btn_restore_packages_exec = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		btn_restore_packages_exec = new Gtk.Button.with_label (" <b>" + _("Restore") + "</b> ");
 		btn_restore_packages_exec.no_show_all = true;
 		hbox_pkg_actions.pack_start (btn_restore_packages_exec, true, true, 0);
 		btn_restore_packages_exec.clicked.connect(btn_restore_packages_exec_clicked);
@@ -539,12 +638,6 @@ public class MainWindow : Window {
         vbox_ppa.margin = 6;
         notebook.append_page (vbox_ppa, lbl_ppa);
         
-        //lbl_ppa
-		lbl_ppa_message = new Label (_("Select the PPAs to backup"));
-		lbl_ppa_message.set_use_markup(true);
-		lbl_ppa_message.halign = Align.START;
-		vbox_ppa.pack_start (lbl_ppa_message, false, true, 0);
-		
 		//ppa treeview --------------------------------------------------
 		
 		//tv_ppa
@@ -579,11 +672,11 @@ public class MainWindow : Window {
 		});
 		
 		cell_ppa_select.toggled.connect((path) => {
-			TreeIter iter;
 			ListStore model = (ListStore)tv_ppa.model;
 			bool selected;
 			Ppa ppa;
-
+			TreeIter iter;
+			
 			model.get_iter_from_string (out iter, path);
 			model.get (iter, 0, out selected);
 			model.get (iter, 1, out ppa);
@@ -681,13 +774,13 @@ public class MainWindow : Window {
 		});
 		
 		//btn_backup_ppa_exec
-		btn_backup_ppa_exec = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		btn_backup_ppa_exec = new Gtk.Button.with_label (" <b>" + _("Backup") + "</b> ");
 		btn_backup_ppa_exec.no_show_all = true;
 		hbox_ppa_actions.pack_start (btn_backup_ppa_exec, true, true, 0);
 		btn_backup_ppa_exec.clicked.connect(btn_backup_ppa_exec_clicked);
 
 		//btn_restore_ppa_exec
-		btn_restore_ppa_exec = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		btn_restore_ppa_exec = new Gtk.Button.with_label (" <b>" + _("Restore") + "</b> ");
 		btn_restore_ppa_exec.no_show_all = true;
 		hbox_ppa_actions.pack_start (btn_restore_ppa_exec, true, true, 0);
 		btn_restore_ppa_exec.clicked.connect(btn_restore_ppa_exec_clicked);
@@ -710,12 +803,6 @@ public class MainWindow : Window {
         vbox_config.margin = 6;
         notebook.append_page (vbox_config, lbl_config);
 
-        //lbl_config
-		lbl_config_message = new Label (_("Select the configs to backup"));
-		lbl_config_message.set_use_markup(true);
-		lbl_config_message.halign = Align.START;
-		vbox_config.pack_start (lbl_config_message, false, true, 0);
-		
 		//config treeview --------------------------------------------------
 		
 		//tv_config
@@ -749,11 +836,11 @@ public class MainWindow : Window {
 		});
 		
 		cell_config_select.toggled.connect((path) => {
-			TreeIter iter;
 			ListStore model = (ListStore)tv_config.model;
 			bool selected;
 			AppConfig config;
-
+			TreeIter iter;
+			
 			model.get_iter_from_string (out iter, path);
 			model.get (iter, 0, out selected);
 			model.get (iter, 1, out config);
@@ -841,13 +928,13 @@ public class MainWindow : Window {
 		});
 		
 		//btn_backup_config_exec
-		btn_backup_config_exec = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		btn_backup_config_exec = new Gtk.Button.with_label (" <b>" + _("Backup") + "</b> ");
 		btn_backup_config_exec.no_show_all = true;
 		hbox_config_actions.pack_start (btn_backup_config_exec, true, true, 0);
 		btn_backup_config_exec.clicked.connect(btn_backup_config_exec_clicked);
 
 		//btn_restore_config_exec
-		btn_restore_config_exec = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		btn_restore_config_exec = new Gtk.Button.with_label (" <b>" + _("Restore") + "</b> ");
 		btn_restore_config_exec.no_show_all = true;
 		btn_restore_config_exec.set_tooltip_text(_("Restore the settings for an application (Eg: Chromium Browser) by replacing the settings directory (~/.config/chromium) with files from backup. Use the 'Reset' button to delete the restored files in case of issues."));
 		hbox_config_actions.pack_start (btn_restore_config_exec, true, true, 0);
@@ -876,13 +963,7 @@ public class MainWindow : Window {
         vbox_theme = new Box (Gtk.Orientation.VERTICAL, 6);
         vbox_theme.margin = 6;
         notebook.append_page (vbox_theme, lbl_theme);
-        
-        //lbl_theme
-		lbl_theme_message = new Label (_("Select the themes to backup"));
-		lbl_theme_message.set_use_markup(true);
-		lbl_theme_message.halign = Align.START;
-		vbox_theme.pack_start (lbl_theme_message, false, true, 0);
-		
+
 		//theme treeview --------------------------------------------------
 		
 		//tv_theme
@@ -917,11 +998,11 @@ public class MainWindow : Window {
 		});
 		
 		cell_theme_select.toggled.connect((path) => {
-			TreeIter iter;
 			ListStore model = (ListStore)tv_theme.model;
 			bool selected;
 			Theme theme;
-
+			TreeIter iter;
+			
 			model.get_iter_from_string (out iter, path);
 			model.get (iter, 0, out selected);
 			model.get (iter, 1, out theme);
@@ -1019,13 +1100,13 @@ public class MainWindow : Window {
 		});
 		
 		//btn_backup_theme_exec
-		btn_backup_theme_exec = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		btn_backup_theme_exec = new Gtk.Button.with_label (" <b>" + _("Backup") + "</b> ");
 		btn_backup_theme_exec.no_show_all = true;
 		hbox_theme_actions.pack_start (btn_backup_theme_exec, true, true, 0);
 		btn_backup_theme_exec.clicked.connect(btn_backup_theme_exec_clicked);
 
 		//btn_restore_theme_exec
-		btn_restore_theme_exec = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		btn_restore_theme_exec = new Gtk.Button.with_label (" <b>" + _("Restore") + "</b> ");
 		btn_restore_theme_exec.no_show_all = true;
 		hbox_theme_actions.pack_start (btn_restore_theme_exec, true, true, 0);
 		btn_restore_theme_exec.clicked.connect(btn_restore_theme_exec_clicked);
@@ -1059,6 +1140,17 @@ public class MainWindow : Window {
 		progressbar.set_size_request(-1,25);
 		//progressbar.pulse_step = 0.2;
 		vbox_main.pack_start (progressbar, false, true, 0);
+		
+		//set bold font for some buttons
+		foreach(Button btn in new Button[] { btn_backup_ppa_exec, btn_backup_packages_exec, btn_backup_config_exec, btn_backup_theme_exec,
+				btn_restore_ppa_exec, btn_restore_packages_exec, btn_restore_config_exec, btn_restore_theme_exec }){
+			foreach(Widget widget in btn.get_children()){
+				if (widget is Label){
+					Label lbl = (Label)widget;
+					lbl.set_markup(lbl.label);
+				}
+			}
+		}
 	}
 	
 	public void init_toolbar_bottom(){
@@ -1234,7 +1326,26 @@ public class MainWindow : Window {
 	}
 	
 	private void show_home_page(){
+		if (timer_infobar != -1){
+			Source.remove(timer_infobar);
+		}
+		if (infobar.visible){
+			infobar.hide();
+		}
 		notebook.page = 0;
+	}
+	
+	private void show_infobar_message(string message){
+		lbl_infobar.label = message;
+		infobar.show();
+		lbl_infobar.show();
+		
+		timer_infobar = Timeout.add(5000, ()=>{
+			if (infobar.visible){
+				infobar.hide();
+			}
+			return true;
+		});
 	}
 	
 	private void tv_packages_refresh(){
@@ -1305,9 +1416,83 @@ public class MainWindow : Window {
 			model.set (iter, 2, pix_status);
 			model.set (iter, 3, tt);
 		}
-			
-		tv_packages.set_model(model);
+
+		filter_packages = new TreeModelFilter (model, null);
+		filter_packages.set_visible_func(filter_packages_filter);
+		tv_packages.set_model (filter_packages);
 		tv_packages.columns_autosize();
+	}
+
+	private bool filter_packages_filter (Gtk.TreeModel model, Gtk.TreeIter iter){
+		Package pkg;
+		model.get (iter, 1, out pkg, -1);
+		bool display = true;
+		
+		string search_string = txt_filter.text.strip().down();
+		if ((search_string != null) && (search_string.length > 0)){
+			try{
+				Regex regexName = new Regex (search_string, RegexCompileFlags.CASELESS);
+				MatchInfo match_name;
+				MatchInfo match_desc;
+				if (!regexName.match (pkg.name, 0, out match_name) && !regexName.match (pkg.description, 0, out match_desc)) {
+					display = false;
+				}
+			}
+			catch (Error e) {
+				//ignore
+			}
+		}
+		
+		if (is_restore_view){
+			switch(cmb_pkg_status.active){
+				case 0: //all
+					//exclude nothing
+					break;
+				case 1: //installed
+					display = display & (pkg.is_installed);
+					break;
+				case 2: //available
+					display = display & (!pkg.is_installed && pkg.is_available);
+					break;
+				case 3: //missing
+					display = display & (!pkg.is_installed && !pkg.is_available);
+					break;
+			}
+		}
+		else{
+			switch(cmb_pkg_type.active){
+				case 0: //all
+					//exclude nothing
+					break;
+				case 1: //default
+					if (!pkg.is_default){
+						display = false;
+					}
+					break;
+				case 2: //extra
+					if (pkg.is_default){
+						display = false;
+					}
+					break;
+			}
+			
+			switch(cmb_pkg_level.active){
+				case 0: //all
+					//exclude nothing
+					break;
+				case 1: //top-level
+					if (!pkg.is_top){
+						display = false;
+					}
+					break;
+				case 2: //dependency
+					if (pkg.is_top){
+						display = false;
+					}
+					break;
+			}
+		}
+		return display;
 	}
 
 	private void tv_ppa_refresh(){
@@ -1420,6 +1605,51 @@ public class MainWindow : Window {
 			model.set (iter, 0, entry.is_selected, 1, entry, -1);
 		}
 	}
+	
+	private void cmb_pkg_type_refresh(){
+		ListStore store = new ListStore(1, typeof(string));
+		TreeIter iter;
+		store.append(out iter);
+		store.set (iter, 0, _("All"));
+		if (!App.default_list_missing){
+			store.append(out iter);
+			store.set (iter, 0, _("Default"));
+			store.append(out iter);
+			store.set (iter, 0, _("Extra"));
+		}
+		
+		cmb_pkg_type.set_model(store);
+		cmb_pkg_type.active = 0;
+	}
+
+	private void cmb_pkg_level_refresh(){	
+		var store = new ListStore(1, typeof(string));
+		TreeIter iter;
+		store.append(out iter);
+		store.set (iter, 0, _("All"));
+		store.append(out iter);
+		store.set (iter, 0, _("Top-Level"));
+		store.append(out iter);
+		store.set (iter, 0, _("Dependencies"));
+		cmb_pkg_level.set_model (store);
+		cmb_pkg_level.active = 1;
+	}
+
+	private void cmb_pkg_status_refresh(){	
+		var store = new ListStore(1, typeof(string));
+		TreeIter iter;
+		store.append(out iter);
+		store.set (iter, 0, _("All"));
+		store.append(out iter);
+		store.set (iter, 0, _("Installed"));
+		store.append(out iter);
+		store.set (iter, 0, _("Available"));
+		store.append(out iter);
+		store.set (iter, 0, _("Missing"));
+		cmb_pkg_status.set_model (store);
+		cmb_pkg_status.active = 0;
+	}
+	
 	
 	private bool check_backup_folder(){
 		if ((App.backup_dir != null) && dir_exists (App.backup_dir)){
@@ -1550,10 +1780,11 @@ public class MainWindow : Window {
 		tv_ppa_refresh();
 		btn_backup_ppa_exec.visible = true;
 		btn_restore_ppa_exec.visible = false;
-		lbl_ppa_message.label = _("Select the PPAs to backup");
+		string message = _("Select the PPAs to backup");
 		title = _("Backup Software Sources");
 		
 		notebook.page = 2;
+		show_infobar_message(message);
 		
 		is_running = false;
 	}
@@ -1612,11 +1843,12 @@ public class MainWindow : Window {
 		tv_ppa_refresh();
 		btn_backup_ppa_exec.visible = false;
 		btn_restore_ppa_exec.visible = true;
-		lbl_ppa_message.label = _("Select the PPAs to restore");
+		string message = _("Select the PPAs to restore");
 		title = _("Restore Software Sources");
 		
 		notebook.page = 2;
-
+		show_infobar_message(message);
+		
 		is_running = false;
 	}
 
@@ -1657,7 +1889,6 @@ public class MainWindow : Window {
 		}
 
 		string cmd = "";
-		int ret_val;
 
 		//add PPAs
 		cmd += "echo ''\n";
@@ -1756,14 +1987,8 @@ public class MainWindow : Window {
 		}
 		
 		progress_hide();
-	}
-	
-	private void btn_backup_packages_clicked_thread(){
-		var list_manual = App.list_manual();
-		var list_top = App.list_top();
-		var list_default = App.list_default();
 		
-		if (list_default.size == 0){
+		if (App.default_list_missing){
 			string title = _("File Missing");
 			string msg = _("The list of default packages is missing on this system") + ":\n'%s'\n\n".printf(Main.DEFAULT_PKG_LIST_FILE);
 			msg += _("It is not possible to determine whether a package was installed by you, or whether it was installed along with the Linux distribution.") + "\n\n";
@@ -1771,50 +1996,47 @@ public class MainWindow : Window {
 			msg += _("Please un-select the packages that are not required.") + "\n";
 			gtk_messagebox(title, msg, this, false);
 			
-			//select all
-			foreach(Package pkg in list_top.values){
-				list_top[pkg.name].is_selected = true;
+			//select all top-level
+			foreach(Package pkg in pkg_list_user.values){
+				pkg.is_selected = pkg.is_top;
 			}
 		}
 		else{
-			//unselect all
-			foreach(Package pkg in list_top.values){
-				list_top[pkg.name].is_selected = false;
-			}
 			//select manual
-			foreach(Package pkg in list_manual.values){
-				if (list_top.has_key(pkg.name)){
-					list_top[pkg.name].is_selected = true;
-				}
-			}
-			//set default flag
-			foreach(Package pkg in list_default.values){
-				if (list_top.has_key(pkg.name)){
-					list_top[pkg.name].is_default = true;
-				}
+			foreach(Package pkg in pkg_list_user.values){
+				pkg.is_selected = pkg.is_manual;
 			}
 		}
-		
-		pkg_list_user = list_top;
-		
+	
 		is_restore_view = false;
-		tv_packages_refresh();
 		btn_backup_packages_exec.visible = true;
 		btn_restore_packages_exec.visible = false;
 		
-		lbl_packages_message.label = _("Select packages to backup");
-		if (list_default.size > 0){
-			 lbl_packages_message.label += ". " + 
-			("Extra packages installed by user are selected by default") + ".";
-		}
+		tv_packages_refresh();
 		
+		cmb_pkg_type.show();
+		cmb_pkg_type_refresh();
+		
+		cmb_pkg_level.show();
+		cmb_pkg_level_refresh();
+
+		cmb_pkg_status.hide();
+		
+		string message = _("Select packages to backup");
+		if (!App.default_list_missing){
+			 message += ". " + ("Extra packages installed by user are selected by default") + ".";
+		}
 		title = _("Backup Software Selections");
 		
+		show_infobar_message(message);
 		notebook.page = 1;
-	
-		is_running = false;
 	}
 	
+	private void btn_backup_packages_clicked_thread(){
+		pkg_list_user = App.list_all(false);
+		is_running = false;
+	}
+
 	private void btn_backup_packages_exec_clicked(){
 		//check if no action required
 		bool none_selected = true;
@@ -1914,21 +2136,29 @@ public class MainWindow : Window {
 		}
 		
 		progress_hide();
+		
+		is_restore_view = true;
+		btn_backup_packages_exec.visible = false;
+		btn_restore_packages_exec.visible = true;
+		
+		string message = _("Select the packages to restore");
+		title = _("Restore Software Selections");
+		
+		tv_packages_refresh();
+		
+		cmb_pkg_type.hide();
+		cmb_pkg_level.hide();
+		
+		cmb_pkg_status.show();
+		cmb_pkg_status_refresh();
+		
+		notebook.page = 1;
+		show_infobar_message(message);
 	}
 	
 	private void btn_restore_packages_clicked_thread(){
 		pkg_list_all = App.list_all();
 		pkg_list_user = App.read_package_list(pkg_list_all);
-
-		is_restore_view = true;
-		tv_packages_refresh();
-		btn_backup_packages_exec.visible = false;
-		btn_restore_packages_exec.visible = true;
-		lbl_packages_message.label = _("Select the packages to restore");
-		title = _("Restore Software Selections");
-		
-		notebook.page = 1;
-
 		is_running = false;
 	}
 
@@ -1993,20 +2223,21 @@ public class MainWindow : Window {
 		if (response == Gtk.ResponseType.YES){
 			progress_begin(_("Installing packages..."));
 			
-			//iconify();
 			gtk_do_events();
 			
-			string cmd = "apt-get install -y %s".printf(list_install);
+			string cmd = "apt-get install %s".printf(list_install);
 			cmd += "\n\necho '" + _("Finished installing packages") + ".'";
 			cmd += "\necho '" + _("Close window to exit...") + "'";
 			cmd += "\nread dummy";
 			execute_command_script_in_terminal_sync(create_temp_bash_script(cmd));
 			//success/error will be displayed by apt-get in terminal
 			
-			//deiconify();
 			gtk_do_events();
 			
 			show_home_page();
+		}
+		else{
+			progress_hide();
 		}
 	}
 	
@@ -2154,11 +2385,12 @@ public class MainWindow : Window {
 		btn_backup_config_exec.visible = true;
 		btn_restore_config_exec.visible = false;
 		btn_reset_config_exec.visible = false;
-		lbl_config_message.label = _("Select the directories to backup");
+		string message = _("Select the directories to backup");
 		title = _("Backup Application Settings");
 		
 		notebook.page = 3;
-
+		show_infobar_message(message);
+		
 		gtk_set_busy(false, this);
 	}
 	
@@ -2209,10 +2441,11 @@ public class MainWindow : Window {
 			btn_backup_config_exec.visible = false;
 			btn_restore_config_exec.visible = true;
 			btn_reset_config_exec.visible = true;
-			lbl_config_message.label = _("Select the directories to restore");
+			string message = _("Select the directories to restore");
 			title = _("Restore Application Settings");
 			
 			notebook.page = 3;
+			show_infobar_message(message);
 		}
 		
 		gtk_set_busy(false, this);
@@ -2339,11 +2572,12 @@ public class MainWindow : Window {
 		tv_theme_refresh();
 		btn_backup_theme_exec.visible = true;
 		btn_restore_theme_exec.visible = false;
-		lbl_theme_message.label = _("Select the themes to backup");
+		string message = _("Select the themes to backup");
 		title = _("Backup Themes");
 		
 		notebook.page = 4;
-
+		show_infobar_message(message);
+		
 		gtk_set_busy(false, this);
 	}
 	
@@ -2403,10 +2637,11 @@ public class MainWindow : Window {
 			tv_theme_refresh();
 			btn_backup_theme_exec.visible = false;
 			btn_restore_theme_exec.visible = true;
-			lbl_theme_message.label = _("Select the themes to restore");
+			string message = _("Select the themes to restore");
 			title = _("Restore Themes");
 			
 			notebook.page = 4;
+			show_infobar_message(message);
 		}
 		
 		gtk_set_busy(false, this);

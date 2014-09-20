@@ -57,6 +57,8 @@ public class Main : GLib.Object{
 	public string app_conf_path = "";
 	public string app_settings_zip_name = "app-settings.tar.gz";
 	
+	public bool default_list_missing = false;
+	
 	public bool gui_mode = false;
 	public string user_login = "";
 	public string user_home = "";
@@ -237,15 +239,21 @@ public class Main : GLib.Object{
 	
 	/* Package selections */
 	
-	public Gee.HashMap<string,Package> list_all(){
-		var pkg_list_available = list_available();
+	public Gee.HashMap<string,Package> list_all(bool list_all_available = true){
 		var pkg_list_installed = list_installed(true);
 		var pkg_list_default = list_default();
 		var pkg_list_top = list_top();
 		var pkg_list_manual = list_manual();
 		
-		var pkg_list_all = pkg_list_available;
-		
+		Gee.HashMap<string,Package> pkg_list_all;
+		if (list_all_available){
+			var pkg_list_available = list_available();
+			pkg_list_all = pkg_list_available;
+		}
+		else{
+			pkg_list_all = pkg_list_installed;
+		}
+
 		foreach(Package pkg in pkg_list_installed.values){
 			if (pkg_list_all.has_key(pkg.name)){
 				pkg_list_all[pkg.name].is_installed = true;
@@ -402,6 +410,9 @@ public class Main : GLib.Object{
 				pkg.is_available = true;
 				pkg_list[pkg.name] = pkg;
 			}
+		}
+		else{
+			default_list_missing = true;
 		}
 
 		return pkg_list;
