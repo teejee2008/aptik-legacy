@@ -1901,6 +1901,11 @@ public class MainWindow : Window {
 		
 		show_infobar_message(message);
 		notebook.page = 1;
+		
+		//fix for column header resize issue
+		gtk_do_events();
+		cmb_pkg_type.active = 1;
+		cmb_pkg_type.active = 0;
 	}
 	
 	private void btn_backup_packages_clicked_thread(){
@@ -2025,6 +2030,11 @@ public class MainWindow : Window {
 		
 		notebook.page = 1;
 		show_infobar_message(message);
+		
+		//fix for column header resize issue
+		gtk_do_events();
+		cmb_pkg_status.active = 1;
+		cmb_pkg_status.active = 0;
 	}
 	
 	private void btn_restore_packages_clicked_thread(){
