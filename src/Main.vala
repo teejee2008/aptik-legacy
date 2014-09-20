@@ -138,7 +138,7 @@ public class Main : GLib.Object{
 	public bool check_dependencies(out string msg){
 		msg = "";
 		
-		string[] dependencies = { "rsync","aptitude","apt-get","gzip","grep","find","chown","rm" };  
+		string[] dependencies = { "rsync","aptitude","apt-get","apt-cache","gzip","grep","find","chown","rm" };  
 
 		string path;
 		foreach(string cmd_tool in dependencies){
@@ -564,42 +564,74 @@ public class Main : GLib.Object{
 	/* PPA */
 	
 	public Gee.HashMap<string,Ppa> list_ppa(){
-		var ppa_list = new Gee.HashMap<string,Ppa>();
+		var ppa_list = list_ppas_from_etc_apt_dir();
 		var pkg_list_installed = list_installed(true);
 		
-		string sh =
-"""
-for listfile in `find /etc/apt/ -name \*.list`; do
-    grep -o "^deb http://ppa.launchpad.net/[a-z0-9\-]\+/[a-z0-9.\-]\+" $listfile | while read entry ; do
-        user=`echo $entry | cut -d/ -f4`
-        ppa=`echo $entry | cut -d/ -f5`
-        echo "$user/$ppa"
-    done
-done
-""";
-		string txt = "";
-		execute_command_script_sync(sh, out txt, null);
-		
-		foreach(string line in txt.split("\n")){
-			string ppa_name = line.strip();
-			if (ppa_name.length > 0) {
-				var ppa = new Ppa(ppa_name);
-				ppa.is_selected = true;
-				ppa.is_installed = true;
-				ppa_list[ppa_name] = ppa;
-				
-				foreach (Package pkg in pkg_list_installed.values) {
-					if (pkg.server.contains(ppa.name)){
-						ppa.description += " %s".printf(pkg.name);
-					}
+		//update ppa description (list of installed packages)
+		foreach(Ppa ppa in ppa_list.values){
+			foreach (Package pkg in pkg_list_installed.values) {
+				if (pkg.server.contains(ppa.name)){
+					ppa.description += " %s".printf(pkg.name);
 				}
-				ppa.description = ppa.description.strip();
 			}
+			ppa.description = ppa.description.strip();
 		}
-
+		
 		return ppa_list;
 	}
+	
+	public Gee.HashMap<string,Ppa> list_ppas_from_etc_apt_dir(){
+		var ppa_list = new Gee.HashMap<string,Ppa>();
+		
+		string std_out = "";
+		string std_err = "";
+		string cmd = "rsync -aim --dry-run --include=\"*.list\" --include=\"*/\" --exclude=\"*\" \"%s/\" /tmp".printf("/etc/apt");
+		int exit_code = execute_command_script_sync(cmd, out std_out, out std_err);
 
+		if (exit_code != 0){ 
+			return ppa_list; //no files found
+		}
+		
+		Regex rex_ppa;
+		MatchInfo match;
+		
+		try{
+			rex_ppa = new Regex("""^deb http://ppa.launchpad.net/([a-z0-9.-]+/[a-z0-9.-]+)""");
+		}
+		catch (Error e) {
+			log_error (e.message);
+			return ppa_list;
+		}
+				
+		string file_path;
+		string ppa_name;
+		foreach(string line in std_out.split("\n")){
+			if (line == null){ continue; }
+			if (line.length == 0){ continue; }
+
+			file_path = line.strip();
+			if (file_path.has_suffix("~")){ continue; }
+			if (file_path.split(" ").length < 2){ continue; }
+			if (!file_path.has_suffix(".list")){ continue; }
+
+			file_path = "/etc/apt/" + file_path[file_path.index_of(" ") + 1:file_path.length].strip();
+			
+			string txt = read_file(file_path);
+			foreach(string list_line in txt.split("\n")){
+				if (rex_ppa.match (list_line, 0, out match)){
+					ppa_name = match.fetch(1).strip();
+					
+					var ppa = new Ppa(ppa_name);
+					ppa.is_selected = true;
+					ppa.is_installed = true;
+					ppa_list[ppa_name] = ppa;
+				}
+			}
+		}
+		
+		return ppa_list;
+	}
+	
 	public bool save_ppa_list_selected(Gee.HashMap<string,Ppa> ppa_list_to_save){
 		string file_name = "ppa.list";
 		string ppa_list_file = backup_dir + file_name;
