@@ -42,7 +42,6 @@ public class MainWindow : Window {
 	
 	private Grid grid_backup_buttons;
 
-	private Toolbar toolbar_top;
 	private Toolbar toolbar_bottom;
 	private ToolButton btn_donate;
 	private ToolButton btn_about;
@@ -146,9 +145,6 @@ public class MainWindow : Window {
 	    //vboxMain
         vbox_main = new Box (Orientation.VERTICAL, 0);
         add (vbox_main);
-		
-        //add toolbar
-        //init_toolbar_top();
 
 		//notebook
 		notebook = new Notebook ();
@@ -1182,144 +1178,19 @@ public class MainWindow : Window {
         toolbar_bottom.add(btn_about);
 
         btn_about.clicked.connect (btn_about_clicked);
-	    
 	}
 
-	public void init_toolbar_top(){
-        //toolbar
-		toolbar_top = new Gtk.Toolbar();
-		toolbar_top.toolbar_style = ToolbarStyle.BOTH;
-		toolbar_top.set_icon_size(IconSize.SMALL_TOOLBAR);
-		toolbar_top.get_style_context().add_class(Gtk.STYLE_CLASS_PRIMARY_TOOLBAR);
-		vbox_main.add(toolbar_top);
-
-		//btn_backup_mode
-        var btn_backup_mode = new Gtk.ToolButton.from_stock ("gtk-missing-image");
-		btn_backup_mode.label = _("Backup >>");
-		btn_backup_mode.set_tooltip_text (_("Backup"));
-		toolbar_mode_backup = true;
-        toolbar_top.add(btn_backup_mode);
-		 
-		btn_backup_mode.clicked.connect(()=>{
-			toolbar_mode_backup = !toolbar_mode_backup;
-			if (toolbar_mode_backup){
-				btn_backup_mode.label = _("Backup >>");
-			}
-			else{
-				btn_backup_mode.label = _("Restore >>");
-			}
-		});
-		
-		var img = get_shared_icon("aptik","aptik.png",icon_size_toolbar);
-		btn_backup_mode.set_icon_widget(img);
-
-		//btn_ppa
-        var btn_ppa = new Gtk.ToolButton.from_stock("x-system-software-sources");
-        btn_ppa.set_size_request(30,-1);
-        
-		btn_ppa.label = _("PPA");
-		btn_ppa.set_tooltip_text (_("Software Sources"));
-        toolbar_top.add(btn_ppa);
-		
-		btn_ppa.clicked.connect(()=>{
-			if (toolbar_mode_backup){
-				btn_backup_ppa_clicked();
-			}
-			else{
-				btn_restore_ppa_clicked();
-			}
-		});
-
-		img = get_shared_icon("x-system-software-sources","ppa.svg",icon_size_toolbar);
-		btn_ppa.set_icon_widget(img);
-
-		//btn_cache
-        var btn_cache = new Gtk.ToolButton.from_stock("download");
-		btn_cache.label = _("Cache");
-		btn_cache.set_tooltip_text (_("Downloaded Packages"));
-        toolbar_top.add(btn_cache);
-		
-		btn_cache.clicked.connect(()=>{
-			if (toolbar_mode_backup){
-				btn_backup_cache_clicked();
-			}
-			else{
-				btn_restore_cache_clicked();
-			}
-		});
-
-		img = get_shared_icon("download","cache.svg",icon_size_toolbar);
-		btn_cache.set_icon_widget(img);
-
-		//btn_package
-        var btn_package = new Gtk.ToolButton.from_stock("gnome-package");
-		btn_package.label = _("Packages");
-		btn_package.set_tooltip_text (_("Installed Packages"));
-        toolbar_top.add(btn_package);
-		
-		btn_package.clicked.connect(()=>{
-			if (toolbar_mode_backup){
-				btn_backup_packages_clicked();
-			}
-			else{
-				btn_restore_packages_clicked();
-			}
-		});
-
-		img = get_shared_icon("gnome-package","package.svg",icon_size_toolbar);
-		btn_package.set_icon_widget(img);
-
-		//btn_config
-        var btn_config = new Gtk.ToolButton.from_stock("gnome-settings");
-		btn_config.label = _("Settings");
-		btn_config.set_tooltip_text (_("Application Settings"));
-        toolbar_top.add(btn_config);
-		
-		btn_config.clicked.connect(()=>{
-			if (toolbar_mode_backup){
-				btn_backup_config_clicked();
-			}
-			else{
-				btn_restore_config_clicked();
-			}
-		});
-
-		img = get_shared_icon("gnome-settings","config.svg",icon_size_toolbar);
-		btn_config.set_icon_widget(img);
-
-		//btn_theme
-        var btn_theme = new Gtk.ToolButton.from_stock("preferences-theme");
-		btn_theme.label = _("Themes");
-		btn_theme.set_tooltip_text (_("Themes & Icons"));
-        toolbar_top.add(btn_theme);
-		
-		btn_theme.clicked.connect(()=>{
-			if (toolbar_mode_backup){
-				btn_backup_theme_clicked();
-			}
-			else{
-				btn_restore_theme_clicked();
-			}
-		});
-
-		img = get_shared_icon("preferences-theme","theme.svg",icon_size_toolbar);
-		btn_theme.set_icon_widget(img);
-	}
-	
 	private void notebook_switch_page (Widget page, uint new_page) {
 		uint old_page = notebook.page;
 		if (old_page == -1) { return; }
 		
 		if (new_page == 0){
-			toolbar_top.visible = true;
 			toolbar_bottom.visible = true;
-			toolbar_top.sensitive = true;
 			resize(def_width, def_height);	
 			title = AppName + " v" + AppVersion;
 			progress_hide();
 		}
 		else {
-			toolbar_top.visible = false;
 			toolbar_bottom.visible = false;
 			resize(ex_width, ex_height);
 		}
@@ -2742,7 +2613,6 @@ public class MainWindow : Window {
 		lbl_status.label = message;
 
 		notebook.sensitive = false;
-		toolbar_top.sensitive = false;
 		toolbar_bottom.visible = false;
 		
 		gtk_set_busy(true, this);
@@ -2757,7 +2627,6 @@ public class MainWindow : Window {
 		//lbl_status.label = message;
 
 		notebook.sensitive = true;
-		toolbar_top.sensitive = true;
 		//toolbar_bottom.visible = true; //depends
 		
 		gtk_set_busy(false, this);
@@ -2772,7 +2641,6 @@ public class MainWindow : Window {
 		progressbar.visible = true;
 
 		notebook.sensitive = true;
-		toolbar_top.sensitive = true;
 		//toolbar_bottom.visible = true; //depends
 		
 		gtk_set_busy(false, this);
