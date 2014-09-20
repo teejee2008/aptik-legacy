@@ -1,5 +1,13 @@
-aptik (1.5.2) trusty; urgency=medium
+aptik (1.6.1) trusty; urgency=medium
 
-  * Updated installer and added uninstaller
+  * Added option to filter list of packages by name, type and status
+  
+  * Removed the top toolbar.
+  
+  * Removed the installation summary prompt
+  
+  * Changed the code for getting list of installed PPAs. This should fix the issue where an empty list is returned on some systems.
 
- -- Tony George <tony.george.kol@gmail.com>  Sun, 17 Aug 2014 10:00:00 +0530
+  * Removed the infobar and messages at the top of each page
+  
+ -- Tony George <tony.george.kol@gmail.com>  Sat, 20 Sep 2014 10:00:00 +0530

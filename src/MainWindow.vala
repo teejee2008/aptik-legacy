@@ -149,7 +149,7 @@ public class MainWindow : Window {
 
         //vbox_actions
         vbox_actions = new Box (Gtk.Orientation.VERTICAL, 6);
-        vbox_actions.margin = 6;
+        vbox_actions.margin = 12;
         notebook.append_page (vbox_actions, lbl_actions);
 
         // lbl_header_location
