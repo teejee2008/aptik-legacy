@@ -112,22 +112,16 @@ public class MainWindow : Window {
 	private Gee.HashMap<string,Ppa> ppa_list_user;
 	private Gee.ArrayList<Theme> theme_list_user;
 	private Gee.ArrayList<AppConfig> config_list_user;
-	
-	private string list_install;
-	private string list_unknown;
-	string summary = "";
 
 	bool is_running;
 	bool is_restore_view = false;
-	bool toolbar_mode_backup = true;
-	
+
 	int def_width = 500;
 	int def_height = 450;
 	
 	int ex_width = 600;
 	int ex_height = 500;
-	
-	int icon_size_toolbar = 32;
+
 	int icon_size_list = 22;
 	int button_width = 85;
 	int button_height = 15;
@@ -2078,72 +2072,8 @@ public class MainWindow : Window {
 		}
 		
 		//check list of packages to install
-		get_package_installation_summary();
-		if (list_install.length == 0){
-			string title = _("Nothing To Do");
-			string msg = "";
-			if (list_unknown.length > 0){
-				msg += _("Following packages are NOT available") + ":\n\n" + list_unknown + "\n\n";
-			}
-			msg += _("There are no packages selected for installation");
-			gtk_messagebox(title, msg, this, false);
-			return;
-		}
-		
-		//show summary prompt
-		var dialog = new LogWindow();
-		dialog.set_transient_for(this);
-		dialog.show_all();
-		dialog.set_title(_("Install Summary"));
-		dialog.set_log_msg(summary);
-		dialog.set_prompt_msg(_("Continue with installation?"));
-		dialog.show_yes_no();
-		int response = dialog.run();
-		dialog.destroy();
-
-		if (response == Gtk.ResponseType.YES){
-			progress_begin(_("Installing packages..."));
-			
-			gtk_do_events();
-			
-			string cmd = "apt-get install %s".printf(list_install);
-			cmd += "\n\necho '" + _("Finished installing packages") + ".'";
-			cmd += "\necho '" + _("Close window to exit...") + "'";
-			cmd += "\nread dummy";
-			execute_command_script_in_terminal_sync(create_temp_bash_script(cmd));
-			//success/error will be displayed by apt-get in terminal
-			
-			gtk_do_events();
-			
-			show_home_page();
-		}
-		else{
-			progress_hide();
-		}
-	}
-	
-	private void get_package_installation_summary(){
-		lbl_status.label = _("Checking available packages...");
-		
-		try {
-			is_running = true;
-			Thread.create<void> (get_package_installation_summary_thread, true);
-		} catch (ThreadError e) {
-			is_running = false;
-			log_error (e.message);
-		}
-
-		while(is_running){
-			Thread.usleep ((ulong) 200000);
-			progressbar.pulse();
-			gtk_do_events();
-		}
-	}
-	
-	private void get_package_installation_summary_thread(){
-		list_install = "";
-		list_unknown = "";
-		summary = "";
+		string list_install = "";
+		string list_unknown = "";
 
 		foreach(Package pkg in pkg_list_user.values){
 			if (pkg.is_selected && pkg.is_available && !pkg.is_installed){
@@ -2158,28 +2088,35 @@ public class MainWindow : Window {
 		
 		list_install = list_install.strip();
 		list_unknown = list_unknown.strip();
-
-		string cmd = "apt-get install -s %s".printf(list_install);
-		string txt = execute_command_sync_get_output(cmd);
-
-		summary = "";
-		if (list_unknown.strip().length > 0){
-			summary += _("Following packages are NOT available") + "\n";
-			summary += list_unknown + "\n\n";
-		}
 		
-		foreach(string line in txt.split("\n")){
-			if (line.has_prefix("Inst ")||line.has_prefix("Conf ")||line.has_prefix("Remv ")){
-				//skip
+		if (list_install.length == 0){
+			string title = _("Nothing To Do");
+			string msg = "";
+			if (list_unknown.length > 0){
+				msg += _("Following packages are NOT available") + ":\n\n" + list_unknown + "\n\n";
 			}
-			else{
-				summary += line + "\n";
-			}
+			msg += _("There are no packages selected for installation");
+			gtk_messagebox(title, msg, this, false);
+			return;
 		}
+
+		progress_begin(_("Installing packages..."));
+			
+		gtk_do_events();
 		
-		is_running = false;
+		string cmd = "apt-get install %s".printf(list_install);
+		cmd += "\necho ''";
+		cmd += "\necho '" + _("Finished installing packages") + ".'";
+		cmd += "\necho '" + _("Close window to exit...") + "'";
+		cmd += "\nread dummy";
+		execute_command_script_in_terminal_sync(create_temp_bash_script(cmd));
+		//success/error will be displayed by apt-get in terminal
+		
+		gtk_do_events();
+		
+		show_home_page();
 	}
-	
+
 	/* APT Cache */
 	
 	private void btn_backup_cache_clicked(){
