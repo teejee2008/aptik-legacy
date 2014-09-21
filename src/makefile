@@ -8,8 +8,12 @@ man1dir=$(mandir)/man1
 CFLAGS=--std=c99
 
 all:
+	#build binaries
 	valac -X -D'GETTEXT_PACKAGE="aptik"' --Xcc="-lm" --thread "Main.vala" "Utility.vala" "AptikGtk.vala" "MainWindow.vala" "DonationWindow.vala" "AboutWindow.vala" -o aptik-gtk --pkg glib-2.0 --pkg gio-unix-2.0 --pkg posix --pkg gtk+-3.0 --pkg gee-1.0 --pkg libsoup-2.4 --pkg json-glib-1.0
 	valac -X -D'GETTEXT_PACKAGE="aptik"' --Xcc="-lm" --thread "Main.vala" "Utility.vala" "AptikConsole.vala" -o aptik --pkg glib-2.0 --pkg gio-unix-2.0 --pkg posix --pkg gtk+-3.0 --pkg gee-1.0 --pkg libsoup-2.4 --pkg json-glib-1.0
+
+	#update translation template
+	xgettext --language=C --keyword=_ --copyright-holder='Tony George (teejee2008@gmail.com)' --package-name='aptik' --package-version='1.6' --msgid-bugs-address='teejee2008@gmail.com' --escape --sort-output -o ../aptik.pot *.vala
 
 clean:
 	rm -rf *.o aptik
