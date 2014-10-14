@@ -3,8 +3,8 @@
 app_name='aptik'
 app_fullname='Aptik'
 
-generic_depends=(rsync libgee json-glib aptitude gksu)
-debian_depends=(rsync libgee2 libjson-glib-1.0-0 aptitude gksu)
+generic_depends=(rsync aptitude)
+debian_depends=(rsync aptitude)
 redhat_depends=()
 arch_depends=()
 
