@@ -1548,7 +1548,10 @@ public class MainWindow : Window {
 		};
 
 		dialog.translators = {
-			"giulux (Italian)"
+			"giulux (Italian)",
+			"Jorge Jamhour (Brazilian Portuguese):https://launchpad.net/~jorge-jamhour",
+			"B. W. Knight (Korean):https://launchpad.net/~kbd0651",
+			"Rodion R. (Russian):https://launchpad.net/~r0di0n"
 		}; 
 		
 		dialog.documenters = null; 

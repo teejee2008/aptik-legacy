@@ -1,0 +1,990 @@
+# Russian translation for apt-toolkit
+# Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
+# This file is distributed under the same license as the apt-toolkit package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: apt-toolkit\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2014-07-08 21:45+0530\n"
+"PO-Revision-Date: 2014-12-07 12:43+0000\n"
+"Last-Translator: Rodion R. <rodikr2005@yandex.ru>\n"
+"Language-Team: Russian <ru@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2015-05-09 13:04+0000\n"
+"X-Generator: Launchpad (build 17474)\n"
+
+#: src/MainWindow.vala:2120
+#, c-format
+msgid "%ld packages in backup"
+msgstr "%ld пакетов в резервной копии"
+
+#: src/MainWindow.vala:2151
+#, c-format
+msgid "%ld packages in cache"
+msgstr "%ld пакетов в кэше"
+
+#: src/MainWindow.vala:1101
+msgid "About"
+msgstr "О приложении"
+
+#: src/MainWindow.vala:159
+msgid "Actions"
+msgstr "Действия"
+
+#: src/MainWindow.vala:243
+msgid "Add missing PPAs"
+msgstr "Добавить отсутствующие PPA"
+
+#: src/AptikConsole.vala:437
+msgid "Adding PPA"
+msgstr "Добавление PPA"
+
+#: src/MainWindow.vala:1674
+msgid "Adding PPAs..."
+msgstr "Добавление PPA..."
+
+#: src/AptikGtk.vala:50
+msgid "Admin Access Required"
+msgstr "Требуются права администратора"
+
+#: src/MainWindow.vala:1800
+msgid "All top-level installed packages have been selected by default."
+msgstr "Все высокоуровневые пакеты выбраны по умолчанию."
+
+#: src/Main.vala:226
+msgid "App config loaded"
+msgstr "Настройки приложения загружены"
+
+#: src/Main.vala:201
+msgid "App config saved"
+msgstr "Настройки приложения сохранены"
+
+#: src/MainWindow.vala:1102
+msgid "Application Info"
+msgstr "О приложении"
+
+#: src/MainWindow.vala:311 src/MainWindow.vala:312 src/MainWindow.vala:1209
+msgid "Application Settings"
+msgstr "Настройки приложения"
+
+#: src/MainWindow.vala:2300
+msgid "Application settings restored successfully"
+msgstr "Настройки приложения успешно восстановлены"
+
+#: src/AptikGtk.vala:48
+msgid "Aptik needs admin access to backup and restore packages."
+msgstr ""
+"Для резервирования и восстановления пакетов Aptik нужны права админастратора."
+
+#: src/Main.vala:1093 src/MainWindow.vala:2413
+#, c-format
+msgid "Archiving"
+msgstr "Архивация"
+
+#: src/AboutWindow.vala:312
+#, c-format
+msgid "Artists"
+msgstr "Художники"
+
+#: src/AptikConsole.vala:96
+msgid "Assume Yes for all prompts"
+msgstr "Отвечать «Да» на все вопросы"
+
+#: src/AboutWindow.vala:304
+#, c-format
+msgid "Authors"
+msgstr "Разработчики"
+
+#: src/MainWindow.vala:1310
+msgid "Available"
+msgstr "Доступен"
+
+#: src/AboutWindow.vala:275
+msgid "Back"
+msgstr "Назад"
+
+#: src/MainWindow.vala:233 src/MainWindow.vala:262 src/MainWindow.vala:289
+#: src/MainWindow.vala:319 src/MainWindow.vala:348 src/MainWindow.vala:520
+#: src/MainWindow.vala:690 src/MainWindow.vala:850 src/MainWindow.vala:1028
+#: src/MainWindow.vala:1129
+msgid "Backup"
+msgstr "Резервировать"
+
+#: src/MainWindow.vala:203
+msgid "Backup &amp; Restore"
+msgstr "Резервирование и восстановление"
+
+#: src/MainWindow.vala:1128 src/MainWindow.vala:1136
+msgid "Backup >>"
+msgstr "Резервировать >>"
+
+#: src/MainWindow.vala:2188
+msgid "Backup Application Settings"
+msgstr "Резервировать настройки приложения"
+
+#: src/MainWindow.vala:167 src/MainWindow.vala:179
+msgid "Backup Directory"
+msgstr "Каталог резервных копий"
+
+#: src/MainWindow.vala:1457
+msgid "Backup Directory Not Selected"
+msgstr "Каталог резервных копий не выбран"
+
+#: src/MainWindow.vala:1841
+msgid "Backup Software Selections"
+msgstr "Резервирование набора приложений"
+
+#: src/MainWindow.vala:1582
+msgid "Backup Software Sources"
+msgstr "Резервирование источников приложений"
+
+#: src/MainWindow.vala:2373
+msgid "Backup Themes"
+msgstr "Резервирование тем"
+
+#: src/MainWindow.vala:321
+msgid "Backup application settings"
+msgstr "Резервировать настройки приложения"
+
+#: src/MainWindow.vala:1754 src/MainWindow.vala:1898
+msgid "Backup created successfully"
+msgstr "Резервная копия успешно создана"
+
+#: src/AptikConsole.vala:94
+msgid "Backup directory (defaults to current directory)"
+msgstr "Каталог резервных копий (по умолчанию текущий)"
+
+#: src/AptikConsole.vala:83 src/MainWindow.vala:264
+msgid "Backup downloaded packages from APT cache"
+msgstr "Резервировать загруженные в кэш APT пакеты"
+
+#: src/AptikConsole.vala:85
+msgid "Backup icons from /usr/share/icons"
+msgstr "Резервировать значки из /usr/share/icons"
+
+#: src/AptikConsole.vala:81
+msgid "Backup list of PPAs"
+msgstr "Резервировать список PPA"
+
+#: src/AptikConsole.vala:82
+msgid "Backup list of manual and installed packages"
+msgstr "Резервировать список вручную (и не только) установленных пакетов"
+
+#: src/MainWindow.vala:235
+msgid "Backup the list of installed PPAs"
+msgstr "Резервировать список установленных PPA"
+
+#: src/MainWindow.vala:291
+msgid "Backup the list of installed packages"
+msgstr "Резервировать список установленных пакетов"
+
+#: src/MainWindow.vala:350
+msgid "Backup themes and icons"
+msgstr "Резервировать темы и значки"
+
+#: src/AptikConsole.vala:84
+msgid "Backup themes from /usr/share/themes"
+msgstr "Резервировать темы из /usr/share/themes"
+
+#: src/MainWindow.vala:2224 src/MainWindow.vala:2420
+msgid "Backups created successfully"
+msgstr "Резервные копии успешно созданы"
+
+#: src/Main.vala:1474
+msgid "Bash Command History"
+msgstr "История комманд Bash"
+
+#: src/Main.vala:1476
+msgid "Bash Init Script"
+msgstr "Bash Init-скрипт"
+
+#: src/Main.vala:1478
+msgid "Bash Logout Script"
+msgstr "Bash Logout-скрипт"
+
+#: src/MainWindow.vala:1170
+msgid "Cache"
+msgstr "Кэш"
+
+#: src/Main.vala:812 src/MainWindow.vala:2134
+msgid "Cache backup not found in backup directory"
+msgstr "Резервная копия кэша не найдена в каталоге"
+
+#: src/MainWindow.vala:532 src/MainWindow.vala:702 src/MainWindow.vala:870
+#: src/MainWindow.vala:1040
+msgid "Cancel"
+msgstr "Отмена"
+
+#: src/MainWindow.vala:2499
+msgid "Change Ownership"
+msgstr "Смена владельца"
+
+#: src/MainWindow.vala:2044
+msgid "Checking available packages..."
+msgstr "Проверка доспупных пакетов..."
+
+#: src/MainWindow.vala:1550 src/MainWindow.vala:1619 src/MainWindow.vala:1718
+msgid "Checking installed PPAs..."
+msgstr "Проверка установленных PPA..."
+
+#: src/MainWindow.vala:1931
+msgid "Checking installed and available packages..."
+msgstr "Проверка установленных и доступных пакетов..."
+
+#: src/MainWindow.vala:1773
+msgid "Checking installed packages..."
+msgstr "Проверка установленных пакетов..."
+
+#: src/Main.vala:1484
+msgid "Chromium Web Browser"
+msgstr "Веб-браузер Chromium"
+
+#: src/AboutWindow.vala:285
+msgid "Close"
+msgstr "Закрыть"
+
+#: src/MainWindow.vala:1710 src/MainWindow.vala:2031
+msgid "Close window to exit..."
+msgstr "Закройте окно, чтобы выйти..."
+
+#: src/Main.vala:150
+msgid "Commands listed below are not available on this system"
+msgstr "Команды ниже не доступны в этой системе"
+
+#: src/MainWindow.vala:712
+msgid "Config"
+msgstr "Настройка"
+
+#: src/MainWindow.vala:2018
+msgid "Continue with installation?"
+msgstr "Продолжить и установить?"
+
+#: src/MainWindow.vala:2501
+msgid "Continue?"
+msgstr "Продолжить?"
+
+#: src/MainWindow.vala:2113 src/MainWindow.vala:2144
+msgid "Copying"
+msgstr "Копирование"
+
+#: src/AboutWindow.vala:262 src/AboutWindow.vala:279
+msgid "Credits"
+msgstr "Благодарности"
+
+#: src/MainWindow.vala:1320
+msgid "Default Package (Was Installed with Distribution)"
+msgstr "Стандартный пакет (установлен с дистрибутивом)"
+
+#: src/MainWindow.vala:2345
+msgid "Deleting"
+msgstr "Удаление"
+
+#: src/MainWindow.vala:461 src/MainWindow.vala:811
+msgid "Description"
+msgstr "Описание"
+
+#: src/DonationWindow.vala:63
+msgid ""
+"Did you find this software useful?\n"
+"\n"
+"Please consider making a donation to show your support.\n"
+"\n"
+"This application is completely free and will continue to remain that way. "
+"Your contributions will help in keeping this project alive and developing it "
+"further.\n"
+"\n"
+"Feel free to mail me if you find any issues or if you need any changes in "
+"this application. I can be reached at teejeetech@gmail.com.\n"
+"\n"
+"~Tony George"
+msgstr ""
+"Считаете эту программу полезной?\n"
+"\n"
+"Пожалуйста, поддержите её, сделав пожертвование.\n"
+"\n"
+"Приложение полностью бесплатно и таким и останется. Ваш вклад поможет "
+"сохранению и развитию проекта.\n"
+"\n"
+"Не стесняйтесь обращаться ко мне при возникновении вопросов или если вам "
+"нужны какие-либо изменения в приложении. Меня можно найти, написав на "
+"teejeetech@gmail.com.\n"
+"\n"
+"~Tony George"
+
+#: src/AboutWindow.vala:328
+#, c-format
+msgid "Documenters"
+msgstr "Авторы документации"
+
+#: src/DonationWindow.vala:98
+msgid "Don't Show This Again"
+msgstr "Не показывать снова"
+
+#: src/MainWindow.vala:1084 src/MainWindow.vala:1085
+msgid "Donate"
+msgstr "Пожертвования"
+
+#: src/DonationWindow.vala:76
+msgid "Donate via PayPal"
+msgstr "Пожертвовать через PayPal"
+
+#: src/AboutWindow.vala:336
+#, c-format
+msgid "Donors"
+msgstr "Жертвователи"
+
+#: src/MainWindow.vala:1171
+msgid "Downloaded Packages"
+msgstr "Загруженные пакеты"
+
+#: src/MainWindow.vala:254 src/MainWindow.vala:255
+msgid "Downloaded Packages (APT Cache)"
+msgstr "Загруженные пакеты (кэш APT)"
+
+#: src/AptikConsole.vala:233 src/AptikConsole.vala:242
+#: src/MainWindow.vala:1668 src/MainWindow.vala:1681 src/MainWindow.vala:1760
+#: src/MainWindow.vala:1904 src/MainWindow.vala:1918 src/MainWindow.vala:1982
+#: src/MainWindow.vala:1993 src/MainWindow.vala:2522 src/Utility.vala:101
+msgid "Error"
+msgstr "Ошибка"
+
+#: src/MainWindow.vala:1324
+msgid "Extra Package (Was Installed by User)"
+msgstr "Дополнительный пакет (установлен пользователем)"
+
+#: src/Main.vala:1130 src/MainWindow.vala:2290 src/MainWindow.vala:2481
+#, c-format
+msgid "Extracting"
+msgstr "Извлечение"
+
+#: src/Main.vala:1591 src/MainWindow.vala:2523
+msgid "Failed to change file ownership"
+msgstr "Не удалось изменить владельца файла"
+
+#: src/Utility.vala:1036
+msgid "Failed to kill process"
+msgstr "Не удалось снять процесс"
+
+#: src/Utility.vala:2062
+msgid "Failed to set ownership"
+msgstr "Не удалось задать владельца"
+
+#: src/Utility.vala:1019 src/Utility.vala:1045
+msgid "Failed to unmount"
+msgstr "Не удалось отключить"
+
+#: src/AptikConsole.vala:182 src/AptikConsole.vala:195 src/Main.vala:459
+#: src/Main.vala:491 src/Main.vala:621 src/MainWindow.vala:1682
+#: src/MainWindow.vala:1761 src/MainWindow.vala:1905 src/MainWindow.vala:1919
+msgid "Failed to write"
+msgstr "Не удалось записать"
+
+#: src/MainWindow.vala:1994
+msgid "Failed to write file"
+msgstr "Ошибка записи в файл"
+
+#: src/MainWindow.vala:1797
+msgid "File Missing"
+msgstr "Файл отсутствует"
+
+#: src/MainWindow.vala:1469
+msgid "File Not Found"
+msgstr "Файл не найден"
+
+#: src/Main.vala:1119 src/Main.vala:1498
+msgid "File not found"
+msgstr "Файл не найден"
+
+#: src/Main.vala:166 src/MainWindow.vala:1470
+msgid "File not found in backup directory"
+msgstr "Файл не найден в каталоге резервных копий"
+
+#: src/AptikConsole.vala:179 src/AptikConsole.vala:192 src/Main.vala:456
+#: src/Main.vala:488 src/Main.vala:618
+msgid "File saved"
+msgstr "Файл сохранён"
+
+#: src/MainWindow.vala:2133
+msgid "Files Not Found"
+msgstr "Файлы не найдены"
+
+#: src/MainWindow.vala:1733 src/MainWindow.vala:1753 src/MainWindow.vala:1897
+#: src/MainWindow.vala:2116 src/MainWindow.vala:2118 src/MainWindow.vala:2147
+#: src/MainWindow.vala:2149 src/MainWindow.vala:2223 src/MainWindow.vala:2299
+#: src/MainWindow.vala:2350 src/MainWindow.vala:2419 src/MainWindow.vala:2488
+msgid "Finished"
+msgstr "Завершено"
+
+#: src/MainWindow.vala:1709
+msgid "Finished adding PPAs"
+msgstr "Добавление PPA завершено"
+
+#: src/MainWindow.vala:2030
+msgid "Finished installing packages"
+msgstr "Установка пакетов завершена"
+
+#: src/MainWindow.vala:1738
+msgid "Finished with Errors"
+msgstr "Завершено с ошибками"
+
+#: src/Main.vala:1464
+msgid "Firefox Web Browser"
+msgstr "Веб-браузер Firefox"
+
+#: src/MainWindow.vala:1488
+msgid "Folder Not Found"
+msgstr "Папка не найдена"
+
+#: src/MainWindow.vala:1489
+msgid "Folder not found in backup directory"
+msgstr "Папка не найдена в каталоге резервных копий"
+
+#: src/MainWindow.vala:1739
+msgid "Following PPAs could not be added"
+msgstr "Следующие PPA не могут быть довавлены"
+
+#: src/AptikConsole.vala:413 src/MainWindow.vala:2005 src/MainWindow.vala:2085
+msgid "Following packages are NOT available"
+msgstr "Следующие пакеты недоступны"
+
+#: src/AptikConsole.vala:417
+msgid "Following packages will be installed"
+msgstr "Будут установлены следующие пакеты"
+
+#: src/MainWindow.vala:2016
+msgid "Install Summary"
+msgstr "Краткая сводка"
+
+#: src/MainWindow.vala:300
+msgid "Install missing packages"
+msgstr "Установить отсутсвующие пакеты"
+
+#: src/MainWindow.vala:1306 src/MainWindow.vala:1422
+msgid "Installed"
+msgstr "Установлено"
+
+#: src/MainWindow.vala:1190
+msgid "Installed Packages"
+msgstr "Установленные пакеты"
+
+#: src/MainWindow.vala:2024
+msgid "Installing packages..."
+msgstr "Установка пакетов..."
+
+#: src/AptikConsole.vala:233 src/AptikConsole.vala:242
+#: src/MainWindow.vala:1669 src/MainWindow.vala:1983
+msgid ""
+"Internet connection is not active. Please check the connection and try again."
+msgstr ""
+"Нет доступа в интернет. Пожалуйста, проверьте соединение и повторите попытку."
+
+#: src/MainWindow.vala:1799
+msgid ""
+"It is not possible to determine whether a package was installed by you, or "
+"whether it was installed along with the Linux distribution."
+msgstr ""
+"Не удалось определить, установлен пакет вами или в составе дистрибутива "
+"Linux."
+
+#: src/Utility.vala:1029
+msgid "Killing all processes using the mount-point..."
+msgstr "Снятие всех процессов с использованием точки монтирования..."
+
+#: src/LogWindow.vala:64
+msgid "Line"
+msgstr "Линия"
+
+#: src/AptikConsole.vala:77
+msgid "List PPAs"
+msgstr "Список PPA"
+
+#: src/AptikConsole.vala:72
+msgid "List available packages"
+msgstr "Список доступных пакетов"
+
+#: src/AptikConsole.vala:76
+msgid "List default packages for linux distribution"
+msgstr "Список стандартных пакетов линукс-дистрибутива"
+
+#: src/AptikConsole.vala:79
+msgid "List icon themes in /usr/share/icons"
+msgstr "Список тем значков в /usr/share/icons"
+
+#: src/AptikConsole.vala:73
+msgid "List installed packages"
+msgstr "Список установленных пакетов"
+
+#: src/MainWindow.vala:1755 src/MainWindow.vala:1899
+msgid "List saved with file name"
+msgstr "Список сохранён в файл с именем"
+
+#: src/AptikConsole.vala:78
+msgid "List themes in /usr/share/themes"
+msgstr "Список тем в /usr/share/themes"
+
+#: src/AptikConsole.vala:74
+msgid "List top-level installed packages"
+msgstr "Список установленных пакетов верхнего уровня"
+
+#: src/AptikConsole.vala:75
+msgid "List top-level packages installed by user"
+msgstr "Список установленных пользователем пакетов верхнего уровня"
+
+#: src/Main.vala:1470 src/Main.vala:1480
+msgid "Local Fonts"
+msgstr "Локальные шрифты"
+
+#: src/Main.vala:1472 src/Main.vala:1482
+msgid "Local Themes"
+msgstr "Локальные темы"
+
+#: src/LogWindow.vala:49
+msgid "Log"
+msgstr "Журнал"
+
+#: src/Main.vala:103
+msgid "Missing Dependencies"
+msgstr "Отсутствующие зависимости"
+
+#: src/Main.vala:1637
+msgid "Missing Icon"
+msgstr "Отсутствующий значок"
+
+#: src/LogWindow.vala:100
+msgid "No"
+msgstr "Нет"
+
+#: src/MainWindow.vala:2205
+msgid "No Directories Selected"
+msgstr "Каталоги не выбраны"
+
+#: src/MainWindow.vala:1599
+msgid "No PPA Selected"
+msgstr "PPA не выбраны"
+
+#: src/MainWindow.vala:1858
+msgid "No Packages Selected"
+msgstr "Пакеты не выбраны"
+
+#: src/MainWindow.vala:2390
+msgid "No Themes Selected"
+msgstr "Темы не выбраны"
+
+#: src/MainWindow.vala:1314
+msgid "Not Available! Check if PPA needs to be added"
+msgstr "Не доступен! Проверьте, добавлен ли PPA"
+
+#: src/MainWindow.vala:1310 src/MainWindow.vala:1426
+msgid "Not Installed"
+msgstr "Не установлен"
+
+#: src/MainWindow.vala:1661 src/MainWindow.vala:1975 src/MainWindow.vala:2002
+#: src/MainWindow.vala:2261 src/MainWindow.vala:2316 src/MainWindow.vala:2455
+msgid "Nothing To Do"
+msgstr "Делать нечего"
+
+#: src/DonationWindow.vala:108
+msgid "OK"
+msgstr "ОК"
+
+#: src/LogWindow.vala:83
+msgid "Ok"
+msgstr "OK"
+
+#: src/MainWindow.vala:191
+msgid "Open"
+msgstr "Открыть"
+
+#: src/MainWindow.vala:193
+msgid "Open Backup Directory"
+msgstr "Открыть каталог резервных копий"
+
+#: src/Main.vala:1468
+msgid "Opera Web Browser"
+msgstr "Веб-браузер Opera"
+
+#: src/AptikConsole.vala:70
+msgid "Options"
+msgstr "Параметры"
+
+#: src/MainWindow.vala:2500
+#, c-format
+msgid "Owner will be changed to '%s' (uid=%d) for files in directory '%s'"
+msgstr "Владелец будет изменён на '%s' (uid=%d) для файлов в каталоге '%s'"
+
+#: src/Main.vala:1587
+#, c-format
+msgid "Ownership changed to '%s' for files in directory '%s'"
+msgstr "Владелец изменён на '%s' для файлов в каталоге '%s'"
+
+#: src/MainWindow.vala:541 src/MainWindow.vala:614 src/MainWindow.vala:1151
+msgid "PPA"
+msgstr "PPA"
+
+#: src/MainWindow.vala:1376 src/MainWindow.vala:1380
+#, c-format
+msgid "PPA is Enabled (%d installed packages)"
+msgstr "PPA подключён (%d пакетов установлено)"
+
+#: src/MainWindow.vala:1385
+msgid "PPA is Not Added"
+msgstr "PPA не добавлен"
+
+#: src/MainWindow.vala:1734
+msgid "PPAs added successfully"
+msgstr "PPA добавлены успешно"
+
+#: src/MainWindow.vala:444
+msgid "Package"
+msgstr "Пакет"
+
+#: src/MainWindow.vala:369 src/MainWindow.vala:631 src/MainWindow.vala:1189
+msgid "Packages"
+msgstr "Пакеты"
+
+#: src/MainWindow.vala:2119 src/MainWindow.vala:2150
+msgid "Packages copied successfully"
+msgstr "Пакеты успешно скопированы"
+
+#: src/MainWindow.vala:773 src/MainWindow.vala:969
+msgid "Path"
+msgstr "Путь"
+
+#: src/Main.vala:151
+msgid "Please install required packages and try running Aptik again"
+msgstr "Пожалуйста, установите требуемые пакеты и снова запустите Aptik"
+
+#: src/AptikGtk.vala:49
+msgid "Please run the application as admin ('gksu aptik-gtk')"
+msgstr ""
+"Пожалуйста, запустите приложение как администратор ('gksu aptik-gtk')"
+
+#: src/MainWindow.vala:1458
+msgid "Please select the backup directory"
+msgstr "Пожалуйста, выберите каталог резервных копий"
+
+#: src/MainWindow.vala:2317
+msgid "Please select the directories to reset"
+msgstr "Пожалуйста, выберите сбрасываемые каталоги"
+
+#: src/MainWindow.vala:2262
+msgid "Please select the directories to restore"
+msgstr "Пожалуйста, выберите восстанавливаемые каталоги"
+
+#: src/MainWindow.vala:1801
+msgid "Please un-select the packages that are not required."
+msgstr "Пожалуйста, снимите отметку с ненужных пакетов"
+
+#: src/MainWindow.vala:2108 src/MainWindow.vala:2139 src/MainWindow.vala:2212
+#: src/MainWindow.vala:2268 src/MainWindow.vala:2323 src/MainWindow.vala:2396
+#: src/MainWindow.vala:2462
+msgid "Preparing"
+msgstr "Подготовка"
+
+#: src/MainWindow.vala:863
+msgid "Reset"
+msgstr "Сбросить"
+
+#: src/MainWindow.vala:865
+msgid ""
+"Reset the settings for an application (Eg: Chromium Browser) by deleting the "
+"settings directory (~/.config/chromium). The directory will be created "
+"automatically with default configuration files on the next run of the "
+"application."
+msgstr ""
+"Сбросить настройки приложения (например, веб-браузера Chromium), удалив "
+"каталог настроек (~/.config/chromium). При следующем запуске приложения "
+"будет автоматически создан каталог  с настройками по умолчанию."
+
+#: src/MainWindow.vala:241 src/MainWindow.vala:269 src/MainWindow.vala:298
+#: src/MainWindow.vala:327 src/MainWindow.vala:356 src/MainWindow.vala:526
+#: src/MainWindow.vala:696 src/MainWindow.vala:856 src/MainWindow.vala:1034
+msgid "Restore"
+msgstr "Восстановить"
+
+#: src/MainWindow.vala:1139
+msgid "Restore >>"
+msgstr "Восстановить >>"
+
+#: src/MainWindow.vala:2243
+msgid "Restore Application Settings"
+msgstr "Восстановить настройки приложения"
+
+#: src/AptikConsole.vala:87
+msgid "Restore PPAs from file 'ppa.list'"
+msgstr "Восстановить PPA из файла 'ppa.list'"
+
+#: src/MainWindow.vala:1958
+msgid "Restore Software Selections"
+msgstr "Восстановить выделенные программы"
+
+#: src/MainWindow.vala:1644
+msgid "Restore Software Sources"
+msgstr "Восстановить источники приложений"
+
+#: src/MainWindow.vala:2437
+msgid "Restore Themes"
+msgstr "Восстановить темы"
+
+#: src/MainWindow.vala:329
+msgid "Restore application settings"
+msgstr "Восстановить настройки приложения"
+
+#: src/AptikConsole.vala:89 src/MainWindow.vala:271
+msgid "Restore downloaded packages to APT cache"
+msgstr "Восстановить заргруженные пакеты в кэш APT"
+
+#: src/AptikConsole.vala:91
+msgid "Restore icons to /usr/share/icons"
+msgstr "Восстановить значки в /usr/share/icons"
+
+#: src/AptikConsole.vala:88
+msgid "Restore packages from file 'packages.list'"
+msgstr "Восстановить пакеты из файла 'packages.list'"
+
+#: src/MainWindow.vala:858
+msgid ""
+"Restore the settings for an application (Eg: Chromium Browser) by replacing "
+"the settings directory (~/.config/chromium) with files from backup. Use the "
+"'Reset' button to delete the restored files in case of issues."
+msgstr ""
+"Восстановить настройки приложения (например, веб-браузера Chromium), заменив "
+"каталог настроек (~/.config/chromium) файлами из резервной копии. При "
+"возникновении проблем удалите восстановленные файлы, нажав кнопку «Сбросить»."
+
+#: src/MainWindow.vala:358
+msgid "Restore themes and icons"
+msgstr "Восстановить темы и значки"
+
+#: src/AptikConsole.vala:90
+msgid "Restore themes to /usr/share/themes"
+msgstr "Восстановить темы в /usr/share/themes"
+
+#: src/Main.vala:1539
+#, c-format
+msgid "Restoring Application Settings..."
+msgstr "Восстановление настроек приложения..."
+
+#: src/MainWindow.vala:1990
+msgid "Saving"
+msgstr "Сохранение"
+
+#: src/Main.vala:1301
+#, c-format
+msgid "Saving Application Settings..."
+msgstr "Сохранение настроек приложения..."
+
+#: src/MainWindow.vala:480 src/MainWindow.vala:650 src/MainWindow.vala:830
+#: src/MainWindow.vala:988
+msgid "Select All"
+msgstr "Выделить всё"
+
+#: src/MainWindow.vala:500 src/MainWindow.vala:670 src/MainWindow.vala:840
+#: src/MainWindow.vala:1008
+msgid "Select None"
+msgstr "Снять выделение"
+
+#: src/MainWindow.vala:1835
+msgid "Select packages to backup"
+msgstr "Выберите пакеты для резервирования"
+
+#: src/MainWindow.vala:549 src/MainWindow.vala:1581 src/MainWindow.vala:1600
+msgid "Select the PPAs to backup"
+msgstr "Выберите PPA для резервирования"
+
+#: src/MainWindow.vala:1643
+msgid "Select the PPAs to restore"
+msgstr "Выберите PPA для восстановления"
+
+#: src/MainWindow.vala:720
+msgid "Select the configs to backup"
+msgstr "Выберите настройки для резервирования"
+
+#: src/MainWindow.vala:2187 src/MainWindow.vala:2206
+msgid "Select the directories to backup"
+msgstr "Выберите каталоги для резервирования"
+
+#: src/MainWindow.vala:2242
+msgid "Select the directories to restore"
+msgstr "Выберите каталоги для восстановления"
+
+#: src/MainWindow.vala:377 src/MainWindow.vala:1859
+msgid "Select the packages to backup"
+msgstr "Выберите пакеты для резервирования"
+
+#: src/MainWindow.vala:1957
+msgid "Select the packages to restore"
+msgstr "Выберите пакеты для восстановления"
+
+#: src/MainWindow.vala:887 src/MainWindow.vala:2372 src/MainWindow.vala:2391
+msgid "Select the themes to backup"
+msgstr "Выберите темы для резервирования"
+
+#: src/MainWindow.vala:2436
+msgid "Select the themes to restore"
+msgstr "Выберите темы для восстановления"
+
+#: src/MainWindow.vala:1662
+msgid "Selected PPAs are already enabled on this system"
+msgstr "Выбранные PPA уже подключены"
+
+#: src/MainWindow.vala:2351
+msgid "Selected directories were deleted successfully"
+msgstr "Выбранные каталоги успешно удалены"
+
+#: src/MainWindow.vala:2328
+msgid "Selected directories will be deleted."
+msgstr "Выбраные каталоги будут удалены."
+
+#: src/MainWindow.vala:2273
+msgid "Selected directories will be replaced with files from backup."
+msgstr "Выбранные каталоги будут заменены файлами из резервной копии."
+
+#: src/AptikConsole.vala:421
+msgid "Selected packages are already installed"
+msgstr "Выбранные PPA уже установлены"
+
+#: src/MainWindow.vala:2456
+msgid "Selected themes are already installed"
+msgstr "Выбранные темы уже установлены"
+
+#: src/DonationWindow.vala:83
+msgid "Send Email"
+msgstr "Отправить письмо"
+
+#: src/MainWindow.vala:1208
+msgid "Settings"
+msgstr "Настройки"
+
+#: src/AptikConsole.vala:97
+msgid "Show all options"
+msgstr "Показать все параметры"
+
+#: src/AptikConsole.vala:95
+msgid "Show package description if available"
+msgstr "Показывать описание пакета, если доступно"
+
+#: src/MainWindow.vala:788
+msgid "Size"
+msgstr "Размер"
+
+#: src/MainWindow.vala:281
+msgid "Software Selections"
+msgstr "Набор приложений"
+
+#: src/MainWindow.vala:282
+msgid "Software Selections (Installed Packages)"
+msgstr "Избранные приложения (установленные пакеты)"
+
+#: src/MainWindow.vala:1152
+msgid "Software Sources"
+msgstr "Источники приложений"
+
+#: src/MainWindow.vala:225
+msgid "Software Sources (PPAs)"
+msgstr "Источники приложений (PPA)"
+
+#: src/MainWindow.vala:226
+msgid "Software Sources (Third Party PPAs)"
+msgstr "Источники приложений (PPA третьих лиц)"
+
+#: src/Main.vala:1486
+msgid "Startup Applications"
+msgstr "Автозагрузка"
+
+#: src/Utility.vala:1530
+msgid "Stopped"
+msgstr "Остановлено"
+
+#: src/MainWindow.vala:2517
+msgid "Success"
+msgstr "Успешно"
+
+#: src/AptikConsole.vala:68
+msgid "Syntax"
+msgstr "Синтаксис"
+
+#: src/MainWindow.vala:1531
+msgid "System migration toolkit for Ubuntu-based distributions"
+msgstr "Утилита миграции для дистрибутивов на базе Ubuntu"
+
+#: src/AptikConsole.vala:93
+msgid "Take ownership of files in your home directory"
+msgstr "Стать владельцем файлов в домашнем каталоге"
+
+#: src/MainWindow.vala:1798
+msgid "The list of default packages is missing on this system"
+msgstr "Список стандратных пакетов, отсутсвующих в системе"
+
+#: src/MainWindow.vala:879 src/MainWindow.vala:952
+msgid "Theme"
+msgstr "Тема"
+
+#: src/MainWindow.vala:1227
+msgid "Themes"
+msgstr "Темы"
+
+#: src/MainWindow.vala:1228
+msgid "Themes & Icons"
+msgstr "Темы & значки"
+
+#: src/MainWindow.vala:340 src/MainWindow.vala:341
+msgid "Themes and Icons"
+msgstr "Темы и значки"
+
+#: src/Main.vala:1038
+msgid "Themes not found in backup directory"
+msgstr "В каталоге резервных копий темы не найдены"
+
+#: src/MainWindow.vala:2489
+msgid "Themes restored successfully"
+msgstr "Темы успешно восстановлены"
+
+#: src/MainWindow.vala:1976 src/MainWindow.vala:2007
+msgid "There are no packages selected for installation"
+msgstr "Не выбраны пакеты для установки"
+
+#: src/AboutWindow.vala:320
+#, c-format
+msgid "Translators"
+msgstr "Переводчики"
+
+#: src/AptikConsole.vala:301
+msgid "Unknown option"
+msgstr "Неизвестная опция"
+
+#: src/Utility.vala:1007
+msgid "Unmounting from"
+msgstr "Отключение от"
+
+#: src/AptikConsole.vala:448 src/MainWindow.vala:1705
+msgid "Updating Package Information..."
+msgstr "Обновление информации о пакете..."
+
+#: src/MainWindow.vala:2294
+msgid "Updating file ownership"
+msgstr "Обновление прав доступа к файлу"
+
+#: src/DonationWindow.vala:90
+msgid "Visit Website"
+msgstr "Посетить сайт"
+
+#: src/MainWindow.vala:2272 src/MainWindow.vala:2327 src/Utility.vala:101
+msgid "Warning"
+msgstr "Предупреждение"
+
+#: src/LogWindow.vala:91
+msgid "Yes"
+msgstr "Да"
+
+#: src/MainWindow.vala:2518
+msgid "You are now the owner of all files in your home directory"
+msgstr "Теперь вы владелец всех файлов в домашнем каталоге"
+
+#: src/MainWindow.vala:2218
+msgid "Zipping"
+msgstr "Сжатие"

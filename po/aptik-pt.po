@@ -1,0 +1,1001 @@
+# Brazilian Portuguese translation for apt-toolkit
+# Copyright (c) 2015 Rosetta Contributors and Canonical Ltd 2015
+# This file is distributed under the same license as the apt-toolkit package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: apt-toolkit\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2014-07-08 21:45+0530\n"
+"PO-Revision-Date: 2015-01-04 23:22+0000\n"
+"Last-Translator: Jorge Jamhour <jorge.jamhour@gmail.com>\n"
+"Language-Team: Brazilian Portuguese <pt_BR@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2015-05-09 13:04+0000\n"
+"X-Generator: Launchpad (build 17474)\n"
+
+#: src/MainWindow.vala:2120
+#, c-format
+msgid "%ld packages in backup"
+msgstr "%ld pacotes em backup"
+
+#: src/MainWindow.vala:2151
+#, c-format
+msgid "%ld packages in cache"
+msgstr "%ld pacotes no cache"
+
+#: src/MainWindow.vala:1101
+msgid "About"
+msgstr "Sobre o Aptik"
+
+#: src/MainWindow.vala:159
+msgid "Actions"
+msgstr "Ações"
+
+#: src/MainWindow.vala:243
+msgid "Add missing PPAs"
+msgstr "Adicionar Pacotes Perdidos"
+
+#: src/AptikConsole.vala:437
+msgid "Adding PPA"
+msgstr "Adicionando Pacote (PPA)"
+
+#: src/MainWindow.vala:1674
+msgid "Adding PPAs..."
+msgstr "Adicionando Pacotes (PPAs)..."
+
+#: src/AptikGtk.vala:50
+msgid "Admin Access Required"
+msgstr "Requer Acesso como Administrador"
+
+#: src/MainWindow.vala:1800
+msgid "All top-level installed packages have been selected by default."
+msgstr ""
+"Todos os pacotes de alto nível instalados foram selecionados por padrão."
+
+#: src/Main.vala:226
+msgid "App config loaded"
+msgstr "Configuração do programa carregado"
+
+#: src/Main.vala:201
+msgid "App config saved"
+msgstr "Configurações de aplicativo salva"
+
+#: src/MainWindow.vala:1102
+msgid "Application Info"
+msgstr "Informações do Aplicativo"
+
+#: src/MainWindow.vala:311 src/MainWindow.vala:312 src/MainWindow.vala:1209
+msgid "Application Settings"
+msgstr "Configurações de Aplicativos"
+
+#: src/MainWindow.vala:2300
+msgid "Application settings restored successfully"
+msgstr "Configurações dos programas restauradas com sucesso"
+
+#: src/AptikGtk.vala:48
+msgid "Aptik needs admin access to backup and restore packages."
+msgstr ""
+"Aptik necessita da senha de administrador para Backup e Restauração de "
+"pacotes"
+
+#: src/Main.vala:1093 src/MainWindow.vala:2413
+#, c-format
+msgid "Archiving"
+msgstr "Arquivando"
+
+#: src/AboutWindow.vala:312
+#, c-format
+msgid "Artists"
+msgstr "Artistas"
+
+#: src/AptikConsole.vala:96
+msgid "Assume Yes for all prompts"
+msgstr "Seleccionar \\\"SIM\\\" para todos"
+
+#: src/AboutWindow.vala:304
+#, c-format
+msgid "Authors"
+msgstr "Autores(as)"
+
+#: src/MainWindow.vala:1310
+msgid "Available"
+msgstr "Disponível"
+
+#: src/AboutWindow.vala:275
+msgid "Back"
+msgstr "Voltar"
+
+#: src/MainWindow.vala:233 src/MainWindow.vala:262 src/MainWindow.vala:289
+#: src/MainWindow.vala:319 src/MainWindow.vala:348 src/MainWindow.vala:520
+#: src/MainWindow.vala:690 src/MainWindow.vala:850 src/MainWindow.vala:1028
+#: src/MainWindow.vala:1129
+msgid "Backup"
+msgstr "Cópia de segurança (Backup)"
+
+#: src/MainWindow.vala:203
+msgid "Backup &amp; Restore"
+msgstr "Backup &amp; Restore"
+
+#: src/MainWindow.vala:1128 src/MainWindow.vala:1136
+msgid "Backup >>"
+msgstr "Backup >>"
+
+#: src/MainWindow.vala:2188
+msgid "Backup Application Settings"
+msgstr "Backup de Configurações de |Aplicativos"
+
+#: src/MainWindow.vala:167 src/MainWindow.vala:179
+msgid "Backup Directory"
+msgstr "Diretório de backup"
+
+#: src/MainWindow.vala:1457
+msgid "Backup Directory Not Selected"
+msgstr "Diretório de backup  NÃO selecionado"
+
+#: src/MainWindow.vala:1841
+msgid "Backup Software Selections"
+msgstr "Seleção de Programas para Backup"
+
+#: src/MainWindow.vala:1582
+msgid "Backup Software Sources"
+msgstr "Backup de Repositórios"
+
+#: src/MainWindow.vala:2373
+msgid "Backup Themes"
+msgstr "Backup de Temas"
+
+#: src/MainWindow.vala:321
+msgid "Backup application settings"
+msgstr "Backup de Configurações de Aplicativos"
+
+#: src/MainWindow.vala:1754 src/MainWindow.vala:1898
+msgid "Backup created successfully"
+msgstr "Backup criado com sucesso!"
+
+#: src/AptikConsole.vala:94
+msgid "Backup directory (defaults to current directory)"
+msgstr "Diretório de backup (o padrão é o diretório atual)"
+
+#: src/AptikConsole.vala:83 src/MainWindow.vala:264
+msgid "Backup downloaded packages from APT cache"
+msgstr "Backup de pacotes baixados (APT cache)"
+
+#: src/AptikConsole.vala:85
+msgid "Backup icons from /usr/share/icons"
+msgstr "Backup de ícones em /usr/share/icons"
+
+#: src/AptikConsole.vala:81
+msgid "Backup list of PPAs"
+msgstr "Backup lista de pacotes (PPAs)"
+
+#: src/AptikConsole.vala:82
+msgid "Backup list of manual and installed packages"
+msgstr "Backup lista de pacotes instalados manualmente"
+
+#: src/MainWindow.vala:235
+msgid "Backup the list of installed PPAs"
+msgstr "Backup lista de PPAs instalados"
+
+#: src/MainWindow.vala:291
+msgid "Backup the list of installed packages"
+msgstr "Backup lista de pacotes instalados"
+
+#: src/MainWindow.vala:350
+msgid "Backup themes and icons"
+msgstr "Backup temas e ícones"
+
+#: src/AptikConsole.vala:84
+msgid "Backup themes from /usr/share/themes"
+msgstr "Backup temas em /usr/share/themes"
+
+#: src/MainWindow.vala:2224 src/MainWindow.vala:2420
+msgid "Backups created successfully"
+msgstr "Backups criados com sucesso!"
+
+#: src/Main.vala:1474
+msgid "Bash Command History"
+msgstr "Bash Command (Guia de Comandos) histórico"
+
+#: src/Main.vala:1476
+msgid "Bash Init Script"
+msgstr "Bash: script de inicialização"
+
+#: src/Main.vala:1478
+msgid "Bash Logout Script"
+msgstr "Bash: script de inicialização"
+
+#: src/MainWindow.vala:1170
+msgid "Cache"
+msgstr "Cache"
+
+#: src/Main.vala:812 src/MainWindow.vala:2134
+msgid "Cache backup not found in backup directory"
+msgstr "Cache backup não encontrado no diretório de backup"
+
+#: src/MainWindow.vala:532 src/MainWindow.vala:702 src/MainWindow.vala:870
+#: src/MainWindow.vala:1040
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/MainWindow.vala:2499
+msgid "Change Ownership"
+msgstr "Alterar Propriedades"
+
+#: src/MainWindow.vala:2044
+msgid "Checking available packages..."
+msgstr "Verificando pacotes disponíveis ..."
+
+#: src/MainWindow.vala:1550 src/MainWindow.vala:1619 src/MainWindow.vala:1718
+msgid "Checking installed PPAs..."
+msgstr "Verificando pacotes (PPAs) instalados..."
+
+#: src/MainWindow.vala:1931
+msgid "Checking installed and available packages..."
+msgstr "Verificando pacotes instalados e disponíveis..."
+
+#: src/MainWindow.vala:1773
+msgid "Checking installed packages..."
+msgstr "Verificando pacotes instalados..."
+
+#: src/Main.vala:1484
+msgid "Chromium Web Browser"
+msgstr "Navegador de Internet Chromium"
+
+#: src/AboutWindow.vala:285
+msgid "Close"
+msgstr "Fechar"
+
+#: src/MainWindow.vala:1710 src/MainWindow.vala:2031
+msgid "Close window to exit..."
+msgstr "Feche a janela para sair..."
+
+#: src/Main.vala:150
+msgid "Commands listed below are not available on this system"
+msgstr "Comandos listados abaixo não estão disponíveis neste sistema"
+
+#: src/MainWindow.vala:712
+msgid "Config"
+msgstr "Configuração"
+
+#: src/MainWindow.vala:2018
+msgid "Continue with installation?"
+msgstr "Continuar com a instalação?"
+
+#: src/MainWindow.vala:2501
+msgid "Continue?"
+msgstr "Continuar?"
+
+#: src/MainWindow.vala:2113 src/MainWindow.vala:2144
+msgid "Copying"
+msgstr "Copiando"
+
+#: src/AboutWindow.vala:262 src/AboutWindow.vala:279
+msgid "Credits"
+msgstr "Créditos"
+
+#: src/MainWindow.vala:1320
+msgid "Default Package (Was Installed with Distribution)"
+msgstr "Pacote Padrão (foi instalado com a Distribuição)"
+
+#: src/MainWindow.vala:2345
+msgid "Deleting"
+msgstr "Deletando"
+
+#: src/MainWindow.vala:461 src/MainWindow.vala:811
+msgid "Description"
+msgstr "Descrição"
+
+#: src/DonationWindow.vala:63
+msgid ""
+"Did you find this software useful?\n"
+"\n"
+"Please consider making a donation to show your support.\n"
+"\n"
+"This application is completely free and will continue to remain that way. "
+"Your contributions will help in keeping this project alive and developing it "
+"further.\n"
+"\n"
+"Feel free to mail me if you find any issues or if you need any changes in "
+"this application. I can be reached at teejeetech@gmail.com.\n"
+"\n"
+"~Tony George"
+msgstr ""
+"Você achou este software útil?\n"
+"\n"
+"Por favor, considere fazer uma doação para mostrar seu apoio.\n"
+"\n"
+"Este aplicativo é totalmente gratuito e continuará a ser assim. Suas "
+"contribuições vão ajudar a manter este projeto vivo e desenvolvê-lo ainda "
+"mais.\n"
+"\n"
+"Sinta-se livre para me enviar, se você encontrar quaisquer problemas ou se "
+"você precisar quaisquer mudanças nesta aplicação. Posso ser acessado em "
+"teejeetech@gmail.com.\n"
+"\n"
+"~ Tony George"
+
+#: src/AboutWindow.vala:328
+#, c-format
+msgid "Documenters"
+msgstr "Documentalistas"
+
+#: src/DonationWindow.vala:98
+msgid "Don't Show This Again"
+msgstr "Não mostrar novamente"
+
+#: src/MainWindow.vala:1084 src/MainWindow.vala:1085
+msgid "Donate"
+msgstr "Fazer uma doação"
+
+#: src/DonationWindow.vala:76
+msgid "Donate via PayPal"
+msgstr "Doar via PayPal"
+
+#: src/AboutWindow.vala:336
+#, c-format
+msgid "Donors"
+msgstr "Doadores"
+
+#: src/MainWindow.vala:1171
+msgid "Downloaded Packages"
+msgstr "Pacotes Baixados"
+
+#: src/MainWindow.vala:254 src/MainWindow.vala:255
+msgid "Downloaded Packages (APT Cache)"
+msgstr "Pacotes Baixados (APT Cache)"
+
+#: src/AptikConsole.vala:233 src/AptikConsole.vala:242
+#: src/MainWindow.vala:1668 src/MainWindow.vala:1681 src/MainWindow.vala:1760
+#: src/MainWindow.vala:1904 src/MainWindow.vala:1918 src/MainWindow.vala:1982
+#: src/MainWindow.vala:1993 src/MainWindow.vala:2522 src/Utility.vala:101
+msgid "Error"
+msgstr "Erro"
+
+#: src/MainWindow.vala:1324
+msgid "Extra Package (Was Installed by User)"
+msgstr "Pacote Extra (foi instalado pelo usuário)"
+
+#: src/Main.vala:1130 src/MainWindow.vala:2290 src/MainWindow.vala:2481
+#, c-format
+msgid "Extracting"
+msgstr "Extraindo"
+
+#: src/Main.vala:1591 src/MainWindow.vala:2523
+msgid "Failed to change file ownership"
+msgstr "Falha ao alterar a propriedade do arquivo"
+
+#: src/Utility.vala:1036
+msgid "Failed to kill process"
+msgstr "Falha ao encerrar processo"
+
+#: src/Utility.vala:2062
+msgid "Failed to set ownership"
+msgstr "Falha ao definir propriedade"
+
+#: src/Utility.vala:1019 src/Utility.vala:1045
+msgid "Failed to unmount"
+msgstr "Falha ao desmontar"
+
+#: src/AptikConsole.vala:182 src/AptikConsole.vala:195 src/Main.vala:459
+#: src/Main.vala:491 src/Main.vala:621 src/MainWindow.vala:1682
+#: src/MainWindow.vala:1761 src/MainWindow.vala:1905 src/MainWindow.vala:1919
+msgid "Failed to write"
+msgstr "Falha ao gravar"
+
+#: src/MainWindow.vala:1994
+msgid "Failed to write file"
+msgstr "Falha ao gravar arquivo"
+
+#: src/MainWindow.vala:1797
+msgid "File Missing"
+msgstr "Arquivo Ausente"
+
+#: src/MainWindow.vala:1469
+msgid "File Not Found"
+msgstr "Arquivo Não Encontrado"
+
+#: src/Main.vala:1119 src/Main.vala:1498
+msgid "File not found"
+msgstr "Arquivo não encontrado"
+
+#: src/Main.vala:166 src/MainWindow.vala:1470
+msgid "File not found in backup directory"
+msgstr "Arquivo não encontrado no diretório de backup"
+
+#: src/AptikConsole.vala:179 src/AptikConsole.vala:192 src/Main.vala:456
+#: src/Main.vala:488 src/Main.vala:618
+msgid "File saved"
+msgstr "Arquivo salvo"
+
+#: src/MainWindow.vala:2133
+msgid "Files Not Found"
+msgstr "Arquivo Não Encontrado"
+
+#: src/MainWindow.vala:1733 src/MainWindow.vala:1753 src/MainWindow.vala:1897
+#: src/MainWindow.vala:2116 src/MainWindow.vala:2118 src/MainWindow.vala:2147
+#: src/MainWindow.vala:2149 src/MainWindow.vala:2223 src/MainWindow.vala:2299
+#: src/MainWindow.vala:2350 src/MainWindow.vala:2419 src/MainWindow.vala:2488
+msgid "Finished"
+msgstr "Concluído."
+
+#: src/MainWindow.vala:1709
+msgid "Finished adding PPAs"
+msgstr "Terminada adição de PPAs"
+
+#: src/MainWindow.vala:2030
+msgid "Finished installing packages"
+msgstr "Adição de pacotes concluída"
+
+#: src/MainWindow.vala:1738
+msgid "Finished with Errors"
+msgstr "Terminou com erros"
+
+#: src/Main.vala:1464
+msgid "Firefox Web Browser"
+msgstr "Navegador de Internet Firefox"
+
+#: src/MainWindow.vala:1488
+msgid "Folder Not Found"
+msgstr "Pasta não encontrada"
+
+#: src/MainWindow.vala:1489
+msgid "Folder not found in backup directory"
+msgstr "Pasta não encontrada no diretório de backup"
+
+#: src/MainWindow.vala:1739
+msgid "Following PPAs could not be added"
+msgstr "Não foi possível adicionar as seguintes PPAs"
+
+#: src/AptikConsole.vala:413 src/MainWindow.vala:2005 src/MainWindow.vala:2085
+msgid "Following packages are NOT available"
+msgstr "Os seguintes pacotes NÃO estão disponíveis"
+
+#: src/AptikConsole.vala:417
+msgid "Following packages will be installed"
+msgstr "Os seguintes pacotes serão instalados"
+
+#: src/MainWindow.vala:2016
+msgid "Install Summary"
+msgstr "Resumo da Instalação"
+
+#: src/MainWindow.vala:300
+msgid "Install missing packages"
+msgstr "Instalar pacotes que faltam"
+
+#: src/MainWindow.vala:1306 src/MainWindow.vala:1422
+msgid "Installed"
+msgstr "Instalado"
+
+#: src/MainWindow.vala:1190
+msgid "Installed Packages"
+msgstr "Pacotes Instalados"
+
+#: src/MainWindow.vala:2024
+msgid "Installing packages..."
+msgstr "Instalando pacotes..."
+
+#: src/AptikConsole.vala:233 src/AptikConsole.vala:242
+#: src/MainWindow.vala:1669 src/MainWindow.vala:1983
+msgid ""
+"Internet connection is not active. Please check the connection and try again."
+msgstr ""
+"Conexão com a Internet não está ativa. Por favor, verifique a conexão e "
+"tente novamente."
+
+#: src/MainWindow.vala:1799
+msgid ""
+"It is not possible to determine whether a package was installed by you, or "
+"whether it was installed along with the Linux distribution."
+msgstr ""
+"Não é possível determinar se um pacote foi instalado por você, ou se foi "
+"instalado junto com a distribuição Linux."
+
+#: src/Utility.vala:1029
+msgid "Killing all processes using the mount-point..."
+msgstr "Encerrar todos os processos usando o ponto de montagem..."
+
+#: src/LogWindow.vala:64
+msgid "Line"
+msgstr "Linha"
+
+#: src/AptikConsole.vala:77
+msgid "List PPAs"
+msgstr "Lista pacotes de terceiros (PPAs)"
+
+#: src/AptikConsole.vala:72
+msgid "List available packages"
+msgstr "Lista pacotes disponíveis"
+
+#: src/AptikConsole.vala:76
+msgid "List default packages for linux distribution"
+msgstr "Lista pacotes padrão para a distribuição linux"
+
+#: src/AptikConsole.vala:79
+msgid "List icon themes in /usr/share/icons"
+msgstr "Lista ícones de temas em /usr/share/icons"
+
+#: src/AptikConsole.vala:73
+msgid "List installed packages"
+msgstr "Lista os pacotes instalados"
+
+#: src/MainWindow.vala:1755 src/MainWindow.vala:1899
+msgid "List saved with file name"
+msgstr "Lista salva com nome do arquivo"
+
+#: src/AptikConsole.vala:78
+msgid "List themes in /usr/share/themes"
+msgstr "Lista temas em /usr/share/themes"
+
+#: src/AptikConsole.vala:74
+msgid "List top-level installed packages"
+msgstr "Lista pacotes instalados de nível superior"
+
+#: src/AptikConsole.vala:75
+msgid "List top-level packages installed by user"
+msgstr "Lista pacotes de nível superior instalados pelo usuário"
+
+#: src/Main.vala:1470 src/Main.vala:1480
+msgid "Local Fonts"
+msgstr "Fontes locais"
+
+#: src/Main.vala:1472 src/Main.vala:1482
+msgid "Local Themes"
+msgstr "Temas locais"
+
+#: src/LogWindow.vala:49
+msgid "Log"
+msgstr "Registro (log)"
+
+#: src/Main.vala:103
+msgid "Missing Dependencies"
+msgstr "Dependências faltando"
+
+#: src/Main.vala:1637
+msgid "Missing Icon"
+msgstr "Ícone Perdido"
+
+#: src/LogWindow.vala:100
+msgid "No"
+msgstr "Não"
+
+#: src/MainWindow.vala:2205
+msgid "No Directories Selected"
+msgstr "Pasta Não Selecionada"
+
+#: src/MainWindow.vala:1599
+msgid "No PPA Selected"
+msgstr "PPA Não Selecionado"
+
+#: src/MainWindow.vala:1858
+msgid "No Packages Selected"
+msgstr "Pacote Não Selecionado"
+
+#: src/MainWindow.vala:2390
+msgid "No Themes Selected"
+msgstr "Tema Não Selecionado"
+
+#: src/MainWindow.vala:1314
+msgid "Not Available! Check if PPA needs to be added"
+msgstr "Não Disponível! Verifique se o PPA precisa ser adicionado"
+
+#: src/MainWindow.vala:1310 src/MainWindow.vala:1426
+msgid "Not Installed"
+msgstr "Não Instalado"
+
+#: src/MainWindow.vala:1661 src/MainWindow.vala:1975 src/MainWindow.vala:2002
+#: src/MainWindow.vala:2261 src/MainWindow.vala:2316 src/MainWindow.vala:2455
+msgid "Nothing To Do"
+msgstr "Nada a fazer"
+
+#: src/DonationWindow.vala:108
+msgid "OK"
+msgstr "Aceitar"
+
+#: src/LogWindow.vala:83
+msgid "Ok"
+msgstr "Aceitar"
+
+#: src/MainWindow.vala:191
+msgid "Open"
+msgstr "Abrir"
+
+#: src/MainWindow.vala:193
+msgid "Open Backup Directory"
+msgstr "Abrir diretório de backup"
+
+#: src/Main.vala:1468
+msgid "Opera Web Browser"
+msgstr "Navegador de Internet Opera"
+
+#: src/AptikConsole.vala:70
+msgid "Options"
+msgstr "Preferências"
+
+#: src/MainWindow.vala:2500
+#, c-format
+msgid "Owner will be changed to '%s' (uid=%d) for files in directory '%s'"
+msgstr ""
+"Proprietário será alterado para '%s' (uid=%d) para arquivos no diretório '%s'"
+
+#: src/Main.vala:1587
+#, c-format
+msgid "Ownership changed to '%s' for files in directory '%s'"
+msgstr "Propriedade alterada para '%s' para arquivos no diretório '%s'"
+
+#: src/MainWindow.vala:541 src/MainWindow.vala:614 src/MainWindow.vala:1151
+msgid "PPA"
+msgstr "PPA"
+
+#: src/MainWindow.vala:1376 src/MainWindow.vala:1380
+#, c-format
+msgid "PPA is Enabled (%d installed packages)"
+msgstr "PPA está habilitado (%d pacotes instalados)"
+
+#: src/MainWindow.vala:1385
+msgid "PPA is Not Added"
+msgstr "PPA não será adicionado"
+
+#: src/MainWindow.vala:1734
+msgid "PPAs added successfully"
+msgstr "PPAs adicionados com sucesso"
+
+#: src/MainWindow.vala:444
+msgid "Package"
+msgstr "Pacote"
+
+#: src/MainWindow.vala:369 src/MainWindow.vala:631 src/MainWindow.vala:1189
+msgid "Packages"
+msgstr "Pacotes"
+
+#: src/MainWindow.vala:2119 src/MainWindow.vala:2150
+msgid "Packages copied successfully"
+msgstr "Pacotes copiados com sucesso"
+
+#: src/MainWindow.vala:773 src/MainWindow.vala:969
+msgid "Path"
+msgstr "Caminho"
+
+#: src/Main.vala:151
+msgid "Please install required packages and try running Aptik again"
+msgstr ""
+"Por favor, instale os pacotes necessários e tente executar o Aptik novamente"
+
+#: src/AptikGtk.vala:49
+msgid "Please run the application as admin ('gksu aptik-gtk')"
+msgstr ""
+"Por favor, execute o aplicativo como administrador ('gksu aptik-gtk')"
+
+#: src/MainWindow.vala:1458
+msgid "Please select the backup directory"
+msgstr "Por favor, selecione o diretório de backup"
+
+#: src/MainWindow.vala:2317
+msgid "Please select the directories to reset"
+msgstr "Por favor, selecione os diretórios para redefinir"
+
+#: src/MainWindow.vala:2262
+msgid "Please select the directories to restore"
+msgstr "Por favor, selecione os diretórios a restaurar"
+
+#: src/MainWindow.vala:1801
+msgid "Please un-select the packages that are not required."
+msgstr "Por favor, desmarque os pacotes que não são necessários."
+
+#: src/MainWindow.vala:2108 src/MainWindow.vala:2139 src/MainWindow.vala:2212
+#: src/MainWindow.vala:2268 src/MainWindow.vala:2323 src/MainWindow.vala:2396
+#: src/MainWindow.vala:2462
+msgid "Preparing"
+msgstr "Preparando"
+
+#: src/MainWindow.vala:863
+msgid "Reset"
+msgstr "Reiniciar"
+
+#: src/MainWindow.vala:865
+msgid ""
+"Reset the settings for an application (Eg: Chromium Browser) by deleting the "
+"settings directory (~/.config/chromium). The directory will be created "
+"automatically with default configuration files on the next run of the "
+"application."
+msgstr ""
+"Redefinir as configurações para uma aplicação (Ex: Navegador Chromium), "
+"excluindo o diretório de configurações (~/.config/chromium). O diretório "
+"será criado automaticamente com arquivos de configuração padrão na próxima "
+"execução do aplicativo."
+
+#: src/MainWindow.vala:241 src/MainWindow.vala:269 src/MainWindow.vala:298
+#: src/MainWindow.vala:327 src/MainWindow.vala:356 src/MainWindow.vala:526
+#: src/MainWindow.vala:696 src/MainWindow.vala:856 src/MainWindow.vala:1034
+msgid "Restore"
+msgstr "Restaurar"
+
+#: src/MainWindow.vala:1139
+msgid "Restore >>"
+msgstr "Restaurar >>"
+
+#: src/MainWindow.vala:2243
+msgid "Restore Application Settings"
+msgstr "Restaurar configurações do aplicativo"
+
+#: src/AptikConsole.vala:87
+msgid "Restore PPAs from file 'ppa.list'"
+msgstr "Restaurar PPAs do arquivo 'ppa.list'"
+
+#: src/MainWindow.vala:1958
+msgid "Restore Software Selections"
+msgstr "Restaurar programas selecionados"
+
+#: src/MainWindow.vala:1644
+msgid "Restore Software Sources"
+msgstr "Restaurar Repositórios"
+
+#: src/MainWindow.vala:2437
+msgid "Restore Themes"
+msgstr "Restaurar Temas"
+
+#: src/MainWindow.vala:329
+msgid "Restore application settings"
+msgstr "Restaurar configurações do aplicativo"
+
+#: src/AptikConsole.vala:89 src/MainWindow.vala:271
+msgid "Restore downloaded packages to APT cache"
+msgstr "Restaurar pacotes baixados para o APT cache"
+
+#: src/AptikConsole.vala:91
+msgid "Restore icons to /usr/share/icons"
+msgstr "Restaurar ícones para /usr/share/icons"
+
+#: src/AptikConsole.vala:88
+msgid "Restore packages from file 'packages.list'"
+msgstr "Restaurar pacotes do arquivo 'packages.list'"
+
+#: src/MainWindow.vala:858
+msgid ""
+"Restore the settings for an application (Eg: Chromium Browser) by replacing "
+"the settings directory (~/.config/chromium) with files from backup. Use the "
+"'Reset' button to delete the restored files in case of issues."
+msgstr ""
+"Restaurar as configurações de um aplicativo (ex: Navegador Chromium), "
+"substituindo o diretório de configurações (~/.config/chromium) com arquivos "
+"do backup. Use o botão \"Reiniciar\" para apagar os arquivos restaurados em "
+"caso de problemas."
+
+#: src/MainWindow.vala:358
+msgid "Restore themes and icons"
+msgstr "Restaurar temas e ícones"
+
+#: src/AptikConsole.vala:90
+msgid "Restore themes to /usr/share/themes"
+msgstr "Restaurar temas para /usr/share/themes"
+
+#: src/Main.vala:1539
+#, c-format
+msgid "Restoring Application Settings..."
+msgstr "Restaurando configurações do aplicativo..."
+
+#: src/MainWindow.vala:1990
+msgid "Saving"
+msgstr "Salvando"
+
+#: src/Main.vala:1301
+#, c-format
+msgid "Saving Application Settings..."
+msgstr "Salvando configurações do aplicativo..."
+
+#: src/MainWindow.vala:480 src/MainWindow.vala:650 src/MainWindow.vala:830
+#: src/MainWindow.vala:988
+msgid "Select All"
+msgstr "Selecionar Tudo"
+
+#: src/MainWindow.vala:500 src/MainWindow.vala:670 src/MainWindow.vala:840
+#: src/MainWindow.vala:1008
+msgid "Select None"
+msgstr "Desmarcar todos"
+
+#: src/MainWindow.vala:1835
+msgid "Select packages to backup"
+msgstr "Selecione pacotes para o backup"
+
+#: src/MainWindow.vala:549 src/MainWindow.vala:1581 src/MainWindow.vala:1600
+msgid "Select the PPAs to backup"
+msgstr "Selecione PPAs para o backup"
+
+#: src/MainWindow.vala:1643
+msgid "Select the PPAs to restore"
+msgstr "Selecione PPAs a restaurar"
+
+#: src/MainWindow.vala:720
+msgid "Select the configs to backup"
+msgstr "Selecione as configurações para fazer backup"
+
+#: src/MainWindow.vala:2187 src/MainWindow.vala:2206
+msgid "Select the directories to backup"
+msgstr "Selecione as pastas para fazer backup"
+
+#: src/MainWindow.vala:2242
+msgid "Select the directories to restore"
+msgstr "Selecione as pastas a restaurar"
+
+#: src/MainWindow.vala:377 src/MainWindow.vala:1859
+msgid "Select the packages to backup"
+msgstr "Selecione os pacotes para o backup"
+
+#: src/MainWindow.vala:1957
+msgid "Select the packages to restore"
+msgstr "Selecione os pacotes a restaurar"
+
+#: src/MainWindow.vala:887 src/MainWindow.vala:2372 src/MainWindow.vala:2391
+msgid "Select the themes to backup"
+msgstr "Selecione os temas para fazer backup"
+
+#: src/MainWindow.vala:2436
+msgid "Select the themes to restore"
+msgstr "Selecione os temas a restaurar"
+
+#: src/MainWindow.vala:1662
+msgid "Selected PPAs are already enabled on this system"
+msgstr "PPAs selecionados já estão ativados neste sistema"
+
+#: src/MainWindow.vala:2351
+msgid "Selected directories were deleted successfully"
+msgstr "Diretórios selecionados foram apagados com êxito"
+
+#: src/MainWindow.vala:2328
+msgid "Selected directories will be deleted."
+msgstr "Diretórios selecionados serão apagados"
+
+#: src/MainWindow.vala:2273
+msgid "Selected directories will be replaced with files from backup."
+msgstr "Diretórios selecionados serão substituídos por arquivos do backup."
+
+#: src/AptikConsole.vala:421
+msgid "Selected packages are already installed"
+msgstr "Pacotes selecionados já estão instalados"
+
+#: src/MainWindow.vala:2456
+msgid "Selected themes are already installed"
+msgstr "Temas selecionados já estão instalados"
+
+#: src/DonationWindow.vala:83
+msgid "Send Email"
+msgstr "Enviar E-mail"
+
+#: src/MainWindow.vala:1208
+msgid "Settings"
+msgstr "Configurações"
+
+#: src/AptikConsole.vala:97
+msgid "Show all options"
+msgstr "Mostrar todas as opções"
+
+#: src/AptikConsole.vala:95
+msgid "Show package description if available"
+msgstr "Mostrar descrição do pacote se disponível"
+
+#: src/MainWindow.vala:788
+msgid "Size"
+msgstr "Tamanho"
+
+#: src/MainWindow.vala:281
+msgid "Software Selections"
+msgstr "Seleção de Programas"
+
+#: src/MainWindow.vala:282
+msgid "Software Selections (Installed Packages)"
+msgstr "Seleção de Programas (Pacotes Instalados)"
+
+#: src/MainWindow.vala:1152
+msgid "Software Sources"
+msgstr "Fontes de Programas"
+
+#: src/MainWindow.vala:225
+msgid "Software Sources (PPAs)"
+msgstr "Repositórios (PPAs)"
+
+#: src/MainWindow.vala:226
+msgid "Software Sources (Third Party PPAs)"
+msgstr "Repositórios (PPAs de Terceiros)"
+
+#: src/Main.vala:1486
+msgid "Startup Applications"
+msgstr "Aplicativos de Inicialização"
+
+#: src/Utility.vala:1530
+msgid "Stopped"
+msgstr "Parado"
+
+#: src/MainWindow.vala:2517
+msgid "Success"
+msgstr "Sucesso"
+
+#: src/AptikConsole.vala:68
+msgid "Syntax"
+msgstr "Sintaxe"
+
+#: src/MainWindow.vala:1531
+msgid "System migration toolkit for Ubuntu-based distributions"
+msgstr ""
+"Conjunto de ferramentas de migração do sistema para distribuições baseadas "
+"no Ubuntu"
+
+#: src/AptikConsole.vala:93
+msgid "Take ownership of files in your home directory"
+msgstr "Obter a propriedade de arquivos em seu diretório home"
+
+#: src/MainWindow.vala:1798
+msgid "The list of default packages is missing on this system"
+msgstr "A lista de pacotes padrão está faltando neste sistema"
+
+#: src/MainWindow.vala:879 src/MainWindow.vala:952
+msgid "Theme"
+msgstr "Tema"
+
+#: src/MainWindow.vala:1227
+msgid "Themes"
+msgstr "Temas"
+
+#: src/MainWindow.vala:1228
+msgid "Themes & Icons"
+msgstr "Temas & Ícones"
+
+#: src/MainWindow.vala:340 src/MainWindow.vala:341
+msgid "Themes and Icons"
+msgstr "Temas e ícones"
+
+#: src/Main.vala:1038
+msgid "Themes not found in backup directory"
+msgstr "Temas não encontrado no diretório de backup"
+
+#: src/MainWindow.vala:2489
+msgid "Themes restored successfully"
+msgstr "Temas restaurados com sucesso"
+
+#: src/MainWindow.vala:1976 src/MainWindow.vala:2007
+msgid "There are no packages selected for installation"
+msgstr "Não existem pacotes selecionados para instalação"
+
+#: src/AboutWindow.vala:320
+#, c-format
+msgid "Translators"
+msgstr "Tradutores"
+
+#: src/AptikConsole.vala:301
+msgid "Unknown option"
+msgstr "Opção desconhecida"
+
+#: src/Utility.vala:1007
+msgid "Unmounting from"
+msgstr "Desmontando..."
+
+#: src/AptikConsole.vala:448 src/MainWindow.vala:1705
+msgid "Updating Package Information..."
+msgstr "Atualizando Informações do Pacote..."
+
+#: src/MainWindow.vala:2294
+msgid "Updating file ownership"
+msgstr "Atualizando propriedade do arquivo..."
+
+#: src/DonationWindow.vala:90
+msgid "Visit Website"
+msgstr "Visitar o website"
+
+#: src/MainWindow.vala:2272 src/MainWindow.vala:2327 src/Utility.vala:101
+msgid "Warning"
+msgstr "Atenção"
+
+#: src/LogWindow.vala:91
+msgid "Yes"
+msgstr "Sim"
+
+#: src/MainWindow.vala:2518
+msgid "You are now the owner of all files in your home directory"
+msgstr ""
+"Agora você é o proprietário de todos os arquivos em seu diretório home"
+
+#: src/MainWindow.vala:2218
+msgid "Zipping"
+msgstr "Compactando"
