@@ -38,7 +38,7 @@ using TeeJee.Misc;
 public Main App;
 public const string AppName = "Aptik";
 public const string AppShortName = "aptik";
-public const string AppVersion = "1.6.2";
+public const string AppVersion = "1.6.4";
 public const string AppAuthor = "Tony George";
 public const string AppAuthorEmail = "teejeetech@gmail.com";
 

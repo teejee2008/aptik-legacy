@@ -1,5 +1,5 @@
-aptik (1.6.2) trusty; urgency=medium
+aptik (1.6.4) trusty; urgency=low
 
-  * Minor changes
+  * Added translations: Portugese, Korean, Russian
   
- -- Tony George <tony.george.kol@gmail.com>  Thu, 6 Nov 2014 10:00:00 +0530
+ -- Tony George <tony.george.kol@gmail.com>  Fri, 8 May 2014 10:00:00 +0530

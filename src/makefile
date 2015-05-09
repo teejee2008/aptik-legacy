@@ -29,6 +29,9 @@ install:
 	mkdir -p "$(DESTDIR)$(sharedir)/${app_name}"
 	mkdir -p "$(DESTDIR)$(sharedir)/pixmaps"
 	mkdir -p "$(DESTDIR)$(localedir)/it_IT/LC_MESSAGES"
+	mkdir -p "$(DESTDIR)$(localedir)/ru_RU/LC_MESSAGES"
+	mkdir -p "$(DESTDIR)$(localedir)/ko_KO/LC_MESSAGES"
+	mkdir -p "$(DESTDIR)$(localedir)/pt_BR/LC_MESSAGES"
 	
 	#binary
 	install -m 0755 ${app_name} "$(DESTDIR)$(bindir)"
