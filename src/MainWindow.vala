@@ -476,7 +476,7 @@ public class MainWindow : Window {
 		
 		cell_pkg_select.toggled.connect((path) => {
 			TreeModel model = filter_packages;
-			ListStore store = (ListStore) filter_packages.child_model;
+			Gtk.ListStore store = (Gtk.ListStore) filter_packages.child_model;
 			bool selected;
 			Package pkg;
 			
@@ -642,7 +642,7 @@ public class MainWindow : Window {
 		});
 		
 		cell_ppa_select.toggled.connect((path) => {
-			ListStore model = (ListStore)tv_ppa.model;
+			Gtk.ListStore model = (Gtk.ListStore)tv_ppa.model;
 			bool selected;
 			Ppa ppa;
 			TreeIter iter;
@@ -806,7 +806,7 @@ public class MainWindow : Window {
 		});
 		
 		cell_config_select.toggled.connect((path) => {
-			ListStore model = (ListStore)tv_config.model;
+			Gtk.ListStore model = (Gtk.ListStore)tv_config.model;
 			bool selected;
 			AppConfig config;
 			TreeIter iter;
@@ -968,7 +968,7 @@ public class MainWindow : Window {
 		});
 		
 		cell_theme_select.toggled.connect((path) => {
-			ListStore model = (ListStore)tv_theme.model;
+			Gtk.ListStore model = (Gtk.ListStore)tv_theme.model;
 			bool selected;
 			Theme theme;
 			TreeIter iter;
@@ -1175,16 +1175,17 @@ public class MainWindow : Window {
 	}
 
 	private void tv_packages_refresh(){
-		ListStore model = new ListStore(4, typeof(bool), typeof(Package), typeof(Gdk.Pixbuf), typeof(string));
+		Gtk.ListStore model = new Gtk.ListStore(4, typeof(bool), typeof(Package), typeof(Gdk.Pixbuf), typeof(string));
 
 		var pkg_list = new ArrayList<Package>();
 		foreach(Package pkg in pkg_list_user.values) {
 			pkg_list.add(pkg);
 		}
-		CompareFunc<Package> func = (a, b) => {
+
+		CompareDataFunc<Package> func = (a, b) => {
 			return strcmp(a.name,b.name);
 		};
-		pkg_list.sort(func);
+		pkg_list.sort((owned) func);
 
 		//status icons
 		Gdk.Pixbuf pix_installed = null;
@@ -1322,17 +1323,17 @@ public class MainWindow : Window {
 	}
 
 	private void tv_ppa_refresh(){
-		ListStore model = new ListStore(4, typeof(bool), typeof(Ppa), typeof(Gdk.Pixbuf), typeof(string));
+		Gtk.ListStore model = new Gtk.ListStore(4, typeof(bool), typeof(Ppa), typeof(Gdk.Pixbuf), typeof(string));
 		
 		//sort ppa list
 		var ppa_list = new ArrayList<Ppa>();
 		foreach(Ppa ppa in ppa_list_user.values) {
 			ppa_list.add(ppa);
 		}
-		CompareFunc<Ppa> func = (a, b) => {
+		CompareDataFunc<Ppa> func = (a, b) => {
 			return strcmp(a.name,b.name);
 		};
-		ppa_list.sort(func);
+		ppa_list.sort((owned) func);
 		
 		//status icons
 		Gdk.Pixbuf pix_enabled = null;
@@ -1381,7 +1382,7 @@ public class MainWindow : Window {
 	}
 
 	private void tv_theme_refresh(){
-		ListStore model = new ListStore(4, typeof(bool), typeof(Theme), typeof(Gdk.Pixbuf), typeof(string));
+		Gtk.ListStore model = new Gtk.ListStore(4, typeof(bool), typeof(Theme), typeof(Gdk.Pixbuf), typeof(string));
 		
 		//status icons
 		Gdk.Pixbuf pix_enabled = null;
@@ -1422,7 +1423,7 @@ public class MainWindow : Window {
 	}
 
 	private void tv_config_refresh(){
-		ListStore model = new ListStore(2,typeof(bool),typeof(AppConfig));
+		Gtk.ListStore model = new Gtk.ListStore(2,typeof(bool),typeof(AppConfig));
 		tv_config.model = model;
 		
 		foreach(AppConfig entry in config_list_user){
@@ -1433,7 +1434,7 @@ public class MainWindow : Window {
 	}
 	
 	private void cmb_pkg_type_refresh(){
-		ListStore store = new ListStore(1, typeof(string));
+		Gtk.ListStore store = new Gtk.ListStore(1, typeof(string));
 		TreeIter iter;
 		store.append(out iter);
 		store.set (iter, 0, _("All"));
@@ -1449,7 +1450,7 @@ public class MainWindow : Window {
 	}
 
 	private void cmb_pkg_level_refresh(){	
-		var store = new ListStore(1, typeof(string));
+		var store = new Gtk.ListStore(1, typeof(string));
 		TreeIter iter;
 		store.append(out iter);
 		store.set (iter, 0, _("All"));
@@ -1462,7 +1463,7 @@ public class MainWindow : Window {
 	}
 
 	private void cmb_pkg_status_refresh(){	
-		var store = new ListStore(1, typeof(string));
+		var store = new Gtk.ListStore(1, typeof(string));
 		TreeIter iter;
 		store.append(out iter);
 		store.set (iter, 0, _("All"));
@@ -1532,7 +1533,7 @@ public class MainWindow : Window {
 	}
 	
 	public void show_donation_window(bool on_exit){
-		var dialog = new DonationWindow(on_exit);
+		var dialog = new DonationWindow();
 		dialog.set_transient_for(this);
 		dialog.show_all();
 		dialog.run();

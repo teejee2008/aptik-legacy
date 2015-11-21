@@ -319,10 +319,10 @@ public class AptikConsole : GLib.Object{
 		foreach(Package pkg in package_list.values) {
 			pkg_list.add(pkg);
 		}
-		CompareFunc<Package> func = (a, b) => {
+		CompareDataFunc<Package> func = (a, b) => {
 			return strcmp(a.name,b.name);
 		};
-		pkg_list.sort(func);
+		pkg_list.sort((owned) func);
 
 		int max_length = 0;
 		foreach(Package pkg in pkg_list){
@@ -350,10 +350,10 @@ public class AptikConsole : GLib.Object{
 		foreach(Ppa ppa in ppa_list_to_print.values) {
 			ppa_list.add(ppa);
 		}
-		CompareFunc<Ppa> func = (a, b) => {
+		CompareDataFunc<Ppa> func = (a, b) => {
 			return strcmp(a.name,b.name);
 		};
-		ppa_list.sort(func);
+		ppa_list.sort((owned) func);
 
 		int max_length = 0;
 		foreach(Ppa ppa in ppa_list){

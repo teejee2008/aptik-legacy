@@ -1,5 +1,5 @@
 aptik (1.6.5) trusty; urgency=low
 
-  * Minor changes
+  * Fixed build issues
   
- -- Tony George <tony.george.kol@gmail.com>  Fri, 20 Nov 2015 10:00:00 +0530
+ -- Tony George <tony.george.kol@gmail.com>  Fri, 20 Nov 2015 14:00:00 +0530
