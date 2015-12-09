@@ -54,40 +54,40 @@ public class DonationWindow : Dialog {
 		string msg = _("Did you find this software useful?\n\nYou can buy me a coffee or make a donation via PayPal to show your support. Or just drop me an email and say Hi. This application is completely free and will continue to remain that way. Your contributions will help in keeping this project alive and improving it further.\n\nFeel free to send me an email if you find any issues in this application or if you need any changes. Suggestions and feedback are always welcome.\n\nThanks,\nTony George\n(teejeetech@gmail.com)");
 		lbl_message.label = msg;
 		lbl_message.wrap = true;
-		vbox_main.pack_start(lbl_message,true,true,0);
+		vbox_main.pack_start(lbl_message, true, true, 0);
 
 		//vbox_actions
 		Box vbox_actions = new Box (Orientation.VERTICAL, 6);
 		vbox_actions.margin_left = 50;
 		vbox_actions.margin_right = 50;
 		vbox_actions.margin_top = 20;
-		vbox_main.pack_start(vbox_actions,false,false,0);
+		vbox_main.pack_start(vbox_actions, false, false, 0);
 
 		//btn_donate_paypal
 		Button btn_donate_paypal = new Button.with_label("   " + _("Donate with PayPal") + "   ");
 		vbox_actions.add(btn_donate_paypal);
-		btn_donate_paypal.clicked.connect(()=>{
+		btn_donate_paypal.clicked.connect(() => {
 			xdg_open("https://www.paypal.com/cgi-bin/webscr?business=teejeetech@gmail.com&cmd=_xclick&currency_code=USD&amount=10&item_name=Selene%20Donation");
 		});
 
 		//btn_donate_wallet
 		Button btn_donate_wallet = new Button.with_label("   " + _("Donate with Google Wallet") + "   ");
 		vbox_actions.add(btn_donate_wallet);
-		btn_donate_wallet.clicked.connect(()=>{
+		btn_donate_wallet.clicked.connect(() => {
 			xdg_open("https://support.google.com/mail/answer/3141103?hl=en");
 		});
-		
+
 		//btn_send_email
 		Button btn_send_email = new Button.with_label("   " + _("Send Email") + "   ");
 		vbox_actions.add(btn_send_email);
-		btn_send_email.clicked.connect(()=>{
+		btn_send_email.clicked.connect(() => {
 			xdg_open("mailto:teejeetech@gmail.com");
 		});
 
 		//btn_visit
 		Button btn_visit = new Button.with_label("   " + _("Visit Website") + "   ");
 		vbox_actions.add(btn_visit);
-		btn_visit.clicked.connect(()=>{
+		btn_visit.clicked.connect(() => {
 			xdg_open("http://www.teejeetech.in");
 		});
 
@@ -99,3 +99,4 @@ public class DonationWindow : Dialog {
 		});
 	}
 }
+

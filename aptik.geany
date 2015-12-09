@@ -17,14 +17,11 @@ long_line_behaviour=1
 long_line_column=80
 
 [files]
-current_page=3
-FILE_NAME_0=20793;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMain.vala;0;4
-FILE_NAME_1=1716;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FAptikConsole.vala;0;4
-FILE_NAME_2=807;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMainWindow.vala;0;4
-FILE_NAME_3=1118;Make;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2Fmakefile;0;4
-FILE_NAME_4=16;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik-bmon%2Fsrc%2FBatteryBar.vala;0;4
-FILE_NAME_5=0;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik-bmon%2Fsrc%2FAptikBatteryStatsGtk.vala;0;4
-FILE_NAME_6=24;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik-bmon%2Fsrc%2FBatteryStatsWindow.vala;0;4
+current_page=2
+FILE_NAME_0=50602;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMain.vala;0;4
+FILE_NAME_1=14591;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FAptikConsole.vala;0;4
+FILE_NAME_2=82818;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMainWindow.vala;0;4
+FILE_NAME_3=1228;Make;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2Fmakefile;0;4
 
 [VTE]
 last_dir=/home/teejee
@@ -41,7 +38,7 @@ NF_03_LB=Clean
 NF_03_CM=make clean
 NF_03_WD=
 EX_00_LB=_Execute
-EX_00_CM=gksu ./aptik-gtk
+EX_00_CM=gksu ./aptik-gtk --debug
 EX_00_WD=
 EX_01_LB=Execute
 EX_01_CM=

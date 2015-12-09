@@ -45,7 +45,7 @@ public const string AppAuthorEmail = "teejeetech@gmail.com";
 const string GETTEXT_PACKAGE = "";
 const string LOCALE_DIR = "/usr/share/locale";
 
-public class AptikGtk : GLib.Object{
+public class AptikGtk : GLib.Object {
 
 	public static int main (string[] args) {
 		set_locale();
@@ -54,7 +54,7 @@ public class AptikGtk : GLib.Object{
 
 		init_tmp();
 
-		if (!user_is_admin()){
+		if (!user_is_admin()) {
 			string msg = _("Aptik needs admin access to backup and restore packages.") + "\n";
 			msg += _("Please run the application as admin ('gksu aptik-gtk')");
 			string title = _("Admin Access Required");
@@ -77,40 +77,40 @@ public class AptikGtk : GLib.Object{
 		return 0;
 	}
 
-	private static void set_locale(){
+	private static void set_locale() {
 		Intl.setlocale(GLib.LocaleCategory.MESSAGES, "aptik");
 		Intl.textdomain(GETTEXT_PACKAGE);
 		Intl.bind_textdomain_codeset(GETTEXT_PACKAGE, "utf-8");
 		Intl.bindtextdomain(GETTEXT_PACKAGE, LOCALE_DIR);
 	}
 
-	public static bool parse_arguments(string[] args){
+	public static bool parse_arguments(string[] args) {
 		//parse options
 		for (int k = 1; k < args.length; k++) // Oth arg is app path
 		{
-			switch (args[k].down()){
-				case "--debug":
-					LOG_DEBUG = true;
-					break;
-				case "--help":
-				case "--h":
-				case "-h":
-					log_msg(help_message());
-					exit(0);
-					return true;
-				default:
-					//unknown option - show help and exit
-					log_error(_("Unknown option") + ": %s".printf(args[k]));
-					log_msg(help_message());
-					exit(1);
-					return false;
+			switch (args[k].down()) {
+			case "--debug":
+				LOG_DEBUG = true;
+				break;
+			case "--help":
+			case "--h":
+			case "-h":
+				log_msg(help_message());
+				exit(0);
+				return true;
+			default:
+				//unknown option - show help and exit
+				log_error(_("Unknown option") + ": %s".printf(args[k]));
+				log_msg(help_message());
+				exit(1);
+				return false;
 			}
 		}
 
 		return true;
 	}
 
-	public static string help_message(){
+	public static string help_message() {
 		string msg = "\n" + AppName + " v" + AppVersion + " by Tony George (teejee2008@gmail.com)" + "\n";
 		msg += "\n";
 		msg += _("Syntax") + ": aptik-gtk [options]\n";
@@ -123,3 +123,4 @@ public class AptikGtk : GLib.Object{
 		return msg;
 	}
 }
+
