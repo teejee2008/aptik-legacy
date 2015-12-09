@@ -22,7 +22,7 @@ MSG_INFO() {
 	if [ "$2" == 0 ]; then
 		add_newline='-n'
 	fi
-	
+
 	if [ $COLORS_SUPPORTED -eq 0 ]; then
         echo -e ${add_newline} "[${Yellow}*${Reset}] ${Green}$1${Reset}"
     else
@@ -35,7 +35,7 @@ MSG_WARNING() {
 	if [ "$2" == 0 ]; then
 		add_newline='-n'
 	fi
-	
+
 	if [ $COLORS_SUPPORTED -eq 0 ]; then
         echo -e ${add_newline} "[${Red}!${Reset}] ${Yellow}$1${Reset}"
     else
@@ -48,7 +48,7 @@ MSG_ERROR() {
 	if [ "$2" == 0 ]; then
 		add_newline='-n'
 	fi
-	
+
     if [ $COLORS_SUPPORTED -eq 0 ]; then
         echo -e ${add_newline} "[${Red}X${Reset}] ${Yellow}$1${Reset}"
     else
@@ -106,6 +106,8 @@ RUN_AS_ADMIN
 
 if [ ! -z "${app_name}" ]; then
 	rm -f  "/usr/bin/${app_name}"
+	rm -f  "/usr/bin/${app_name}-gtk"
+	rm -f  "/usr/bin/${app_name}-launcher"
 	rm -f  "/usr/bin/${app_name}-uninstall"
 	rm -f  "/usr/share/applications/${app_name}.desktop"
 	rm -f  "/usr/share/pixmaps/${app_name}.png"

@@ -8,7 +8,7 @@ indent_mode=2
 
 [project]
 name=aptik
-base_path=/home/teejee/projects/aptik/src
+base_path=/home/teejee/projects/linux/aptik
 description=
 file_patterns=
 
@@ -17,18 +17,14 @@ long_line_behaviour=1
 long_line_column=80
 
 [files]
-current_page=6
-FILE_NAME_0=5405;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FAboutWindow.vala;0;4
-FILE_NAME_1=2075;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FAptikConsole.vala;0;4
-FILE_NAME_2=1151;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FAptikGtk.vala;0;4
-FILE_NAME_3=1381;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMain.vala;0;4
-FILE_NAME_4=9102;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FUtility.vala;0;4
-FILE_NAME_5=547;Make;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2Fmakefile;0;4
-FILE_NAME_6=91;None;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fdebian%2Fchangelog;0;4
-FILE_NAME_7=927;Conf;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fdebian%2Fcontrol;0;4
-FILE_NAME_8=882;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FDonationWindow.vala;0;4
-FILE_NAME_9=233;Conf;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2Faptik.desktop;0;4
-FILE_NAME_10=5045;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMainWindow.vala;0;4
+current_page=3
+FILE_NAME_0=20793;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMain.vala;0;4
+FILE_NAME_1=1716;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FAptikConsole.vala;0;4
+FILE_NAME_2=807;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMainWindow.vala;0;4
+FILE_NAME_3=1118;Make;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2Fmakefile;0;4
+FILE_NAME_4=16;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik-bmon%2Fsrc%2FBatteryBar.vala;0;4
+FILE_NAME_5=0;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik-bmon%2Fsrc%2FAptikBatteryStatsGtk.vala;0;4
+FILE_NAME_6=24;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik-bmon%2Fsrc%2FBatteryStatsWindow.vala;0;4
 
 [VTE]
 last_dir=/home/teejee
@@ -47,7 +43,7 @@ NF_03_WD=
 EX_00_LB=_Execute
 EX_00_CM=gksu ./aptik-gtk
 EX_00_WD=
-EX_01_LB=Execute (sudo)
+EX_01_LB=Execute
 EX_01_CM=
 EX_01_WD=
 ValaFT_01_LB=_Build

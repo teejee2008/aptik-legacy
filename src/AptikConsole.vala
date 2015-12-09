@@ -1,24 +1,24 @@
 /*
  * AptikConsole.vala
- * 
- * Copyright 2012 Tony George <teejee2008@gmail.com>
- * 
+ *
+ * Copyright 2015 Tony George <teejee2008@gmail.com>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
- * 
- * 
+ *
+ *
  */
 
 using GLib;
@@ -36,29 +36,37 @@ using TeeJee.Multimedia;
 using TeeJee.System;
 using TeeJee.Misc;
 
-//extern void exit(int exit_code);
+public Main App;
+public const string AppName = "Aptik";
+public const string AppShortName = "aptik";
+public const string AppVersion = "1.6.4";
+public const string AppAuthor = "Tony George";
+public const string AppAuthorEmail = "teejeetech@gmail.com";
+
+const string GETTEXT_PACKAGE = "";
+const string LOCALE_DIR = "/usr/share/locale";
 
 public class AptikConsole : GLib.Object{
 
 	public static int main (string[] args) {
 		set_locale();
-		
+
 		LOG_TIMESTAMP = false;
-		
+
 		if (!user_is_admin()){
 			log_msg(_("Aptik needs admin access to backup and restore packages."));
 			log_msg(_("Please run the application as admin (using 'sudo' or 'su')"));
 			exit(0);
 		}
-		
+
 		init_tmp();
-		
+
 		App = new Main(args,false);
-		
+
 		var console =  new AptikConsole();
 		bool is_success = console.parse_arguments(args);
 		App.exit_app();
-		
+
 		return (is_success) ? 0 : 1;
 	}
 
@@ -68,7 +76,7 @@ public class AptikConsole : GLib.Object{
 		Intl.bind_textdomain_codeset(GETTEXT_PACKAGE, "utf-8");
 		Intl.bindtextdomain(GETTEXT_PACKAGE, LOCALE_DIR);
 	}
-	
+
 	public string help_message(){
 		string msg = "\n" + AppName + " v" + AppVersion + " by Tony George (teejee2008@gmail.com)" + "\n";
 		msg += "\n";
@@ -78,25 +86,25 @@ public class AptikConsole : GLib.Object{
 		msg += "\n";
 		msg += "  --list-available      " + _("List available packages") + "\n";
 		msg += "  --list-installed      " + _("List installed packages") + "\n";
-		msg += "  --list-top            " + _("List top-level installed packages") + "\n";
-		msg += "  --list-{manual|extra} " + _("List top-level packages installed by user") + "\n";
+		msg += "  --list-auto[matic]    " + _("List auto-installed packages") + "\n";
+		msg += "  --list-{manual|extra} " + _("List extra packages installed by user") + "\n";
 		msg += "  --list-default        " + _("List default packages for linux distribution") + "\n";
 		msg += "  --list-ppa            " + _("List PPAs") + "\n";
 		msg += "  --list-themes         " + _("List themes in /usr/share/themes") + "\n";
 		msg += "  --list-icons          " + _("List icon themes in /usr/share/icons") + "\n";
-		
+
 		msg += "  --backup-ppa          " + _("Backup list of PPAs") + "\n";
 		msg += "  --backup-packages     " + _("Backup list of manual and installed packages") + "\n";
-		msg += "  --backup-cache        " + _("Backup downloaded packages from APT cache") + "\n";		
+		msg += "  --backup-cache        " + _("Backup downloaded packages from APT cache") + "\n";
 		msg += "  --backup-themes       " + _("Backup themes from /usr/share/themes") + "\n";
 		msg += "  --backup-icons        " + _("Backup icons from /usr/share/icons") + "\n";
-		
+
 		msg += "  --restore-ppa         " + _("Restore PPAs from file 'ppa.list'") + "\n";
 		msg += "  --restore-packages    " + _("Restore packages from file 'packages.list'") + "\n";
 		msg += "  --restore-cache       " + _("Restore downloaded packages to APT cache") + "\n";
 		msg += "  --restore-themes      " + _("Restore themes to /usr/share/themes") + "\n";
 		msg += "  --restore-icons       " + _("Restore icons to /usr/share/icons") + "\n";
-		
+
 		msg += "  --take-ownership      " + _("Take ownership of files in your home directory") + "\n";
 		msg += "  --backup-dir          " + _("Backup directory (defaults to current directory)") + "\n";
 		msg += "  --[show-]desc         " + _("Show package description if available") + "\n";
@@ -105,7 +113,7 @@ public class AptikConsole : GLib.Object{
 		msg += "\n";
 		return msg;
 	}
-	
+
 	public bool parse_arguments(string[] args){
 
 		bool show_desc = false;
@@ -116,9 +124,9 @@ public class AptikConsole : GLib.Object{
 			log_msg(help_message());
 			return false;
 		}
-		
+
 		//parse options
-		for (int k = 1; k < args.length; k++) // Oth arg is app path 
+		for (int k = 1; k < args.length; k++) // Oth arg is app path
 		{
 			switch (args[k].down()){
 				case "--desc":
@@ -133,6 +141,9 @@ public class AptikConsole : GLib.Object{
 				case "--yes":
 					no_prompt = true;
 					break;
+				case "--debug":
+					LOG_DEBUG = true;
+					break;
 				case "--help":
 				case "--h":
 				case "-h":
@@ -140,48 +151,81 @@ public class AptikConsole : GLib.Object{
 					return true;
 			}
 		}
-			
+
 		//parse commands
-		for (int k = 1; k < args.length; k++) // Oth arg is app path 
+		for (int k = 1; k < args.length; k++) // Oth arg is app path
 		{
 			switch (args[k].down()){
 				case "--list-available":
-					print_package_list(App.list_available(), show_desc);
-					break;
-					
-				case "--list-installed":
-					print_package_list(App.list_installed(false), show_desc);
+					App.read_package_info();
+					foreach(Package pkg in App.pkg_list_master.values){
+						pkg.is_selected = pkg.is_available;
+					}
+					print_package_list(show_desc);
 					break;
 
-				case "--list-top":
-					print_package_list(App.list_top(), show_desc);
-					break;
-					
-				case "--list-manual":
-					print_package_list(App.list_manual(), show_desc);
+				case "--list-installed":
+					App.read_package_info();
+					foreach(Package pkg in App.pkg_list_master.values){
+						pkg.is_selected = pkg.is_installed;
+					}
+					print_package_list(show_desc);
 					break;
 
 				case "--list-default":
-					print_package_list(App.list_default(), show_desc);
+					App.read_package_info();
+					foreach(Package pkg in App.pkg_list_master.values){
+						pkg.is_selected = pkg.is_default;
+					}
+					print_package_list(show_desc);
+					break;
+
+				case "--list-auto":
+				case "--list-automatic":
+					App.read_package_info();
+					foreach(Package pkg in App.pkg_list_master.values){
+						pkg.is_selected = pkg.is_automatic;
+					}
+					print_package_list(show_desc);
+					break;
+
+				case "--list-manual":
+					App.read_package_info();
+					foreach(Package pkg in App.pkg_list_master.values){
+						pkg.is_selected = pkg.is_manual;
+					}
+					print_package_list(show_desc);
 					break;
 
 				case "--list-ppa":
 				case "--list-ppas":
-					print_ppa_list(App.list_ppa(), show_desc);
+					App.read_package_info();
+					foreach(Ppa ppa in App.ppa_list_master.values){
+						ppa.is_selected = true;
+					}
+					print_ppa_list(show_desc);
+					//TODO: call the faster method for getting ppas?
 					break;
 
+				case "--list-theme":
 				case "--list-themes":
 					print_theme_list(App.list_themes());
 					break;
 
+				case "--list-icon":
 				case "--list-icons":
 					print_theme_list(App.list_icons());
 					break;
-					
+
 				case "--backup-ppa":
 				case "--backup-ppas":
 					string file_name = "ppa.list";
-					bool is_success = App.save_ppa_list_selected(App.list_ppa());
+					App.read_package_info();
+					foreach(Ppa ppa in App.ppa_list_master.values){
+						ppa.is_selected = true;
+					}
+					//TODO: call the faster method for getting ppas?
+					bool is_success = App.save_ppa_list_selected();
 					if (is_success){
 						log_msg(_("File saved") + " '%s'".printf(file_name));
 					}
@@ -190,12 +234,17 @@ public class AptikConsole : GLib.Object{
 						return false;
 					}
 					break;
-					
+
 				case "--backup-package":
 				case "--backup-packages":
 					string file_name = "packages.list";
-					bool is_success = App.save_package_list_selected(App.list_manual());
-					if (is_success){
+
+					App.read_package_info();
+					foreach(Package pkg in App.pkg_list_master.values){
+						pkg.is_selected = pkg.is_manual;
+					}
+
+					if (App.save_package_list_selected()){
 						log_msg(_("File saved") + " '%s'".printf(file_name));
 					}
 					else{
@@ -211,7 +260,8 @@ public class AptikConsole : GLib.Object{
 						Thread.usleep ((ulong) 0.3 * 1000000);
 					}
 					break;
-					
+
+				case "--backup-theme":
 				case "--backup-themes":
 					foreach(Theme theme in App.list_themes()){
 						if (theme.is_selected){
@@ -222,7 +272,8 @@ public class AptikConsole : GLib.Object{
 						}
 					}
 					break;
-					
+
+				case "--backup-icon":
 				case "--backup-icons":
 					foreach(Theme theme in App.list_icons()){
 						if (theme.is_selected){
@@ -233,13 +284,15 @@ public class AptikConsole : GLib.Object{
 						}
 					}
 					break;
-					
+
 				case "--restore-ppa":
 				case "--restore-ppas":
 					if (!check_internet_connectivity()){
 						log_msg(_("Error") + ": " +  _("Internet connection is not active. Please check the connection and try again."));
 						return false;
 					}
+
+					App.read_package_info();
 					restore_ppa();
 					break;
 
@@ -259,7 +312,8 @@ public class AptikConsole : GLib.Object{
 						Thread.usleep ((ulong) 0.3 * 1000000);
 					}
 					break;
-					
+
+				case "--restore-theme":
 				case "--restore-themes":
 					foreach(Theme theme in App.get_themes_from_backup("theme")){
 						if (theme.is_selected && !theme.is_installed){
@@ -272,6 +326,7 @@ public class AptikConsole : GLib.Object{
 					}
 					break;
 
+				case "--restore-icon":
 				case "--restore-icons":
 					foreach(Theme theme in App.get_themes_from_backup("icon")){
 						if (theme.is_selected && !theme.is_installed){
@@ -283,11 +338,15 @@ public class AptikConsole : GLib.Object{
 						}
 					}
 					break;
-					
+
 				case "--take-ownership":
 					App.take_ownership();
 					break;
-					
+
+				case "--check-perf":
+					check_performance();
+					break;
+
 				case "--desc":
 				case "--show-desc":
 				case "-y":
@@ -295,15 +354,16 @@ public class AptikConsole : GLib.Object{
 				case "--help":
 				case "--h":
 				case "-h":
+				case "--debug":
 					//handled already - do nothing
 					break;
-					
+
 				case "--backup-dir":
 					k += 1;
 					//handled already - do nothing
 					break;
-					
-				default: 
+
+				default:
 					//unknown option - show help and exit
 					log_error(_("Unknown option") + ": %s".printf(args[k]));
 					log_msg(help_message());
@@ -314,15 +374,41 @@ public class AptikConsole : GLib.Object{
 		return true;
 	}
 
-	public void print_package_list(Gee.HashMap<string,Package> package_list, bool show_desc){
+	public void check_performance(){
+			App.read_package_info_from_system();
+			App.read_package_info_from_cache();
+
+			var timer = timer_start();
+
+			timer.start();
+			//App.list_ppa();
+			log_msg("list_ppa: %s".printf(timer_elapsed_string(timer)));
+
+			timer.start();
+			App.list_themes();
+			log_msg("list_themes: %s".printf(timer_elapsed_string(timer)));
+
+			timer.start();
+			App.list_icons();
+			log_msg("list_icons: %s".printf(timer_elapsed_string(timer)));
+
+			timer.start();
+			App.list_app_config_directories_from_home();
+			log_msg("list_apps: %s".printf(timer_elapsed_string(timer)));
+	}
+
+	public void print_package_list(bool show_desc){
+		//create an arraylist and sort items for printing
 		var pkg_list = new ArrayList<Package>();
-		foreach(Package pkg in package_list.values) {
-			pkg_list.add(pkg);
+		foreach(Package pkg in App.pkg_list_master.values) {
+			if (pkg.is_selected){
+				pkg_list.add(pkg);
+			}
 		}
 		CompareDataFunc<Package> func = (a, b) => {
 			return strcmp(a.name,b.name);
 		};
-		pkg_list.sort((owned) func);
+		pkg_list.sort((owned)func);
 
 		int max_length = 0;
 		foreach(Package pkg in pkg_list){
@@ -331,7 +417,7 @@ public class AptikConsole : GLib.Object{
 			}
 		}
 		string fmt = "%%-%ds".printf(max_length + 2);
-		
+
 		if (show_desc){
 			fmt = fmt + "%s";
 			foreach(Package pkg in pkg_list){
@@ -345,15 +431,18 @@ public class AptikConsole : GLib.Object{
 		}
 	}
 
-	public void print_ppa_list(Gee.HashMap<string,Ppa> ppa_list_to_print, bool show_desc){
+	public void print_ppa_list(bool show_desc){
+		//create an arraylist and sort items for printing
 		var ppa_list = new ArrayList<Ppa>();
-		foreach(Ppa ppa in ppa_list_to_print.values) {
-			ppa_list.add(ppa);
+		foreach(Ppa ppa in App.ppa_list_master.values) {
+			if (ppa.is_selected){
+				ppa_list.add(ppa);
+			}
 		}
 		CompareDataFunc<Ppa> func = (a, b) => {
 			return strcmp(a.name,b.name);
 		};
-		ppa_list.sort((owned) func);
+		ppa_list.sort((owned)func);
 
 		int max_length = 0;
 		foreach(Ppa ppa in ppa_list){
@@ -362,7 +451,7 @@ public class AptikConsole : GLib.Object{
 			}
 		}
 		string fmt = "%%-%ds".printf(max_length + 2);
-		
+
 		if (show_desc){
 			fmt = fmt + "%s";
 			foreach(Ppa ppa in ppa_list){
@@ -388,41 +477,46 @@ public class AptikConsole : GLib.Object{
 			log_msg(fmt.printf(theme.name));
 		}
 	}
-	
+
 	public bool restore_packages(bool no_prompt){
 		if (!App.check_backup_file("packages.list")){
 			return false;
 		}
-		
-		string list_found = "";
+
+		string list_new = "";
+		string list_installed = "";
 		string list_missing = "";
 
-		var pkg_list = App.read_package_list(App.list_all());
+		var pkg_list = App.read_package_list();
 		if (pkg_list.size == 0){
 			return false;
 		}
-		
-		foreach(Package pkg in pkg_list.values){
-			if (pkg.is_selected && pkg.is_available && !pkg.is_installed){
-				list_found += " %s".printf(pkg.name);
+
+		foreach(string pkg_name in pkg_list){
+			if (App.pkg_list_master.has_key(pkg_name)){
+				Package pkg = App.pkg_list_master[pkg_name];
+				if (pkg.is_available && !pkg.is_installed){
+					list_new += " %s".printf(pkg_name);
+				}
+				else{
+					list_installed += " %s".printf(pkg_name);
+				}
+			}
+			else{
+				list_missing += " %s".printf(pkg_name);
 			}
 		}
-		foreach(Package pkg in pkg_list.values){
-			if (pkg.is_selected && !pkg.is_available && !pkg.is_installed){
-				list_missing += " %s".printf(pkg.name);
-			}
-		}
-		
-		list_found = list_found.strip();
+
+		list_new = list_new.strip();
 		list_missing = list_missing.strip();
-		
+
 		if (list_missing.length > 0){
 			log_msg(_("Following packages are NOT available") + ":\n%s\n".printf(list_missing));
 		}
-		
-		if (list_found.length > 0){
-			log_msg(_("Following packages will be installed") + ":\n%s\n".printf(list_found));
-			Posix.system("sudo apt-get%s install %s".printf((no_prompt)? " -y" : "", list_found));
+
+		if (list_new.length > 0){
+			log_msg(_("Following packages will be installed") + ":\n%s\n".printf(list_new));
+			Posix.system("sudo apt-get%s install %s".printf((no_prompt)? " -y" : "", list_new));
 		}
 		else{
 			log_msg(_("Selected packages are already installed"));
@@ -435,27 +529,25 @@ public class AptikConsole : GLib.Object{
 		if (!App.check_backup_file("ppa.list")){
 			return false;
 		}
-		
-		var ppa_list = App.read_ppa_list();
-		
+
 		bool run_apt_update = false;
-		foreach(Ppa ppa in ppa_list.values){
+		foreach(Ppa ppa in App.ppa_list_master.values){
 			if (ppa.is_selected && !ppa.is_installed){
 				log_msg(_("Adding PPA") + " '%s'".printf(ppa.name));
-				
+
 				Posix.system("sudo apt-add-repository -y ppa:%s".printf(ppa.name));
 				//exit code is not reliable (always 0?)
-				
+
 				run_apt_update = true;
 				log_msg("");
 			}
-		}			
-		
+		}
+
 		if (run_apt_update){
 			log_msg(_("Updating Package Information..."));
 			Posix.system("sudo apt-get -y update");
 		}
-		
+
 		return true;
 	}
 }

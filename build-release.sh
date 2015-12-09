@@ -5,7 +5,6 @@ DIR="$( cd "$( dirname "$0" )" && pwd )"
 cd "$DIR"
 
 sh build-installer.sh
-
 #check for errors
 if [ $? -ne 0 ]; then
 	cd "$backup"
@@ -22,7 +21,6 @@ done
 cd ..
 
 sh push.sh
-
 #check for errors
 if [ $? -ne 0 ]; then
 	cd "$backup"
