@@ -801,16 +801,17 @@ namespace TeeJee.ProcessManagement{
 		return execute_command_sync ("kill -CONT %d".printf(procID));
 	}
 
-	public void command_kill(string cmd_name, string cmd){
+	public void command_kill(string cmd_name, string cmd_to_match, bool exact_match){
 
 		/* Kills a specific command */
 
-		string txt = execute_command_sync_get_output ("ps w -C %s".printf(cmd_name));
+		string txt = execute_command_sync_get_output ("ps w -C '%s'".printf(cmd_name));
 		//use 'ps ew -C conky' for all users
 
 		string pid = "";
 		foreach(string line in txt.split("\n")){
-			if (line.index_of(cmd) != -1){
+			if ((exact_match && line.has_suffix(" " + cmd_to_match))
+			|| (!exact_match && (line.index_of(cmd_to_match) != -1))){
 				pid = line.strip().split(" ")[0];
 				Posix.kill ((Pid) int.parse(pid), 15);
 				log_debug(_("Stopped") + ": [PID=" + pid + "] ");
@@ -818,7 +819,27 @@ namespace TeeJee.ProcessManagement{
 		}
 	}
 
+	public bool process_is_running_by_name(string proc_name){
 
+		/* Checks if given process is running */
+
+		string cmd = "";
+		string std_out;
+		string std_err;
+		int ret_val;
+
+		try{
+			cmd = "pgrep -f '%s'".printf(proc_name);
+			Process.spawn_command_line_sync(cmd, out std_out, out std_err, out ret_val);
+		}
+		catch (Error e) {
+			log_error (e.message);
+			return false;
+		}
+
+		return (ret_val == 0);
+	}
+	
 	public void process_set_priority (Pid procID, int prio){
 
 		/* Set process priority */

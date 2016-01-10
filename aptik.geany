@@ -17,11 +17,13 @@ long_line_behaviour=1
 long_line_column=80
 
 [files]
-current_page=2
-FILE_NAME_0=50602;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMain.vala;0;4
-FILE_NAME_1=14591;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FAptikConsole.vala;0;4
-FILE_NAME_2=82818;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMainWindow.vala;0;4
-FILE_NAME_3=1228;Make;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2Fmakefile;0;4
+current_page=5
+FILE_NAME_0=5993;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik-archive-manager%2Fsrc%2FArchiveItem.vala;0;4
+FILE_NAME_1=1732;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FClasses.vala;0;4
+FILE_NAME_2=12377;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FUtility.vala;0;4
+FILE_NAME_3=85723;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMainWindow.vala;0;4
+FILE_NAME_4=25636;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMain.vala;0;4
+FILE_NAME_5=6757;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FAptikConsole.vala;0;4
 
 [VTE]
 last_dir=/home/teejee

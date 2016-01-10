@@ -159,7 +159,7 @@ public class AptikConsole : GLib.Object {
 			case "--list-available":
 				App.read_package_info();
 				foreach(Package pkg in App.pkg_list_master.values) {
-					pkg.is_selected = pkg.is_available;
+					pkg.is_selected = (pkg.is_available && !pkg.is_foreign());
 				}
 				print_package_list(show_desc);
 				break;
@@ -200,6 +200,7 @@ public class AptikConsole : GLib.Object {
 			case "--list-ppa":
 			case "--list-ppas":
 				App.read_package_info();
+				App.ppa_list_master = App.list_ppa();
 				foreach(Ppa ppa in App.ppa_list_master.values) {
 					ppa.is_selected = true;
 				}
@@ -221,19 +222,12 @@ public class AptikConsole : GLib.Object {
 			case "--backup-ppas":
 				string file_name = "ppa.list";
 				App.read_package_info();
+				App.ppa_list_master = App.list_ppa();
 				foreach(Ppa ppa in App.ppa_list_master.values) {
 					ppa.is_selected = true;
 				}
 				//TODO: call the faster method for getting ppas?
-				bool is_success = App.save_ppa_list_selected();
-				if (is_success) {
-					log_msg(_("File saved") + " '%s'".printf(file_name));
-				}
-				else {
-					log_error(_("Failed to write") + " '%s'".printf(file_name));
-					return false;
-				}
-				break;
+				return App.save_ppa_list_selected();
 
 			case "--backup-package":
 			case "--backup-packages":
@@ -244,14 +238,7 @@ public class AptikConsole : GLib.Object {
 					pkg.is_selected = pkg.is_manual;
 				}
 
-				if (App.save_package_list_selected()) {
-					log_msg(_("File saved") + " '%s'".printf(file_name));
-				}
-				else {
-					log_error(_("Failed to write") + " '%s'".printf(file_name));
-					return false;
-				}
-				break;
+				return App.save_package_list_selected();
 
 			case "--backup-cache":
 			case "--backup-apt-cache":
@@ -375,8 +362,7 @@ public class AptikConsole : GLib.Object {
 	}
 
 	public void check_performance() {
-		App.read_package_info_from_system();
-		App.read_package_info_from_cache();
+		App.read_package_info();
 
 		var timer = timer_start();
 
@@ -414,6 +400,9 @@ public class AptikConsole : GLib.Object {
 		foreach(Package pkg in pkg_list) {
 			if (pkg.name.length > max_length) {
 				max_length = pkg.name.length;
+			}
+			if (pkg.is_foreign()){
+				pkg.name = "%s:%s".printf(pkg.name,pkg.arch);
 			}
 		}
 		string fmt = "%%-%ds".printf(max_length + 2);

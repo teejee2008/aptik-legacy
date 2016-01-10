@@ -37,6 +37,7 @@ using TeeJee.Misc;
 
 
 public class Package : GLib.Object {
+	public string id = "";
 	public string name = "";
 	public string description = "";
 	public string server = "";
@@ -53,9 +54,41 @@ public class Package : GLib.Object {
 	public bool is_default = false;
 	public bool is_automatic = false;
 	public bool is_manual = false;
+	public bool is_deb = false;
 
+	//convenience members
+	public bool is_visible = false;
+	public bool in_backup_list = false;
+	
 	public Package(string _name){
 		name = _name;
+	}
+
+	public bool is_foreign(){
+		if (check_if_foreign(arch)){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
+	public static string get_id(string _name, string _arch){
+		string str = "";
+		str = "%s".printf(_name);
+		if (check_if_foreign(_arch)){
+			str = str + ":%s".printf(_arch); //make it unique
+		}
+		return str;
+	}
+	
+	public static bool check_if_foreign(string architecture){
+		if ((architecture.length > 0) && (architecture != App.NATIVE_ARCH) && (architecture != "all") && (architecture != "any")){
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 }
 
@@ -73,6 +106,25 @@ public struct Package2 {
 
 	public Package2(string _name){
 		name = _name;
+	}
+}
+
+public class Repository : GLib.Object{
+	public string name = "";
+	public string description = "";
+	
+	public bool is_selected = false;
+	public bool is_installed = false;
+
+	public Type type = Type.BINARY;
+	public string URI = "";
+	public string dist = "";
+	public string sections = "";
+	public string comments = "";
+	
+	public enum Type{
+		BINARY,
+		SOURCE
 	}
 }
 

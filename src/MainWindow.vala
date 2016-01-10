@@ -76,6 +76,7 @@ public class MainWindow : Window {
 	private Entry txt_filter;
 	private ComboBox cmb_pkg_section;
 	private ComboBox cmb_pkg_status;
+	private Gtk.Label infobar_pkg_lbl;
 
 	private Button btn_restore_cache;
 	private Button btn_backup_cache;
@@ -157,7 +158,7 @@ public class MainWindow : Window {
 
 		init_section_backup();
 
-		init_section_tools();
+		//init_section_tools();
 
 		init_section_toolbar_bottom();
 
@@ -497,9 +498,14 @@ public class MainWindow : Window {
 		vbox_packages.margin = 6;
 		notebook.append_page (vbox_packages, lbl_packages);
 
+		//filters
 		init_section_backup_packages_tab_filters();
 
-
+		//infobar_pkg_lbl
+		infobar_pkg_lbl = new Gtk.Label(_("Select packages to backup"));
+		infobar_pkg_lbl.xalign = (float) 0.0;
+		vbox_packages.add(infobar_pkg_lbl);
+		
 		//tooltips -------------------------------------------------------------
 
 		// TODO: Fix messages
@@ -520,8 +526,18 @@ public class MainWindow : Window {
 		tt = _("Search package name and description");
 		txt_filter.set_tooltip_markup(tt);
 
+		//treeview
 		init_section_backup_packages_tab_treeview();
 
+		//infobar
+		//infobar_pkg = new Gtk.InfoBar();
+		//infobar_pkg.show_close_button = true;
+		//infobar_pkg_lbl = new Gtk.Label("");
+		//Gtk.Container content = infobar_pkg.get_content_area ();
+		//content.add (infobar_pkg_lbl);
+		//vbox_packages.add(infobar_pkg);
+
+		//buttons
 		init_section_backup_packages_tab_actions();
 	}
 
@@ -602,6 +618,12 @@ public class MainWindow : Window {
 			Package pkg;
 			model.get (iter, 0, out selected, 1, out pkg, -1);
 			(cell as Gtk.CellRendererToggle).active = selected;
+			if (is_restore_view){
+				(cell as Gtk.CellRendererToggle).sensitive = !pkg.is_installed;
+			}
+			else{
+				(cell as Gtk.CellRendererToggle).sensitive = true;
+			}
 		});
 
 		cell_pkg_select.toggled.connect((path) => {
@@ -646,12 +668,17 @@ public class MainWindow : Window {
 		col_pkg_name.set_cell_data_func (cell_pkg_name, (cell_layout, cell, model, iter) => {
 			Package pkg;
 			model.get (iter, 1, out pkg, -1);
-			(cell as Gtk.CellRendererText).text = pkg.name;
+			if (pkg.is_foreign()){
+				(cell as Gtk.CellRendererText).text = "%s (%s)".printf(pkg.name,pkg.arch);
+			}
+			else{
+				(cell as Gtk.CellRendererText).text = pkg.name;
+			}
 		});
 
 		//col_pkg_installed ----------------------
 
-		TreeViewColumn col_pkg_installed = new TreeViewColumn();
+		/*TreeViewColumn col_pkg_installed = new TreeViewColumn();
 		col_pkg_installed.title = _("Installed");
 		col_pkg_installed.resizable = true;
 		col_pkg_installed.min_width = 120;
@@ -665,11 +692,11 @@ public class MainWindow : Window {
 			Package pkg;
 			model.get (iter, 1, out pkg, -1);
 			(cell as Gtk.CellRendererText).text = pkg.version_installed;
-		});
+		});*/
 
 		//col_pkg_latest ----------------------
 
-		TreeViewColumn col_pkg_latest = new TreeViewColumn();
+		/*TreeViewColumn col_pkg_latest = new TreeViewColumn();
 		col_pkg_latest.title = _("Latest");
 		col_pkg_latest.resizable = true;
 		col_pkg_latest.min_width = 120;
@@ -683,7 +710,7 @@ public class MainWindow : Window {
 			Package pkg;
 			model.get (iter, 1, out pkg, -1);
 			(cell as Gtk.CellRendererText).text = pkg.version_available;
-		});
+		});*/
 
 		//col_pkg_desc ----------------------
 
@@ -713,16 +740,18 @@ public class MainWindow : Window {
 		hbox_pkg_actions.pack_start (btn_backup_packages_select_all, true, true, 0);
 		btn_backup_packages_select_all.clicked.connect(() => {
 			foreach(Package pkg in pkg_list_user.values) {
-				if (is_restore_view) {
-					if (pkg.is_available && !pkg.is_installed) {
-						pkg.is_selected = true;
+				if (pkg.is_visible){
+					if (is_restore_view) {
+						if (pkg.is_available && !pkg.is_installed) {
+							pkg.is_selected = true;
+						}
+						else {
+							//no change
+						}
 					}
 					else {
-						//no change
+						pkg.is_selected = true;
 					}
-				}
-				else {
-					pkg.is_selected = true;
 				}
 			}
 			tv_packages_refresh();
@@ -733,16 +762,18 @@ public class MainWindow : Window {
 		hbox_pkg_actions.pack_start (btn_backup_packages_select_none, true, true, 0);
 		btn_backup_packages_select_none.clicked.connect(() => {
 			foreach(Package pkg in pkg_list_user.values) {
-				if (is_restore_view) {
-					if (pkg.is_available && !pkg.is_installed) {
-						pkg.is_selected = false;
+				if (pkg.is_visible){
+					if (is_restore_view) {
+						if (pkg.is_available && !pkg.is_installed) {
+							pkg.is_selected = false;
+						}
+						else {
+							//no change
+						}
 					}
 					else {
-						//no change
+						pkg.is_selected = false;
 					}
-				}
-				else {
-					pkg.is_selected = false;
 				}
 			}
 			tv_packages_refresh();
@@ -1483,23 +1514,33 @@ public class MainWindow : Window {
 				display = false;
 			}
 			break;
-		case 5: //NotInstalled
-			if (pkg.is_installed) {
+		case 5: //Installed, DEB
+			if (!(pkg.is_installed && pkg.is_deb && !pkg.is_automatic)) {
 				display = false;
 			}
 			break;
-		case 6: //selected
+		case 6: //NotInstalled
+			if (!(!pkg.is_installed && !pkg.is_foreign())) {
+				display = false;
+			}
+			break;
+		case 7: //selected
 			if (!pkg.is_selected) {
 				display = false;
 			}
 			break;
-		case 7: //unselected
+		case 8: //unselected
 			if (pkg.is_selected) {
 				display = false;
 			}
 			break;
+		case 9: //backup-list
+			if (!(pkg.in_backup_list)) {
+				display = false;
+			}
+			break;
 		}
-
+		
 		switch (cmb_pkg_section.active) {
 		case 0: //all
 			//exclude nothing
@@ -1512,6 +1553,8 @@ public class MainWindow : Window {
 			break;
 		}
 
+		pkg.is_visible = display;
+		
 		return display;
 	}
 
@@ -1521,7 +1564,9 @@ public class MainWindow : Window {
 		//sort ppa list
 		var ppa_list = new ArrayList<Ppa>();
 		foreach(Ppa ppa in ppa_list_user.values) {
-			ppa_list.add(ppa);
+			if (ppa.name != "official"){
+				ppa_list.add(ppa);
+			}
 		}
 		CompareDataFunc<Ppa> func = (a, b) => {
 			return strcmp(a.name, b.name);
@@ -1641,11 +1686,17 @@ public class MainWindow : Window {
 		store.append(out iter);
 		store.set (iter, 0, _("Installed (auto)"));
 		store.append(out iter);
+		store.set (iter, 0, _("Installed (deb)"));
+		store.append(out iter);
 		store.set (iter, 0, _("NotInstalled"));
 		store.append(out iter);
 		store.set (iter, 0, _("(selected)"));
 		store.append(out iter);
 		store.set (iter, 0, _("(unselected)"));
+		if (is_restore_view){
+			store.append(out iter);
+			store.set (iter, 0, _("(backup-list)"));
+		}
 		cmb_pkg_status.set_model (store);
 		cmb_pkg_status.active = 0;
 	}
@@ -1665,8 +1716,46 @@ public class MainWindow : Window {
 	}
 
 	private void cmb_filters_connect() {
-		cmb_pkg_status.changed.connect(tv_packages_refilter);
+		cmb_pkg_status.changed.connect(()=>{
+			tv_packages_refilter();
+
+			switch (cmb_pkg_status.active) {
+			case 0: //all
+				//exclude nothing
+				infobar_pkg_lbl.label = _("Showing all available packages");
+				break;
+			case 1: //Installed
+				infobar_pkg_lbl.label = _("Showing all installed packages");
+				break;
+			case 2: //Installed, Distribution
+				infobar_pkg_lbl.label = _("Showing packages that were installed with the Linux OS");
+				break;
+			case 3: //Installed, User
+				infobar_pkg_lbl.label = _("Showing extra packages that were installed by you");
+				break;
+			case 4: //Installed, Automatic
+				infobar_pkg_lbl.label = _("Showing packages that were automatically installed (required by other packages)");
+				break;
+			case 5: //Installed, DEB
+				infobar_pkg_lbl.label = _("Showing packages that were installed from DEB files");
+				break;
+			case 6: //NotInstalled
+				infobar_pkg_lbl.label = _("Showing packages that are not installed but available for installation");
+				break;
+			case 7: //selected
+				infobar_pkg_lbl.label = _("Showing selected packages");
+				break;
+			case 8: //unselected
+				infobar_pkg_lbl.label = _("Showing unselected packages");
+				break;
+			case 9: //backup list
+				infobar_pkg_lbl.label = _("Showing packages from the backup list");
+				break;
+			}
+		});
+
 		cmb_pkg_section.changed.connect(tv_packages_refilter);
+		
 		log_debug("connected: combo events");
 	}
 
@@ -1767,6 +1856,9 @@ public class MainWindow : Window {
 			if (ppa.description.length == 0) {
 				ppa.is_selected = false;
 			}
+			else{
+				ppa.is_selected = true;
+			}
 		}
 
 		is_restore_view = false;
@@ -1779,8 +1871,12 @@ public class MainWindow : Window {
 	}
 
 	private void btn_backup_ppa_clicked_thread() {
+		//App.read_package_info();
+		//ppa_list_user = App.ppa_list_master;
 		App.read_package_info();
+		App.ppa_list_master = App.list_ppa();
 		ppa_list_user = App.ppa_list_master;
+		//ppa_list_user = App.list_ppa();
 		is_running = false;
 	}
 
@@ -1847,7 +1943,9 @@ public class MainWindow : Window {
 
 	private void btn_restore_ppa_clicked_thread() {
 		App.read_package_info();
+		App.ppa_list_master = App.list_ppa();
 		ppa_list_user = App.ppa_list_master;
+		App.read_ppa_list();
 		is_running = false;
 	}
 
@@ -1914,6 +2012,7 @@ public class MainWindow : Window {
 		//deiconify();
 		gtk_do_events();
 
+		/*
 		//verify
 		status = _("Checking installed PPAs...");
 		progress_begin(status);
@@ -1941,6 +2040,9 @@ public class MainWindow : Window {
 			string msg = _("Following PPAs could not be added") + ":\n\n%s\n".printf(error_list);
 			gtk_messagebox(title, msg, this, false);
 		}
+		* */
+
+		progress_end();
 
 		show_home_page();
 	}
@@ -1993,7 +2095,7 @@ public class MainWindow : Window {
 
 		if (App.default_list_missing) {
 			string title = _("File Missing");
-			string msg = _("The list of default packages is missing on this system") + ":\n'%s'\n\n".printf(Main.DEFAULT_PKG_LIST_FILE);
+			string msg = _("The list of default packages is missing on this system") + ":\n'%s'\n\n".printf(Main.DEF_PKG_LIST);
 			msg += _("It is not possible to determine whether a package was installed by you, or whether it was installed along with the Linux distribution.") + "\n\n";
 			msg += _("All top-level installed packages have been selected by default.") + " ";
 			msg += _("Please un-select the packages that are not required.") + "\n";
@@ -2139,7 +2241,9 @@ public class MainWindow : Window {
 		}
 		foreach(string pkg_name in list_bak) {
 			if (pkg_list_user.has_key(pkg_name)) {
-				pkg_list_user[pkg_name].is_selected = true;
+				Package pkg = pkg_list_user[pkg_name];
+				pkg.is_selected = (!pkg.is_installed);
+				pkg.in_backup_list = true;
 			}
 			else {
 				missing += "%s ".printf(pkg_name);
@@ -2152,7 +2256,7 @@ public class MainWindow : Window {
 		btn_backup_packages_exec.visible = false;
 		btn_restore_packages_exec.visible = true;
 
-		title = _("Restore Software Selections");
+		title = _("Re-install Software Packages");
 
 		tv_packages_refresh();
 
@@ -2160,7 +2264,7 @@ public class MainWindow : Window {
 		cmb_filters_disconnect();
 		//refresh combos
 		cmb_pkg_status_refresh();
-		cmb_pkg_status.active = 6;
+		cmb_pkg_status.active = 9;
 		cmb_pkg_section_refresh();
 		//re-connect combo events
 		cmb_filters_connect();
@@ -2262,6 +2366,7 @@ public class MainWindow : Window {
 		execute_command_script_in_terminal_sync(create_temp_bash_script(cmd));
 		//success/error will be displayed by apt-get in terminal
 
+		progress_end();
 		gtk_do_events();
 
 		show_home_page();
