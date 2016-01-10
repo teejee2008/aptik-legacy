@@ -92,23 +92,7 @@ public class Package : GLib.Object {
 	}
 }
 
-public struct Package2 {
-	public string name;
-	public string description;
-	public string server;
-	public string repo;
-	public bool is_selected;
-	public bool is_available;
-	public bool is_installed;
-	public bool is_top;
-	public bool is_default;
-	public bool is_manual;
-
-	public Package2(string _name){
-		name = _name;
-	}
-}
-
+//unused
 public class Repository : GLib.Object{
 	public string name = "";
 	public string description = "";
@@ -273,7 +257,8 @@ public class AppConfig : GLib.Object{
 	public string description = "";
 	public bool is_selected = false;
 	public string size = "";
-
+	public uint64 bytes = 0;
+	
 	public AppConfig(string dir_name){
 		name = dir_name;
 	}

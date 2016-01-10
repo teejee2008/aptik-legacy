@@ -2481,9 +2481,15 @@ public class MainWindow : Window {
 		progress_begin(status);
 
 		//backup
-		App.backup_app_settings(config_list_user);
-		while (App.is_running) {
-			update_progress(_("Zipping"));
+		App.backup_app_settings_init(config_list_user);
+		
+		foreach(AppConfig config in config_list_user){
+			if (!config.is_selected) { continue; }
+			
+			App.backup_app_settings_single(config);
+			while (App.is_running) {
+				update_progress(_("Archiving"));
+			}
 		}
 
 		//finish ----------------------------------
@@ -2502,18 +2508,16 @@ public class MainWindow : Window {
 
 		gtk_set_busy(true, this);
 
-		if (check_backup_file(App.app_settings_zip_name)) {
-			is_restore_view = true;
-			config_list_user = App.list_app_config_directories_from_backup();
-			tv_config_refresh();
-			btn_backup_config_exec.visible = false;
-			btn_restore_config_exec.visible = true;
-			btn_reset_config_exec.visible = true;
+		is_restore_view = true;
+		config_list_user = App.list_app_config_directories_from_backup();
+		tv_config_refresh();
+		btn_backup_config_exec.visible = false;
+		btn_restore_config_exec.visible = true;
+		btn_reset_config_exec.visible = true;
 
-			title = _("Restore Application Settings");
+		title = _("Restore Application Settings");
 
-			notebook.page = Page.CONFIGS;
-		}
+		notebook.page = Page.CONFIGS;
 
 		gtk_set_busy(false, this);
 	}
@@ -2555,9 +2559,15 @@ public class MainWindow : Window {
 		}
 
 		//extract
-		App.restore_app_settings(config_list_user);
-		while (App.is_running) {
-			update_progress(_("Extracting"));
+		App.restore_app_settings_init(config_list_user);
+
+		foreach(AppConfig config in config_list_user){
+			if (!config.is_selected) { continue; }
+			
+			App.restore_app_settings_single(config);
+			while (App.is_running) {
+				update_progress(_("Extracting"));
+			}
 		}
 
 		//update ownership

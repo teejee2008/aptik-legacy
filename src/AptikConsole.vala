@@ -92,19 +92,22 @@ public class AptikConsole : GLib.Object {
 		msg += "  --list-ppa            " + _("List PPAs") + "\n";
 		msg += "  --list-themes         " + _("List themes in /usr/share/themes") + "\n";
 		msg += "  --list-icons          " + _("List icon themes in /usr/share/icons") + "\n";
-
+		msg += "  --list-configs        " + _("List config dirs in /home/<user>") + "\n";
+		
 		msg += "  --backup-ppa          " + _("Backup list of PPAs") + "\n";
 		msg += "  --backup-packages     " + _("Backup list of manual and installed packages") + "\n";
 		msg += "  --backup-cache        " + _("Backup downloaded packages from APT cache") + "\n";
 		msg += "  --backup-themes       " + _("Backup themes from /usr/share/themes") + "\n";
 		msg += "  --backup-icons        " + _("Backup icons from /usr/share/icons") + "\n";
+		msg += "  --backup-configs      " + _("Backup config files from /home/<user>") + "\n";
 
 		msg += "  --restore-ppa         " + _("Restore PPAs from file 'ppa.list'") + "\n";
 		msg += "  --restore-packages    " + _("Restore packages from file 'packages.list'") + "\n";
 		msg += "  --restore-cache       " + _("Restore downloaded packages to APT cache") + "\n";
 		msg += "  --restore-themes      " + _("Restore themes to /usr/share/themes") + "\n";
 		msg += "  --restore-icons       " + _("Restore icons to /usr/share/icons") + "\n";
-
+		msg += "  --restore-configs     " + _("Restore config files to /home/<user>") + "\n";
+		
 		msg += "  --take-ownership      " + _("Take ownership of files in your home directory") + "\n";
 		msg += "  --backup-dir          " + _("Backup directory (defaults to current directory)") + "\n";
 		msg += "  --[show-]desc         " + _("Show package description if available") + "\n";
@@ -218,6 +221,11 @@ public class AptikConsole : GLib.Object {
 				print_theme_list(App.list_icons());
 				break;
 
+			case "--list-config":
+			case "--list-configs":
+				print_config_list(App.list_app_config_directories_from_home());
+				break;
+				
 			case "--backup-ppa":
 			case "--backup-ppas":
 				string file_name = "ppa.list";
@@ -271,7 +279,16 @@ public class AptikConsole : GLib.Object {
 					}
 				}
 				break;
-
+				
+			case "--backup-appsettings":
+			case "--backup-configs":
+				var list = App.list_app_config_directories_from_home();
+				foreach(AppConfig conf in list){
+					conf.is_selected = true;
+				}
+				App.backup_app_settings_all(list);
+				break;
+				
 			case "--restore-ppa":
 			case "--restore-ppas":
 				if (!check_internet_connectivity()) {
@@ -326,6 +343,15 @@ public class AptikConsole : GLib.Object {
 				}
 				break;
 
+			case "--restore-appsettings":
+			case "--restore-configs":
+				var list = App.list_app_config_directories_from_backup();
+				foreach(AppConfig conf in list){
+					conf.is_selected = true;
+				}
+				App.restore_app_settings_all(list);
+				break;
+				
 			case "--take-ownership":
 				App.take_ownership();
 				break;
@@ -464,6 +490,13 @@ public class AptikConsole : GLib.Object {
 		string fmt = "%%-%ds".printf(max_length + 2);
 		foreach(Theme theme in theme_list) {
 			log_msg(fmt.printf(theme.name));
+		}
+	}
+
+	public void print_config_list(Gee.ArrayList<AppConfig> config_list) {
+		foreach(AppConfig config in config_list){
+			log_msg("%-60s%10s".printf(config.name,config.size));
+			//TODO: show size in bytes with commas
 		}
 	}
 

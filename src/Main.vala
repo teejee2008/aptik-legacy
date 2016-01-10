@@ -79,8 +79,8 @@ public class Main : GLib.Object {
 	public Pid proc_id;
 	public DataInputStream dis_out;
 	public DataInputStream dis_err;
-	public int progress_count;
-	public int progress_total;
+	public long progress_count;
+	public long progress_total;
 	public bool is_running;
 
 	private Regex rex_aptget_download;
@@ -1418,7 +1418,7 @@ public class Main : GLib.Object {
 				f.make_directory_with_parents();
 			}
 
-			string cmd = "tar -czvf '%s' -C '%s' '%s'".printf(zip_file, theme_dir_system, theme.name);
+			string cmd = "tar czvf '%s' -C '%s' '%s'".printf(zip_file, theme_dir_system, theme.name);
 			status_line = theme.system_path;
 
 			if (gui_mode) {
@@ -1553,6 +1553,10 @@ public class Main : GLib.Object {
 				log_error (e.message);
 			}
 
+			//while(is_running){
+			//	sleep(100);
+			//}
+
 			return true;
 		}
 		catch (Error e) {
@@ -1597,45 +1601,61 @@ public class Main : GLib.Object {
 
 	/* App Settings */
 
-	public bool backup_app_settings(Gee.ArrayList<AppConfig> config_list) {
+	public bool backup_app_settings_all(Gee.ArrayList<AppConfig> config_list) {
+		backup_app_settings_init(config_list);
+
+		foreach(AppConfig config in config_list) {
+			if (config.is_selected) { 
+				backup_app_settings_single(config);
+			}
+		}
+
+		return true;
+	}
+
+	public void backup_app_settings_init(Gee.ArrayList<AppConfig> config_list){
+		//get total file count
+		progress_total = 0;
+		progress_count = 0;
+		foreach(AppConfig config in config_list) {
+			if (config.is_selected) {
+				progress_total += (int) get_file_count(config.path);
+			}
+		}
+	}
+	
+	public bool backup_app_settings_single(AppConfig config) {
 		string cmd;
 
+		string backup_dir_config = "%sconfigs".printf(backup_dir);
+		create_dir(backup_dir_config);
+		
 		try {
-			string dir_list = "";
-			foreach(AppConfig config in config_list) {
-				if (config.is_selected) {
-					dir_list += " '%s'".printf(config.name.replace("~/", ""));
-				}
+			string name = config.name.replace("~/", "");
+			string zip_file ="%s/%s.tgz".printf(backup_dir_config,name);
+
+			if (name.contains("/")){
+				string parent_dir = "%s/%s".printf(backup_dir_config, name[0:name.last_index_of("/")]);
+				create_dir(parent_dir);
 			}
-
-			string zip_file = app_settings_zip_file;
-
+			
 			//delete zip file
 			var f = File.new_for_path(zip_file);
 			if (f.query_exists()) {
 				f.delete();
 			}
 
-			//get total file count
-			progress_total = 0;
-			progress_count = 0;
-			foreach(AppConfig config in config_list) {
-				if (config.is_selected) {
-					progress_total += (int) get_file_count(config.path);
-				}
-			}
-
-			//zip selected folders
-			cmd = "tar -czvf '%s' -C '%s' %s".printf(zip_file, user_home, dir_list);
+			//zip selected folder
+			cmd = "tar czvf '%s' -C '%s' '%s'".printf(zip_file, user_home, name);
 			status_line = "";
 
 			if (gui_mode) {
 				run_gzip(cmd);
 			}
 			else {
-				stdout.printf(_("Saving Application Settings..."));
+				stdout.printf("%-60s".printf(_("Archiving") + " '%s'".printf(config.name)));
 				stdout.flush();
-
+			
 				int status = Posix.system(cmd + " 1> /dev/null");
 				if (status == 0) {
 					stdout.printf("[ OK ]\n");
@@ -1643,7 +1663,7 @@ public class Main : GLib.Object {
 				else {
 					stdout.printf("[ status=%d ]\n".printf(status));
 				}
-				return (status == 0);
+				//return (status == 0);
 			}
 
 			return true;
@@ -1653,14 +1673,14 @@ public class Main : GLib.Object {
 			return false;
 		}
 	}
-
+	
 	public Gee.ArrayList<AppConfig> list_app_config_directories_from_home() {
 		return list_app_config_directories_from_path(user_home);
 	}
 
 	public Gee.ArrayList<AppConfig> list_app_config_directories_from_path(string base_path) {
 		var app_config_list = new Gee.ArrayList<AppConfig>();
-
+		
 		try
 		{
 			//list all items in home except .config and .local
@@ -1745,61 +1765,10 @@ public class Main : GLib.Object {
 
 	public Gee.ArrayList<AppConfig> list_app_config_directories_from_backup() {
 		var app_config_list = new Gee.ArrayList<AppConfig>();
-
-		string lines = execute_command_sync_get_output("tar -tzvf '%s'".printf(app_settings_zip_file));
-		string rel_path, name;
-		Regex rex;
-		MatchInfo match;
-		AppConfig entry;
-
-		foreach(string line in lines.split("\n")) {
-			if (line.split(" ").length < 5) {
-				continue;
-			}
-
-			try {
-				rex = new Regex("""[^ ]*[ ]*[^ ]*[ ]*[^ ]*[ ]*[^ ]*[ ]*[^ ]*[ ]*([^ ]*)""");
-				if (rex.match (line, 0, out match)) {
-
-					rel_path = match.fetch(1).strip();
-
-					if (rel_path.split("/")[0] == ".config") {
-						name = rel_path.split("/")[1];
-						entry = new AppConfig("~/.config/%s".printf(name));
-					}
-					else if (rel_path.split("/")[0] == ".local") {
-						if (rel_path.split("/")[1] == "share") {
-							name = rel_path.split("/")[2];
-							entry = new AppConfig("~/.local/share/%s".printf(name));
-						}
-						else {
-							continue;
-						}
-					}
-					else {
-						name = rel_path.split("/")[0];
-						entry = new AppConfig("~/%s".printf(name));
-					}
-
-					bool found = false;
-					foreach(AppConfig config in app_config_list) {
-						if (config.path == entry.path) {
-							found = true;
-							break;
-						}
-					}
-
-					if (!found) {
-						entry.description = get_config_dir_description(entry.name);
-						app_config_list.add(entry);
-					}
-				}
-			}
-			catch (Error e) {
-				log_error (e.message);
-			}
-		}
-
+		string backup_dir_config = "%sconfigs".printf(backup_dir);
+		
+		list_app_config_directories_from_backup_path(backup_dir_config, ref app_config_list);
+		
 		//sort the list
 		CompareDataFunc<AppConfig> entry_compare = (a, b) => {
 			return strcmp(a.path, b.path);
@@ -1807,6 +1776,35 @@ public class Main : GLib.Object {
 		app_config_list.sort((owned)entry_compare);
 
 		return app_config_list;
+	}
+
+	public void list_app_config_directories_from_backup_path(
+	string backup_path, ref Gee.ArrayList<AppConfig> app_config_list) {
+
+		string backup_dir_config = "%sconfigs".printf(backup_dir);
+
+		try{
+			File f_bak = File.new_for_path (backup_path);
+			FileEnumerator enumerator = f_bak.enumerate_children ("standard::*", 0);
+			FileInfo file;
+			while ((file = enumerator.next_file ()) != null) {
+				string name = file.get_name();
+				string path = backup_path + "/" + name;
+				if (dir_exists(path)){
+					list_app_config_directories_from_backup_path(path, ref app_config_list);
+				}
+				else{
+					string item_name = path.replace(backup_dir_config,"~");
+					item_name = item_name[0:item_name.length - 4];
+					var conf = new AppConfig(item_name);
+					conf.description = get_config_dir_description(conf.name);
+					app_config_list.add(conf);
+				}
+			}
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}
 	}
 
 	public string get_config_dir_description(string name) {
@@ -1840,54 +1838,75 @@ public class Main : GLib.Object {
 		}
 	}
 
-	public bool restore_app_settings(Gee.ArrayList<AppConfig> config_list) {
+	public bool restore_app_settings_all(Gee.ArrayList<AppConfig> config_list) {
+		restore_app_settings_init(config_list);
+		
+		foreach(AppConfig config in config_list) {
+			if (config.is_selected) {
+				restore_app_settings_single(config);
+			}
+		}
+
+		return true;
+	}
+
+	public void restore_app_settings_init(Gee.ArrayList<AppConfig> config_list) {
+		//get file count before unzipping
+		progress_total = 0;
+		progress_count = 0;
+		foreach(AppConfig config in config_list) {
+			if (config.is_selected) {
+				string name = config.name.replace("~/", "");
+				string backup_dir_config = "%sconfigs".printf(backup_dir);
+				string zip_file = "%s/%s.tgz".printf(backup_dir_config, name);
+				string cmd = "tar tzvf '%s' | wc -l".printf(zip_file);
+				string stderr, stdout;
+				execute_command_script_sync(cmd, out stdout, out stderr, true);
+				progress_total += long.parse(stdout);
+			}
+		}
+		//log_msg("Total=%ld".printf(progress_total));
+	}
+	
+	public bool restore_app_settings_single(AppConfig config) {
 		string cmd;
 		string base_dir_target = user_home;
 
+		string backup_dir_config = "%sconfigs".printf(backup_dir);
+		string name = config.name.replace("~/", "");
+		string zip_file = "%s/%s.tgz".printf(backup_dir_config, name);
+		
 		//check zip file
-		if (!file_exists(app_settings_zip_file)) {
+		if (!file_exists(zip_file)) {
 			log_error(_("File not found") + ": '%s'".printf(app_settings_zip_file));
 			return false;
 		}
 
-		//delete existing target folders
-		foreach(AppConfig config in config_list) {
-			if (config.is_selected) {
-				string dir = config.name.replace("~", base_dir_target);
-				if (dir_exists(dir)) {
-					cmd = "rm -rf \"%s\"".printf(dir);
-					execute_command_sync(cmd);
-				}
-			}
+		//delete existing target folder
+		string dir = config.name.replace("~", base_dir_target);
+		if (dir_exists(dir)) {
+			cmd = "rm -rf \"%s\"".printf(dir);
+			execute_command_sync(cmd);
 		}
 
 		//create base_dir_target
 		create_dir(base_dir_target);
 
-		//create list of selected items to extract from zip file
-		string dir_list = "";
-		foreach(AppConfig config in config_list) {
-			if (config.is_selected) {
-				dir_list += " '%s'".printf(config.name.replace("~/", ""));
-			}
+		if (name.contains("/")){
+			string parent_dir = "%s/%s".printf(base_dir_target, name[0:name.last_index_of("/")]);
+			create_dir(parent_dir);
+			log_debug("create_dir: %s".printf(parent_dir));
 		}
 
-		//get file count before unzipping
-		progress_total = 0;
-		progress_count = 0;
-		cmd = "tar -tzvf '%s' -C '%s' %s".printf(app_settings_zip_file, base_dir_target, dir_list);
-		string txt = execute_command_sync_get_output(cmd);
-		progress_total += txt.split("\n").length;
-
 		//unzip selected items to home directory
-		cmd = "tar -xzvf '%s' -C '%s' %s".printf(app_settings_zip_file, base_dir_target, dir_list);
+		cmd = "tar xzvf '%s' -C '%s' %s".printf(zip_file, base_dir_target, name);
 		status_line = "";
 
 		if (gui_mode) {
 			run_gzip(cmd);
 		}
 		else {
-			stdout.printf(_("Restoring Application Settings..."));
+			stdout.printf("%-60s".printf(_("Extracting") + " '%s'".printf(config.name)));
 			stdout.flush();
 
 			int status = Posix.system(cmd + " 1> /dev/null");
