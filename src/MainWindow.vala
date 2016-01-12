@@ -35,8 +35,6 @@ using TeeJee.Misc;
 
 public class MainWindow : Window {
 	private Box vbox_main;
-	private Box vbox_actions;
-	private Box vbox_theme;
 
 	private Grid grid_backup_buttons;
 
@@ -44,8 +42,8 @@ public class MainWindow : Window {
 	private ToolButton btn_donate;
 	private ToolButton btn_about;
 
-	private Notebook notebook;
-	private FileChooserButton fcb_backup;
+	private Gtk.Entry txt_backup_path;
+	private Button btn_browse_backup_dir;
 	private Button btn_open_backup_dir;
 
 	private Button btn_restore_packages;
@@ -68,13 +66,8 @@ public class MainWindow : Window {
 	private ProgressBar progressbar;
 	private Label lbl_status;
 
-	bool is_restore_view = false;
-
-	int def_width = 500;
-	int def_height = 450;
-
-	int ex_width = 600;
-	int ex_height = 500;
+	int def_width = 400;
+	int def_height = -1;
 
 	int icon_size_list = 22;
 	int button_width = 85;
@@ -83,30 +76,17 @@ public class MainWindow : Window {
 	public MainWindow () {
 		title = AppName + " v" + AppVersion;
 		window_position = WindowPosition.CENTER;
-		//resizable = false;
+		resizable = false;
 		destroy.connect (Gtk.main_quit);
 		set_default_size (def_width, def_height);
 		icon = get_app_icon(16);
 
 		//vboxMain
 		vbox_main = new Box (Orientation.VERTICAL, 0);
+		vbox_main.margin = 12;
 		add (vbox_main);
 
-		//notebook
-		notebook = new Notebook ();
-		notebook.show_tabs = false;
-		vbox_main.pack_start (notebook, true, true, 0);
-		notebook.switch_page.connect(notebook_switch_page);
-
 		//actions ---------------------------------------------
-
-		//lbl_actions
-		Label lbl_actions = new Label (_("Actions"));
-
-		//vbox_actions
-		vbox_actions = new Box (Gtk.Orientation.VERTICAL, 6);
-		vbox_actions.margin = 12;
-		notebook.append_page (vbox_actions, lbl_actions);
 
 		init_section_backup_location();
 
@@ -124,31 +104,50 @@ public class MainWindow : Window {
 		Label lbl_header_location = new Label ("<b>" + _("Backup Directory") + "</b>");
 		lbl_header_location.set_use_markup(true);
 		lbl_header_location.halign = Align.START;
-		lbl_header_location.margin_top = 6;
+		//lbl_header_location.margin_top = 6;
 		lbl_header_location.margin_bottom = 6;
-		vbox_actions.pack_start (lbl_header_location, false, true, 0);
+		vbox_main.pack_start (lbl_header_location, false, true, 0);
 
 		//vbox_backup_dir
-		Box vbox_backup_dir = new Box (Gtk.Orientation.HORIZONTAL, 6);
-		vbox_actions.pack_start (vbox_backup_dir, false, true, 0);
+		Box hbox_backup_dir = new Box (Gtk.Orientation.HORIZONTAL, 6);
+		vbox_main.pack_start (hbox_backup_dir, false, true, 0);
 
-		//fcb_backup
-		fcb_backup = new FileChooserButton (_("Backup Directory"), FileChooserAction.SELECT_FOLDER);
-		fcb_backup.margin_left = 6;
+		//txt_backup_path
+		txt_backup_path = new Gtk.Entry();
+		txt_backup_path.hexpand = true;
+		//txt_backup_path.secondary_icon_stock = "gtk-open";
+		txt_backup_path.margin_left = 6;
+		hbox_backup_dir.pack_start (txt_backup_path, true, true, 0);
+
 		if ((App.backup_dir != null) && dir_exists (App.backup_dir)) {
-			fcb_backup.set_filename (App.backup_dir);
+			var path = App.backup_dir;
+			path = path.has_suffix("/") ? path[0:path.length-1] : path;
+			txt_backup_path.text = path;
 		}
-		vbox_backup_dir.pack_start (fcb_backup, true, true, 0);
 
-		fcb_backup.selection_changed.connect(() => {
-			App.backup_dir = fcb_backup.get_file().get_path() + "/";
+		txt_backup_path.changed.connect(() => {
+			var path = txt_backup_path.text;
+			path = path.has_suffix("/") ? path : path + "/";
+			App.backup_dir = path;
+		});
+		
+		txt_backup_path.icon_release.connect((p0, p1) => {
+			backup_location_browse();
 		});
 
+		//btn_browse_backup_dir
+		btn_browse_backup_dir = new Gtk.Button.with_label (" " + _("Select") + " ");
+		btn_browse_backup_dir.set_size_request(button_width, button_height);
+		btn_browse_backup_dir.set_tooltip_text(_("Select backup location"));
+		hbox_backup_dir.pack_start (btn_browse_backup_dir, false, true, 0);
+
+		btn_browse_backup_dir.clicked.connect(backup_location_browse);
+		
 		//btn_open_backup_dir
 		btn_open_backup_dir = new Gtk.Button.with_label (" " + _("Open") + " ");
-		btn_open_backup_dir.set_size_request(80, -1);
-		btn_open_backup_dir.set_tooltip_text(_("Open Backup Directory"));
-		vbox_backup_dir.pack_start (btn_open_backup_dir, false, true, 0);
+		btn_open_backup_dir.set_size_request(button_width, button_height);
+		btn_open_backup_dir.set_tooltip_text(_("Open backup location"));
+		hbox_backup_dir.pack_start (btn_open_backup_dir, false, true, 0);
 
 		btn_open_backup_dir.clicked.connect(() => {
 			if (check_backup_folder()) {
@@ -157,21 +156,43 @@ public class MainWindow : Window {
 		});
 	}
 
+	private void backup_location_browse(){
+		//chooser
+		var chooser = new Gtk.FileChooserDialog(
+			"Select Path",
+			this,
+			FileChooserAction.SELECT_FOLDER,
+			"_Cancel",
+			Gtk.ResponseType.CANCEL,
+			"_Open",
+			Gtk.ResponseType.ACCEPT
+		);
+
+		chooser.select_multiple = false;
+		chooser.set_filename(App.backup_dir);
+
+		if (chooser.run() == Gtk.ResponseType.ACCEPT) {
+			txt_backup_path.text = chooser.get_filename();
+		}
+
+		chooser.destroy();
+	}
+	
 	private void init_section_backup() {
 		// lbl_header_backup
 		Label lbl_header_backup = new Label ("<b>" + _("Backup &amp; Restore") + "</b>");
 		lbl_header_backup.set_use_markup(true);
 		lbl_header_backup.halign = Align.START;
-		lbl_header_backup.margin_top = 6;
+		lbl_header_backup.margin_top = 12;
 		lbl_header_backup.margin_bottom = 6;
-		vbox_actions.pack_start (lbl_header_backup, false, true, 0);
+		vbox_main.pack_start (lbl_header_backup, false, true, 0);
 
 		//grid_backup_buttons
 		grid_backup_buttons = new Grid();
 		grid_backup_buttons.set_column_spacing (6);
 		grid_backup_buttons.set_row_spacing (6);
 		grid_backup_buttons.margin_left = 6;
-		vbox_actions.pack_start (grid_backup_buttons, false, true, 0);
+		vbox_main.pack_start (grid_backup_buttons, false, true, 0);
 
 		int row = -1;
 
@@ -413,14 +434,14 @@ public class MainWindow : Window {
 		lbl_header_tools.halign = Align.START;
 		lbl_header_tools.margin_top = 6;
 		lbl_header_tools.margin_bottom = 6;
-		vbox_actions.pack_start (lbl_header_tools, false, true, 0);
+		vbox_main.pack_start (lbl_header_tools, false, true, 0);
 
 		//grid_backup_tools
 		Grid grid_backup_tools = new Grid();
 		grid_backup_tools.set_column_spacing (6);
 		grid_backup_tools.set_row_spacing (6);
 		grid_backup_tools.margin_left = 6;
-		vbox_actions.pack_start (grid_backup_tools, false, true, 0);
+		vbox_main.pack_start (grid_backup_tools, false, true, 0);
 
 		int row = 1;
 
@@ -505,6 +526,7 @@ public class MainWindow : Window {
 		//toolbar_bottom
 		toolbar_bottom = new Gtk.Toolbar();
 		toolbar_bottom.toolbar_style = ToolbarStyle.BOTH;
+		toolbar_bottom.margin_top = 24;
 		vbox_main.add(toolbar_bottom);
 
 		//separator
@@ -570,32 +592,6 @@ public class MainWindow : Window {
 		dialog.initialize();
 		dialog.show_all();
 	}
-
-	private void notebook_switch_page (Widget page, uint new_page) {
-		uint old_page = notebook.page;
-		if (old_page == -1) {
-			return;
-		}
-
-		if (new_page == Page.HOME) {
-			toolbar_bottom.visible = true;
-			resize(def_width, def_height);
-			title = AppName + " v" + AppVersion;
-
-			lbl_status.visible = false;
-			progressbar.visible = false;
-			notebook.sensitive = true;
-		}
-		else {
-			toolbar_bottom.visible = false;
-			resize(ex_width, ex_height);
-		}
-	}
-
-	private void show_home_page() {
-		notebook.page = Page.HOME;
-	}
-
 
 	private bool check_backup_folder() {
 		if ((App.backup_dir != null) && dir_exists (App.backup_dir)) {
@@ -701,7 +697,7 @@ public class MainWindow : Window {
 
 		App.restore_apt_cache();
 		while (App.is_running) {
-			update_progress(_("Copying"));
+			dlg.update_progress(_("Copying"));
 		}
 
 		//finish ----------------------------------
@@ -720,8 +716,6 @@ public class MainWindow : Window {
 	/* Misc */
 
 	private void btn_take_ownership_clicked() {
-		progress_hide();
-
 		string title = _("Change Ownership");
 		string msg = _("Owner will be changed to '%s' (uid=%d) for files in directory '%s'").printf(App.user_login, App.user_uid, App.user_home);
 		msg += "\n\n" + _("Continue?");
@@ -752,72 +746,6 @@ public class MainWindow : Window {
 
 			gtk_set_busy(false, this);
 		}
-	}
-
-	private void progress_begin(string message = "") {
-		lbl_status.visible = true;
-		progressbar.visible = true;
-
-		App.progress_total = 0;
-		progressbar.fraction = 0.0;
-		lbl_status.label = message;
-
-		notebook.sensitive = false;
-		toolbar_bottom.visible = false;
-
-		gtk_set_busy(true, this);
-		//gtk_do_events();
-	}
-
-	private void progress_hide(string message = "") {
-		lbl_status.visible = false;
-		progressbar.visible = false;
-
-		//progressbar.fraction = 0.0; //not required, gives warnings
-		//lbl_status.label = message;
-
-		notebook.sensitive = true;
-		//toolbar_bottom.visible = true; //depends
-
-		gtk_set_busy(false, this);
-		gtk_do_events();
-	}
-
-	private void progress_end(string message = "") {
-		progressbar.fraction = 1.0;
-		lbl_status.label = message;
-
-		lbl_status.visible = true;
-		progressbar.visible = true;
-
-		notebook.sensitive = true;
-		//toolbar_bottom.visible = true; //depends
-
-		gtk_set_busy(false, this);
-		gtk_do_events();
-	}
-
-	private void update_progress(string message) {
-		if (App.progress_total > 0) {
-			progressbar.fraction = App.progress_count / (App.progress_total * 1.0);
-			lbl_status.label = message + ": %s".printf(App.status_line);
-			gtk_do_events();
-			Thread.usleep ((ulong) 0.1 * 1000000);
-		}
-		else {
-			progressbar.pulse();
-			lbl_status.label = message;
-			gtk_do_events();
-			Thread.usleep ((ulong) 200000);
-		}
-	}
-
-	public enum Page {
-		HOME = 0,
-		PPA = 1,
-		PACKAGES = 2,
-		CONFIGS = 3,
-		THEMES = 4
 	}
 }
 
