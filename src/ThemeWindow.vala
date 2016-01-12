@@ -52,7 +52,7 @@ public class ThemeWindow : Window {
 	private int def_width = 600;
 	private int def_height = 500;
 	private uint tmr_init = 0;
-	private bool is_running = false;
+	//private bool is_running = false;
 	private bool is_restore_view = false;
 
 	// init

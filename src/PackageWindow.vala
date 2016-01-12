@@ -779,9 +779,6 @@ public class PackageWindow : Window {
 	private bool save_package_list_selected(bool show_on_success) {
 		string file_name = Main.PKG_LIST_BAK;
 
-		//filter the list of packages
-		var pkg_list = pkg_list_user;
-
 		//save it
 		bool is_success = App.save_package_list_selected();
 
@@ -903,16 +900,6 @@ public class PackageWindow : Window {
 			string title = _("Error");
 			string msg = _("Internet connection is not active. Please check the connection and try again.");
 			gtk_messagebox(title, msg, this, false);
-			return;
-		}
-
-		//save packages.list
-		string file_name = "packages.list";
-		bool is_success = save_package_list_selected(false);
-		if (!is_success) {
-			string title = _("Error");
-			string msg = _("Failed to write file")  + ": '%s'".printf(file_name);
-			gtk_messagebox(title, msg, this, true);
 			return;
 		}
 

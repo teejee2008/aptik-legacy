@@ -650,8 +650,6 @@ public class MainWindow : Window {
 			return;
 		}
 
-		string archives_dir = App.backup_dir + "archives";
-
 		string message = _("Preparing") + "...";
 		var dlg = new ProgressWindow.with_parent(this,message);
 		dlg.show_all();

@@ -40,18 +40,14 @@ extern void exit(int exit_code);
 public class Main : GLib.Object {
 	public static string DEF_PKG_LIST = "/var/log/installer/initial-status.gz";
 	public static string DEF_PKG_LIST_UNPACKED = "/var/log/installer/initial-status";
-	
+
+	public static string APT_LISTS_PATH = "/var/lib/apt/lists";
 	public static string PKG_CACHE_APT = "/var/cache/apt/pkgcache.bin";
-	public static string PKG_CACHE_APTIK = "/var/cache/apt/aptikcache";
 	public static string PKG_CACHE_TEMP = "/tmp/aptikcache";
 	public static string DEB_LIST_TEMP = "/tmp/aptik-debs";
 
 	public static string PKG_LIST_BAK = "packages.list";
 	public static string PKG_LIST_INSTALLED_BAK = "packages-installed.list";
-
-	public static string BATT_STATS_CACHE_FILE = "/var/log/aptik-bstats/stats.log";
-	public static string RC_LOCAL_FILE = "/etc/rc.local";
-	public static int BATT_STATS_LOG_INTERVAL = 30;
 
 	public string NATIVE_ARCH = "amd64";
 	
@@ -59,11 +55,8 @@ public class Main : GLib.Object {
 	public string backup_dir = "";
 	public string share_dir = "/usr/share";
 	public string app_conf_path = "";
-	public string app_settings_zip_name = "app-settings.tar.gz";
 
 	public bool default_list_missing = false;
-
-	public Gee.ArrayList<string> sections;
 
 	public bool gui_mode = false;
 	public string user_login = "";
@@ -83,18 +76,21 @@ public class Main : GLib.Object {
 	public long progress_total;
 	public bool is_running;
 
-	private Regex rex_aptget_download;
+	//private Regex rex_aptget_download;
 
 	public Gee.HashMap<string, Package> pkg_list_master;
-	public Gee.HashMap<string, Repository> repo_list_master;
-	
+	//public Gee.HashMap<string, Repository> repo_list_master;
 	public Gee.HashMap<string, Ppa> ppa_list_master;
-	public Gee.ArrayList<BatteryStat> battery_stats_list;
+	public Gee.ArrayList<string> sections;
+	
+	public DateTime pkginfo_modified_date;
 
 	public Main(string[] args, bool _gui_mode) {
 
 		gui_mode = _gui_mode;
 
+		pkginfo_modified_date = new DateTime.from_unix_utc(0); //1970
+		
 		//config file
 		string home = Environment.get_home_dir();
 		app_conf_path = home + "/.config/aptik.json";
@@ -130,7 +126,7 @@ public class Main : GLib.Object {
 			f.make_directory_with_parents();
 
 			//initialize regex variables
-			rex_aptget_download = new Regex("""([0-9]*)%[ \t]*\[([^\]]*)\]""");
+			//rex_aptget_download = new Regex("""([0-9]*)%[ \t]*\[([^\]]*)\]""");
 		}
 		catch (Error e) {
 			log_error (e.message);
@@ -166,6 +162,22 @@ public class Main : GLib.Object {
 		else {
 			return true;
 		}
+	}
+
+	public DateTime get_apt_list_modified_date(){
+		try{
+			FileInfo info;
+			File file = File.parse_name (APT_LISTS_PATH);
+			if (file.query_exists()) {
+				info = file.query_info("%s".printf(FileAttribute.TIME_MODIFIED), 0);
+				return (new DateTime.from_timeval_utc(info.get_modification_time())).to_local();
+			}
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}
+		
+		return (new DateTime.from_unix_utc(0)); //1970
 	}
 
 	/* Common */
@@ -236,48 +248,43 @@ public class Main : GLib.Object {
 		}
 	}
 
-	/* Properties */
-
-	public string app_settings_zip_file {
-		owned get{
-			return  backup_dir + app_settings_zip_name;
-		}
-	}
-
 	/* Package selections */
 
-	public void read_package_info(){
-		read_package_info_from_apt_list_files();
-		read_package_info_for_installed_packages();
-		read_package_info_for_default_packages();
-		read_package_info_for_manual_packages();
+	public void read_package_info(){	
+		if (get_apt_list_modified_date().compare(pkginfo_modified_date) > 0){
+			read_package_info_from_apt_list_files();
+			read_package_info_for_installed_packages();
+			read_package_info_for_default_packages();
+			read_package_info_for_manual_packages();
+
+			DateTime now = new DateTime.now_local();
+			pkginfo_modified_date = now;
+		}
 	}
 	
 	//set section, arch, version_available, is_available
 	private void read_package_info_from_apt_list_files(){
-		var apt_lists_path = "/var/lib/apt/lists";
-
 		//clear lists and start reading file
 		pkg_list_master = new Gee.HashMap<string, Package>();
-		repo_list_master = new Gee.HashMap<string, Repository>();
+		//repo_list_master = new Gee.HashMap<string, Repository>();
 		sections = new Gee.ArrayList<string>();
 		
 		try{
 			//iterate files in /var/lib/apt/lists
 			FileInfo info;
-			File file = File.new_for_path(apt_lists_path);
+			File file = File.new_for_path(APT_LISTS_PATH);
 			FileEnumerator enumerator = file.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
 			while ((info = enumerator.next_file()) != null) {
 				string file_name = info.get_name();
-				string list_file_path = "%s/%s".printf(apt_lists_path, file_name);
+				string list_file_path = "%s/%s".printf(APT_LISTS_PATH, file_name);
 			
 				if (!file_name.has_suffix("_Packages")){ continue; }
 
-				var repo = new Repository();
-				repo.name = file_name[0:file_name.index_of("_dists")];
-				repo_list_master[repo.name] = repo;
+				//var repo = new Repository();
+				var repo_name = file_name[0:file_name.index_of("_dists")];
+				//repo_list_master[repo.name] = repo;
 
-				string pkg_server = repo.name.replace("_","/");
+				string pkg_server = repo_name.replace("_","/");
 		
 				File f_list = File.new_for_path(list_file_path);
 				
@@ -513,7 +520,6 @@ public class Main : GLib.Object {
 
 		if (exit_code == 0) {
 			string pkg_name;
-			string pkg_id;
 			string pkg_server;
 			string pkg_repo;
 			string pkg_repo_section;
@@ -665,7 +671,7 @@ public class Main : GLib.Object {
 			if (file.query_exists ()) {
 				var dis = new DataInputStream (file.read());
 
-				var pkg_list = new Gee.HashMap<string, Package>();
+				//var pkg_list = new Gee.HashMap<string, Package>();
 				while ((line = dis.read_line (null)) != null) {
 
 				}
@@ -1878,7 +1884,7 @@ public class Main : GLib.Object {
 		
 		//check zip file
 		if (!file_exists(zip_file)) {
-			log_error(_("File not found") + ": '%s'".printf(app_settings_zip_file));
+			log_error(_("File not found") + ": '%s'".printf(zip_file));
 			return false;
 		}
 

@@ -228,7 +228,6 @@ public class AptikConsole : GLib.Object {
 				
 			case "--backup-ppa":
 			case "--backup-ppas":
-				string file_name = "ppa.list";
 				App.read_package_info();
 				App.ppa_list_master = App.list_ppa();
 				foreach(Ppa ppa in App.ppa_list_master.values) {
@@ -239,8 +238,6 @@ public class AptikConsole : GLib.Object {
 
 			case "--backup-package":
 			case "--backup-packages":
-				string file_name = "packages.list";
-
 				App.read_package_info();
 				foreach(Package pkg in App.pkg_list_master.values) {
 					pkg.is_selected = pkg.is_manual;

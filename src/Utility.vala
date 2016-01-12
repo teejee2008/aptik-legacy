@@ -181,6 +181,22 @@ namespace TeeJee.FileSystem{
 		}
 	}
 
+	public DateTime file_modified_date(string file_path){
+		try{
+			FileInfo info;
+			File file = File.parse_name (file_path);
+			if (file.query_exists()) {
+				info = file.query_info("%s".printf(FileAttribute.TIME_MODIFIED), 0);
+				return (new DateTime.from_timeval_utc(info.get_modification_time())).to_local();
+			}
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}
+		
+		return (new DateTime.from_unix_utc(0)); //1970
+	}
+	
 	public bool dir_exists (string filePath){
 
 		/* Check if directory exists */
