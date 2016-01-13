@@ -56,6 +56,7 @@ public class ProgressWindow : Window {
 
 		App.status_line = "";
 		App.progress_count = 0;
+		App.progress_total = 0;
 		
 		status_message = message;
 		

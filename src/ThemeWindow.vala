@@ -50,7 +50,7 @@ public class ThemeWindow : Window {
 	private Gee.ArrayList<Theme> theme_list_user;
 	
 	private int def_width = 550;
-	private int def_height = 400;
+	private int def_height = 450;
 	private uint tmr_init = 0;
 	//private bool is_running = false;
 	private bool is_restore_view = false;
@@ -362,7 +362,7 @@ public class ThemeWindow : Window {
 
 		string message = _("Preparing") + "...";
 
-		var dlg = new ProgressWindow.with_parent(this,message);
+		var dlg = new ProgressWindow.with_parent(this, message);
 		dlg.show_all();
 		gtk_do_events();
 		
@@ -374,7 +374,7 @@ public class ThemeWindow : Window {
 				App.progress_total += (int) get_file_count(theme.system_path);
 			}
 		}
-
+		
 		//zip themes
 		foreach(Theme theme in theme_list_user) {
 			if (theme.is_selected) {
@@ -420,7 +420,7 @@ public class ThemeWindow : Window {
 
 		//begin
 		string message = _("Preparing") + "...";
-		var dlg = new ProgressWindow.with_parent(this,message);
+		var dlg = new ProgressWindow.with_parent(this, message);
 		dlg.show_all();
 		gtk_do_events();
 

@@ -57,7 +57,7 @@ public class PackageWindow : Window {
 	private Gee.HashMap<string, Package> pkg_list_user;
 
 	private int def_width = 550;
-	private int def_height = 400;
+	private int def_height = 450;
 	private uint tmr_init = 0;
 	private bool is_running = false;
 	private bool is_restore_view = false;
@@ -184,7 +184,7 @@ public class PackageWindow : Window {
 		//lbl_filter_msg
 		lbl_filter_msg = new Gtk.Label("");
 		lbl_filter_msg.xalign = (float) 0.0;
-		vbox_main.add(lbl_filter_msg);
+		//vbox_main.add(lbl_filter_msg);
 	}
 
 	private void init_treeview() {
@@ -696,7 +696,7 @@ public class PackageWindow : Window {
 	private void backup_init() {
 		string message = _("Checking installed packages...");
 		
-		var dlg = new ProgressWindow.with_parent(this,message);
+		var dlg = new ProgressWindow.with_parent(this, message);
 		dlg.show_all();
 		gtk_do_events();
 		
@@ -818,7 +818,7 @@ public class PackageWindow : Window {
 	private void restore_init() {
 		string message = _("Checking installed packages...");
 		
-		var dlg = new ProgressWindow.with_parent(this,message);
+		var dlg = new ProgressWindow.with_parent(this, message);
 		dlg.show_all();
 		gtk_do_events();
 

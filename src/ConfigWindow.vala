@@ -48,7 +48,7 @@ public class ConfigWindow : Window {
 	private Gee.ArrayList<AppConfig> config_list_user;
 	
 	private int def_width = 550;
-	private int def_height = 400;
+	private int def_height = 450;
 	private uint tmr_init = 0;
 	//private bool is_running = false;
 	private bool is_restore_view = false;
@@ -330,7 +330,7 @@ public class ConfigWindow : Window {
 		//begin
 		string message = _("Preparing") + "...";
 
-		var dlg = new ProgressWindow.with_parent(this,message);
+		var dlg = new ProgressWindow.with_parent(this, message);
 		dlg.show_all();
 		gtk_do_events();
 
@@ -397,7 +397,7 @@ public class ConfigWindow : Window {
 
 		//begin
 		string message = _("Preparing") + "...";
-		var dlg = new ProgressWindow.with_parent(this,message);
+		var dlg = new ProgressWindow.with_parent(this, message);
 		dlg.show_all();
 		gtk_do_events();
 		
@@ -459,7 +459,7 @@ public class ConfigWindow : Window {
 
 		//begin
 		string message = _("Preparing") + "...";
-		var dlg = new ProgressWindow.with_parent(this,message);
+		var dlg = new ProgressWindow.with_parent(this, message);
 		dlg.show_all();
 		gtk_do_events();
 		

@@ -664,7 +664,7 @@ public class MainWindow : Window {
 		string archives_dir = App.backup_dir + "archives";
 		
 		string message = _("Preparing") + "...";
-		var dlg = new ProgressWindow.with_parent(this,message);
+		var dlg = new ProgressWindow.with_parent(this, message);
 		dlg.show_all();
 		gtk_do_events();
 
@@ -696,7 +696,7 @@ public class MainWindow : Window {
 		}
 
 		string message = _("Preparing") + "...";
-		var dlg = new ProgressWindow.with_parent(this,message);
+		var dlg = new ProgressWindow.with_parent(this, message);
 		dlg.show_all();
 		gtk_do_events();
 
