@@ -49,8 +49,8 @@ public class PpaWindow : Window {
 
 	private Gee.HashMap<string, Ppa> ppa_list_user;
 	
-	private int def_width = 600;
-	private int def_height = 500;
+	private int def_width = 550;
+	private int def_height = 400;
 	private uint tmr_init = 0;
 	private bool is_running = false;
 	private bool is_restore_view = false;

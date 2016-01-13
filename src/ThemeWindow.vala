@@ -49,8 +49,8 @@ public class ThemeWindow : Window {
 
 	private Gee.ArrayList<Theme> theme_list_user;
 	
-	private int def_width = 600;
-	private int def_height = 500;
+	private int def_width = 550;
+	private int def_height = 400;
 	private uint tmr_init = 0;
 	//private bool is_running = false;
 	private bool is_restore_view = false;
@@ -385,10 +385,9 @@ public class ThemeWindow : Window {
 			}
 		}
 
-		//dlg.finish("Backups created successfully");
-
-		dlg.close();
-		//this.close();
+		//finish ----------------------------------
+		message = _("Backups created successfully");
+		dlg.finish(message);
 		gtk_do_events();
 	}
 
@@ -448,13 +447,8 @@ public class ThemeWindow : Window {
 		}
 
 		//finish ----------------------------------
-
-		//string title = _("Finished");
-		//string msg = _("Themes restored successfully");
-		//gtk_messagebox(title, msg, this, false);
-
-		dlg.close();
-		//this.close();
+		message = _("Themes restored successfully");
+		dlg.finish(message);
 		gtk_do_events();
 	}
 }

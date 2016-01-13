@@ -47,8 +47,8 @@ public class ConfigWindow : Window {
 	
 	private Gee.ArrayList<AppConfig> config_list_user;
 	
-	private int def_width = 600;
-	private int def_height = 500;
+	private int def_width = 550;
+	private int def_height = 400;
 	private uint tmr_init = 0;
 	//private bool is_running = false;
 	private bool is_restore_view = false;
@@ -259,7 +259,7 @@ public class ConfigWindow : Window {
 		btn_restore.clicked.connect(btn_restore_clicked);
 
 		//btn_reset
-		btn_reset = new Gtk.Button.with_label (" " + _("Reset") + " ");
+		btn_reset = new Gtk.Button.with_label (" " + _("Delete") + " ");
 		btn_reset.no_show_all = true;
 		btn_reset.set_tooltip_text(_("Reset the settings for an application (Eg: Chromium Browser) by deleting the settings directory (~/.config/chromium). The directory will be created automatically with default configuration files on the next run of the application."));
 		hbox_config_actions.pack_start (btn_reset, true, true, 0);
@@ -347,13 +347,8 @@ public class ConfigWindow : Window {
 		}
 
 		//finish ----------------------------------
-
-		//string title = _("Finished");
-		//string msg = _("Backups created successfully");
-		//gtk_messagebox(title, msg, this, false);
-
-		dlg.close();
-		//this.close();
+		message = _("Backups created successfully");
+		dlg.finish(message);
 		gtk_do_events();
 	}
 
@@ -423,13 +418,8 @@ public class ConfigWindow : Window {
 		App.update_ownership(config_list_user);
 
 		//finish ----------------------------------
-
-		//title = _("Finished");
-		//msg = _("Application settings restored successfully");
-		//gtk_messagebox(title, msg, this, false);
-
-		dlg.close();
-		//this.close();
+		message = _("Application settings restored successfully");
+		dlg.finish(message);
 		gtk_do_events();
 	}
 
@@ -479,16 +469,9 @@ public class ConfigWindow : Window {
 			dlg.update_progress(_("Deleting"));
 		}
 
-		//finish
-
-		//title = _("Finished");
-		//msg = _("Selected directories were deleted successfully");
-		//gtk_messagebox(title, msg, this, false);
-
-		//show_home_page();
-
-		dlg.close();
-		//this.close();
+		//finish ----------------------------------
+		message = _("Selected directories were deleted successfully");
+		dlg.finish(message);
 		gtk_do_events();
 	}
 }

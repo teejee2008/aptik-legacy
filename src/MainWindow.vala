@@ -650,6 +650,8 @@ public class MainWindow : Window {
 			return;
 		}
 
+		string archives_dir = App.backup_dir + "archives";
+		
 		string message = _("Preparing") + "...";
 		var dlg = new ProgressWindow.with_parent(this,message);
 		dlg.show_all();
@@ -661,15 +663,9 @@ public class MainWindow : Window {
 		}
 
 		//finish ----------------------------------
-
-		//progress_hide("Finished");
-
-		//string title = _("Finished");
-		//string msg = _("Packages copied successfully") + ".\n";
-		//msg += _("%ld packages in backup").printf(get_file_count(archives_dir));
-		//gtk_messagebox(title, msg, this, false);
-
-		dlg.close();
+		message = _("Finished") + " - ";
+		message += _("%ld packages in backup").printf(get_file_count(archives_dir));
+		dlg.finish(message);
 		gtk_do_events();
 	}
 
@@ -699,15 +695,9 @@ public class MainWindow : Window {
 		}
 
 		//finish ----------------------------------
-
-		//progress_hide("Finished");
-
-		//string title = _("Finished");
-		//string msg = _("Packages copied successfully") + ".\n";
-		//msg += _("%ld packages in cache").printf(get_file_count("/var/cache/apt/archives") - 2); //excluding 'lock' and 'partial'
-		//gtk_messagebox(title, msg, this, false);
-
-		dlg.close();
+		message = _("Finished") + " - ";
+		message += _("%ld packages in cache").printf(get_file_count("/var/cache/apt/archives") - 2); //excluding 'lock' and 'partial'
+		dlg.finish(message);
 		gtk_do_events();
 	}
 

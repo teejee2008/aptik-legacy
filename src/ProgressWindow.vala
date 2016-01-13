@@ -38,6 +38,7 @@ public class ProgressWindow : Window {
 	private Gtk.Box vbox_main;
 
 	private uint tmr_init = 0;
+	private uint tmr_close = 0;
 	private int def_width = 400;
 	private int def_height = 50;
 	
@@ -51,6 +52,10 @@ public class ProgressWindow : Window {
 		set_modal(true);
 		set_skip_taskbar_hint(true);
 		set_skip_pager_hint(true);
+		window_position = WindowPosition.CENTER_ON_PARENT;
+
+		App.status_line = "";
+		App.progress_count = 0;
 		
 		status_message = message;
 		
@@ -108,39 +113,27 @@ public class ProgressWindow : Window {
 
 	// common
 	
-	private void progress_begin(string message = "") {
-		lbl_status.visible = true;
-		progressbar.visible = true;
-
-		App.progress_total = 0;
-		progressbar.fraction = 0.0;
-		lbl_status.label = message;
-
-		gtk_set_busy(true, this);
-		gtk_do_events();
-	}
-
-	private void progress_hide(string message = "") {
-		lbl_status.visible = false;
-		progressbar.visible = false;
-
-		lbl_status.label = message;
-
-		gtk_set_busy(false, this);
-		gtk_do_events();
-	}
-
-	private void finish(string message = "") {
+	public void finish(string message = "") {
 		progressbar.fraction = 1.0;
 		lbl_status.label = message;
-
-		lbl_status.visible = true;
-		progressbar.visible = true;
-
-		gtk_set_busy(false, this);
+		
 		gtk_do_events();
+		auto_close_window();
 	}
 
+	private void auto_close_window() {
+
+		tmr_close = Timeout.add(2000, ()=>{
+			if (tmr_init > 0) {
+				Source.remove(tmr_init);
+				tmr_init = 0;
+			}
+
+			this.close();
+			return false;
+		});
+	}
+	
 	public void update_progress(string message) {
 		if (App.progress_total > 0) {
 			progressbar.fraction = App.progress_count / (App.progress_total * 1.0);
