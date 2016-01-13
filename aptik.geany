@@ -17,15 +17,17 @@ long_line_behaviour=1
 long_line_column=80
 
 [files]
-current_page=3
-FILE_NAME_0=9953;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FUtility.vala;0;4
-FILE_NAME_1=49532;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMain.vala;0;4
+current_page=1
+FILE_NAME_0=3884;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FUtility.vala;0;4
+FILE_NAME_1=13586;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMain.vala;0;4
 FILE_NAME_2=2540;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FPpaWindow.vala;0;4
-FILE_NAME_3=1990;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FProgressWindow.vala;0;4
-FILE_NAME_4=21873;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMainWindow.vala;0;4
-FILE_NAME_5=11759;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FThemeWindow.vala;0;4
-FILE_NAME_6=10297;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FConfigWindow.vala;0;4
+FILE_NAME_3=2873;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FProgressWindow.vala;0;4
+FILE_NAME_4=22521;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMainWindow.vala;0;4
+FILE_NAME_5=1489;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FThemeWindow.vala;0;4
+FILE_NAME_6=1474;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FConfigWindow.vala;0;4
 FILE_NAME_7=520;Make;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2Fmakefile;0;4
+FILE_NAME_8=24608;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FPackageWindow.vala;0;4
+FILE_NAME_9=7569;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FAptikConsole.vala;0;4
 
 [VTE]
 last_dir=/home/teejee
