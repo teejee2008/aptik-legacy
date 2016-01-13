@@ -529,6 +529,17 @@ public class MainWindow : Window {
 		toolbar_bottom.margin_top = 24;
 		vbox_main.add(toolbar_bottom);
 
+		//remove toolbar background
+		var css_provider = new Gtk.CssProvider();
+		var toolbar_css = ".toolbar2 { background: alpha (@bg_color, 0.0); border-color: transparent; }";
+		try {
+			css_provider.load_from_data(toolbar_css,-1);
+		} catch (GLib.Error e) {
+            warning(e.message);
+        }
+		toolbar_bottom.get_style_context().add_provider(css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+		toolbar_bottom.get_style_context().add_class("toolbar2");
+		
 		//separator
 		var separator = new Gtk.SeparatorToolItem();
 		separator.set_draw (false);
