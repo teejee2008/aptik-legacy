@@ -10,12 +10,11 @@ Homepage: http://teejeetech.blogspot.in/
 
 Package: aptik
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, rsync, aptitude
+Depends: ${shlibs:Depends}, ${misc:Depends}, rsync, aptitude, gdebi
 #Recommends: 
-Description: Utility to simplify re-installation of software packages
+Description: Utility to backup and restore PPAs and packages.
  Command line utility to simplify re-installation of software packages
  after upgrading/re-installing Ubuntu-based distributions.
- Provides options to backup and re-install extra applications installed
- by user; backup and re-add third-party PPAs; backup and restore 
- downloaded packages in APT cache; fixing ownership of files in user's 
- home directory.
+ Provides options to backup and restore PPAs, installed packages,
+ downloaded packages in APT cache, icons, themes
+ and application settings.
