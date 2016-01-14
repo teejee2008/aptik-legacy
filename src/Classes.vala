@@ -46,8 +46,10 @@ public class Package : GLib.Object {
 	public string arch = "";
 	public string status = "";
 	public string section = "";
+	public string version = "";
 	public string version_installed = "";
 	public string version_available = "";
+	public string deb_file_name = "";
 	public bool is_selected = false;
 	public bool is_available = false;
 	public bool is_installed = false;

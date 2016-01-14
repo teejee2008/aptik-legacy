@@ -38,23 +38,22 @@ public class PackageWindow : Window {
 	private Gtk.Box vbox_main;
 
 	private Box hbox_filter;
+	private Entry txt_filter;
+	private ComboBox cmb_pkg_section;
+	private ComboBox cmb_pkg_status;
+	private Gtk.Label lbl_filter_msg;
+	
+	private TreeView tv_packages;
+	private TreeViewColumn col_pkg_status;
+	private TreeViewColumn col_pkg_deb_name;
+	private TreeModelFilter filter_packages;
+	private ScrolledWindow sw_packages;
 	
 	private Button btn_restore;
 	private Button btn_backup;
 	private Button btn_cancel;
 	private Button btn_select_all;
 	private Button btn_select_none;
-	
-	private TreeView tv_packages;
-	private TreeViewColumn col_pkg_status;
-	private TreeModelFilter filter_packages;
-	private ScrolledWindow sw_packages;
-	private Entry txt_filter;
-	private ComboBox cmb_pkg_section;
-	private ComboBox cmb_pkg_status;
-	private Gtk.Label lbl_filter_msg;
-
-	private Gee.HashMap<string, Package> pkg_list_user;
 
 	private int def_width = 550;
 	private int def_height = 450;
@@ -62,6 +61,10 @@ public class PackageWindow : Window {
 	private bool is_running = false;
 	private bool is_restore_view = false;
 
+	private const Gtk.TargetEntry[] targets = {
+		{ "text/uri-list", 0, 0}
+	};
+	
 	// init
 	
 	public PackageWindow.with_parent(Window parent, bool restore) {
@@ -69,6 +72,9 @@ public class PackageWindow : Window {
 		set_modal(true);
 		is_restore_view = restore;
 
+		Gtk.drag_dest_set (this,Gtk.DestDefaults.ALL, targets, Gdk.DragAction.COPY);
+		drag_data_received.connect(on_drag_data_received);
+		
 		destroy.connect(()=>{
 			parent.present();
 		});
@@ -217,7 +223,8 @@ public class PackageWindow : Window {
 			model.get (iter, 0, out selected, 1, out pkg, -1);
 			(cell as Gtk.CellRendererToggle).active = selected;
 			if (is_restore_view){
-				(cell as Gtk.CellRendererToggle).sensitive = !pkg.is_installed;
+				(cell as Gtk.CellRendererToggle).sensitive = !pkg.is_installed
+					&& (pkg.is_available || (pkg.is_deb && pkg.deb_file_name.length > 0));
 			}
 			else{
 				(cell as Gtk.CellRendererToggle).sensitive = true;
@@ -266,14 +273,37 @@ public class PackageWindow : Window {
 		col_pkg_name.set_cell_data_func (cell_pkg_name, (cell_layout, cell, model, iter) => {
 			Package pkg;
 			model.get (iter, 1, out pkg, -1);
+			
+			string display_name = pkg.name;
 			if (pkg.is_foreign()){
-				(cell as Gtk.CellRendererText).text = "%s (%s)".printf(pkg.name,pkg.arch);
+				display_name += " (%s)".printf(pkg.arch);
 			}
-			else{
-				(cell as Gtk.CellRendererText).text = pkg.name;
-			}
+			//if (pkg.is_deb && (pkg.deb_file_name.length > 0)){
+			//	display_name += " (DEB)";
+			//}
+			
+			(cell as Gtk.CellRendererText).text = display_name;
 		});
 
+		//col_pkg_deb_name ----------------------
+
+		col_pkg_deb_name = new TreeViewColumn();
+		col_pkg_deb_name.title = _("DEB File Backup");
+		col_pkg_deb_name.resizable = true;
+		col_pkg_deb_name.min_width = 180;
+		tv_packages.append_column(col_pkg_deb_name);
+
+		CellRendererText cell_deb_name = new CellRendererText ();
+		cell_deb_name.ellipsize = Pango.EllipsizeMode.END;
+		col_pkg_deb_name.pack_start (cell_deb_name, false);
+
+		col_pkg_deb_name.set_cell_data_func (cell_deb_name, (cell_layout, cell, model, iter) => {
+			Package pkg;
+			model.get (iter, 1, out pkg, -1);
+			
+			(cell as Gtk.CellRendererText).text = pkg.deb_file_name;
+		});
+		
 		//col_pkg_installed ----------------------
 
 		/*TreeViewColumn col_pkg_installed = new TreeViewColumn();
@@ -315,6 +345,7 @@ public class PackageWindow : Window {
 		TreeViewColumn col_pkg_desc = new TreeViewColumn();
 		col_pkg_desc.title = _("Description");
 		col_pkg_desc.resizable = true;
+		//col_pkg_desc.min_width = 300;
 		tv_packages.append_column(col_pkg_desc);
 
 		CellRendererText cell_pkg_desc = new CellRendererText ();
@@ -337,7 +368,7 @@ public class PackageWindow : Window {
 		btn_select_all = new Gtk.Button.with_label (" " + _("Select All") + " ");
 		hbox_pkg_actions.pack_start (btn_select_all, true, true, 0);
 		btn_select_all.clicked.connect(() => {
-			foreach(Package pkg in pkg_list_user.values) {
+			foreach(Package pkg in App.pkg_list_master.values) {
 				if (pkg.is_visible){
 					if (is_restore_view) {
 						if (pkg.is_available && !pkg.is_installed) {
@@ -359,7 +390,7 @@ public class PackageWindow : Window {
 		btn_select_none = new Gtk.Button.with_label (" " + _("Select None") + " ");
 		hbox_pkg_actions.pack_start (btn_select_none, true, true, 0);
 		btn_select_none.clicked.connect(() => {
-			foreach(Package pkg in pkg_list_user.values) {
+			foreach(Package pkg in App.pkg_list_master.values) {
 				if (pkg.is_visible){
 					if (is_restore_view) {
 						if (pkg.is_available && !pkg.is_installed) {
@@ -412,7 +443,28 @@ public class PackageWindow : Window {
 	}
 
 	// events
-	
+
+	private void on_drag_data_received (Gdk.DragContext drag_context, int x, int y, Gtk.SelectionData data, uint info, uint time) {
+		int count = 0;
+        foreach(string uri in data.get_uris()){
+			string file = uri.replace("file://","").replace("file:/","");
+			file = Uri.unescape_string (file);
+
+			if (file.has_suffix(".deb")){
+				App.copy_deb_file(file);
+				count++;
+			}
+		}
+
+		if (count > 0){
+			string msg = _("DEB files were copied to backup location.");
+			gtk_messagebox("Files copied",msg,this,false);
+		}
+
+        Gtk.drag_finish (drag_context, true, false, time);
+    }
+
+
 	private void cmb_pkg_status_refresh() {
 		log_debug("call: cmb_pkg_status_refresh()");
 		var store = new ListStore(1, typeof(string));
@@ -461,6 +513,8 @@ public class PackageWindow : Window {
 		cmb_pkg_status.changed.connect(()=>{
 			tv_packages_refilter();
 			lbl_filter_msg_update();
+
+			col_pkg_deb_name.visible = (cmb_pkg_status.active == 5);
 		});
 
 		cmb_pkg_section.changed.connect(tv_packages_refilter);
@@ -512,22 +566,16 @@ public class PackageWindow : Window {
 
 	private void tv_packages_refilter() {
 		log_debug("call: tv_packages_refilter()");
-		//gtk_set_busy(true,this);
-		//vbox_actions.sensitive = false;
-
+		col_pkg_deb_name.visible = (cmb_pkg_status.active == 5);
 		filter_packages.refilter();
-		//log_debug("end: refilter();");
-
-		//gtk_set_busy(false,this);
-		//vbox_actions.sensitive = true;
 	}
 
 	private void tv_packages_refresh() {
 		ListStore model = new ListStore(4, typeof(bool), typeof(Package), typeof(Gdk.Pixbuf), typeof(string));
 
 		var pkg_list = new ArrayList<Package>();
-		if (pkg_list_user != null) {
-			foreach(Package pkg in pkg_list_user.values) {
+		if (App.pkg_list_master != null) {
+			foreach(Package pkg in App.pkg_list_master.values) {
 				pkg_list.add(pkg);
 			}
 		}
@@ -565,9 +613,13 @@ public class PackageWindow : Window {
 					tt += _("Installed");
 					pix_status = pix_green;
 				}
-				else {
+				else if(pkg.is_available || (pkg.is_deb && pkg.deb_file_name.length > 0)){
 					tt += _("Available") + ", " + _("Not Installed");
 					pix_status = pix_gray;
+				}
+				else{
+					tt += _("Not Available");
+					pix_status = pix_red;
 				}
 			}
 			else {
@@ -722,7 +774,7 @@ public class PackageWindow : Window {
 		}
 
 		//select manual
-		foreach(Package pkg in pkg_list_user.values) {
+		foreach(Package pkg in App.pkg_list_master.values) {
 			pkg.is_selected = pkg.is_manual;
 		}
 
@@ -741,18 +793,31 @@ public class PackageWindow : Window {
 
 		dlg.close();
 		gtk_do_events();
+
+		string deb_list = "";
+		foreach(Package pkg in App.pkg_list_master.values){
+			if (pkg.is_installed && pkg.is_deb && (pkg.deb_file_name.length == 0)){
+				deb_list += pkg.id + " ";
+			}
+		}
+		if (deb_list.length > 0){
+			string deb_msg = _("Following packages were installed from DEB files and are not available in the package repositories") + ":\n\n";
+			deb_msg += deb_list + "\n\n";
+			deb_msg += "If you have the DEB files for these packages, you can drag-and-drop the DEB files on this window. They will be copied to the backup location and used for re-installing the packages during restore.";
+			gtk_messagebox("DEB Files", deb_msg, this, false);
+		}
 	}
 
 	private void backup_init_thread() {
 		App.read_package_info();
-		pkg_list_user = App.pkg_list_master;
+		App.pkg_list_master = App.pkg_list_master;
 		is_running = false;
 	}
 
 	private void btn_backup_clicked() {
 		//check if no action required
 		bool none_selected = true;
-		foreach(Package pkg in pkg_list_user.values) {
+		foreach(Package pkg in App.pkg_list_master.values) {
 			if (pkg.is_selected) {
 				none_selected = false;
 				break;
@@ -834,23 +899,6 @@ public class PackageWindow : Window {
 			dlg.update_progress(message);
 		}
 
-		//select packages from backup file
-		string missing = "";
-		var list_bak = App.read_package_list();
-		foreach(Package pkg in pkg_list_user.values) {
-			pkg.is_selected = false;
-		}
-		foreach(string pkg_name in list_bak) {
-			if (pkg_list_user.has_key(pkg_name)) {
-				Package pkg = pkg_list_user[pkg_name];
-				pkg.is_selected = (!pkg.is_installed);
-				pkg.in_backup_list = true;
-			}
-			else {
-				missing += "%s ".printf(pkg_name);
-			}
-		}
-	
 		tv_packages_refresh();
 
 		//disconnect combo events
@@ -864,9 +912,9 @@ public class PackageWindow : Window {
 
 		tv_packages_refilter();
 
-		if (missing.length > 0) {
+		if (App.pkg_list_missing.length > 0) {
 			var title = _("Missing Packages");
-			var msg = _("Following packages are not available (missing PPA):\n\n%s").printf(missing);
+			var msg = _("Following packages are not available (missing PPA):\n\n%s").printf(App.pkg_list_missing);
 			gtk_messagebox(title, msg, this, false);
 		}
 
@@ -876,22 +924,22 @@ public class PackageWindow : Window {
 
 	private void restore_init_thread() {
 		App.read_package_info();
-		pkg_list_user = App.pkg_list_master;
+		App.update_pkg_list_master_for_restore(true);
 		is_running = false;
 	}
 
 	private void btn_restore_clicked() {
 		//check if no action required
 		bool none_selected = true;
-		foreach(Package pkg in pkg_list_user.values) {
-			if (pkg.is_selected && pkg.is_available && !pkg.is_installed) {
+		foreach(Package pkg in App.pkg_list_master.values) {
+			if (pkg.is_selected && !pkg.is_installed) {
 				none_selected = false;
 				break;
 			}
 		}
 		if (none_selected) {
 			string title = _("Nothing To Do");
-			string msg = _("There are no packages selected for installation");
+			string msg = _("There are no packages selected for installation2");
 			gtk_messagebox(title, msg, this, false);
 			return;
 		}
@@ -903,29 +951,13 @@ public class PackageWindow : Window {
 			return;
 		}
 
-		//check list of packages to install
-		string list_install = "";
-		string list_unknown = "";
+		App.update_pkg_list_master_for_restore(false);
 
-		foreach(Package pkg in pkg_list_user.values) {
-			if (pkg.is_selected && pkg.is_available && !pkg.is_installed) {
-				list_install += " %s".printf(pkg.name);
-			}
-		}
-		foreach(Package pkg in pkg_list_user.values) {
-			if (pkg.is_selected && !pkg.is_available && !pkg.is_installed) {
-				list_unknown += " %s".printf(pkg.name);
-			}
-		}
-
-		list_install = list_install.strip();
-		list_unknown = list_unknown.strip();
-
-		if (list_install.length == 0) {
+		if ((App.pkg_list_install.length == 0) && (App.pkg_list_deb.length == 0)) {
 			string title = _("Nothing To Do");
 			string msg = "";
-			if (list_unknown.length > 0) {
-				msg += _("Following packages are NOT available") + ":\n\n" + list_unknown + "\n\n";
+			if (App.pkg_list_missing.length > 0) {
+				msg += _("Following packages are NOT available") + ":\n\n" + App.pkg_list_missing + "\n\n";
 			}
 			msg += _("There are no packages selected for installation");
 			gtk_messagebox(title, msg, this, false);
@@ -934,8 +966,17 @@ public class PackageWindow : Window {
 
 		gtk_do_events();
 
-		string cmd = "apt-get install %s".printf(list_install);
-		cmd += "\necho ''";
+		string cmd = "";
+		if (App.pkg_list_install.length > 0){
+			cmd += "apt-get install %s".printf(App.pkg_list_install);
+			cmd += "\necho ''";
+		}
+		if (App.pkg_list_deb.length > 0){
+			cmd += "gdebi %s".printf(App.gdebi_file_list);
+			cmd += "\necho ''";
+			
+		}
+		log_msg(cmd);
 		cmd += "\necho '" + _("Finished installing packages") + ".'";
 		cmd += "\necho '" + _("Close window to exit...") + "'";
 		cmd += "\nread dummy";
@@ -943,6 +984,8 @@ public class PackageWindow : Window {
 		//success/error will be displayed by apt-get in terminal
 
 		gtk_do_events();
+
+		restore_init();
 	}
 }
 

@@ -502,43 +502,25 @@ public class AptikConsole : GLib.Object {
 			return false;
 		}
 
-		string list_new = "";
-		string list_installed = "";
-		string list_missing = "";
-
-		var pkg_list = App.read_package_list();
-		if (pkg_list.size == 0) {
-			return false;
+		App.read_package_info();
+		App.update_pkg_list_master_for_restore(true);
+		
+		if (App.pkg_list_missing.length > 0) {
+			log_msg(_("Following packages are not available") + ":\n%s\n".printf(App.pkg_list_missing));
 		}
 
-		foreach(string pkg_name in pkg_list) {
-			if (App.pkg_list_master.has_key(pkg_name)) {
-				Package pkg = App.pkg_list_master[pkg_name];
-				if (pkg.is_available && !pkg.is_installed) {
-					list_new += " %s".printf(pkg_name);
-				}
-				else {
-					list_installed += " %s".printf(pkg_name);
-				}
-			}
-			else {
-				list_missing += " %s".printf(pkg_name);
-			}
-		}
-
-		list_new = list_new.strip();
-		list_missing = list_missing.strip();
-
-		if (list_missing.length > 0) {
-			log_msg(_("Following packages are NOT available") + ":\n%s\n".printf(list_missing));
-		}
-
-		if (list_new.length > 0) {
-			log_msg(_("Following packages will be installed") + ":\n%s\n".printf(list_new));
-			Posix.system("sudo apt-get%s install %s".printf((no_prompt) ? " -y" : "", list_new));
-		}
-		else {
+		if ((App.pkg_list_install.length == 0) && (App.pkg_list_deb.length == 0)) {
 			log_msg(_("Selected packages are already installed"));
+		}
+		else{
+			if (App.pkg_list_install.length > 0){
+				log_msg(_("Following packages will be installed") + ":\n%s\n".printf(App.pkg_list_install));
+				Posix.system("apt-get%s install %s".printf((no_prompt) ? " -y" : "", App.pkg_list_install));
+			}
+			if (App.pkg_list_deb.length > 0){
+				log_msg(_("Following packages will be installed") + ":\n%s\n".printf(App.pkg_list_deb));
+				Posix.system("gdebi%s %s".printf((no_prompt) ? " -n" : "", App.gdebi_file_list));
+			}
 		}
 
 		return true;

@@ -96,7 +96,9 @@ public class CustomMessageDialog : Dialog {
 		//lbl_msg
 		var lbl_msg = new Gtk.Label(msg_body);
 		lbl_msg.xalign = (float) 0.0;
-		//lbl_msg.margin_bottom = 6;
+		lbl_msg.max_width_chars = 70;
+		lbl_msg.wrap = true;
+		lbl_msg.wrap_mode = Pango.WrapMode.WORD;
 		hbox_contents.add(lbl_msg);
 
 		//actions

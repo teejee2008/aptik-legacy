@@ -82,6 +82,11 @@ public class Main : GLib.Object {
 	//public Gee.HashMap<string, Repository> repo_list_master;
 	public Gee.HashMap<string, Ppa> ppa_list_master;
 	public Gee.ArrayList<string> sections;
+
+	public string pkg_list_install = "";
+	public string pkg_list_deb = "";
+	public string pkg_list_missing = "";
+	public string gdebi_file_list = "";
 	
 	public DateTime pkginfo_modified_date;
 
@@ -252,17 +257,222 @@ public class Main : GLib.Object {
 
 	public void read_package_info(){	
 		if (get_apt_list_modified_date().compare(pkginfo_modified_date) > 0){
-			read_package_info_from_apt_list_files();
-			read_package_info_for_installed_packages();
+			log_msg("Reading package lists...");
+			read_package_lists();
+		}
+		
+		log_msg("Reading state information...");
+		read_package_info_for_installed_packages();
+
+		if (get_apt_list_modified_date().compare(pkginfo_modified_date) > 0){
+			log_msg("Reading default package lists...");
 			read_package_info_for_default_packages();
 			read_package_info_for_manual_packages();
 
-			DateTime now = new DateTime.now_local();
-			pkginfo_modified_date = now;
+			pkginfo_modified_date = new DateTime.now_local();
+		}
+		
+		update_deb_file_name_from_backup();
+	}
+
+	private void read_package_lists(){
+		//clear lists
+		pkg_list_master = new Gee.HashMap<string, Package>();
+		sections = new Gee.ArrayList<string>();
+
+		//iterate files in /var/lib/apt/lists
+		
+		try{
+			FileInfo info;
+			File file = File.new_for_path(APT_LISTS_PATH);
+			FileEnumerator enumerator = file.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
+			while ((info = enumerator.next_file()) != null) {
+				string file_name = info.get_name();
+				string file_path = "%s/%s".printf(APT_LISTS_PATH, file_name);
+			
+				if (!file_name.has_suffix("_Packages")){ continue; }
+
+				var map = read_status_file(file_path);
+
+				var pkg_repo_name = file_name[0:file_name.index_of("_dists") - 1];
+				var pkg_server = pkg_repo_name.replace("_","/");
+				
+				foreach(Package pkg in map.values){
+					pkg_list_master[pkg.id] = pkg;
+					pkg.is_available = true;
+					pkg.version_available = pkg.version;
+					pkg.server = pkg_server;
+
+					if (!sections.contains(pkg.section)) {
+						sections.add(pkg.section);
+					}
+				}
+			}
+
+			//sort sections by name
+			CompareDataFunc<string> func = (a, b) => {
+				return strcmp(a, b);
+			};
+			sections.sort((owned)func);
+		}
+		catch(Error e){
+			log_error(e.message);
 		}
 	}
+
+	private void read_package_info_for_installed_packages() {
+		//set version_installed, is_installed, is_automatic
+		
+		log_debug("call: update_info_for_available_packages");
+
+		string txt = execute_command_sync_get_output("aptitude search --disable-columns -F '%p|%v|%M|%d' '?installed'");
+		write_file(PKG_CACHE_TEMP, txt);
+
+		// TODO: Create an optimized method for writing output to file
+
+		//read command output from temp file line by line
+
+		foreach(Package pkg in pkg_list_master.values){
+			pkg.is_installed = false;
+			//pkg.is_deb = false; //do not reset
+			pkg.is_automatic = false;
+		}
+		
+		try {
+			string line;
+			var file = File.new_for_path (PKG_CACHE_TEMP);
+			if (file.query_exists ()) {
+				var dis = new DataInputStream (file.read());
+				while ((line = dis.read_line (null)) != null) {
+					string[] arr = line.split("|");
+					if (arr.length != 4) {
+						continue;
+					}
+
+					string name = arr[0].strip();
+					string arch = (name.contains(":")) ? name.split(":")[1].strip() : "";
+					if (name.contains(":")) { name = name.split(":")[0]; }
+					string version = arr[1].strip();
+					string auto = arr[2].strip();
+					string desc = arr[3].strip();
+					
+					string id = Package.get_id(name,arch);
+
+					Package pkg = null;
+					if (pkg_list_master.has_key(id)) {
+						pkg = pkg_list_master[id];
+					}
+					else{
+						//installed from DEB file, add to master
+						pkg = new Package(name);
+						pkg.is_deb = true;
+						pkg.arch = arch;
+						pkg.description = desc;
+						pkg.id = Package.get_id(pkg.name,pkg.arch);
+						pkg_list_master[pkg.id] = pkg;
+					}
+
+					if (pkg != null){
+						pkg.is_installed = true;
+						pkg.is_automatic = (auto == "A");
+						pkg.version_installed = version;
+					}
+				}
+			}
+			else {
+				log_error ("File not found: %s".printf(PKG_CACHE_TEMP));
+			}
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}
+	}
+
+	private Gee.HashMap<string,Package> read_status_file(string status_file){
+		var map = new Gee.HashMap<string,Package>();
+
+		try {
+			string line;
+			var file = File.new_for_path(status_file);
+			if (!file.query_exists ()) {
+				return map;
+			}
+
+			Package pkg = null;
+			var dis = new DataInputStream (file.read());
+			while ((line = dis.read_line (null)) != null) {
+				if (line.strip().length == 0) { continue; }
+				if (line.index_of(": ") == -1) { continue; }
+
+				//Note: split on ': ' since version string can have colons
+				
+				string p_name = line[0:line.index_of(": ")].strip();
+				string p_value = line[line.index_of(": ") + 2:line.length].strip();
+
+				switch (p_name.down()){
+				case "package":
+					//add previous pkg to list
+					if (pkg != null){
+						pkg.id = Package.get_id(pkg.name,pkg.arch);
+						map[pkg.id] = pkg;
+						pkg = null;
+					}
+					//create new pkg
+					pkg = new Package(p_value);
+					break;
+				case "section":
+					pkg.section = p_value;
+					if (pkg.section.contains("/")){
+						pkg.section = pkg.section.split("/")[1];
+					}
+					if (!sections.contains(pkg.section)) {
+						sections.add(pkg.section);
+					}
+					break;
+				case "architecture":
+					pkg.arch = p_value;
+					break;
+				case "version":
+					pkg.version = p_value;
+					break;
+				case "description":
+					pkg.description = p_value;
+					break;
+				}
+			}
+
+			//add last pkg to list
+			if (pkg != null){
+				pkg.id = Package.get_id(pkg.name,pkg.arch);
+				map[pkg.id] = pkg;
+				pkg = null;
+			}
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}
+		
+		return map;
+	}
 	
-	//set section, arch, version_available, is_available
+	//not used
+	private void read_state_information(){
+		var map = read_status_file("/var/lib/dpkg/status");
+
+		foreach(Package pkg in map.values){
+			Package pkg_master = null;
+			if (pkg_list_master.has_key(pkg.id)) {
+				pkg_master = pkg_list_master[pkg.id];
+			}
+			else{
+				//installed from DEB file, add to master
+				pkg_list_master[pkg.id] = pkg;
+				pkg.is_deb = true;
+			}
+		}
+	}
+
+	//not used
 	private void read_package_info_from_apt_list_files(){
 		//clear lists and start reading file
 		pkg_list_master = new Gee.HashMap<string, Package>();
@@ -361,75 +571,9 @@ public class Main : GLib.Object {
 		}
 	}
 
-	//set version_installed, is_installed, is_automatic
-	private void read_package_info_for_installed_packages() {
-		log_debug("call: update_info_for_available_packages");
-
-		string txt = execute_command_sync_get_output("aptitude search --disable-columns -F '%p|%v|%M' '?installed'");
-		write_file(PKG_CACHE_TEMP, txt);
-
-		// TODO: Create an optimized method for writing output to file
-
-		//read command output from temp file line by line
-
-		try {
-			string line;
-			var file = File.new_for_path (PKG_CACHE_TEMP);
-			if (file.query_exists ()) {
-				var dis = new DataInputStream (file.read());
-				while ((line = dis.read_line (null)) != null) {
-					string[] arr = line.split("|");
-					if (arr.length != 3) {
-						continue;
-					}
-
-					string name = arr[0].strip();
-					string arch = (name.contains(":")) ? name.split(":")[1].strip() : "";
-					if (name.contains(":")) { name = name.split(":")[0]; }
-					string version = arr[1].strip();
-					string auto = arr[2].strip();
-
-					string id = Package.get_id(name,arch);
-
-					Package pkg = null;
-					if (pkg_list_master.has_key(id)) {
-						pkg = pkg_list_master[id];
-					}
-					else{
-						//installed from DEB file, add to master
-						pkg = new Package(name);
-						pkg.is_available = true;
-						pkg.is_deb = true;
-						pkg.arch = arch;
-						pkg_list_master[id] = pkg;
-					}
-
-					if (pkg != null){
-						pkg.is_installed = true;
-						pkg.is_automatic = (auto == "A");
-						pkg.version_installed = version;
-					}
-				}
-			}
-			else {
-				log_error ("File not found: %s".printf(PKG_CACHE_TEMP));
-			}
-		}
-		catch (Error e) {
-			log_error (e.message);
-		}
-
-		//export csv
-		
-		/*log_msg("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"".printf("id","name","arch","section","ver_available","ver_installed","description","installed?"));
-		foreach(var pkg in pkg_list_master.values){
-			log_msg("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"".printf(pkg.id,pkg.name,pkg.arch,pkg.section,pkg.version_available,pkg.version_installed,pkg.description.replace("\"","\"\""), (pkg.is_installed)?"Y":"N"));
-		}*/
-		
-	}
-
-	//sets: is_default
 	private void read_package_info_for_default_packages() {
+		//sets: is_default
+		
 		log_debug("call: update_info_for_default_packages");
 
 		if (!file_exists(DEF_PKG_LIST)) {
@@ -491,8 +635,9 @@ public class Main : GLib.Object {
 		}
 	}
 
-	//sets: is_manual
 	private void read_package_info_for_manual_packages() {
+		//sets: is_manual
+		
 		log_debug("call: update_info_for_manual_packages");
 
 		foreach(Package pkg in pkg_list_master.values) {
@@ -502,8 +647,93 @@ public class Main : GLib.Object {
 		}
 	}
 
+	public void update_deb_file_name_from_backup(){
+		string deb_dir = backup_dir + "debs";
 
-	//deprecated
+		//reset 'deb_file_name'
+		foreach(Package pkg in pkg_list_master.values) {
+			pkg.deb_file_name = "";
+		}
+		
+		try{
+			FileInfo info;
+			File file = File.new_for_path(deb_dir);
+			FileEnumerator enumerator = file.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
+			while ((info = enumerator.next_file()) != null) {
+				string file_name = info.get_name();
+				string file_path = "%s/%s".printf(deb_dir, file_name);
+			
+				if (!file_name.has_suffix(".deb")){ continue; }
+
+				update_deb_file_name_from_backup_single(file_path);
+			}
+		}
+		catch(Error e){
+			log_error(e.message);
+		}
+	}
+
+	public void update_deb_file_name_from_backup_single(string deb_file_path){
+		//get package info from DEB file
+		string txt = execute_command_sync_get_output("dpkg --info '%s'".printf(deb_file_path));
+		Package pkg = null;
+		foreach(string line in txt.split("\n")){
+			if (line.strip().length == 0) { continue; }
+			if (line.index_of(": ") == -1) { continue; }
+			
+			string p_name = line[0:line.index_of(": ")].strip();
+			string p_value = line[line.index_of(": ") + 2:line.length].strip();
+
+			switch(p_name.down()){
+				case "package":
+					//create new pkg
+					pkg = new Package(p_value);
+					pkg.is_available = true;
+					break;
+				case "section":
+					pkg.section = p_value;
+					if (pkg.section.contains("/")){
+						pkg.section = pkg.section.split("/")[1];
+					}
+					if (!sections.contains(pkg.section)) {
+						sections.add(pkg.section);
+					}
+					break;
+				case "architecture":
+					pkg.arch = p_value;
+					break;
+				case "version":
+					pkg.version_available = p_value;
+					break;
+				case "description":
+					pkg.description = p_value;
+					break;
+			}
+		}
+
+		if (pkg != null){
+			pkg.id = Package.get_id(pkg.name,pkg.arch);
+			if (pkg_list_master.has_key(pkg.id)) {
+				Package pkg_2 = pkg_list_master[pkg.id];
+				string file_name = deb_file_path[deb_file_path.last_index_of("/")+1:deb_file_path.length];
+				pkg_2.is_deb = true;
+				pkg_2.deb_file_name = file_name;
+				pkg_2.description = pkg.description;
+			}
+		}
+	}
+
+	private void print_pkg_info(){
+		log_msg("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"".printf(
+		"id","name","arch","section","version_available","description"));
+		
+		foreach(var pkg in pkg_list_master.values){
+			log_msg("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"".printf(
+			pkg.id,pkg.name,pkg.arch,pkg.section,pkg.version_available,pkg.description));
+		}
+	}
+
+	//not used
 	public void update_info_for_repository_alternate() {
 		log_debug("call: update_info_for_repository");
 
@@ -577,7 +807,7 @@ public class Main : GLib.Object {
 		string text = "";
 		foreach(Package pkg in pkg_list) {
 			if (pkg.is_selected) {
-				text += "%s\n".printf(pkg.name);
+				text += "%s\n".printf(pkg.id);
 			}
 		}
 
@@ -612,7 +842,7 @@ public class Main : GLib.Object {
 		string text = "";
 		foreach(Package pkg in pkg_list) {
 			if (pkg.is_installed) {
-				text += "%s\n".printf(pkg.name);
+				text += "%s\n".printf(pkg.id);
 			}
 		}
 
@@ -628,7 +858,7 @@ public class Main : GLib.Object {
 		return is_success;
 	}
 
-	public Gee.ArrayList<string> read_package_list() {
+	private Gee.ArrayList<string> read_package_list() {
 		string pkg_list_file = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + PKG_LIST_BAK;
 		var pkg_list = new Gee.ArrayList<string>();
 
@@ -651,6 +881,82 @@ public class Main : GLib.Object {
 		return pkg_list;
 	}
 
+	public void update_pkg_list_master_for_restore(bool update_selections){
+		string deb_dir = backup_dir + "debs";
+		
+		//read backup file
+		var list_bak = read_package_list();
+		
+		foreach(Package pkg in pkg_list_master.values) {
+			if (update_selections){
+				//unselect all
+				pkg.is_selected = false;
+			}
+			pkg.in_backup_list = false;
+		}
+		
+		foreach(string pkg_id in list_bak) {
+			if (!pkg_list_master.has_key(pkg_id)){
+				//add missing pkg to master list
+				string pkg_name = pkg_id.contains(":") ? pkg_id[0:pkg_id.last_index_of(":")-1] : pkg_id;
+				Package pkg = new Package(pkg_name);
+				pkg.id = pkg_id;
+				pkg_list_master[pkg_id] = pkg;
+			}
+			//set 'in_backup_list' flag
+			Package pkg = pkg_list_master[pkg_id];
+			pkg.in_backup_list = true;
+		}
+
+		update_deb_file_name_from_backup();
+
+		if (update_selections){
+			foreach(Package pkg in pkg_list_master.values) {
+				//select if not installed and available for installation
+				pkg.is_selected = pkg.in_backup_list && !pkg.is_installed &&
+					(pkg.is_available || (pkg.is_deb && pkg.deb_file_name.length > 0));
+			}
+		}
+		
+		// create a list of packages to be installed -------------------
+		
+		pkg_list_install = "";
+		pkg_list_missing = "";
+		pkg_list_deb = "";
+		gdebi_file_list = "";
+		
+		foreach(Package pkg in pkg_list_master.values) {
+			if (!pkg.is_selected || pkg.is_installed){
+				continue;
+			}
+
+			//available in repo
+			if (pkg.is_available) {
+				pkg_list_install += " %s".printf(pkg.name);
+			}
+			else{ //not available
+				
+				//DEB file available
+				if (pkg.is_deb && (pkg.deb_file_name.length > 0)) {
+					pkg_list_deb += " %s".printf(pkg.name);
+					gdebi_file_list += " '%s/%s'".printf(deb_dir,pkg.deb_file_name);
+				}
+				else{
+					pkg_list_missing += " %s".printf(pkg.name);
+				}
+			}
+		}
+
+		pkg_list_install = pkg_list_install.strip();
+		pkg_list_deb = pkg_list_deb.strip();
+		pkg_list_missing = pkg_list_missing.strip();
+		gdebi_file_list = gdebi_file_list.strip();
+		
+		//log_msg("pkg_list_install: " + pkg_list_install);
+		//log_msg("pkg_list_deb: " + pkg_list_deb);
+		//log_msg("pkg_list_missing: " + pkg_list_missing);
+	}
+	
 	public void download_packages() {
 		log_debug("call: update_info_for_available_packages");
 
@@ -683,6 +989,15 @@ public class Main : GLib.Object {
 		catch (Error e) {
 			log_error (e.message);
 		}
+	}
+
+	public void copy_deb_file(string src_file){
+		string deb_dir = backup_dir + "debs";
+		create_dir(deb_dir);
+		string file_name = src_file[src_file.last_index_of("/")+1:src_file.length];
+		string dest_file = deb_dir + "/" + file_name;
+		file_copy(src_file,dest_file);
+		update_deb_file_name_from_backup_single(dest_file);
 	}
 
 	/* PPA */
@@ -760,7 +1075,6 @@ public class Main : GLib.Object {
 	}
 
 	//sets: server and repo
-	//'apt-cache policy .' only returns info for 
 	public void update_info_for_repository() {
 		log_debug("call: update_info_for_repository");
 
@@ -771,6 +1085,7 @@ public class Main : GLib.Object {
 			}
 		}
 		cmd = "apt-cache policy %s".printf(cmd);
+		//Note: we are listing each package by name since 'apt-cache policy .' only gives info for native packages
 		
 		string txt = execute_command_sync_get_output(cmd);
 
@@ -902,25 +1217,6 @@ public class Main : GLib.Object {
 			log_error (e.message);
 		}
 	}
-
-	/*
-		public Gee.HashMap<string,Ppa> list_ppa(){
-			var ppa_list = list_ppas_from_etc_apt_dir();
-			var pkg_list_installed = list_installed(true);
-
-			//update ppa description (list of installed packages)
-			foreach(Ppa ppa in ppa_list.values){
-				foreach (Package pkg in pkg_list_installed.values) {
-					if (pkg.server.contains(ppa.name)){
-						ppa.description += " %s".printf(pkg.name);
-					}
-				}
-				ppa.description = ppa.description.strip();
-			}
-
-			return ppa_list;
-		}
-	*/
 
 	public bool save_ppa_list_selected() {
 		string file_name = "ppa.list";
@@ -1785,7 +2081,7 @@ public class Main : GLib.Object {
 	}
 
 	public void list_app_config_directories_from_backup_path(
-	string backup_path, ref Gee.ArrayList<AppConfig> app_config_list) {
+		string backup_path, ref Gee.ArrayList<AppConfig> app_config_list) {
 
 		string backup_dir_config = "%sconfigs".printf(backup_dir);
 
