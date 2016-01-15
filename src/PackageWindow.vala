@@ -987,9 +987,14 @@ public class PackageWindow : Window {
 		cmd += "\necho '" + _("Finished installing packages") + ".'";
 		cmd += "\necho '" + _("Close window to exit...") + "'";
 		cmd += "\nread dummy";
+
+		this.hide();
+		
 		execute_command_script_in_terminal_sync(create_temp_bash_script(cmd));
 		//success/error will be displayed by apt-get in terminal
 
+		this.present();
+		
 		gtk_do_events();
 
 		restore_init();
