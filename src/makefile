@@ -41,7 +41,7 @@ install:
 	install -m 0755 ${app_name} "$(DESTDIR)$(bindir)"
 	install -m 0755 ${app_name}-gtk "$(DESTDIR)$(bindir)"
 
-	install -m 0755 ${app_name}-pkg-mgr "$(DESTDIR)$(bindir)"
+	#install -m 0755 ${app_name}-pkg-mgr "$(DESTDIR)$(bindir)"
 
 	install -m 0755 ${app_name}-uninstall "$(DESTDIR)$(bindir)"
 	install -m 0755 ${app_name}-launcher "$(DESTDIR)$(bindir)"
