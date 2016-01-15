@@ -1313,16 +1313,15 @@ public class Main : GLib.Object {
 		}
 	}
 
-	public bool run_apt_update () {
+
+	public bool add_ppa (string cmd) {
 		string[] argv = new string[1];
-		argv[0] = create_temp_bash_script("apt-get -y update");
+		argv[0] = save_script(cmd);
 
 		Pid child_pid;
 		int input_fd;
 		int output_fd;
 		int error_fd;
-
-
 
 		try {
 			//execute script file
@@ -1349,21 +1348,20 @@ public class Main : GLib.Object {
 			dis_out.newline_type = DataStreamNewlineType.ANY;
 			dis_err.newline_type = DataStreamNewlineType.ANY;
 
-			progress_count = 0;
-			progress_total = 0;
-			//stdout_lines = new Gee.ArrayList<string>();
+			//progress_count = 0;
+			stdout_lines = new Gee.ArrayList<string>();
 			stderr_lines = new Gee.ArrayList<string>();
 
 			try {
 				//start thread for reading output stream
-				Thread.create<void> (apt_read_output_line, true);
+				Thread.create<void> (add_ppa_read_output_line, true);
 			} catch (Error e) {
 				log_error (e.message);
 			}
 
 			try {
 				//start thread for reading error stream
-				Thread.create<void> (apt_read_error_line, true);
+				Thread.create<void> (add_ppa_read_error_line, true);
 			} catch (Error e) {
 				log_error (e.message);
 			}
@@ -1376,11 +1374,13 @@ public class Main : GLib.Object {
 		}
 	}
 
-	private void apt_read_error_line() {
+	private void add_ppa_read_error_line() {
 		try {
 			err_line = dis_err.read_line (null);
 			while (err_line != null) {
-				log_msg(err_line);
+				stderr_lines.add(err_line);
+				status_line = err_line;
+				log_msg("err: %s".printf(err_line));
 				err_line = dis_err.read_line (null); //read next
 			}
 		}
@@ -1389,10 +1389,13 @@ public class Main : GLib.Object {
 		}
 	}
 
-	private void apt_read_output_line() {
+	private void add_ppa_read_output_line() {
 		try {
 			out_line = dis_out.read_line (null);
 			while (out_line != null) {
+				stdout_lines.add(out_line);
+				status_line = out_line;
+				log_msg("out: %s".printf(out_line));
 				out_line = dis_out.read_line (null);  //read next
 			}
 
@@ -1403,6 +1406,142 @@ public class Main : GLib.Object {
 		}
 	}
 
+	public bool apt_get_update () {
+		string[] argv = new string[1];
+		argv[0] = save_script("apt-get -y update");
+
+		Pid child_pid;
+		int input_fd;
+		int output_fd;
+		int error_fd;
+
+		try {
+			//execute script file
+			Process.spawn_async_with_pipes(
+			    null, //working dir
+			    argv, //argv
+			    null, //environment
+			    SpawnFlags.SEARCH_PATH,
+			    null,   // child_setup
+			    out child_pid,
+			    out input_fd,
+			    out output_fd,
+			    out error_fd);
+
+			is_running = true;
+
+			proc_id = child_pid;
+
+			//create stream readers
+			UnixInputStream uis_out = new UnixInputStream(output_fd, false);
+			UnixInputStream uis_err = new UnixInputStream(error_fd, false);
+			dis_out = new DataInputStream(uis_out);
+			dis_err = new DataInputStream(uis_err);
+			dis_out.newline_type = DataStreamNewlineType.ANY;
+			dis_err.newline_type = DataStreamNewlineType.ANY;
+
+			//progress_count = 0;
+			stdout_lines = new Gee.ArrayList<string>();
+			stderr_lines = new Gee.ArrayList<string>();
+
+			try {
+				//start thread for reading output stream
+				Thread.create<void> (apt_get_update_read_output_line, true);
+			} catch (Error e) {
+				log_error (e.message);
+			}
+
+			try {
+				//start thread for reading error stream
+				Thread.create<void> (apt_get_update_read_error_line, true);
+			} catch (Error e) {
+				log_error (e.message);
+			}
+
+			return true;
+		}
+		catch (Error e) {
+			log_error (e.message);
+			return false;
+		}
+	}
+
+	private void apt_get_update_read_error_line() {
+		try {
+			err_line = dis_err.read_line (null);
+			while (err_line != null) {
+				stderr_lines.add(err_line);
+				status_line = err_line;
+				log_msg("err: %s".printf(err_line));
+				err_line = dis_err.read_line (null); //read next
+			}
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}
+	}
+
+	private void apt_get_update_read_output_line() {
+		try {
+			out_line = dis_out.read_line (null);
+			while (out_line != null) {
+				stdout_lines.add(out_line);
+				status_line = out_line;
+				log_msg("out: %s".printf(out_line));
+				progress_count++;
+				out_line = dis_out.read_line (null);  //read next
+			}
+
+			is_running = false;
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}
+	}
+
+	private string save_script(string cmd){
+		var script = new StringBuilder();
+		script.append ("#!/bin/bash\n");
+		script.append ("\n");
+		script.append ("LANG=C\n");
+		script.append ("\n");
+		script.append ("%s\n".printf(cmd));
+		script.append ("\n\nexitCode=$?\n");
+		script.append ("echo ${exitCode} > ${exitCode}\n");
+		script.append ("echo ${exitCode} > status\n");
+
+		temp_dir = TEMP_DIR + "/" + timestamp2();
+		var script_file = temp_dir + "/script.sh";
+		create_dir (temp_dir);
+		
+		try {
+			// create new script file
+			var file = File.new_for_path(script_file);
+			var file_stream = file.create(FileCreateFlags.REPLACE_DESTINATION);
+			var data_stream = new DataOutputStream(file_stream);
+			data_stream.put_string(script.str);
+			data_stream.close();
+
+			//set execute permission
+			chmod(script_file, "u+x");
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}
+
+		return script_file;
+	}
+
+	public int read_status(){
+		var path = temp_dir + "/status";
+		var f = File.new_for_path(path);
+		if (f.query_exists()){
+			var txt = read_file(path);
+			return int.parse(txt);
+		}
+		return -1;
+	}
+	
 	/* APT Cache */
 
 	public bool backup_apt_cache() {

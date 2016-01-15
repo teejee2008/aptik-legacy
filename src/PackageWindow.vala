@@ -760,8 +760,11 @@ public class PackageWindow : Window {
 			log_error (e.message);
 		}
 
+		dlg.pulse_start();
+		dlg.update_status_line(true);
+		
 		while (is_running) {
-			dlg.update_progress(message);
+			dlg.sleep(200);
 		}
 
 		if (App.default_list_missing) {
@@ -895,8 +898,11 @@ public class PackageWindow : Window {
 			log_error (e.message);
 		}
 
+		dlg.pulse_start();
+		dlg.update_status_line(true);
+		
 		while (is_running) {
-			dlg.update_progress(message);
+			dlg.sleep(200);
 		}
 
 		tv_packages_refresh();

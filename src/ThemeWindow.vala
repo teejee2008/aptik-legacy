@@ -360,7 +360,7 @@ public class ThemeWindow : Window {
 			return;
 		}
 
-		string message = _("Preparing") + "...";
+		string message = _("Preparing...");
 
 		var dlg = new ProgressWindow.with_parent(this, message);
 		dlg.show_all();
@@ -374,13 +374,19 @@ public class ThemeWindow : Window {
 				App.progress_total += (int) get_file_count(theme.system_path);
 			}
 		}
+
+		//dlg.pulse_start();
+		dlg.update_message(_("Archiving..."));
+		dlg.update_status_line(true);
 		
 		//zip themes
 		foreach(Theme theme in theme_list_user) {
 			if (theme.is_selected) {
 				App.zip_theme(theme);
 				while (App.is_running) {
-					dlg.update_progress(_("Archiving"));
+					dlg.update_progressbar();
+					dlg.update_status_line();
+					dlg.sleep(50);
 				}
 			}
 		}
@@ -419,7 +425,7 @@ public class ThemeWindow : Window {
 		}
 
 		//begin
-		string message = _("Preparing") + "...";
+		string message = _("Preparing...");
 		var dlg = new ProgressWindow.with_parent(this, message);
 		dlg.show_all();
 		gtk_do_events();
@@ -435,12 +441,18 @@ public class ThemeWindow : Window {
 			}
 		}
 
+		//dlg.pulse_start();
+		dlg.update_message(_("Extracting..."));
+		dlg.update_status_line(true);
+		
 		//unzip themes
 		foreach(Theme theme in theme_list_user) {
 			if (theme.is_selected && !theme.is_installed) {
 				App.unzip_theme(theme);
 				while (App.is_running) {
-					dlg.update_progress(_("Extracting"));
+					dlg.update_progressbar();
+					dlg.update_status_line();
+					dlg.sleep(50);
 				}
 				App.update_permissions(theme.system_path);
 			}

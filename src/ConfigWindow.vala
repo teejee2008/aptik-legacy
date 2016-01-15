@@ -328,21 +328,26 @@ public class ConfigWindow : Window {
 		}
 
 		//begin
-		string message = _("Preparing") + "...";
+		string message = _("Preparing...");
 
 		var dlg = new ProgressWindow.with_parent(this, message);
 		dlg.show_all();
 		gtk_do_events();
 
-		//backup
 		App.backup_app_settings_init(config_list_user);
+
+		//dlg.pulse_start();
+		dlg.update_message(_("Archiving..."));
+		dlg.update_status_line(true);
 		
 		foreach(AppConfig config in config_list_user){
 			if (!config.is_selected) { continue; }
 			
 			App.backup_app_settings_single(config);
 			while (App.is_running) {
-				dlg.update_progress(_("Archiving"));
+				dlg.update_progressbar();
+				dlg.update_status_line();
+				dlg.sleep(50);
 			}
 		}
 
@@ -396,25 +401,30 @@ public class ConfigWindow : Window {
 		}
 
 		//begin
-		string message = _("Preparing") + "...";
+		string message = _("Preparing...");
 		var dlg = new ProgressWindow.with_parent(this, message);
 		dlg.show_all();
 		gtk_do_events();
-		
-		//extract
+
 		App.restore_app_settings_init(config_list_user);
 
+		//dlg.pulse_start();
+		dlg.update_message(_("Extracting..."));
+		dlg.update_status_line(true);
+		
 		foreach(AppConfig config in config_list_user){
 			if (!config.is_selected) { continue; }
 			
 			App.restore_app_settings_single(config);
 			while (App.is_running) {
-				dlg.update_progress(_("Extracting"));
+				dlg.update_progressbar();
+				dlg.update_status_line();
+				dlg.sleep(50);
 			}
 		}
 
 		//update ownership
-		dlg.update_progress(_("Updating file ownership") + "...");
+		dlg.update_message(_("Updating file ownership..."));
 		App.update_ownership(config_list_user);
 
 		//finish ----------------------------------
@@ -458,15 +468,19 @@ public class ConfigWindow : Window {
 		}
 
 		//begin
-		string message = _("Preparing") + "...";
+		string message = _("Preparing...");
 		var dlg = new ProgressWindow.with_parent(this, message);
 		dlg.show_all();
 		gtk_do_events();
+
+		dlg.pulse_start();
+		dlg.update_message(_("Deleting..."));
+		dlg.update_status_line(true);
 		
 		//extract
 		App.reset_app_settings(config_list_user);
 		while (App.is_running) {
-			dlg.update_progress(_("Deleting"));
+			dlg.sleep(200);
 		}
 
 		//finish ----------------------------------

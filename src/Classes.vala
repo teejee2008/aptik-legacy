@@ -121,6 +121,8 @@ public class Ppa : GLib.Object{
 	public bool is_selected = false;
 	public bool is_installed = false;
 
+	public string message = "";
+	
 	public Ppa(string _name){
 		name = _name;
 	}

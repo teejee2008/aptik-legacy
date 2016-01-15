@@ -663,19 +663,25 @@ public class MainWindow : Window {
 
 		string archives_dir = App.backup_dir + "archives";
 		
-		string message = _("Preparing") + "...";
+		string message = _("Preparing...");
 		var dlg = new ProgressWindow.with_parent(this, message);
 		dlg.show_all();
 		gtk_do_events();
 
+		//dlg.pulse_start();
+		dlg.update_message(_("Copying packages..."));
+		dlg.update_status_line(true);
+		
 		App.backup_apt_cache();
 		while (App.is_running) {
-			dlg.update_progress(_("Copying"));
+			dlg.update_progressbar();
+			dlg.update_status_line();
+			dlg.sleep(50);
 		}
 
 		//finish ----------------------------------
-		message = _("Finished") + " - ";
-		message += _("%ld packages in backup").printf(get_file_count(archives_dir));
+		message = _("Packages copied successfully") + " ";
+		message += _("(%ld packages in backup)").printf(get_file_count(archives_dir));
 		dlg.finish(message);
 		gtk_do_events();
 	}
@@ -695,19 +701,25 @@ public class MainWindow : Window {
 			return;
 		}
 
-		string message = _("Preparing") + "...";
+		string message = _("Preparing...");
 		var dlg = new ProgressWindow.with_parent(this, message);
 		dlg.show_all();
 		gtk_do_events();
 
+		//dlg.pulse_start();
+		dlg.update_message(_("Copying packages..."));
+		dlg.update_status_line(true);
+		
 		App.restore_apt_cache();
 		while (App.is_running) {
-			dlg.update_progress(_("Copying"));
+			dlg.update_progressbar();
+			dlg.update_status_line();
+			dlg.sleep(50);
 		}
 
 		//finish ----------------------------------
-		message = _("Finished") + " - ";
-		message += _("%ld packages in cache").printf(get_file_count("/var/cache/apt/archives") - 2); //excluding 'lock' and 'partial'
+		message = _("Packages copied successfully") + " ";
+		message += _("(%ld packages in cache)").printf(get_file_count("/var/cache/apt/archives") - 2); //excluding 'lock' and 'partial'
 		dlg.finish(message);
 		gtk_do_events();
 	}

@@ -47,14 +47,14 @@ public class PpaWindow : Window {
 	private TreeViewColumn col_ppa_status;
 	private ScrolledWindow sw_ppa;
 
-	private Gee.HashMap<string, Ppa> ppa_list_user;
-	
 	private int def_width = 550;
 	private int def_height = 450;
 	private uint tmr_init = 0;
 	private bool is_running = false;
 	private bool is_restore_view = false;
 
+	private bool skip_pkg_info_update = false;
+	
 	// init
 	
 	public PpaWindow.with_parent(Window parent, bool restore) {
@@ -220,7 +220,7 @@ public class PpaWindow : Window {
 		btn_select_all = new Gtk.Button.with_label (" " + _("Select All") + " ");
 		hbox_ppa_actions.pack_start (btn_select_all, true, true, 0);
 		btn_select_all.clicked.connect(() => {
-			foreach(Ppa ppa in ppa_list_user.values) {
+			foreach(Ppa ppa in App.ppa_list_master.values) {
 				if (is_restore_view) {
 					if (!ppa.is_installed) {
 						ppa.is_selected = true;
@@ -240,7 +240,7 @@ public class PpaWindow : Window {
 		btn_select_none = new Gtk.Button.with_label (" " + _("Select None") + " ");
 		hbox_ppa_actions.pack_start (btn_select_none, true, true, 0);
 		btn_select_none.clicked.connect(() => {
-			foreach(Ppa ppa in ppa_list_user.values) {
+			foreach(Ppa ppa in App.ppa_list_master.values) {
 				if (is_restore_view) {
 					if (!ppa.is_installed) {
 						ppa.is_selected = false;
@@ -297,7 +297,7 @@ public class PpaWindow : Window {
 
 		//sort ppa list
 		var ppa_list = new ArrayList<Ppa>();
-		foreach(Ppa ppa in ppa_list_user.values) {
+		foreach(Ppa ppa in App.ppa_list_master.values) {
 			if (ppa.name != "official"){
 				ppa_list.add(ppa);
 			}
@@ -370,12 +370,15 @@ public class PpaWindow : Window {
 			log_error (e.message);
 		}
 
+		dlg.pulse_start();
+		dlg.update_status_line(true);
+		
 		while (is_running) {
-			dlg.update_progress(message);
+			dlg.sleep(200);
 		}
 
 		//un-select unused PPAs
-		foreach(Ppa ppa in ppa_list_user.values) {
+		foreach(Ppa ppa in App.ppa_list_master.values) {
 			if (ppa.description.length == 0) {
 				ppa.is_selected = false;
 			}
@@ -392,18 +395,18 @@ public class PpaWindow : Window {
 
 	private void backup_init_thread() {
 		//App.read_package_info();
-		//ppa_list_user = App.ppa_list_master;
+		//App.ppa_list_master = App.ppa_list_master;
 		App.read_package_info();
 		App.ppa_list_master = App.list_ppa();
-		ppa_list_user = App.ppa_list_master;
-		//ppa_list_user = App.list_ppa();
+		App.ppa_list_master = App.ppa_list_master;
+		//App.ppa_list_master = App.list_ppa();
 		is_running = false;
 	}
 
 	private void btn_backup_clicked() {
 		//check if no action required
 		bool none_selected = true;
-		foreach(Ppa ppa in ppa_list_user.values) {
+		foreach(Ppa ppa in App.ppa_list_master.values) {
 			if (ppa.is_selected) {
 				none_selected = false;
 				break;
@@ -442,8 +445,11 @@ public class PpaWindow : Window {
 			log_error (e.message);
 		}
 
+		dlg.pulse_start();
+		dlg.update_status_line(true);
+		
 		while (is_running) {
-			dlg.update_progress(message);
+			dlg.sleep(200);
 		}
 
 		tv_ppa_refresh();
@@ -453,17 +459,20 @@ public class PpaWindow : Window {
 	}
 
 	private void restore_init_thread() {
-		App.read_package_info();
+		if (!skip_pkg_info_update){
+			App.read_package_info();
+		}
+		skip_pkg_info_update = false;
+		
 		App.ppa_list_master = App.list_ppa();
 		App.read_ppa_list();
-		ppa_list_user = App.ppa_list_master;
 		is_running = false;
 	}
 
 	private void btn_restore_clicked() {
 		//check if no action required
 		bool none_selected = true;
-		foreach(Ppa ppa in ppa_list_user.values) {
+		foreach(Ppa ppa in App.ppa_list_master.values) {
 			if (ppa.is_selected && !ppa.is_installed) {
 				none_selected = false;
 				break;
@@ -483,74 +492,91 @@ public class PpaWindow : Window {
 			return;
 		}
 
-		//save ppa.list
-		string file_name = "ppa.list";
-		bool is_success = save_ppa_list_selected(false);
-		if (!is_success) {
-			string title = _("Error");
-			string msg = _("Failed to write")  + " '%s'".printf(file_name);
-			gtk_messagebox(title, msg, this, false);
-			return;
-		}
-
-		string cmd = "";
-
-		//add PPAs
-		cmd += "echo ''\n";
-		foreach(Ppa ppa in ppa_list_user.values) {
-			if (ppa.is_selected && !ppa.is_installed) {
-				cmd += "add-apt-repository -y ppa:%s\n".printf(ppa.name);
-				cmd += "echo ''\n";
-			}
-		}
-
-		//iconify();
+		string message = _("Preparing...");
+		var dlg = new ProgressWindow.with_parent(this, message);
+		dlg.show_all();
 		gtk_do_events();
 
-		cmd += "echo ''\n";
-		cmd += "echo '" + _("Updating Package Information...") + "'\n";
-		cmd += "echo ''\n";
-		cmd += "apt-get update\n"; //> /dev/null 2>&1
-		cmd += "echo ''\n";
-		cmd += "\n\necho '" + _("Finished adding PPAs") + "'";
-		cmd += "\necho '" + _("Close window to exit...") + "'";
-		cmd += "\nread dummy";
-		execute_command_script_in_terminal_sync(create_temp_bash_script(cmd));
-
-		//deiconify();
-		gtk_do_events();
-
-		/*
-		//verify
-		status = _("Checking installed PPAs...");
-		progress_begin(status);
-
-		App.update_info_for_repository();
-
-		string error_list = "";
+		//get total count
+		App.progress_total = 0;
+		App.progress_count = 0;
 		foreach(Ppa ppa in App.ppa_list_master.values) {
 			if (ppa.is_selected && !ppa.is_installed) {
-				//if (!ppa_list_new.has_key(ppa.name)){
-				//	error_list += "%s\n".printf(ppa.name);
-				//}
-				//TODO: Check if PPA addition failed
+				App.progress_total++;
 			}
 		}
 
-		//show message
-		if (error_list.length == 0) {
-			string title = _("Finished");
-			string msg = _("PPAs added successfully");
-			gtk_messagebox(title, msg, this, false);
-		}
-		else {
-			string title = _("Finished with Errors");
-			string msg = _("Following PPAs could not be added") + ":\n\n%s\n".printf(error_list);
-			gtk_messagebox(title, msg, this, false);
-		}
-		* */
+		var ppa_list_add = new Gee.ArrayList<Ppa>();
+		foreach(Ppa ppa in App.ppa_list_master.values) {
+			if (ppa.is_selected && !ppa.is_installed) {
+				string cmd = "add-apt-repository -y ppa:%s\n".printf(ppa.name);
 
-		//this.close(); //TODO: check for errors
+				App.add_ppa(cmd);
+
+				//dlg.pulse_start();
+				dlg.update_message(_("Adding '%s'...").printf(ppa.name));
+				dlg.update_status_line(true);
+
+				while (App.is_running) {
+					dlg.update_progressbar();
+					//dlg.update_status_line();
+					dlg.sleep(200);
+				}
+
+				App.progress_count++;
+
+				ppa.message = "";
+				foreach(string line in App.stdout_lines){
+					ppa.message += "%s\n".printf(line);
+				}
+
+				ppa_list_add.add(ppa);
+			}
+		}
+
+		//get total URL count
+		App.progress_total = 0;
+		App.progress_count = 0;
+		string cmd = "apt-get update -y --print-uris";
+		string txt = execute_command_sync_get_output(cmd);
+		App.progress_total += txt.split("\n").length;
+
+		//dlg.pulse_start();
+		dlg.update_message(_("Running 'apt-get update'..."));
+		dlg.update_status_line(true);
+				
+		App.apt_get_update();
+		while (App.is_running) {
+			dlg.update_progressbar();
+			//dlg.update_status_line();
+			dlg.sleep(200);
+		}
+		
+		dlg.close();
+		dlg.destroy();
+		gtk_do_events();
+		
+		skip_pkg_info_update = true;
+		restore_init();
+
+		string error_msg = "";
+		foreach(Ppa ppa_to_add in ppa_list_add) {
+			if (App.ppa_list_master.has_key(ppa_to_add.name)){
+				var ppa = App.ppa_list_master[ppa_to_add.name];
+				if (!ppa.is_installed){
+					error_msg += "%s\n\n".printf(ppa_to_add.name);
+					error_msg += "%s\n\n".printf(ppa_to_add.message);
+				}
+			}
+		}
+		
+		if (error_msg.length > 0){
+			string title = _("Error");
+			string msg = _("Following PPAs could not be added") + ":\n\n%s\n".printf(error_msg);
+			gtk_messagebox(title, msg, this, false);
+		}
+
+		gtk_do_events();
 	}
 
 	private bool save_ppa_list_selected(bool show_on_success) {

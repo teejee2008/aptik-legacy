@@ -36,6 +36,8 @@ using TeeJee.Misc;
 
 public class CustomMessageDialog : Dialog {
 	private Gtk.Box vbox_main;
+	private Gtk.Label lbl_msg;
+	private Gtk.ScrolledWindow sw_msg;
 	private Gtk.Button btn_ok;
 
 	private string msg_title;
@@ -53,6 +55,15 @@ public class CustomMessageDialog : Dialog {
 		init_window();
 
 		show_all();
+
+		if (lbl_msg.get_allocated_height() > 400){
+			sw_msg.vscrollbar_policy = PolicyType.AUTOMATIC;
+			sw_msg.set_size_request(-1,400);
+			lbl_msg.margin_right = 6;
+		}
+		else{
+			sw_msg.vscrollbar_policy = PolicyType.NEVER;
+		}
 	}
 
 	public void init_window () {
@@ -91,15 +102,26 @@ public class CustomMessageDialog : Dialog {
 
 		//img
 		var img = new Image.from_icon_name(icon_name, Gtk.IconSize.DIALOG);
+		img.margin_right = 12;
 		hbox_contents.add(img);
 		
 		//lbl_msg
-		var lbl_msg = new Gtk.Label(msg_body);
+		lbl_msg = new Gtk.Label(msg_body);
 		lbl_msg.xalign = (float) 0.0;
 		lbl_msg.max_width_chars = 70;
 		lbl_msg.wrap = true;
 		lbl_msg.wrap_mode = Pango.WrapMode.WORD;
-		hbox_contents.add(lbl_msg);
+		//hbox_contents.add(lbl_msg);
+
+		//sw_msg
+		sw_msg = new ScrolledWindow(null, null);
+		//sw_msg.set_shadow_type (ShadowType.ETCHED_IN);
+		sw_msg.add (lbl_msg);
+		sw_msg.expand = true;
+		sw_msg.hscrollbar_policy = PolicyType.NEVER;
+		sw_msg.vscrollbar_policy = PolicyType.AUTOMATIC;
+		//sw_msg.set_size_request();
+		hbox_contents.add(sw_msg);
 
 		//actions
 		btn_ok = (Gtk.Button) add_button ("_Ok", Gtk.ResponseType.OK);

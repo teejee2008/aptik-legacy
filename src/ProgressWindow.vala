@@ -36,14 +36,17 @@ using TeeJee.Misc;
 
 public class ProgressWindow : Window {
 	private Gtk.Box vbox_main;
-
+	private Gtk.Spinner spinner;
+	private Gtk.Label lbl_msg;
+	private Gtk.Label lbl_status;
+	private ProgressBar progressbar;
+	
 	private uint tmr_init = 0;
+	private uint tmr_pulse = 0;
 	private uint tmr_close = 0;
 	private int def_width = 400;
 	private int def_height = 50;
-	
-	private ProgressBar progressbar;
-	private Label lbl_status;
+
 	private string status_message;
 	// init
 	
@@ -75,15 +78,23 @@ public class ProgressWindow : Window {
 		vbox_main.set_size_request (def_width, def_height);
 		add (vbox_main);
 
-		//lbl_status
-		lbl_status = new Label (status_message);
-		lbl_status.halign = Align.START;
-		lbl_status.ellipsize = Pango.EllipsizeMode.END;
-		lbl_status.max_width_chars = 50;
-		lbl_status.margin_bottom = 3;
-		lbl_status.margin_left = 3;
-		lbl_status.margin_right = 3;
-		vbox_main.pack_start (lbl_status, false, true, 0);
+		var hbox_status = new Box (Orientation.HORIZONTAL, 3);
+		hbox_status.margin_top = 6;
+		vbox_main.add (hbox_status);
+		
+		spinner = new Gtk.Spinner();
+		spinner.active = true;
+		hbox_status.add(spinner);
+		
+		//lbl_msg
+		lbl_msg = new Label (status_message);
+		lbl_msg.halign = Align.START;
+		lbl_msg.ellipsize = Pango.EllipsizeMode.END;
+		lbl_msg.max_width_chars = 50;
+		lbl_msg.margin_bottom = 3;
+		lbl_msg.margin_left = 3;
+		lbl_msg.margin_right = 3;
+		hbox_status.add (lbl_msg);
 
 		//progressbar
 		progressbar = new ProgressBar();
@@ -91,8 +102,18 @@ public class ProgressWindow : Window {
 		progressbar.margin_left = 3;
 		progressbar.margin_right = 3;
 		//progressbar.set_size_request(-1, 25);
-		//progressbar.pulse_step = 0.2;
+		progressbar.pulse_step = 0.1;
 		vbox_main.pack_start (progressbar, false, true, 0);
+
+		//lbl_status
+		lbl_status = new Label ("");
+		lbl_status.halign = Align.START;
+		lbl_status.ellipsize = Pango.EllipsizeMode.END;
+		lbl_status.max_width_chars = 50;
+		lbl_status.margin_bottom = 3;
+		lbl_status.margin_left = 3;
+		lbl_status.margin_right = 3;
+		vbox_main.pack_start (lbl_status, false, true, 0);
 		
 		show_all();
 
@@ -113,17 +134,66 @@ public class ProgressWindow : Window {
 
 
 	// common
+
+	public void pulse_start(){
+		tmr_pulse = Timeout.add(100, pulse_timeout);
+	}
+
+	private bool pulse_timeout(){
+		if (tmr_pulse > 0) {
+			Source.remove(tmr_pulse);
+			tmr_pulse = 0;
+		}
+			
+		progressbar.pulse();
+		gtk_do_events();
+
+		tmr_pulse = Timeout.add(100, pulse_timeout);
+		return true;
+	}
+	
+	public void pulse_stop(){
+		if (tmr_pulse > 0) {
+			Source.remove(tmr_pulse);
+			tmr_pulse = 0;
+		}
+	}
+
+	public void update_message(string msg){
+		lbl_msg.label = msg;
+	}
+
+	public void update_status_line(bool clear = false){
+		if (clear){
+			lbl_status.label = "";
+		}
+		else{
+			lbl_status.label = App.status_line;
+		}
+	}
+	
+	public void update_progressbar(){
+		double fraction = App.progress_count / (App.progress_total * 1.0);
+		if (fraction > 1.0){
+			fraction = 1.0;
+		}
+		progressbar.fraction = fraction;
+	}
 	
 	public void finish(string message = "") {
+		pulse_stop();
 		progressbar.fraction = 1.0;
-		lbl_status.label = message;
+		
+		lbl_msg.label = message;
+		lbl_status.label = "";
+		
+		spinner.visible = false;
 		
 		gtk_do_events();
 		auto_close_window();
 	}
 
 	private void auto_close_window() {
-
 		tmr_close = Timeout.add(2000, ()=>{
 			if (tmr_init > 0) {
 				Source.remove(tmr_init);
@@ -135,21 +205,35 @@ public class ProgressWindow : Window {
 		});
 	}
 	
-	public void update_progress(string message) {
-		if (App.progress_total > 0) {
-			progressbar.fraction = App.progress_count / (App.progress_total * 1.0);
-			lbl_status.label = message + ": %s".printf(App.status_line);
-			gtk_do_events();
-			Thread.usleep ((ulong) 0.1 * 1000000);
+	public void update_progress(string message, bool show_status_line) {
+		lbl_msg.label = message;
+		
+		if (show_status_line){
+			lbl_status.label = App.status_line;
 		}
-		else {
+		else{
+			lbl_status.label = "";
+		}
+
+		//lbl_msg.label = ((message.length > 0) ? message + ": " : message) + "%s".printf(App.status_line);
+
+		/*if (pulse){
 			progressbar.pulse();
-			lbl_status.label = message;
-			gtk_do_events();
-			Thread.usleep ((ulong) 200000);
 		}
+		else if (App.progress_total > 0) {
+			progressbar.fraction = App.progress_count / (App.progress_total * 1.0);
+		}
+		else{
+			progressbar.pulse();
+		}*/
+
+		gtk_do_events();
 	}
 
+	public void sleep(int ms){
+		Thread.usleep ((ulong) ms * 1000);
+		gtk_do_events();
+	}
 }
 
 
