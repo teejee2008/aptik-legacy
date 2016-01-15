@@ -356,9 +356,8 @@ public class PpaWindow : Window {
 	// backup
 
 	private void backup_init() {
-		string message = _("Checking installed PPAs...");
-
-		var dlg = new ProgressWindow.with_parent(this, message);
+		var status_msg = _("Preparing...");
+		var dlg = new ProgressWindow.with_parent(this, status_msg);
 		dlg.show_all();
 		gtk_do_events();
 
@@ -374,6 +373,7 @@ public class PpaWindow : Window {
 		dlg.update_status_line(true);
 		
 		while (is_running) {
+			dlg.update_message(App.status_line);
 			dlg.sleep(200);
 		}
 
@@ -431,9 +431,8 @@ public class PpaWindow : Window {
 	// restore
 	
 	private void restore_init() {
-		string message = _("Checking installed PPAs...");
-
-		var dlg = new ProgressWindow.with_parent(this, message);
+		var status_msg = _("Preparing...");
+		var dlg = new ProgressWindow.with_parent(this, status_msg);
 		dlg.show_all();
 		gtk_do_events();
 
@@ -449,6 +448,7 @@ public class PpaWindow : Window {
 		dlg.update_status_line(true);
 		
 		while (is_running) {
+			dlg.update_message(App.status_line);
 			dlg.sleep(200);
 		}
 
@@ -492,8 +492,8 @@ public class PpaWindow : Window {
 			return;
 		}
 
-		string message = _("Preparing...");
-		var dlg = new ProgressWindow.with_parent(this, message);
+		var status_msg = _("Preparing...");
+		var dlg = new ProgressWindow.with_parent(this,status_msg);
 		dlg.show_all();
 		gtk_do_events();
 

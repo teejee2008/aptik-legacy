@@ -160,7 +160,9 @@ public class ProgressWindow : Window {
 	}
 
 	public void update_message(string msg){
-		lbl_msg.label = msg;
+		if (msg.length > 0){
+			lbl_msg.label = msg;
+		}
 	}
 
 	public void update_status_line(bool clear = false){
@@ -205,31 +207,6 @@ public class ProgressWindow : Window {
 		});
 	}
 	
-	public void update_progress(string message, bool show_status_line) {
-		lbl_msg.label = message;
-		
-		if (show_status_line){
-			lbl_status.label = App.status_line;
-		}
-		else{
-			lbl_status.label = "";
-		}
-
-		//lbl_msg.label = ((message.length > 0) ? message + ": " : message) + "%s".printf(App.status_line);
-
-		/*if (pulse){
-			progressbar.pulse();
-		}
-		else if (App.progress_total > 0) {
-			progressbar.fraction = App.progress_count / (App.progress_total * 1.0);
-		}
-		else{
-			progressbar.pulse();
-		}*/
-
-		gtk_do_events();
-	}
-
 	public void sleep(int ms){
 		Thread.usleep ((ulong) ms * 1000);
 		gtk_do_events();

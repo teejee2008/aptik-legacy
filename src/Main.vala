@@ -255,23 +255,34 @@ public class Main : GLib.Object {
 
 	/* Package selections */
 
-	public void read_package_info(){	
+	public void read_package_info(){
+		string msg = "";
 		if (get_apt_list_modified_date().compare(pkginfo_modified_date) > 0){
-			log_msg("Reading package lists...");
+			msg = _("Reading package lists...");
+			log_msg(msg);
+			status_line = msg;
 			read_package_lists();
 		}
-		
-		log_msg("Reading state information...");
+
+		msg = _("Reading state information...");
+		log_msg(msg);
+		status_line = msg;
 		read_package_info_for_installed_packages();
 
 		if (get_apt_list_modified_date().compare(pkginfo_modified_date) > 0){
-			log_msg("Reading default package lists...");
+			msg = _("Reading default package lists...");
+			log_msg(msg);
+			status_line = msg;
 			read_package_info_for_default_packages();
 			read_package_info_for_manual_packages();
 
 			pkginfo_modified_date = new DateTime.now_local();
 		}
-		
+
+		msg = _("Reading deb files from backup...");
+		log_msg(msg);
+		status_line = msg;
+				
 		update_deb_file_name_from_backup();
 	}
 
@@ -1005,24 +1016,16 @@ public class Main : GLib.Object {
 	public Gee.HashMap<string,Ppa> list_ppa(){
 		ppa_list_master = list_ppas_from_etc_apt_dir();
 
-		//update ppa description (list of installed packages)
-		/*foreach(Ppa ppa in ppa_list.values){
-			foreach (Package pkg in pkg_list_master.values) {
-				if (pkg.is_installed){
-					if (pkg.server.contains(ppa.name)){
-						ppa.description += " %s".printf(pkg.name);
-					}
-				}
-			}
-			ppa.description = ppa.description.strip();
-		}*/
-
 		update_info_for_repository();
 
 		return ppa_list_master;
 	}
 	
 	public Gee.HashMap<string,Ppa> list_ppas_from_etc_apt_dir(){
+		var msg = _("Reading source lists...");
+		log_msg(msg);
+		status_line = msg;
+
 		var ppa_list = new Gee.HashMap<string,Ppa>();
 
 		string std_out = "";
@@ -1076,8 +1079,10 @@ public class Main : GLib.Object {
 
 	//sets: server and repo
 	public void update_info_for_repository() {
-		log_debug("call: update_info_for_repository");
-
+		var msg = _("Reading package priorities...");
+		log_msg(msg);
+		status_line = msg;
+		
 		string cmd = "";
 		foreach(Package pkg in pkg_list_master.values){
 			if (pkg.is_installed){
@@ -1377,10 +1382,10 @@ public class Main : GLib.Object {
 	private void add_ppa_read_error_line() {
 		try {
 			err_line = dis_err.read_line (null);
-			while (err_line != null) {
+			while ((err_line != null) && (err_line.length > 0)) {
 				stderr_lines.add(err_line);
 				status_line = err_line;
-				log_msg("err: %s".printf(err_line));
+				//log_msg("err: %s".printf(err_line));
 				err_line = dis_err.read_line (null); //read next
 			}
 		}
@@ -1392,10 +1397,10 @@ public class Main : GLib.Object {
 	private void add_ppa_read_output_line() {
 		try {
 			out_line = dis_out.read_line (null);
-			while (out_line != null) {
+			while ((out_line != null) && (out_line.length > 0)) {
 				stdout_lines.add(out_line);
 				status_line = out_line;
-				log_msg("out: %s".printf(out_line));
+				//log_msg("out: %s".printf(out_line));
 				out_line = dis_out.read_line (null);  //read next
 			}
 
@@ -1469,10 +1474,10 @@ public class Main : GLib.Object {
 	private void apt_get_update_read_error_line() {
 		try {
 			err_line = dis_err.read_line (null);
-			while (err_line != null) {
+			while ((err_line != null) && (err_line.length > 0)) {
 				stderr_lines.add(err_line);
 				status_line = err_line;
-				log_msg("err: %s".printf(err_line));
+				//log_msg("err: %s".printf(err_line));
 				err_line = dis_err.read_line (null); //read next
 			}
 		}
@@ -1484,10 +1489,10 @@ public class Main : GLib.Object {
 	private void apt_get_update_read_output_line() {
 		try {
 			out_line = dis_out.read_line (null);
-			while (out_line != null) {
+			while ((out_line != null) && (out_line.length > 0)) {
 				stdout_lines.add(out_line);
 				status_line = out_line;
-				log_msg("out: %s".printf(out_line));
+				//log_msg("out: %s".printf(out_line));
 				progress_count++;
 				out_line = dis_out.read_line (null);  //read next
 			}
