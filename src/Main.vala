@@ -728,7 +728,7 @@ public class Main : GLib.Object {
 				}
 
 				string pkg_name = pkg_id.contains(":") ? pkg_id[0:pkg_id.last_index_of(":") - 1] : pkg_id;
-				string pkg_arch = pkg_id.contains(":") ? pkg_id[pkg_id.last_index_of(":") - 1: pkg_id.length] : "";
+				string pkg_arch = pkg_id.contains(":") ? pkg_id[pkg_id.last_index_of(":") + 1: pkg_id.length] : "";
 				
 				Package pkg = new Package(pkg_name);
 				pkg.id = pkg_id;
@@ -1148,6 +1148,9 @@ public class Main : GLib.Object {
 				Ppa ppa = ppa_list_master[ppa_name];
 				ppa.is_installed = true;
 				ppa.is_selected = false;
+				if (ppa.description.length == 0){
+					ppa.description = ppa_desc;
+				}
 			}
 			else {
 				Ppa ppa = new Ppa(ppa_name);

@@ -197,7 +197,12 @@ public class PpaWindow : Window {
 		//col_ppa_desc ----------------------
 
 		TreeViewColumn col_ppa_desc = new TreeViewColumn();
-		col_ppa_desc.title = _("Installed Packages");
+		if (is_restore_view){
+			col_ppa_desc.title = _("Available Packages");
+		}
+		else{
+			col_ppa_desc.title = _("Installed Packages");
+		}
 		col_ppa_desc.resizable = true;
 		tv_ppa.append_column(col_ppa_desc);
 
@@ -213,7 +218,7 @@ public class PpaWindow : Window {
 	}
 
 	private void init_actions() {
-	//hbox_ppa_actions
+		//hbox_ppa_actions
 		Box hbox_ppa_actions = new Box (Orientation.HORIZONTAL, 6);
 		vbox_main.add (hbox_ppa_actions);
 
