@@ -270,7 +270,7 @@ public class ThemeWindow : Window {
 		btn_restore.clicked.connect(btn_restore_clicked);
 
 		//btn_cancel
-		btn_cancel = new Gtk.Button.with_label (" " + _("Cancel") + " ");
+		btn_cancel = new Gtk.Button.with_label (" " + _("Close") + " ");
 		hbox_theme_actions.pack_start (btn_cancel, true, true, 0);
 		btn_cancel.clicked.connect(() => {
 			this.close();

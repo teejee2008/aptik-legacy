@@ -267,7 +267,7 @@ public class ConfigWindow : Window {
 		btn_reset.clicked.connect(btn_reset_clicked);
 
 		//btn_cancel
-		btn_cancel = new Gtk.Button.with_label (" " + _("Cancel") + " ");
+		btn_cancel = new Gtk.Button.with_label (" " + _("Close") + " ");
 		hbox_config_actions.pack_start (btn_cancel, true, true, 0);
 		btn_cancel.clicked.connect(() => {
 			this.close();
