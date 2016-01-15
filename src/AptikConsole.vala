@@ -193,6 +193,7 @@ public class AptikConsole : GLib.Object {
 				break;
 
 			case "--list-manual":
+			case "--list-extra":
 				App.read_package_info();
 				foreach(Package pkg in App.pkg_list_master.values) {
 					pkg.is_selected = pkg.is_manual;
