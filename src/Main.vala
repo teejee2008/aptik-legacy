@@ -76,8 +76,6 @@ public class Main : GLib.Object {
 	public long progress_total;
 	public bool is_running;
 
-	//private Regex rex_aptget_download;
-
 	public Gee.HashMap<string, Package> pkg_list_master;
 	//public Gee.HashMap<string, Repository> repo_list_master;
 	public Gee.HashMap<string, Ppa> ppa_list_master;
@@ -466,122 +464,6 @@ public class Main : GLib.Object {
 		return map;
 	}
 	
-	//not used
-	private void read_state_information(){
-		var map = read_status_file("/var/lib/dpkg/status");
-
-		foreach(Package pkg in map.values){
-			Package pkg_master = null;
-			if (pkg_list_master.has_key(pkg.id)) {
-				pkg_master = pkg_list_master[pkg.id];
-			}
-			else{
-				//installed from DEB file, add to master
-				pkg_list_master[pkg.id] = pkg;
-				pkg.is_deb = true;
-			}
-		}
-	}
-
-	//not used
-	private void read_package_info_from_apt_list_files(){
-		//clear lists and start reading file
-		pkg_list_master = new Gee.HashMap<string, Package>();
-		//repo_list_master = new Gee.HashMap<string, Repository>();
-		sections = new Gee.ArrayList<string>();
-		
-		try{
-			//iterate files in /var/lib/apt/lists
-			FileInfo info;
-			File file = File.new_for_path(APT_LISTS_PATH);
-			FileEnumerator enumerator = file.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
-			while ((info = enumerator.next_file()) != null) {
-				string file_name = info.get_name();
-				string list_file_path = "%s/%s".printf(APT_LISTS_PATH, file_name);
-			
-				if (!file_name.has_suffix("_Packages")){ continue; }
-
-				//var repo = new Repository();
-				var repo_name = file_name[0:file_name.index_of("_dists")];
-				//repo_list_master[repo.name] = repo;
-
-				string pkg_server = repo_name.replace("_","/");
-		
-				File f_list = File.new_for_path(list_file_path);
-				
-				string line;
-				Package pkg = null;
-				var dis = new DataInputStream (f_list.read());
-				while ((line = dis.read_line (null)) != null) {
-					
-					if (line.strip().length == 0) { continue; }
-					if (line.index_of(": ") == -1) { continue; }
-
-					//Note: split on ': ' since version string can have colons
-					
-					string p_name = line[0:line.index_of(": ")].strip();
-					string p_value = line[line.index_of(": ") + 2:line.length].strip();
-
-					switch(p_name.down()){
-						case "package":
-							//add previous pkg to list
-							if (pkg != null){
-								pkg.id = Package.get_id(pkg.name,pkg.arch);
-								pkg_list_master[pkg.id] = pkg;
-								pkg = null;
-							}
-							//create new pkg
-							pkg = new Package(p_value);
-							pkg.is_available = true;
-							pkg.server = pkg_server;
-							break;
-						case "section":
-							pkg.section = p_value;
-							if (pkg.section.contains("/")){
-								pkg.section = pkg.section.split("/")[1];
-							}
-							if (!sections.contains(pkg.section)) {
-								sections.add(pkg.section);
-							}
-							break;
-						case "architecture":
-							pkg.arch = p_value;
-							break;
-						case "version":
-							pkg.version_available = p_value;
-							break;
-						case "description":
-							pkg.description = p_value;
-							break;
-					}
-				}
-
-				//add last pkg to list
-				if (pkg != null){
-					pkg.id = Package.get_id(pkg.name,pkg.arch);
-					pkg_list_master[pkg.id] = pkg;
-				}
-			}
-
-			//sort sections by name
-			CompareDataFunc<string> func = (a, b) => {
-				return strcmp(a, b);
-			};
-			sections.sort((owned)func);
-
-			//export csv
-			/*
-			log_msg("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"".printf("id","name","arch","section","version_available","description"));
-			foreach(var pkg in pkg_list_master.values){
-				log_msg("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"".printf(pkg.id,pkg.name,pkg.arch,pkg.section,pkg.version_available,pkg.description));
-			}
-			*/
-		}
-		catch(Error e){
-			log_error(e.message);
-		}
-	}
-
 	private void read_package_info_for_default_packages() {
 		//sets: is_default
 		
@@ -741,58 +623,6 @@ public class Main : GLib.Object {
 		foreach(var pkg in pkg_list_master.values){
 			log_msg("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"".printf(
 			pkg.id,pkg.name,pkg.arch,pkg.section,pkg.version_available,pkg.description));
-		}
-	}
-
-	//not used
-	public void update_info_for_repository_alternate() {
-		log_debug("call: update_info_for_repository");
-
-		var cmd =
-		    """apt-cache policy $(dpkg -l | awk 'NR >= 6 { print $2 }') |
-    awk '/^[^ ]/    { split($1, a, ": "); pkg = a[1] }
-		    nextline == 1 { nextline = 0; printf("
-		    % -40s % -50s % s\n", pkg, $2, $3) }
-		    /\*\*\*/      { nextline = 1 }'
-		    """;
-
-		string txtout, txterr;
-		int exit_code = execute_command_script_sync(cmd, out txtout, out txterr);
-
-		if (exit_code == 0) {
-			string pkg_name;
-			string pkg_server;
-			string pkg_repo;
-			string pkg_repo_section;
-
-			Regex rex_pkg_installed = null;
-			MatchInfo match;
-
-			try {
-				rex_pkg_installed = new Regex("""([^ \t]*)[ \t]*([^ \t]*)[ \t]*([^ \t]*)[ \t]*""");
-			}
-			catch (Error e) {
-				log_error (e.message);
-			}
-
-			foreach(string line in txtout.split("\n")) {
-				if (line.strip().length == 0) {
-					continue;
-				}
-
-				if (rex_pkg_installed.match (line, 0, out match)) {
-					pkg_name = match.fetch(1).strip();
-					pkg_server = match.fetch(2).strip();
-					pkg_repo = "";
-					pkg_repo_section = match.fetch(3).strip();
-
-					if (pkg_list_master.has_key(pkg_name)) {
-						pkg_list_master[pkg_name].server = pkg_server;
-						pkg_list_master[pkg_name].repo = pkg_repo;
-						pkg_list_master[pkg_name].repo_section = pkg_repo_section;
-					}
-				}
-			}
 		}
 	}
 
