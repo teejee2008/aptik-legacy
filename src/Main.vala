@@ -648,7 +648,7 @@ public class Main : GLib.Object {
 		string text = "";
 		foreach(Package pkg in pkg_list) {
 			if (pkg.is_selected) {
-				text += "%s\n".printf(pkg.id);
+				text += "%s #%s\n".printf(pkg.id,pkg.description);
 			}
 		}
 
@@ -699,9 +699,9 @@ public class Main : GLib.Object {
 		return is_success;
 	}
 
-	private Gee.ArrayList<string> read_package_list() {
+	private Gee.ArrayList<Package> read_package_list_from_backup() {
 		string pkg_list_file = backup_dir + (backup_dir.has_suffix("/") ? "" : "/") + PKG_LIST_BAK;
-		var pkg_list = new Gee.ArrayList<string>();
+		var pkg_list = new Gee.ArrayList<Package>();
 
 		//check file
 		if (!check_backup_file(PKG_LIST_BAK)) {
@@ -710,13 +710,29 @@ public class Main : GLib.Object {
 
 		//read package names
 		foreach(string line in read_file(pkg_list_file).split("\n")) {
-			if (line.strip() == "") {
+			if (line.strip().length == 0) {
 				continue;
 			}
+
 			if (!line.strip().has_prefix("#")) {
-				pkg_list.add(line.strip());
+				string pkg_id = line.strip();
+				string pkg_desc = "";
+				
+				if (line.strip().contains("#")){
+					pkg_id = pkg_id[0:pkg_id.index_of("#") - 1];
+					pkg_desc = pkg_id[pkg_id.index_of("#") + 1 : pkg_id.length];
+				}
+
+				string pkg_name = pkg_id.contains(":") ? pkg_id[0:pkg_id.last_index_of(":") - 1] : pkg_id;
+				string pkg_arch = pkg_id.contains(":") ? pkg_id[pkg_id.last_index_of(":") - 1: pkg_id.length] : "";
+				
+				Package pkg = new Package(pkg_name);
+				pkg.id = pkg_id;
+				pkg.arch = pkg_arch;
+				pkg.description = pkg_desc;
+				pkg.in_backup_list = true;
+				pkg_list.add(pkg);
 			}
-			// TODO: Read from script file
 		}
 
 		return pkg_list;
@@ -724,10 +740,7 @@ public class Main : GLib.Object {
 
 	public void update_pkg_list_master_for_restore(bool update_selections){
 		string deb_dir = backup_dir + "debs";
-		
-		//read backup file
-		var list_bak = read_package_list();
-		
+
 		foreach(Package pkg in pkg_list_master.values) {
 			if (update_selections){
 				//unselect all
@@ -735,18 +748,16 @@ public class Main : GLib.Object {
 			}
 			pkg.in_backup_list = false;
 		}
+
+		//read backup file
+		var list_bak = read_package_list_from_backup();
 		
-		foreach(string pkg_id in list_bak) {
-			if (!pkg_list_master.has_key(pkg_id)){
-				//add missing pkg to master list
-				string pkg_name = pkg_id.contains(":") ? pkg_id[0:pkg_id.last_index_of(":")-1] : pkg_id;
-				Package pkg = new Package(pkg_name);
-				pkg.id = pkg_id;
-				pkg_list_master[pkg_id] = pkg;
+		foreach(Package pkg_bak in list_bak) {
+			if (!pkg_list_master.has_key(pkg_bak.id)){
+				pkg_list_master[pkg_bak.id] = pkg_bak;
 			}
-			//set 'in_backup_list' flag
-			Package pkg = pkg_list_master[pkg_id];
-			pkg.in_backup_list = true;
+
+			pkg_list_master[pkg_bak.id].in_backup_list = true;
 		}
 
 		update_deb_file_name_from_backup();
