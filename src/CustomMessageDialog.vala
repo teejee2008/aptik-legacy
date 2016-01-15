@@ -68,7 +68,8 @@ public class CustomMessageDialog : Dialog {
 
 	public void init_window () {
 		title = msg_title;
-		window_position = WindowPosition.CENTER;
+		window_position = WindowPosition.CENTER_ON_PARENT;
+		icon = get_app_icon(16);
 		resizable = false;
 		deletable = false;
 		skip_taskbar_hint = true;

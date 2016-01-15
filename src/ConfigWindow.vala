@@ -68,9 +68,10 @@ public class ConfigWindow : Window {
 	}
 
 	public void init_window () {
-		title = AppName + " v" + AppVersion;
+		//title = AppName + " v" + AppVersion;
 		window_position = WindowPosition.CENTER;
 		set_default_size (def_width, def_height);
+		icon = get_app_icon(16);
 		resizable = true;
 		deletable = true;
 		

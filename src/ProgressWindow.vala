@@ -55,7 +55,7 @@ public class ProgressWindow : Window {
 		set_modal(true);
 		set_skip_taskbar_hint(true);
 		set_skip_pager_hint(true);
-		window_position = WindowPosition.CENTER_ON_PARENT;
+		window_position = WindowPosition.CENTER;
 
 		App.status_line = "";
 		App.progress_count = 0;
@@ -68,7 +68,7 @@ public class ProgressWindow : Window {
 
 	public void init_window () {
 		title = "";
-		window_position = WindowPosition.CENTER;
+		icon = get_app_icon(16);
 		resizable = false;
 		deletable = false;
 		
