@@ -975,7 +975,13 @@ public class PackageWindow : Window {
 
 		string cmd = "";
 		if (App.pkg_list_install.length > 0){
-			cmd += "apt-get install %s".printf(App.pkg_list_install);
+			var command = "apt-get";
+			var cmd_path = get_cmd_path ("apt-fast");
+			if ((cmd_path != null) && (cmd_path.length > 0)) {
+				command = "apt-fast";
+			}
+				
+			cmd += "%s install %s".printf(command,App.pkg_list_install);
 			cmd += "\necho ''";
 		}
 		if (App.pkg_list_deb.length > 0){

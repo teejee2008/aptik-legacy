@@ -516,7 +516,14 @@ public class AptikConsole : GLib.Object {
 		else{
 			if (App.pkg_list_install.length > 0){
 				log_msg(_("Following packages will be installed") + ":\n%s\n".printf(App.pkg_list_install));
-				Posix.system("apt-get%s install %s".printf((no_prompt) ? " -y" : "", App.pkg_list_install));
+
+				var command = "apt-get";
+				var cmd_path = get_cmd_path ("apt-fast");
+				if ((cmd_path != null) && (cmd_path.length > 0)) {
+					command = "apt-fast";
+				}
+
+				Posix.system("%s%s install %s".printf(command, (no_prompt) ? " -y" : "", App.pkg_list_install));
 			}
 			if (App.pkg_list_deb.length > 0){
 				log_msg(_("Following packages will be installed") + ":\n%s\n".printf(App.pkg_list_deb));
