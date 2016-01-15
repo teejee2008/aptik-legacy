@@ -394,7 +394,7 @@ public class PackageWindow : Window {
 			foreach(Package pkg in App.pkg_list_master.values) {
 				if (pkg.is_visible){
 					if (is_restore_view) {
-						if (pkg.is_available && !pkg.is_installed) {
+						if (!pkg.is_installed && (pkg.is_available || (pkg.is_deb && (pkg.deb_file_name.length > 0)))) {
 							pkg.is_selected = false;
 						}
 						else {
