@@ -73,6 +73,7 @@ namespace TeeJee.Logging{
 		msg += "\n";
 
 		stdout.printf (msg);
+		stdout.flush();
 
 		try {
 			if (dos_log != null){
@@ -108,7 +109,8 @@ namespace TeeJee.Logging{
 		msg += "\n";
 
 		stdout.printf (msg);
-
+		stdout.flush();
+		
 		try {
 			if (dos_log != null){
 				dos_log.put_string ("[%s] %s: %s\n".printf(timestamp(), prefix, message));
@@ -179,6 +181,34 @@ namespace TeeJee.FileSystem{
 		catch(Error e){
 	        log_error (e.message);
 		}
+	}
+
+	public void file_move (string src_file, string dest_file){
+		try{
+			var file_src = File.new_for_path (src_file);
+			if (file_src.query_exists()) {
+				var file_dest = File.new_for_path (dest_file);
+				file_src.move(file_dest,FileCopyFlags.OVERWRITE,null,null);
+			}
+		}
+		catch(Error e){
+	        log_error (e.message);
+		}
+	}
+
+	private string MD5Sum(string path){
+		Checksum checksum = new Checksum (ChecksumType.MD5);
+		FileStream stream = FileStream.open (path, "rb");
+
+		uint8 fbuf[100];
+		size_t size;
+		while ((size = stream.read (fbuf)) > 0){
+		  checksum.update (fbuf, size);
+		}
+		
+		unowned string digest = checksum.get_string();
+
+		return digest;
 	}
 
 	public DateTime file_modified_date(string file_path){
@@ -347,6 +377,25 @@ namespace TeeJee.FileSystem{
 		return output.split("\t")[0].strip();
 	}
 
+	public string format_file_size (int64 size, bool binary_units = false){
+		int64 KB = binary_units ? 1024 : 1000;
+		int64 MB = binary_units ? 1024 * KB : 1000 * KB;
+		int64 GB = binary_units ? 1024 * MB : 1000 * MB;
+
+		if (size > GB){
+			return "%'0.1f %sB".printf(size/(1.0*GB), (binary_units)?"Gi":"G");
+		}
+		else if (size > MB){
+			return "%'0.1f %sB".printf(size/(1.0*MB), (binary_units)?"Mi":"M");
+		}
+		else if (size > KB){
+			return "%'0.0f %sB".printf(size/(1.0*KB), (binary_units)?"Ki":"K");
+		}
+		else{
+			return "%'0lld B".printf(size);
+		}
+	}
+	
 	public int chmod (string file, string permission){
 
 		/* Change file permissions */
@@ -1333,7 +1382,7 @@ namespace TeeJee.System{
 
 	    return (exit_code == 0);
 	}
-
+	
 	public bool shutdown (){
 
 		/* Shutdown the system immediately */
@@ -1816,13 +1865,6 @@ namespace TeeJee.Misc {
 
 		Time t = Time.local (time_t ());
 		return t.format ("%Y-%d-%m_%H-%M-%S");
-	}
-
-	public string format_file_size (int64 size){
-
-		/* Format file size in MB */
-
-		return "%0.1f MB".printf (size / (1024.0 * 1024));
 	}
 
 	public string format_duration (long millis){

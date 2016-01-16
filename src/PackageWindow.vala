@@ -58,6 +58,7 @@ public class PackageWindow : Window {
 	private int def_width = 550;
 	private int def_height = 450;
 	private uint tmr_init = 0;
+	private uint tmr_refilter = 0;
 	private bool is_running = false;
 	private bool is_restore_view = false;
 
@@ -184,9 +185,7 @@ public class PackageWindow : Window {
 
 		//filter events -------------
 
-		txt_filter.changed.connect(() => {
-			filter_packages.refilter();
-		});
+		txt_filter.changed.connect(refilter_after_timeout);
 
 		//lbl_filter_msg
 		lbl_filter_msg = new Gtk.Label("");
@@ -744,6 +743,26 @@ public class PackageWindow : Window {
 		return display;
 	}
 
+	private void refilter_after_timeout() {
+		//remove pending action
+		if (tmr_refilter > 0) {
+			Source.remove(tmr_refilter);
+			tmr_refilter = 0;
+		}
+
+		//add timed action
+		tmr_refilter = Timeout.add(500, ()=>{
+			if (tmr_refilter > 0) {
+				Source.remove(tmr_refilter);
+				tmr_refilter = 0;
+			}
+			
+			filter_packages.refilter();
+			
+			return true;
+		});
+	}
+	
 	// backup
 
 	private void backup_init() {
@@ -958,7 +977,11 @@ public class PackageWindow : Window {
 			return;
 		}
 
+		gtk_set_busy(true, this);
+		
 		App.update_pkg_list_master_for_restore(false);
+
+		gtk_set_busy(false, this);
 
 		if ((App.pkg_list_install.length == 0) && (App.pkg_list_deb.length == 0)) {
 			string title = _("Nothing To Do");
@@ -971,17 +994,43 @@ public class PackageWindow : Window {
 			return;
 		}
 
+		this.hide();
+
+		bool continue_installation = true;
+		
+		var download_list = App.get_download_uris(App.pkg_list_install);
+		if (download_list.size > 0){
+			var dlg = new DownloadWindow.with_parent(this,download_list);
+			int response_code = dlg.run();
+			dlg.close();
+			dlg.destroy();
+			gtk_do_events();
+
+			if (response_code == Gtk.ResponseType.OK){
+				continue_installation = true;
+			}
+			else{
+				continue_installation = false;
+			}
+		}
+		
+		if (continue_installation){
+			execute_in_terminal();
+			//success/error will be displayed by apt-get in terminal
+		}
+
+		this.present();
 		gtk_do_events();
 
+		if (continue_installation){
+			restore_init();
+		}
+	}
+	
+	private void execute_in_terminal(){
 		string cmd = "";
 		if (App.pkg_list_install.length > 0){
-			var command = "apt-get";
-			var cmd_path = get_cmd_path ("apt-fast");
-			if ((cmd_path != null) && (cmd_path.length > 0)) {
-				command = "apt-fast";
-			}
-				
-			cmd += "%s install %s".printf(command,App.pkg_list_install);
+			cmd += "apt-get install %s".printf(App.pkg_list_install);
 			cmd += "\necho ''";
 		}
 		if (App.pkg_list_deb.length > 0){
@@ -989,22 +1038,13 @@ public class PackageWindow : Window {
 			cmd += "\necho ''";
 			
 		}
-		log_msg(cmd);
 		cmd += "\necho '" + _("Finished installing packages") + ".'";
 		cmd += "\necho '" + _("Close window to exit...") + "'";
 		cmd += "\nread dummy";
 
-		this.hide();
-		
 		execute_command_script_in_terminal_sync(create_temp_bash_script(cmd));
-		//success/error will be displayed by apt-get in terminal
-
-		this.present();
-		
-		gtk_do_events();
-
-		restore_init();
 	}
+		
 }
 
 

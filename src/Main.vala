@@ -72,8 +72,8 @@ public class Main : GLib.Object {
 	public Pid proc_id;
 	public DataInputStream dis_out;
 	public DataInputStream dis_err;
-	public long progress_count;
-	public long progress_total;
+	public int64 progress_count;
+	public int64 progress_total;
 	public bool is_running;
 
 	public Gee.HashMap<string, Package> pkg_list_master;
@@ -856,6 +856,49 @@ public class Main : GLib.Object {
 		update_deb_file_name_from_backup_single(dest_file);
 	}
 
+	public Gee.ArrayList<Package> get_download_uris(string pkg_names){
+		var pkg_list = new Gee.ArrayList<Package>();
+		
+		string cmd = "apt-get install -y --print-uris %s".printf(pkg_names);
+		string txt = execute_command_sync_get_output(cmd);
+
+		Regex regex = null;
+		MatchInfo match;
+		
+		try {
+			//Sample:
+			//'http://us.archive.ubuntu.com/ubuntu/pool/main/f/firefox/firefox_43.0.4+build3-0ubuntu0.15.04.1_amd64.deb' firefox_43.0.4+build3-0ubuntu0.15.04.1_amd64.deb 45095814 MD5Sum:bc2e305042e265725ca8548308d8d14a
+			regex = new Regex("""^'([^']+)'[ \t]+([^ \t]+)[ \t]+([0-9]+)[ \t]+[^:]+:([^ \t]+)$""");
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}
+		
+		foreach(string line in txt.split("\n")){
+			if (regex.match(line, 0, out match)) {
+				string deb_uri = match.fetch(1).strip();
+				string deb_name = match.fetch(2).strip();
+				int64 deb_size = int64.parse(match.fetch(3).strip());
+				string deb_md5hash = match.fetch(4).strip();
+
+				string pkg_name = deb_name.split("_")[0];
+				var pkg = new Package(pkg_name);
+				pkg.deb_uri = deb_uri;
+				pkg.deb_file_name = deb_name;
+				pkg.deb_size = deb_size;
+				pkg.deb_md5hash = deb_md5hash;
+				pkg_list.add(pkg);
+			}
+		}
+
+		CompareDataFunc<Package> func = (a, b) => {
+			return strcmp(a.name, b.name);
+		};
+		pkg_list.sort((owned)func);
+
+		return pkg_list;
+	}
+	
 	/* PPA */
 
 	public Gee.HashMap<string,Ppa> list_ppa(){
@@ -1226,10 +1269,13 @@ public class Main : GLib.Object {
 	private void add_ppa_read_error_line() {
 		try {
 			err_line = dis_err.read_line (null);
-			while ((err_line != null) && (err_line.length > 0)) {
-				stderr_lines.add(err_line);
-				status_line = err_line;
-				//log_msg("err: %s".printf(err_line));
+			while (err_line != null) {
+				if (err_line.length > 0){
+					stderr_lines.add(err_line);
+					status_line = err_line;
+					//log_msg("err: %s".printf(err_line));
+				}
+				
 				err_line = dis_err.read_line (null); //read next
 			}
 		}
@@ -1241,10 +1287,13 @@ public class Main : GLib.Object {
 	private void add_ppa_read_output_line() {
 		try {
 			out_line = dis_out.read_line (null);
-			while ((out_line != null) && (out_line.length > 0)) {
-				stdout_lines.add(out_line);
-				status_line = out_line;
-				//log_msg("out: %s".printf(out_line));
+			while (out_line != null) {
+				if (out_line.length > 0){
+					stdout_lines.add(out_line);
+					status_line = out_line;
+					//log_msg("out: %s".printf(out_line));
+				}
+				
 				out_line = dis_out.read_line (null);  //read next
 			}
 
@@ -1318,10 +1367,13 @@ public class Main : GLib.Object {
 	private void apt_get_update_read_error_line() {
 		try {
 			err_line = dis_err.read_line (null);
-			while ((err_line != null) && (err_line.length > 0)) {
-				stderr_lines.add(err_line);
-				status_line = err_line;
-				//log_msg("err: %s".printf(err_line));
+			while (err_line != null) {
+				if (err_line.length > 0){
+					stderr_lines.add(err_line);
+					status_line = err_line;
+					//log_msg("err: %s".printf(err_line));
+				}
+				
 				err_line = dis_err.read_line (null); //read next
 			}
 		}
@@ -1333,11 +1385,13 @@ public class Main : GLib.Object {
 	private void apt_get_update_read_output_line() {
 		try {
 			out_line = dis_out.read_line (null);
-			while ((out_line != null) && (out_line.length > 0)) {
-				stdout_lines.add(out_line);
-				status_line = out_line;
-				//log_msg("out: %s".printf(out_line));
-				progress_count++;
+			while (out_line != null) {
+				if (out_line.length > 0){
+					stdout_lines.add(out_line);
+					status_line = out_line;
+					//log_msg("out: %s".printf(out_line));
+					progress_count++;
+				}
 				out_line = dis_out.read_line (null);  //read next
 			}
 
