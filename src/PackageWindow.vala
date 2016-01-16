@@ -166,7 +166,16 @@ public class PackageWindow : Window {
 		
 		//cmb_pkg_status
 		cmb_pkg_status = new ComboBox();
-		cmb_pkg_status.set_tooltip_text(_("Package State\n\nInstalled\tPackages which are in Installed state\nNot-Installed\t\tPackages which are not in Installed state"));
+		
+		tt = _("<b>Package State</b>\n\n");
+		tt += _("<b>Installed</b>\nAll installed packages.") + "\n\n";
+		tt += _("<b>Installed (dist)</b>\nPackages that came with your OS.") + "\n\n";
+		tt += _("<b>Installed (user)</b>\nExtra packages installed by you. Dependency packages will not be displayed. For example, if you installed package A on your system, and packages B, C, D were installed along with A (as dependencies), then only A will be listed.") + "\n\n";
+		tt += _("<b>Installed (auto)</b>\nPackages that were installed automatically for satisfying the dependencies of extra packages that were installed by you. Displays B, C, D from the above example.") + "\n\n";
+		tt += _("<b>Installed (deb)</b>\nPackages that were installed from downloaded DEB files.") + "\n\n";
+		tt += _("<b>Not Installed</b>\nPackages that are not installed but available for installation.");
+		cmb_pkg_status.set_tooltip_markup(tt);
+		
 		hbox_filter.add (cmb_pkg_status);
 
 		CellRendererText cell_pkg_restore_status = new CellRendererText();
