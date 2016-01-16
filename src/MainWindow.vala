@@ -459,7 +459,7 @@ public class MainWindow : Window {
 		});
 
 		//btn_battery_monitor
-		var btn_battery_monitor = new Gtk.Button.with_label (" " + _("Battery Monitor") + " ");
+		/*var btn_battery_monitor = new Gtk.Button.with_label (" " + _("Battery Monitor") + " ");
 		btn_battery_monitor.set_size_request(button_width, button_height);
 		btn_battery_monitor.set_tooltip_text(_("View battery statistics"));
 		grid_backup_tools.attach(btn_battery_monitor, 1, row, 1, 1);
@@ -470,7 +470,7 @@ public class MainWindow : Window {
 		btn_battery_monitor.clicked.connect(() => {
 			Posix.system("aptik-bmon-gtk");
 		});
-		/*
+		
 				//btn_mount_manager
 			 	var btn_mount_manager = new Gtk.Button.with_label (" " + _("Mount Manager") + " ");
 				btn_mount_manager.set_size_request(button_width,button_height);
@@ -591,8 +591,8 @@ public class MainWindow : Window {
 		dialog.donations = null;
 
 		dialog.program_name = AppName;
-		dialog.comments = _("System migration toolkit for Ubuntu-based distributions");
-		dialog.copyright = "Copyright © 2014 Tony George (%s)".printf(AppAuthorEmail);
+		dialog.comments = _("Migration utility for Ubuntu-based distributions");
+		dialog.copyright = "Copyright © 2016 Tony George (%s)".printf(AppAuthorEmail);
 		dialog.version = AppVersion;
 		dialog.logo = get_app_icon(128);
 
@@ -722,41 +722,6 @@ public class MainWindow : Window {
 		message += _("(%ld packages in cache)").printf(get_file_count("/var/cache/apt/archives") - 2); //excluding 'lock' and 'partial'
 		dlg.finish(message);
 		gtk_do_events();
-	}
-
-	/* Misc */
-
-	private void btn_take_ownership_clicked() {
-		string title = _("Change Ownership");
-		string msg = _("Owner will be changed to '%s' (uid=%d) for files in directory '%s'").printf(App.user_login, App.user_uid, App.user_home);
-		msg += "\n\n" + _("Continue?");
-
-		var dlg = new Gtk.MessageDialog.with_markup(null, Gtk.DialogFlags.MODAL, Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, msg);
-		dlg.set_title(title);
-		dlg.set_default_size (200, -1);
-		dlg.set_transient_for(this);
-		dlg.set_modal(true);
-		int response = dlg.run();
-		dlg.destroy();
-		gtk_do_events();
-
-		if (response == Gtk.ResponseType.YES) {
-			gtk_set_busy(true, this);
-
-			bool is_success = App.take_ownership();
-			if (is_success) {
-				title = _("Success");
-				msg = _("You are now the owner of all files in your home directory");
-				gtk_messagebox(title, msg, this, false);
-			}
-			else {
-				title = _("Error");
-				msg = _("Failed to change file ownership");
-				gtk_messagebox(title, msg, this, true);
-			}
-
-			gtk_set_busy(false, this);
-		}
 	}
 }
 

@@ -383,23 +383,6 @@ public class DownloadWindow : Dialog {
 		}
 		progressbar.fraction = fraction;
 	}
-	
-	private void auto_close_window() {
-		tmr_close = Timeout.add(2000, ()=>{
-			if (tmr_init > 0) {
-				Source.remove(tmr_init);
-				tmr_init = 0;
-			}
-
-			this.close();
-			return false;
-		});
-	}
-	
-	public void sleep(int ms){
-		Thread.usleep ((ulong) ms * 1000);
-		gtk_do_events();
-	}
 }
 
 
