@@ -579,6 +579,12 @@ public class MainWindow : Window {
 			"Tony George:teejeetech@gmail.com"
 		};
 
+		dialog.third_party = {
+			"Numix project (Main app icon):https://numixproject.org/",
+			"Elementary project (various icons):https://github.com/elementary/icons",
+			"Tango project (various icons):http://tango.freedesktop.org/Tango_Desktop_Project"
+		};
+		
 		dialog.translators = {
 			"giulux (Italian)",
 			"Jorge Jamhour (Brazilian Portuguese):https://launchpad.net/~jorge-jamhour",

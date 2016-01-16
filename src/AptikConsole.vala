@@ -39,7 +39,7 @@ using TeeJee.Misc;
 public Main App;
 public const string AppName = "Aptik Migration Utility";
 public const string AppShortName = "aptik";
-public const string AppVersion = "1.6.4";
+public const string AppVersion = "2.1";
 public const string AppAuthor = "Tony George";
 public const string AppAuthorEmail = "teejeetech@gmail.com";
 

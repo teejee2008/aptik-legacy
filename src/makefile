@@ -54,7 +54,7 @@ install:
 	install -m 0755 ${app_name}.desktop "$(DESTDIR)$(launcherdir)"
 
 	#app icon
-	install -m 0755 ./share/pixmaps/${app_name}.png "$(DESTDIR)$(sharedir)/pixmaps/"
+	install -m 0755 ./share/pixmaps/${app_name}.svg "$(DESTDIR)$(sharedir)/pixmaps/"
 
 	#translations
 	msgfmt --check --verbose -o "$(DESTDIR)$(localedir)/it_IT/LC_MESSAGES/${app_name}.mo" ../po/${app_name}-it.po
@@ -77,7 +77,7 @@ uninstall:
 	rm -f "$(DESTDIR)$(launcherdir)/${app_name}.desktop"
 
 	#app icon
-	rm -f "$(DESTDIR)$(sharedir)/pixmaps/${app_name}.png"
+	rm -f "$(DESTDIR)$(sharedir)/pixmaps/${app_name}.svg"
 
 	#translations
 	rm -f $(DESTDIR)$(localedir)/*/LC_MESSAGES/${app_name}.mo
