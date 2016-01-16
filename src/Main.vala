@@ -146,7 +146,7 @@ public class Main : GLib.Object {
 	public bool check_dependencies(out string msg) {
 		msg = "";
 
-		string[] dependencies = { "rsync", "aptitude", "apt-get", "apt-cache", "gzip", "grep", "find", "chown", "rm", "add-apt-repository", "gdebi" };
+		string[] dependencies = { "rsync", "aptitude", "apt-get", "apt-cache", "gzip", "grep", "find", "chown", "rm", "add-apt-repository", "gdebi", "aria2c" };
 
 		string path;
 		foreach(string cmd_tool in dependencies) {
@@ -389,7 +389,7 @@ public class Main : GLib.Object {
 				}
 			}
 			else {
-				log_error ("File not found: %s".printf(PKG_CACHE_TEMP));
+				log_error (_("File not found: %s").printf(PKG_CACHE_TEMP));
 			}
 		}
 		catch (Error e) {
@@ -484,7 +484,7 @@ public class Main : GLib.Object {
 			string line;
 			var file = File.new_for_path(DEF_PKG_LIST_UNPACKED);
 			if (!file.query_exists ()) {
-				log_error("Failed to unzip: '%s'".printf(DEF_PKG_LIST_UNPACKED));
+				log_error(_("Failed to unzip: '%s'").printf(DEF_PKG_LIST_UNPACKED));
 			}
 
 			Package pkg = null;
@@ -807,44 +807,6 @@ public class Main : GLib.Object {
 		pkg_list_deb = pkg_list_deb.strip();
 		pkg_list_missing = pkg_list_missing.strip();
 		gdebi_file_list = gdebi_file_list.strip();
-		
-		//log_msg("pkg_list_install: " + pkg_list_install);
-		//log_msg("pkg_list_deb: " + pkg_list_deb);
-		//log_msg("pkg_list_missing: " + pkg_list_missing);
-	}
-	
-	public void download_packages() {
-		log_debug("call: update_info_for_available_packages");
-
-		log_debug("create: %s".printf(DEB_LIST_TEMP));
-
-		string txt = execute_command_sync_get_output("apt-get install --reinstall --print-uris -qq chromium-browser firefox | cut -d\' -f2");
-
-		write_file(DEB_LIST_TEMP, txt);
-
-		// TODO: Create an optimized method for writing output to file
-
-		log_debug("read: %s".printf(DEB_LIST_TEMP));
-
-		string line;
-
-		try {
-			var file = File.new_for_path (DEB_LIST_TEMP);
-			if (file.query_exists ()) {
-				var dis = new DataInputStream (file.read());
-
-				//var pkg_list = new Gee.HashMap<string, Package>();
-				while ((line = dis.read_line (null)) != null) {
-
-				}
-			}
-			else {
-				log_error ("File not found: %s".printf(DEB_LIST_TEMP));
-			}
-		}
-		catch (Error e) {
-			log_error (e.message);
-		}
 	}
 
 	public void copy_deb_file(string src_file){
@@ -1024,7 +986,7 @@ public class Main : GLib.Object {
 			int count_pkg = 0;
 			var file = File.new_for_path (PKG_CACHE_TEMP);
 			if (!file.query_exists()) {
-				log_error ("File not found: %s".printf(PKG_CACHE_TEMP));
+				log_error (_("File not found: %s").printf(PKG_CACHE_TEMP));
 				return;
 			}
 

@@ -474,7 +474,7 @@ public class PackageWindow : Window {
 
 		if (count > 0){
 			string msg = _("DEB files were copied to backup location.");
-			gtk_messagebox("Files copied",msg,this,false);
+			gtk_messagebox(_("Files copied"),msg,this,false);
 		}
 
         Gtk.drag_finish (drag_context, true, false, time);
@@ -842,8 +842,8 @@ public class PackageWindow : Window {
 		if (deb_list.length > 0){
 			string deb_msg = _("Following packages were installed from DEB files and are not available in the package repositories") + ":\n\n";
 			deb_msg += deb_list + "\n\n";
-			deb_msg += "If you have the DEB files for these packages, you can drag-and-drop them on this window. The files will be copied to the backup directory and used for re-installing the packages.";
-			gtk_messagebox("DEB Files", deb_msg, this, false);
+			deb_msg += _("If you have the DEB files for these packages, you can drag-and-drop them on this window. The files will be copied to the backup directory and used for re-installing the packages.");
+			gtk_messagebox(_("DEB Files"), deb_msg, this, false);
 		}
 	}
 
