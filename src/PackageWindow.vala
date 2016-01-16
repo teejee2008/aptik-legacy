@@ -150,9 +150,16 @@ public class PackageWindow : Window {
 		Label lbl_filter = new Label(_("Filter"));
 		hbox_filter.add (lbl_filter);
 
+		//txt_filter
 		txt_filter = new Entry();
 		txt_filter.hexpand = true;
+		txt_filter.secondary_icon_stock = "gtk-clear";
 		hbox_filter.add (txt_filter);
+
+		txt_filter.icon_release.connect((p0, p1) => {
+			txt_filter.text = "";
+			filter_packages.refilter();
+		});
 
 		string tt = _("Search package name and description");
 		txt_filter.set_tooltip_markup(tt);
@@ -826,7 +833,7 @@ public class PackageWindow : Window {
 		if (deb_list.length > 0){
 			string deb_msg = _("Following packages were installed from DEB files and are not available in the package repositories") + ":\n\n";
 			deb_msg += deb_list + "\n\n";
-			deb_msg += "If you have the DEB files for these packages, you can drag-and-drop the DEB files on this window. They will be copied to the backup location and used for re-installing the packages during restore.";
+			deb_msg += "If you have the DEB files for these packages, you can drag-and-drop them on this window. The files will be copied to the backup directory and used for re-installing the packages.";
 			gtk_messagebox("DEB Files", deb_msg, this, false);
 		}
 	}
