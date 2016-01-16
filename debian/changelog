@@ -1,5 +1,17 @@
-aptik (2.0) trusty; urgency=low
+aptik (2.1) trusty; urgency=low
 
-  * Added translations: Portugese, Korean, Russian
+  * Backup and restore for 32-bit packages installed on 64-bit systems
+
+  * Backup and restore for packages installed from downloaded DEB files
   
- -- Tony George <tony.george.kol@gmail.com>  Sat, 16 Jan 2016 10:00:00 +0530
+  * New download manager window for faster package downloads
+
+  * New 'Package Status' and 'Section' dropdown filters
+
+  * App settings will be saved as separate archives
+
+  * New app icon from the Numix Circle icon theme
+
+  * Various UI improvements
+
+ -- Tony George <tony.george.kol@gmail.com>  Sat, 16 Jan 2016 14:00:00 +0530
