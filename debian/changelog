@@ -1,17 +1,7 @@
-aptik (2.1) trusty; urgency=low
+aptik (2.2) trusty; urgency=low
 
-  * Backup and restore for 32-bit packages installed on 64-bit systems
+  * Fixed: App launcher will use 'pkexec' for starting 'aptik-gtk'
+  instead of 'gksu'. Users who are not part of 'sudoers' group will get
+  an option to run the application with another user account.
 
-  * Backup and restore for packages installed from downloaded DEB files
-  
-  * New download manager window for faster package downloads
-
-  * New 'Package Status' and 'Section' dropdown filters
-
-  * App settings will be saved as separate archives
-
-  * New app icon from the Numix Circle icon theme
-
-  * Various UI improvements
-
- -- Tony George <tony.george.kol@gmail.com>  Sat, 16 Jan 2016 14:00:00 +0530
+ -- Tony George <tony.george.kol@gmail.com>  Sun, 17 Jan 2016 10:00:00 +0530
