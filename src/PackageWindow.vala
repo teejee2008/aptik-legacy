@@ -178,6 +178,10 @@ public class PackageWindow : Window {
 		
 		hbox_filter.add (cmb_pkg_status);
 
+		CellRendererPixbuf cell_cmb_status = new CellRendererPixbuf ();
+		cmb_pkg_status.pack_start (cell_cmb_status, false);
+		cmb_pkg_status.set_attributes(cell_cmb_status, "pixbuf", 1);
+		
 		CellRendererText cell_pkg_restore_status = new CellRendererText();
 		cmb_pkg_status.pack_start(cell_pkg_restore_status, false );
 		cmb_pkg_status.set_cell_data_func (cell_pkg_restore_status, (cell_pkg_restore_status, cell, model, iter) => {
@@ -483,26 +487,47 @@ public class PackageWindow : Window {
 
 	private void cmb_pkg_status_refresh() {
 		log_debug("call: cmb_pkg_status_refresh()");
-		var store = new ListStore(1, typeof(string));
+		var store = new ListStore(2, typeof(string), typeof(Gdk.Pixbuf));
 		TreeIter iter;
+
+		//status icons
+		Gdk.Pixbuf pix_green = null;
+		Gdk.Pixbuf pix_gray = null;
+		Gdk.Pixbuf pix_red = null;
+		Gdk.Pixbuf pix_yellow = null;
+		Gdk.Pixbuf pix_blue = null;
+		Gdk.Pixbuf pix_pink = null;
+
+		try {
+			pix_green = new Gdk.Pixbuf.from_file(App.share_dir + "/aptik/images/item-green.png");
+			pix_gray = new Gdk.Pixbuf.from_file(App.share_dir + "/aptik/images/item-gray.png");
+			pix_red  = new Gdk.Pixbuf.from_file(App.share_dir + "/aptik/images/item-red.png");
+			pix_pink  = new Gdk.Pixbuf.from_file(App.share_dir + "/aptik/images/item-pink.png");
+			pix_yellow  = new Gdk.Pixbuf.from_file(App.share_dir + "/aptik/images/item-yellow.png");
+			pix_blue  = new Gdk.Pixbuf.from_file(App.share_dir + "/aptik/images/item-blue.png");
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}
+
 		store.append(out iter);
-		store.set (iter, 0, _("All"));
+		store.set (iter, 0, _("All"), 1, null);
 		store.append(out iter);
-		store.set (iter, 0, _("Installed"));
+		store.set (iter, 0, _("Installed"), 1, null);
 		store.append(out iter);
-		store.set (iter, 0, _("Installed (dist)"));
+		store.set (iter, 0, _("Installed (dist)"), 1, pix_blue);
 		store.append(out iter);
-		store.set (iter, 0, _("Installed (user)"));
+		store.set (iter, 0, _("Installed (user)"), 1, pix_green);
 		store.append(out iter);
-		store.set (iter, 0, _("Installed (auto)"));
+		store.set (iter, 0, _("Installed (auto)"), 1, pix_yellow);
 		store.append(out iter);
-		store.set (iter, 0, _("Installed (deb)"));
+		store.set (iter, 0, _("Installed (deb)"), 1, pix_pink);
 		store.append(out iter);
-		store.set (iter, 0, _("NotInstalled"));
+		store.set (iter, 0, _("NotInstalled"), 1, pix_gray);
 		store.append(out iter);
-		store.set (iter, 0, _("(selected)"));
+		store.set (iter, 0, _("(selected)"), 1, null);
 		store.append(out iter);
-		store.set (iter, 0, _("(unselected)"));
+		store.set (iter, 0, _("(unselected)"), 1, null);
 		if (is_restore_view){
 			store.append(out iter);
 			store.set (iter, 0, _("(backup-list)"));
@@ -607,11 +632,13 @@ public class PackageWindow : Window {
 		Gdk.Pixbuf pix_yellow = null;
 		Gdk.Pixbuf pix_blue = null;
 		Gdk.Pixbuf pix_status = null;
-
+		Gdk.Pixbuf pix_pink = null;
+		
 		try {
 			pix_green = new Gdk.Pixbuf.from_file(App.share_dir + "/aptik/images/item-green.png");
 			pix_gray = new Gdk.Pixbuf.from_file(App.share_dir + "/aptik/images/item-gray.png");
 			pix_red  = new Gdk.Pixbuf.from_file(App.share_dir + "/aptik/images/item-red.png");
+			pix_pink  = new Gdk.Pixbuf.from_file(App.share_dir + "/aptik/images/item-pink.png");
 			pix_yellow  = new Gdk.Pixbuf.from_file(App.share_dir + "/aptik/images/item-yellow.png");
 			pix_blue  = new Gdk.Pixbuf.from_file(App.share_dir + "/aptik/images/item-blue.png");
 		}
@@ -629,6 +656,10 @@ public class PackageWindow : Window {
 					tt += _("Installed");
 					pix_status = pix_green;
 				}
+				else if (pkg.is_available && pkg.is_deb){
+					tt += _("Available") + ", " + _("Not Installed");
+					pix_status = pix_pink;
+				}
 				else if(pkg.is_available || (pkg.is_deb && pkg.deb_file_name.length > 0)){
 					tt += _("Available") + ", " + _("Not Installed");
 					pix_status = pix_gray;
@@ -639,16 +670,20 @@ public class PackageWindow : Window {
 				}
 			}
 			else {
-				if (pkg.is_installed && pkg.is_default) {
-					tt += _("Default - This package is part of the base distribution");
+				if (pkg.is_installed && pkg.is_deb) {
+					tt += _("This package was installed from a DEB file");
+					pix_status = pix_pink;
+				}
+				else if (pkg.is_installed && pkg.is_default) {
+					tt += _("This package is part of the Linux distribution");
 					pix_status = pix_blue;
 				}
 				else if (pkg.is_installed && pkg.is_manual) {
-					tt += _("Extra - This package was installed by user");
+					tt += _("This package was installed by user");
 					pix_status = pix_green;
 				}
 				else if (pkg.is_installed && pkg.is_automatic) {
-					tt += _("Automatic - This package was installed as a dependency for other packages");
+					tt += _("This package was installed as a dependency for other packages");
 					pix_status = pix_yellow;
 				}
 				else {
@@ -711,7 +746,7 @@ public class PackageWindow : Window {
 			}
 			break;
 		case 4: //Installed, Automatic
-			if (!(pkg.is_installed && pkg.is_automatic)) {
+			if (!(pkg.is_installed && pkg.is_automatic && !pkg.is_default)) {
 				display = false;
 			}
 			break;
