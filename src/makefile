@@ -3,6 +3,7 @@ bindir=$(prefix)/bin
 sharedir=$(prefix)/share
 localedir=$(sharedir)/locale
 launcherdir=$(sharedir)/applications
+polkitdir=$(sharedir)/polkit-1/actions
 mandir=$(sharedir)/man
 man1dir=$(mandir)/man1
 CFLAGS=--std=c99
@@ -30,6 +31,7 @@ install:
 	mkdir -p "$(DESTDIR)$(mandir)"
 	mkdir -p "$(DESTDIR)$(man1dir)"
 	mkdir -p "$(DESTDIR)$(launcherdir)"
+	mkdir -p "$(DESTDIR)$(polkitdir)"
 	mkdir -p "$(DESTDIR)$(sharedir)/${app_name}"
 	mkdir -p "$(DESTDIR)$(sharedir)/pixmaps"
 	mkdir -p "$(DESTDIR)$(localedir)/it_IT/LC_MESSAGES"
@@ -50,6 +52,9 @@ install:
 	cp -dpr --no-preserve=ownership -t "$(DESTDIR)$(sharedir)/${app_name}" ./share/${app_name}/*
 	chmod --recursive 0755 $(DESTDIR)$(sharedir)/${app_name}/*
 
+	#polkit policy file
+	install -m 0644 ./share/polkit-1/actions/in.teejeetech.pkexec.aptik-gtk.policy "$(DESTDIR)$(polkitdir)"
+	
 	#launcher
 	install -m 0755 ${app_name}.desktop "$(DESTDIR)$(launcherdir)"
 
@@ -72,6 +77,9 @@ uninstall:
 
 	#shared files
 	rm -rf "$(DESTDIR)$(sharedir)/${app_name}"
+
+	#polkit policy file
+	rm -f "$(DESTDIR)$(polkitdir)/in.teejeetech.pkexec.aptik-gtk.policy"
 
 	#launcher
 	rm -f "$(DESTDIR)$(launcherdir)/${app_name}.desktop"
