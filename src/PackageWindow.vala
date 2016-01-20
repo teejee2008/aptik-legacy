@@ -173,7 +173,9 @@ public class PackageWindow : Window {
 		tt += _("<b>Installed (user)</b>\nExtra packages installed by you. Dependency packages will not be displayed. For example, if you installed package A on your system, and packages B, C, D were installed along with A (as dependencies), then only A will be listed.") + "\n\n";
 		tt += _("<b>Installed (auto)</b>\nPackages that were installed automatically for satisfying the dependencies of extra packages that were installed by you. Displays B, C, D from the above example.") + "\n\n";
 		tt += _("<b>Installed (deb)</b>\nPackages that were installed from downloaded DEB files.") + "\n\n";
-		tt += _("<b>Not Installed</b>\nPackages that are not installed but available for installation.");
+		tt += _("<b>Not Installed</b>\nPackages that are not installed but available for installation.") + "\n\n";
+		tt += _("<b>Not Available</b>\nPackages that are not available for installation. These packages are not available in software repositories and there are no DEB files in backup directory.") + "\n\n";
+		tt += _("<b>(backup-list)</b>\nPackages in the backup list");
 		cmb_pkg_status.set_tooltip_markup(tt);
 		
 		hbox_filter.add (cmb_pkg_status);
@@ -510,27 +512,53 @@ public class PackageWindow : Window {
 			log_error (e.message);
 		}
 
-		store.append(out iter);
-		store.set (iter, 0, _("All"), 1, null);
-		store.append(out iter);
-		store.set (iter, 0, _("Installed"), 1, null);
-		store.append(out iter);
-		store.set (iter, 0, _("Installed (dist)"), 1, pix_blue);
-		store.append(out iter);
-		store.set (iter, 0, _("Installed (user)"), 1, pix_green);
-		store.append(out iter);
-		store.set (iter, 0, _("Installed (auto)"), 1, pix_yellow);
-		store.append(out iter);
-		store.set (iter, 0, _("Installed (deb)"), 1, pix_pink);
-		store.append(out iter);
-		store.set (iter, 0, _("NotInstalled"), 1, pix_gray);
-		store.append(out iter);
-		store.set (iter, 0, _("(selected)"), 1, null);
-		store.append(out iter);
-		store.set (iter, 0, _("(unselected)"), 1, null);
-		if (is_restore_view){
+		if (is_restore_view) {
+			//restore
 			store.append(out iter);
-			store.set (iter, 0, _("(backup-list)"));
+			store.set (iter, 0, _("All"), 1, null);
+			store.append(out iter);
+			store.set (iter, 0, _("Installed"), 1, pix_green);
+			store.append(out iter);
+			store.set (iter, 0, _("Installed (dist)"), 1, null);
+			store.append(out iter);
+			store.set (iter, 0, _("Installed (user)"), 1, null);
+			store.append(out iter);
+			store.set (iter, 0, _("Installed (auto)"), 1, null);
+			store.append(out iter);
+			store.set (iter, 0, _("Installed (deb)"), 1, null);
+			store.append(out iter);
+			store.set (iter, 0, _("NotInstalled"), 1, pix_gray);
+			store.append(out iter);
+			store.set (iter, 0, _("NotAvailable"), 1, pix_red);
+			store.append(out iter);
+			store.set (iter, 0, _("(selected)"), 1, null);
+			store.append(out iter);
+			store.set (iter, 0, _("(unselected)"), 1, null);
+			store.append(out iter);
+			store.set (iter, 0, _("(backup-list)"), 1, null);
+		}
+		else{
+			//backup
+			store.append(out iter);
+			store.set (iter, 0, _("All"), 1, null);
+			store.append(out iter);
+			store.set (iter, 0, _("Installed"), 1, null);
+			store.append(out iter);
+			store.set (iter, 0, _("Installed (dist)"), 1, pix_blue);
+			store.append(out iter);
+			store.set (iter, 0, _("Installed (user)"), 1, pix_green);
+			store.append(out iter);
+			store.set (iter, 0, _("Installed (auto)"), 1, pix_yellow);
+			store.append(out iter);
+			store.set (iter, 0, _("Installed (deb)"), 1, pix_pink);
+			store.append(out iter);
+			store.set (iter, 0, _("NotInstalled"), 1, pix_gray);
+			store.append(out iter);
+			store.set (iter, 0, _("NotAvailable"), 1, null);
+			store.append(out iter);
+			store.set (iter, 0, _("(selected)"), 1, null);
+			store.append(out iter);
+			store.set (iter, 0, _("(unselected)"), 1, null);
 		}
 		cmb_pkg_status.set_model (store);
 		cmb_pkg_status.active = 0;
@@ -760,23 +788,35 @@ public class PackageWindow : Window {
 				display = false;
 			}
 			break;
-		case 7: //selected
+		case 7: //NotAvailable
+			if (is_restore_view){
+				if (!(!pkg.is_available && !(pkg.is_deb && (pkg.deb_file_name.length > 0)) && !pkg.is_installed)) {
+					display = false;
+				}
+			}
+			else{
+				if (!(!pkg.is_available && !(pkg.is_deb && (pkg.deb_file_name.length > 0)))) {
+					display = false;
+				}
+			}
+			break;
+		case 8: //selected
 			if (!pkg.is_selected) {
 				display = false;
 			}
 			break;
-		case 8: //unselected
+		case 9: //unselected
 			if (pkg.is_selected) {
 				display = false;
 			}
 			break;
-		case 9: //backup-list
+		case 10: //backup-list
 			if (!(pkg.in_backup_list)) {
 				display = false;
 			}
 			break;
 		}
-		
+
 		switch (cmb_pkg_section.active) {
 		case 0: //all
 			//exclude nothing
@@ -982,7 +1022,7 @@ public class PackageWindow : Window {
 		cmb_filters_disconnect();
 		//refresh combos
 		cmb_pkg_status_refresh();
-		cmb_pkg_status.active = 9;
+		cmb_pkg_status.active = 10;
 		cmb_pkg_section_refresh();
 		//re-connect combo events
 		cmb_filters_connect();

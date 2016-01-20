@@ -100,7 +100,8 @@ public class AptikConsole : GLib.Object {
 		msg += "  --backup-themes       " + _("Backup themes from /usr/share/themes") + "\n";
 		msg += "  --backup-icons        " + _("Backup icons from /usr/share/icons") + "\n";
 		msg += "  --backup-configs      " + _("Backup config files from /home/<user>") + "\n";
-
+		msg += "  --user <username>     " + _("Select username for listing config files") + "\n";
+		
 		msg += "  --restore-ppa         " + _("Restore PPAs from file 'ppa.list'") + "\n";
 		msg += "  --restore-packages    " + _("Restore packages from file 'packages.list'") + "\n";
 		msg += "  --restore-cache       " + _("Restore downloaded packages to APT cache") + "\n";
@@ -108,8 +109,8 @@ public class AptikConsole : GLib.Object {
 		msg += "  --restore-icons       " + _("Restore icons to /usr/share/icons") + "\n";
 		msg += "  --restore-configs     " + _("Restore config files to /home/<user>") + "\n";
 		
-		msg += "  --take-ownership      " + _("Take ownership of files in your home directory") + "\n";
-		msg += "  --backup-dir          " + _("Backup directory (defaults to current directory)") + "\n";
+		//msg += "  --take-ownership      " + _("Take ownership of files in your home directory") + "\n";
+		msg += "  --backup-dir <dir>    " + _("Backup directory (defaults to current directory)") + "\n";
 		msg += "  --[show-]desc         " + _("Show package description if available") + "\n";
 		msg += "  --yes                 " + _("Assume Yes for all prompts") + "\n";
 		msg += "  --h[elp]              " + _("Show all options") + "\n";
@@ -139,6 +140,11 @@ public class AptikConsole : GLib.Object {
 			case "--backup-dir":
 				k += 1;
 				App.backup_dir = args[k] + (args[k].has_suffix("/") ? "" : "/");
+				break;
+			case "--user":
+			case "--username":
+				k += 1;
+				App.select_user(args[k]);
 				break;
 			case "-y":
 			case "--yes":
@@ -369,6 +375,8 @@ public class AptikConsole : GLib.Object {
 				//handled already - do nothing
 				break;
 
+			case "--user":
+			case "--username":
 			case "--backup-dir":
 				k += 1;
 				//handled already - do nothing

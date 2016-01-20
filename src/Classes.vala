@@ -599,3 +599,73 @@ public class DownloadManager : GLib.Object{
 	}
 
 }
+
+public class FstabEntry : GLib.Object{
+	public string device = "";
+	public string mount_point = "";
+	public string fs_type = "";
+	public string options = "";
+	public string dump = "";
+	public string pass = "";
+	public bool is_selected = false;
+	
+	public string line{
+		owned get{
+			return "%s\t%s\t%s\t%s\t%s\t%s".printf(device,mount_point,fs_type,options,dump,pass);
+		}
+	}
+
+	public static FstabEntry create_from_line(string fstab_line){
+		var s = fstab_line;
+
+		while (s.contains("  ")){
+			s = s.replace("  "," ");
+		}
+		
+		while (s.contains(" \t")){
+			s = s.replace(" \t"," ");
+		}
+
+		while (s.contains("\t ")){
+			s = s.replace("\t "," ");
+		}
+
+		s = s.replace(" ","\t");
+		
+		FstabEntry fs = null;
+
+		log_msg("line:" + s);
+		
+		string[] arr = s.split("\t");
+		if (arr.length >= 6){
+			fs = new FstabEntry();
+			fs.device = arr[0];
+			fs.mount_point = arr[1];
+			fs.fs_type = arr[2];
+			fs.options = arr[3];
+			fs.dump = arr[4];
+			fs.pass = arr[5];
+		}
+		else{
+			log_msg("%d".printf(arr.length));
+		}
+		
+		return fs;
+	}
+
+	public static Gee.ArrayList<FstabEntry> read_fstab_file(){
+		var list = new Gee.ArrayList<FstabEntry>();
+		foreach(string line in read_file("/etc/fstab").split("\n")){
+			if (line.strip().has_prefix("#")){
+				continue;
+			}
+			var fs = create_from_line(line);
+			if (fs == null){
+				continue;
+			}
+			list.add(fs);
+		}
+		return list;
+	}
+}
+

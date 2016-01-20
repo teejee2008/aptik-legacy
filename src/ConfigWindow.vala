@@ -44,6 +44,8 @@ public class ConfigWindow : Window {
 	private Button btn_select_all;
 	private Button btn_select_none;
 	private TreeView tv_config;
+	private Gtk.ComboBox cmb_username;
+	private Gtk.Box hbox_filter;
 	
 	private Gee.ArrayList<AppConfig> config_list_user;
 	
@@ -80,6 +82,10 @@ public class ConfigWindow : Window {
 		vbox_main.margin = 6;
 		add (vbox_main);
 
+		//username
+		init_username();
+		cmb_username_refresh();
+		
 		//treeview
 		init_treeview();
 
@@ -119,6 +125,72 @@ public class ConfigWindow : Window {
 
 		return false;
 	}
+
+
+	private void init_username(){
+		//hbox_filter
+		hbox_filter = new Box (Orientation.HORIZONTAL, 6);
+		hbox_filter.margin_left = 3;
+		hbox_filter.margin_right = 3;
+		vbox_main.pack_start (hbox_filter, false, true, 0);
+
+		//filter
+		Label lbl_filter = new Label(_("Username"));
+		hbox_filter.add (lbl_filter);
+		
+		//cmb_username
+		cmb_username = new ComboBox();
+		cmb_username.set_tooltip_text(_("Username"));
+		hbox_filter.add (cmb_username);
+
+		CellRendererText cell_username = new CellRendererText();
+		cmb_username.pack_start(cell_username, false );
+		cmb_username.set_cell_data_func (cell_username, (cell_username, cell, model, iter) => {
+			string username;
+			model.get (iter, 0, out username, -1);
+			(cell as Gtk.CellRendererText).text = username;
+		});
+
+		cmb_username.changed.connect(()=>{
+			App.select_user(gtk_combobox_get_value(cmb_username,1,"root"));
+			if (is_restore_view){
+				restore_init();
+			}
+			else{
+				backup_init();
+			}
+		});
+	}
+
+	private void cmb_username_refresh() {
+		var store = new ListStore(2, typeof (string), typeof (string));;
+		TreeIter iter;
+
+		int selected = 0;
+		int index = -1;
+
+		index++;
+		store.append(out iter);
+		store.set (iter, 0, _("root"), 1, "root", -1);
+		
+		foreach (string username in list_dir_names("/home")) {
+			if (username == "PinguyBuilder"){
+				continue;
+			}
+			
+			index++;
+			store.append(out iter);
+			store.set (iter, 0, username, 1, username, -1);
+
+			if (App.user_login == username){
+				selected = index;
+			}
+		}
+		
+		cmb_username.set_model (store);
+		cmb_username.active = selected;
+	}
+
 
 	private void init_treeview() {
 		//tv_config
@@ -221,6 +293,18 @@ public class ConfigWindow : Window {
 		});
 	}
 
+	private void tv_config_refresh() {
+		ListStore model = new ListStore(2, typeof(bool), typeof(AppConfig));
+		tv_config.model = model;
+
+		foreach(AppConfig entry in config_list_user) {
+			TreeIter iter;
+			model.append(out iter);
+			model.set (iter, 0, entry.is_selected, 1, entry, -1);
+		}
+	}
+
+
 	private void init_actions() {
 		//hbox_config_actions
 		Box hbox_config_actions = new Box (Orientation.HORIZONTAL, 6);
@@ -285,19 +369,6 @@ public class ConfigWindow : Window {
 					lbl.set_markup(lbl.label);
 				}
 			}
-		}
-	}
-
-	// events
-
-	private void tv_config_refresh() {
-		ListStore model = new ListStore(2, typeof(bool), typeof(AppConfig));
-		tv_config.model = model;
-
-		foreach(AppConfig entry in config_list_user) {
-			TreeIter iter;
-			model.append(out iter);
-			model.set (iter, 0, entry.is_selected, 1, entry, -1);
 		}
 	}
 

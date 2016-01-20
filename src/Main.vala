@@ -136,13 +136,24 @@ public class Main : GLib.Object {
 		}
 
 		//get user info
-		user_login = get_user_login();
-		user_home = "/home/" + user_login;
-		user_uid = get_user_id(user_login);
-
+		select_user(get_user_login());
+		
 		NATIVE_ARCH = execute_command_sync_get_output("dpkg --print-architecture").strip();
 	}
 
+	public void select_user(string username){
+		if ((username == null)||(username.length == 0)||(username == "root")){
+			user_login = "root";
+			user_home = "/root";
+			user_uid = 0;
+		}
+		else{
+			user_login = username;
+			user_home = "/home/" + username;
+			user_uid = get_user_id(username);
+		}
+	}
+	
 	public bool check_dependencies(out string msg) {
 		msg = "";
 
@@ -1933,7 +1944,7 @@ public class Main : GLib.Object {
 	public bool backup_app_settings_single(AppConfig config) {
 		string cmd;
 
-		string backup_dir_config = "%sconfigs".printf(backup_dir);
+		string backup_dir_config = "%sconfigs/%s".printf(backup_dir, user_login);
 		create_dir(backup_dir_config);
 		
 		try {
@@ -1991,7 +2002,7 @@ public class Main : GLib.Object {
 		{
 			//list all items in home except .config and .local
 			File f_home = File.new_for_path (base_path);
-			FileEnumerator enumerator = f_home.enumerate_children ("standard::*", 0);
+			FileEnumerator enumerator = f_home.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
 			FileInfo file;
 			while ((file = enumerator.next_file ()) != null) {
 				string name = file.get_name();
@@ -2026,7 +2037,7 @@ public class Main : GLib.Object {
 
 			//list all items in .config
 			File f_home_config = File.new_for_path (base_path + "/.config");
-			enumerator = f_home_config.enumerate_children ("standard::*", 0);
+			enumerator = f_home_config.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
 			while ((file = enumerator.next_file ()) != null) {
 				string name = file.get_name();
 				string item = base_path + "/.config/" + name;
@@ -2042,7 +2053,7 @@ public class Main : GLib.Object {
 
 			//list all items in .local/share
 			var f_home_local = File.new_for_path (base_path + "/.local/share");
-			enumerator = f_home_local.enumerate_children ("standard::*", 0);
+			enumerator = f_home_local.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
 			while ((file = enumerator.next_file ()) != null) {
 				string name = file.get_name();
 				string item = base_path + "/.local/share/" + name;
@@ -2071,7 +2082,7 @@ public class Main : GLib.Object {
 
 	public Gee.ArrayList<AppConfig> list_app_config_directories_from_backup() {
 		var app_config_list = new Gee.ArrayList<AppConfig>();
-		string backup_dir_config = "%sconfigs".printf(backup_dir);
+		string backup_dir_config = "%sconfigs/%s".printf(backup_dir, user_login);
 		
 		list_app_config_directories_from_backup_path(backup_dir_config, ref app_config_list);
 		
@@ -2087,7 +2098,7 @@ public class Main : GLib.Object {
 	public void list_app_config_directories_from_backup_path(
 		string backup_path, ref Gee.ArrayList<AppConfig> app_config_list) {
 
-		string backup_dir_config = "%sconfigs".printf(backup_dir);
+		string backup_dir_config = "%sconfigs/%s".printf(backup_dir, user_login);
 
 		try{
 			File f_bak = File.new_for_path (backup_path);
@@ -2163,7 +2174,7 @@ public class Main : GLib.Object {
 		foreach(AppConfig config in config_list) {
 			if (config.is_selected) {
 				string name = config.name.replace("~/", "");
-				string backup_dir_config = "%sconfigs".printf(backup_dir);
+				string backup_dir_config = "%sconfigs/%s".printf(backup_dir, user_login);
 				string zip_file = "%s/%s.tgz".printf(backup_dir_config, name);
 				string cmd = "tar tzvf '%s' | wc -l".printf(zip_file);
 				string stderr, stdout;
@@ -2178,7 +2189,7 @@ public class Main : GLib.Object {
 		string cmd;
 		string base_dir_target = user_home;
 
-		string backup_dir_config = "%sconfigs".printf(backup_dir);
+		string backup_dir_config = "%sconfigs/%s".printf(backup_dir, user_login);
 		string name = config.name.replace("~/", "");
 		string zip_file = "%s/%s.tgz".printf(backup_dir_config, name);
 		

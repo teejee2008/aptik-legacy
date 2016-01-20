@@ -1367,6 +1367,33 @@ namespace TeeJee.System{
 		return "Unknown";
 	}
 
+	public Gee.ArrayList<string> list_dir_names(string path){
+		var list = new Gee.ArrayList<string>();
+		
+		try
+		{
+			File f_home = File.new_for_path (path);
+			FileEnumerator enumerator = f_home.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
+			FileInfo file;
+			while ((file = enumerator.next_file ()) != null) {
+				string name = file.get_name();
+				//string item = path + "/" + name;
+				list.add(name);
+			}
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}
+
+		//sort the list
+		CompareDataFunc<string> entry_compare = (a, b) => {
+			return strcmp(a,b);
+		};
+		list.sort((owned) entry_compare);
+
+		return list;
+	}
+	
 	public bool check_internet_connectivity(){
 		int exit_code = -1;
 		string std_err;
