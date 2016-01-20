@@ -49,6 +49,7 @@ public class Package : GLib.Object {
 	public string version = "";
 	public string version_installed = "";
 	public string version_available = "";
+	public string depends = "";
 	
 	public string deb_file_name = "";
 	public string deb_uri = "";

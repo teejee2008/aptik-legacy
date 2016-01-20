@@ -616,6 +616,9 @@ public class Main : GLib.Object {
 				case "description":
 					pkg.description = p_value;
 					break;
+				case "depends":
+					pkg.depends = p_value;
+					break;
 			}
 		}
 

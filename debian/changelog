@@ -1,7 +1,14 @@
-aptik (2.2) trusty; urgency=low
+aptik (2.3) trusty; urgency=low
 
-  * Fixed: App launcher will use 'pkexec' for starting 'aptik-gtk'
-  instead of 'gksu'. Users who are not part of 'sudoers' group will get
-  an option to run the application with another user account.
+  * Fixed: App settings backup list is empty when Aptik is started
+  using 'pkexec'
 
- -- Tony George <tony.george.kol@gmail.com>  Sun, 17 Jan 2016 10:00:00 +0530
+  * Added dropdown to app settings window to select username. Items
+  will be listed for selected user.
+
+  * Added --user option to select username from command line
+
+  * Status icons will be displayed in the 'Status' dropdown for
+  saving and restoring packages
+
+ -- Tony George <tony.george.kol@gmail.com>  Wed, 20 Jan 2016 10:00:00 +0530
