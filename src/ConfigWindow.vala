@@ -84,7 +84,6 @@ public class ConfigWindow : Window {
 
 		//username
 		init_username();
-		cmb_username_refresh();
 		
 		//treeview
 		init_treeview();
@@ -104,6 +103,8 @@ public class ConfigWindow : Window {
 			tmr_init = 0;
 		}
 
+		cmb_username_refresh();
+		
 		if (is_restore_view){
 			title = _("Restore Application Settings");
 			
