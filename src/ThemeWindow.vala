@@ -36,7 +36,8 @@ using TeeJee.Misc;
 
 public class ThemeWindow : Window {
 	private Gtk.Box vbox_main;
-
+	private Gtk.Expander expander;
+	
 	private Button btn_restore;
 	private Button btn_backup;
 	private Button btn_cancel;
@@ -87,10 +88,8 @@ public class ThemeWindow : Window {
 		vbox_main.margin = 6;
 		add (vbox_main);
 
-		//init filters
-		init_username();
-		init_type();
-		
+		init_filters();
+
 		//treeview
 		init_treeview();
 
@@ -128,18 +127,28 @@ public class ThemeWindow : Window {
 			btn_backup.show();
 			btn_backup.visible = true;
 
-			backup_init();
+			//backup_init(); // will be trigerred by cmb_username_refresh()
 		}
 
 		return false;
 	}
 
+	private void init_filters(){
+		expander = new Gtk.Expander("Advanced Options");
+		expander.use_markup = true;
+		expander.expanded = false;
+		vbox_main.add (expander);
+
+		init_username();
+		init_type();
+	}
+	
 	private void init_username(){
 		//hbox_filter
 		hbox_filter = new Box (Orientation.HORIZONTAL, 6);
 		hbox_filter.margin_left = 3;
 		hbox_filter.margin_right = 3;
-		vbox_main.pack_start (hbox_filter, false, true, 0);
+		expander.add(hbox_filter);
 
 		//filter
 		Label lbl_filter = new Label(_("Username"));
@@ -227,14 +236,7 @@ public class ThemeWindow : Window {
 		}
 		
 		cmb_username.set_model (store);
-		
-		if (!is_restore_view){
-			//for backup view, list themes for 'All Users' by default
-			cmb_username.active = 0;
-		}
-		else{
-			cmb_username.active = selected;
-		}
+		cmb_username.active = 0;
 	}
 
 	private void init_type(){
@@ -558,12 +560,16 @@ public class ThemeWindow : Window {
 
 	private void backup_init() {
 		gtk_set_busy(true, this);
+
+		Theme.load_index(App.backup_dir);
 		
 		string username = App.all_users ? "" : App.user_login;
 		theme_list_user = Theme.list_themes_installed(username);
 		
 		tv_theme_refresh();
 
+		Theme.save_index(theme_list_user, App.backup_dir);
+		
 		gtk_set_busy(false, this);
 	}
 	
@@ -632,6 +638,8 @@ public class ThemeWindow : Window {
 		dlg.show_all();
 		gtk_do_events();
 
+		Theme.load_index(App.backup_dir);
+		
 		//get total count
 		App.progress_total = 0;
 		App.progress_count = 0;
@@ -659,6 +667,8 @@ public class ThemeWindow : Window {
 		}
 				
 		tv_theme_refresh();
+
+		Theme.save_index(theme_list_user, App.backup_dir);
 		
 		//finish ----------------------------------
 		dlg.destroy();

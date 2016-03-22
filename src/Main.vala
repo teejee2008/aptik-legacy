@@ -52,7 +52,7 @@ public class Main : GLib.Object {
 	public string NATIVE_ARCH = "amd64";
 	
 	public string temp_dir = "";
-	public string backup_dir = "";
+	public string _backup_dir = "";
 	public string share_dir = "/usr/share";
 	public string app_conf_path = "";
 
@@ -140,6 +140,8 @@ public class Main : GLib.Object {
 		select_user(get_user_login());
 		
 		NATIVE_ARCH = execute_command_sync_get_output("dpkg --print-architecture").strip();
+
+		Theme.init();
 	}
 
 	public void select_user(string username){
@@ -276,6 +278,15 @@ public class Main : GLib.Object {
 		}
 	}
 
+	public string backup_dir {
+		owned get{
+			return _backup_dir.has_suffix("/") ? _backup_dir : _backup_dir + "/";
+		}
+		set{
+			_backup_dir = value.has_suffix("/") ? value : value + "/";
+		}
+	}
+	
 	/* Package selections */
 
 	public void read_package_info(){
