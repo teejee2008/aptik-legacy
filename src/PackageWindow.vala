@@ -255,7 +255,7 @@ public class PackageWindow : Window {
 
 		cell_pkg_select.toggled.connect((path) => {
 			TreeModel model = filter_packages;
-			ListStore store = (ListStore) filter_packages.child_model;
+			var store = (Gtk.ListStore) filter_packages.child_model;
 			bool selected;
 			Package pkg;
 
@@ -489,7 +489,7 @@ public class PackageWindow : Window {
 
 	private void cmb_pkg_status_refresh() {
 		log_debug("call: cmb_pkg_status_refresh()");
-		var store = new ListStore(2, typeof(string), typeof(Gdk.Pixbuf));
+		var store = new Gtk.ListStore(2, typeof(string), typeof(Gdk.Pixbuf));
 		TreeIter iter;
 
 		//status icons
@@ -566,7 +566,7 @@ public class PackageWindow : Window {
 
 	private void cmb_pkg_section_refresh() {
 		log_debug("call: cmb_pkg_section_refresh()");
-		var store = new ListStore(1, typeof(string));
+		var store = new Gtk.ListStore(1, typeof(string));
 		TreeIter iter;
 		store.append(out iter);
 		store.set (iter, 0, _("All"));
@@ -640,7 +640,7 @@ public class PackageWindow : Window {
 	}
 
 	private void tv_packages_refresh() {
-		ListStore model = new ListStore(4, typeof(bool), typeof(Package), typeof(Gdk.Pixbuf), typeof(string));
+		var model = new Gtk.ListStore(4, typeof(bool), typeof(Package), typeof(Gdk.Pixbuf), typeof(string));
 
 		var pkg_list = new ArrayList<Package>();
 		if (App.pkg_list_master != null) {
@@ -898,7 +898,7 @@ public class PackageWindow : Window {
 		cmb_filters_disconnect();
 		//refresh combos
 		cmb_pkg_status_refresh();
-		cmb_pkg_status.active = 1;
+		cmb_pkg_status.active = 3;
 		cmb_pkg_section_refresh();
 		//re-connect combo events
 		cmb_filters_connect();

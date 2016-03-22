@@ -154,7 +154,7 @@ public class MountWindow : Window {
 		});
 
 		cell_mount_select.toggled.connect((path) => {
-			ListStore model = (ListStore) tv_mount.model;
+			var model = (Gtk.ListStore) tv_mount.model;
 			bool selected;
 			FstabEntry fs;
 			TreeIter iter;
@@ -340,7 +340,7 @@ public class MountWindow : Window {
 	private void tv_mount_refresh() {
 		log_msg("here0");
 		
-		ListStore model = new ListStore(2, typeof(bool), typeof(FstabEntry));
+		var model = new Gtk.ListStore(2, typeof(bool), typeof(FstabEntry));
 
 		log_msg("here");
 		

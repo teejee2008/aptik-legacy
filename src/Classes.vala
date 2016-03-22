@@ -246,22 +246,6 @@ public class BatteryStat : GLib.Object{
 	}
 }
 
-public class Theme : GLib.Object{
-	public string name = "";
-	public string description = "";
-	public string system_path = "";
-	public string zip_file_path = "";
-	public bool is_selected = false;
-	public bool is_installed = false;
-	public string type = "";
-
-	public Theme(string _name, string _type){
-		name = _name;
-		type = _type;
-		system_path = "/usr/share/%ss/%s".printf(type, name);
-	}
-}
-
 public class AppConfig : GLib.Object{
 	public string name = "";
 	public string description = "";

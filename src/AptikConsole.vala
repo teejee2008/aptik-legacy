@@ -220,13 +220,13 @@ public class AptikConsole : GLib.Object {
 
 			case "--list-theme":
 			case "--list-themes":
-				print_theme_list(App.list_themes());
+				print_theme_list(Theme.list_themes_installed());
 				break;
 
-			case "--list-icon":
-			case "--list-icons":
-				print_theme_list(App.list_icons());
-				break;
+			//case "--list-icon":
+			//case "--list-icons":
+			//	print_theme_list(App.list_icons());
+			//	break;
 
 			case "--list-config":
 			case "--list-configs":
@@ -262,27 +262,27 @@ public class AptikConsole : GLib.Object {
 
 			case "--backup-theme":
 			case "--backup-themes":
-				foreach(Theme theme in App.list_themes()) {
+				foreach(Theme theme in Theme.list_themes_installed()) {
 					if (theme.is_selected) {
-						App.zip_theme(theme);
-						while (App.is_running) {
+						theme.zip(App.backup_dir,false);
+						while (theme.is_running) {
 							Thread.usleep ((ulong) 0.3 * 1000000);
 						}
 					}
 				}
 				break;
 
-			case "--backup-icon":
-			case "--backup-icons":
-				foreach(Theme theme in App.list_icons()) {
-					if (theme.is_selected) {
-						App.zip_theme(theme);
-						while (App.is_running) {
-							Thread.usleep ((ulong) 0.3 * 1000000);
-						}
-					}
-				}
-				break;
+			//case "--backup-icon":
+			//case "--backup-icons":
+			//	foreach(Theme theme in App.list_icons()) {
+			//		if (theme.is_selected) {
+			//			App.zip_theme(theme);
+			//			while (App.is_running) {
+			//				Thread.usleep ((ulong) 0.3 * 1000000);
+			//			}
+			//		}
+			//	}
+			//	break;
 				
 			case "--backup-appsettings":
 			case "--backup-configs":
@@ -323,29 +323,13 @@ public class AptikConsole : GLib.Object {
 
 			case "--restore-theme":
 			case "--restore-themes":
-				foreach(Theme theme in App.get_themes_from_backup("theme")) {
-					if (theme.is_selected && !theme.is_installed) {
-						App.unzip_theme(theme);
-						while (App.is_running) {
-							Thread.usleep ((ulong) 0.3 * 1000000);
-						}
-						App.update_permissions(theme.system_path);
-					}
-				}
+				restore_themes();
 				break;
 
-			case "--restore-icon":
-			case "--restore-icons":
-				foreach(Theme theme in App.get_themes_from_backup("icon")) {
-					if (theme.is_selected && !theme.is_installed) {
-						App.unzip_theme(theme);
-						while (App.is_running) {
-							Thread.usleep ((ulong) 0.3 * 1000000);
-						}
-						App.update_permissions(theme.system_path);
-					}
-				}
-				break;
+			//case "--restore-icon":
+			//case "--restore-icons":
+				//restore_themes();
+				//break;
 
 			case "--restore-appsettings":
 			case "--restore-configs":
@@ -403,12 +387,12 @@ public class AptikConsole : GLib.Object {
 		log_msg("list_ppa: %s".printf(timer_elapsed_string(timer)));
 
 		timer.start();
-		App.list_themes();
-		log_msg("list_themes: %s".printf(timer_elapsed_string(timer)));
+		//App.list_themes();
+		//log_msg("list_themes: %s".printf(timer_elapsed_string(timer)));
 
 		timer.start();
-		App.list_icons();
-		log_msg("list_icons: %s".printf(timer_elapsed_string(timer)));
+		//App.list_icons();
+		//log_msg("list_icons: %s".printf(timer_elapsed_string(timer)));
 
 		timer.start();
 		App.list_app_config_directories_from_home();
@@ -563,6 +547,22 @@ public class AptikConsole : GLib.Object {
 		if (run_apt_update) {
 			log_msg(_("Updating Package Information..."));
 			Posix.system("sudo apt-get -y update");
+		}
+
+		return true;
+	}
+
+	public bool restore_themes(){
+		foreach(Theme theme in Theme.list_themes_archived(App.backup_dir)) {
+			if (theme.is_selected && !theme.is_installed) {
+				theme.unzip("",false);
+				while (theme.is_running) {
+					Thread.usleep ((ulong) 0.3 * 1000000);
+				}
+
+				theme.update_permissions();
+				theme.update_ownership(App.user_login);
+			}
 		}
 
 		return true;

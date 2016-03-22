@@ -104,7 +104,7 @@ public class ConfigWindow : Window {
 		}
 
 		cmb_username_refresh();
-		
+
 		if (is_restore_view){
 			title = _("Restore Application Settings");
 			
@@ -164,7 +164,7 @@ public class ConfigWindow : Window {
 	}
 
 	private void cmb_username_refresh() {
-		var store = new ListStore(2, typeof (string), typeof (string));;
+		var store = new Gtk.ListStore(2, typeof (string), typeof (string));;
 		TreeIter iter;
 
 		int selected = 0;
@@ -225,7 +225,7 @@ public class ConfigWindow : Window {
 		});
 
 		cell_config_select.toggled.connect((path) => {
-			ListStore model = (ListStore)tv_config.model;
+			var model = (Gtk.ListStore)tv_config.model;
 			bool selected;
 			AppConfig config;
 			TreeIter iter;
@@ -295,7 +295,7 @@ public class ConfigWindow : Window {
 	}
 
 	private void tv_config_refresh() {
-		ListStore model = new ListStore(2, typeof(bool), typeof(AppConfig));
+		var model = new Gtk.ListStore(2, typeof(bool), typeof(AppConfig));
 		tv_config.model = model;
 
 		foreach(AppConfig entry in config_list_user) {

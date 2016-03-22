@@ -149,6 +149,14 @@ namespace TeeJee.FileSystem{
 	using TeeJee.ProcessManagement;
 	using TeeJee.Misc;
 
+	public string file_parent(string filePath){
+		return File.new_for_path(filePath).get_parent().get_path();
+	}
+
+	public string file_basename(string filePath){
+		return File.new_for_path(filePath).get_basename();
+	}
+	
 	public void file_delete(string filePath){
 
 		/* Check and delete file */
@@ -363,6 +371,23 @@ namespace TeeJee.FileSystem{
 		cmd = "du -s \"%s\"".printf(path);
 		output = execute_command_sync_get_output(cmd);
 		return long.parse(output.split("\t")[0]);
+	}
+
+	public int64 get_file_size_bytes(string file_path){
+		try{
+			File file = File.parse_name (file_path);
+			if (FileUtils.test(file_path, GLib.FileTest.EXISTS)){
+				if (FileUtils.test(file_path, GLib.FileTest.IS_REGULAR)
+					&& !FileUtils.test(file_path, GLib.FileTest.IS_SYMLINK)){
+					return file.query_info("standard::size",0).get_size();
+				}
+			}
+		}
+		catch(Error e){
+			log_error (e.message);
+		}
+
+		return -1;
 	}
 
 	public string get_file_size_formatted(string path){
@@ -783,6 +808,70 @@ namespace TeeJee.ProcessManagement{
 		return -1;
 	}
 
+	public int get_pid_by_command(string cmdline){
+		try {
+			FileEnumerator enumerator;
+			FileInfo info;
+			File file = File.parse_name ("/proc");
+
+			enumerator = file.enumerate_children ("standard::name", 0);
+			while ((info = enumerator.next_file()) != null) {
+				try {
+					string io_stat_file_path = "/proc/%s/cmdline".printf(info.get_name());
+					var io_stat_file = File.new_for_path(io_stat_file_path);
+					if (file.query_exists()){
+						var dis = new DataInputStream (io_stat_file.read());
+
+						string line;
+						string text = "";
+						size_t length;
+						while((line = dis.read_until ("\0", out length)) != null){
+							text += " " + line;
+						}
+
+						if ((text != null) && text.contains(cmdline)){
+							return int.parse(info.get_name());
+						}
+					} //stream closed
+				}
+				catch(Error e){
+				  //log_error (e.message);
+				}
+			}
+		}
+		catch(Error e){
+		  log_error (e.message);
+		}
+
+		return -1;
+	}
+
+	public void get_proc_io_stats(int pid, out int64 read_bytes, out int64 write_bytes){
+		string io_stat_file_path = "/proc/%d/io".printf(pid);
+		var file = File.new_for_path(io_stat_file_path);
+
+		read_bytes = 0;
+		write_bytes = 0;
+
+		try {
+			if (file.query_exists()){
+				var dis = new DataInputStream (file.read());
+				string line;
+				while ((line = dis.read_line (null)) != null) {
+					if(line.has_prefix("rchar:")){
+						read_bytes = int64.parse(line.replace("rchar:","").strip());
+					}
+					else if(line.has_prefix("wchar:")){
+						write_bytes = int64.parse(line.replace("wchar:","").strip());
+					}
+				}
+			} //stream closed
+		}
+		catch(Error e){
+			log_error (e.message);
+		}
+	}
+
 	public bool process_is_running(long pid){
 
 		/* Checks if given process is running */
@@ -1116,6 +1205,21 @@ namespace TeeJee.GtkHelper{
 
 		TreeIter iter;
 		string val = "";
+		combo.get_active_iter (out iter);
+		TreeModel model = (TreeModel) combo.model;
+		model.get(iter, index, out val);
+
+		return val;
+	}
+	
+	public int gtk_combobox_get_value_enum (ComboBox combo, int index, int default_value){
+
+		/* Conveniance function to get combobox value */
+
+		if ((combo.model == null) || (combo.active < 0)) { return default_value; }
+
+		TreeIter iter;
+		int val;
 		combo.get_active_iter (out iter);
 		TreeModel model = (TreeModel) combo.model;
 		model.get(iter, index, out val);
@@ -1572,6 +1676,13 @@ namespace TeeJee.System{
 		log_msg("%s %lu\n".printf(seconds.to_string(), microseconds));
 	}
 
+	public string[] array_concat(string[] a, string[] b){
+		string[] c = {};
+		foreach(string str in a){ c += str; }
+		foreach(string str in b){ c += str; }
+		return c;
+	}
+	
 	private DateTime dt_last_notification = null;
 	private const int NOTIFICATION_INTERVAL = 3;
 
@@ -1615,7 +1726,7 @@ namespace TeeJee.System{
 			Process.spawn_command_line_sync(cmd, null, null, out exit_code);
 
 			if (exit_code == 0){
-				//log_msg(_("Ownership changed to '%s' for files in directory '%s'").printf(login_name, dir_name));
+				log_msg(_("Set owner: %s, dir: %s").printf(login_name, dir_name));
 				return true;
 			}
 			else{
@@ -1942,4 +2053,28 @@ namespace TeeJee.Misc {
 		.replace("&gt;",">")
 		;
 	}
+
+	public DateTime datetime_from_string (string date_time_string){
+
+		/* Converts date time string to DateTime
+		 * 
+		 * Supported inputs:
+		 * 'yyyy-MM-dd'
+		 * 'yyyy-MM-dd HH'
+		 * 'yyyy-MM-dd HH:mm'
+		 * 'yyyy-MM-dd HH:mm:ss'
+		 * */
+
+		string[] arr = date_time_string.replace(":"," ").replace("-"," ").strip().split(" ");
+
+		int year  = (arr.length >= 3) ? int.parse(arr[0]) : 0;
+		int month = (arr.length >= 3) ? int.parse(arr[1]) : 0;
+		int day   = (arr.length >= 3) ? int.parse(arr[2]) : 0;
+		int hour  = (arr.length >= 4) ? int.parse(arr[3]) : 0;
+		int min   = (arr.length >= 5) ? int.parse(arr[4]) : 0;
+		int sec   = (arr.length >= 6) ? int.parse(arr[5]) : 0;
+
+		return new DateTime.utc(year,month,day,hour,min,sec);
+	}
+	
 }

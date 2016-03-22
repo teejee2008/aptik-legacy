@@ -153,7 +153,7 @@ public class PpaWindow : Window {
 		});
 
 		cell_ppa_select.toggled.connect((path) => {
-			ListStore model = (ListStore)tv_ppa.model;
+			var model = (Gtk.ListStore)tv_ppa.model;
 			bool selected;
 			Ppa ppa;
 			TreeIter iter;
@@ -299,7 +299,7 @@ public class PpaWindow : Window {
 	// events
 
 	private void tv_ppa_refresh() {
-		ListStore model = new ListStore(4, typeof(bool), typeof(Ppa), typeof(Gdk.Pixbuf), typeof(string));
+		var model = new Gtk.ListStore(4, typeof(bool), typeof(Ppa), typeof(Gdk.Pixbuf), typeof(string));
 
 		//sort ppa list
 		var ppa_list = new ArrayList<Ppa>();

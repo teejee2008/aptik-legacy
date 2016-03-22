@@ -259,7 +259,7 @@ public class DownloadWindow : Dialog {
 	}
 
 	private void tv_pkg_refresh() {
-		ListStore model = new ListStore(3, typeof(DownloadManager),typeof(int),typeof(string));
+		var model = new Gtk.ListStore(3, typeof(DownloadManager),typeof(int),typeof(string));
 
 		TreeIter iter;
 		foreach(DownloadManager mgr in download_list) {

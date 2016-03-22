@@ -180,6 +180,7 @@ public class ProgressWindow : Window {
 			fraction = 1.0;
 		}
 		progressbar.fraction = fraction;
+		gtk_do_events();
 	}
 	
 	public void finish(string message = "") {

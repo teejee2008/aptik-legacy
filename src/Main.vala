@@ -62,6 +62,7 @@ public class Main : GLib.Object {
 	public string user_login = "";
 	public string user_home = "";
 	public int user_uid = -1;
+	public bool all_users = false;
 
 	public string err_line;
 	public string out_line;
@@ -142,7 +143,18 @@ public class Main : GLib.Object {
 	}
 
 	public void select_user(string username){
-		if ((username == null)||(username.length == 0)||(username == "root")){
+		if (username == "(all)"){
+			all_users = true;
+			user_login = "";
+			user_home = "";
+			user_uid = 0;
+			return;
+		}
+		else{
+			all_users = false;
+		}
+		
+		if ((username == null)||(username.length == 0)||(username == "root")||(username == "(all)")){
 			user_login = "root";
 			user_home = "/root";
 			user_uid = 0;
@@ -152,6 +164,8 @@ public class Main : GLib.Object {
 			user_home = "/home/" + username;
 			user_uid = get_user_id(username);
 		}
+
+		//log_msg(_("Selected user: %s").printf(user_login));
 	}
 	
 	public bool check_dependencies(out string msg) {
@@ -1584,341 +1598,6 @@ public class Main : GLib.Object {
 		}
 	}
 
-	/* Themes */
-
-	public Gee.ArrayList<Theme> list_all_themes() {
-		var theme_list = list_themes();
-		foreach(Theme theme in list_icons()) {
-			theme_list.add(theme);
-		}
-		return theme_list;
-	}
-
-	public Gee.ArrayList<Theme> list_themes() {
-		var theme_list = new Gee.ArrayList<Theme>();
-
-		try {
-			string theme_type = "theme";
-			string share_path = "/usr/share/%ss".printf(theme_type);
-			var directory = File.new_for_path(share_path);
-			var enumerator = directory.enumerate_children("standard::*", 0);
-			FileInfo info;
-
-			while ((info = enumerator.next_file()) != null) {
-				if (info.get_file_type() == FileType.DIRECTORY) {
-					string theme_name = info.get_name();
-					switch (theme_name.down()) {
-					case "default":
-					case "emacs":
-					case "highcontrast":
-						continue;
-					}
-
-					Theme theme = new Theme(theme_name, theme_type);
-					theme.is_selected = true;
-					theme.is_installed = true;
-					theme_list.add(theme);
-				}
-			}
-		}
-		catch (Error e) {
-			log_error (e.message);
-		}
-
-		return theme_list;
-	}
-
-	public Gee.ArrayList<Theme> list_icons() {
-		var theme_list = new Gee.ArrayList<Theme>();
-
-		try {
-			string theme_type = "icon";
-			string share_path = "/usr/share/%ss".printf(theme_type);
-			var directory = File.new_for_path(share_path);
-			var enumerator = directory.enumerate_children("standard::*", 0);
-			FileInfo info;
-
-			while ((info = enumerator.next_file()) != null) {
-				if (info.get_file_type() == FileType.DIRECTORY) {
-					string theme_name = info.get_name();
-					switch (theme_name.down()) {
-					case "default":
-					case "mini":
-					case "large":
-					case "hicolor":
-					case "locolor":
-					case "scalable":
-					case "highcontrast":
-					case "gnome":
-						continue;
-					}
-
-					Theme theme = new Theme(theme_name, theme_type);
-					theme.is_selected = true;
-					theme.is_installed = true;
-					theme_list.add(theme);
-				}
-			}
-		}
-		catch (Error e) {
-			log_error (e.message);
-		}
-
-		return theme_list;
-	}
-
-	public Gee.ArrayList<Theme> get_all_themes_from_backup() {
-		var themes_list = new Gee.ArrayList<Theme>();
-
-		foreach(Theme theme in get_themes_from_backup("theme")) {
-			themes_list.add(theme);
-		}
-
-		foreach(Theme theme in get_themes_from_backup("icon")) {
-			themes_list.add(theme);
-		}
-
-		return themes_list;
-	}
-
-	public Gee.ArrayList<Theme> get_themes_from_backup(string theme_type) {
-		var themes_list = new Gee.ArrayList<Theme>();
-		var themes_installed = list_all_themes();
-
-		string themes_dir = backup_dir + "%ss".printf(theme_type);
-
-		//check directory
-		var f = File.new_for_path(themes_dir);
-		if (!f.query_exists()) {
-			log_error(_("Themes not found in backup directory"));
-			return themes_list;
-		}//TODO:use func
-
-		try {
-			var directory = File.new_for_path(themes_dir);
-			var enumerator = directory.enumerate_children("standard::*", 0);
-			FileInfo info;
-
-			while ((info = enumerator.next_file()) != null) {
-				if (info.get_file_type() == FileType.REGULAR) {
-					string zip_file_path = "%s/%s".printf(themes_dir, info.get_name());
-					string theme_name = info.get_name().replace(".tar.gz", "");
-
-					Theme theme = new Theme(theme_name, theme_type);
-					theme.zip_file_path = zip_file_path;
-					theme.is_selected = true;
-					foreach (Theme th in themes_installed) {
-						if ((th.name == theme_name) && (th.type == theme_type)) {
-							theme.is_installed = true;
-							break;
-						}
-					}
-					themes_list.add(theme);
-				}
-			}
-		}
-		catch (Error e) {
-			log_error (e.message);
-		}
-
-		return themes_list;
-	}
-
-
-	public bool zip_theme(Theme theme) {
-		string theme_dir = backup_dir + "%ss".printf(theme.type);
-		string theme_dir_system = "/usr/share/%ss".printf(theme.type);
-		string file_name = theme.name + ".tar.gz";
-		string zip_file = theme_dir + "/" + file_name;
-
-		try {
-			//create theme directory
-			var f = File.new_for_path(theme_dir);
-			if (!f.query_exists()) {
-				f.make_directory_with_parents();
-			}
-
-			string cmd = "tar czvf '%s' -C '%s' '%s'".printf(zip_file, theme_dir_system, theme.name);
-			status_line = theme.system_path;
-
-			if (gui_mode) {
-				run_gzip(cmd);
-			}
-			else {
-				stdout.printf("%-60s".printf(_("Archiving") + " '%s'".printf(theme.system_path)));
-				stdout.flush();
-
-				int status = Posix.system(cmd + " 1> /dev/null");
-				if (status == 0) {
-					stdout.printf("[ OK ]\n");
-				}
-				else {
-					stdout.printf("[ status=%d ]\n".printf(status));
-				}
-				return (status == 0);
-			}
-
-			return true;
-		}
-		catch (Error e) {
-			log_error (e.message);
-			return false;
-		}
-	}
-
-	public bool unzip_theme(Theme theme) {
-		string theme_dir_system = "/usr/share/%ss".printf(theme.type);
-
-		//check file
-		if (!file_exists(theme.zip_file_path)) {
-			log_error(_("File not found") + ": '%s'".printf(theme.zip_file_path));
-			return false;
-		}
-
-		string cmd = "tar -xzvf '%s' --directory='%s'".printf(theme.zip_file_path, theme_dir_system);
-		status_line = theme.zip_file_path;
-
-		if (gui_mode) {
-			return run_gzip(cmd);
-		}
-		else {
-			stdout.printf("%-60s".printf(_("Extracting") + " '%s'".printf(theme.system_path)));
-			stdout.flush();
-
-			int status = Posix.system(cmd + " 1> /dev/null");
-			if (status == 0) {
-				stdout.printf("[ OK ]\n");
-			}
-			else {
-				stdout.printf("[ status=%d ]\n".printf(status));
-			}
-			return (status == 0);
-		}
-	}
-
-	public bool update_permissions(string path) {
-		try {
-			int exit_code;
-			string cmd;
-
-			cmd = "find '%s' -type d -exec chmod 755 '{}' ';'".printf(path);
-			Process.spawn_command_line_sync(cmd, null, null, out exit_code);
-			if (exit_code != 0) {
-				return false;
-			}
-
-			cmd = "find '%s' -type f -exec chmod 644 '{}' ';'".printf(path);
-			Process.spawn_command_line_sync(cmd, null, null, out exit_code);
-			if (exit_code != 0) {
-				return false;
-			}
-
-			return true;
-		}
-		catch (Error e) {
-			log_error (e.message);
-			return false;
-		}
-	}
-
-	private bool run_gzip (string cmd) {
-		string[] argv = new string[1];
-		argv[0] = create_temp_bash_script(cmd);
-
-		Pid child_pid;
-		int input_fd;
-		int output_fd;
-		int error_fd;
-
-		try {
-			//execute script file
-			Process.spawn_async_with_pipes(
-			    null, //working dir
-			    argv, //argv
-			    null, //environment
-			    SpawnFlags.SEARCH_PATH,
-			    null,   // child_setup
-			    out child_pid,
-			    out input_fd,
-			    out output_fd,
-			    out error_fd);
-
-			is_running = true;
-
-			proc_id = child_pid;
-
-			//create stream readers
-			UnixInputStream uis_out = new UnixInputStream(output_fd, false);
-			UnixInputStream uis_err = new UnixInputStream(error_fd, false);
-			dis_out = new DataInputStream(uis_out);
-			dis_err = new DataInputStream(uis_err);
-			dis_out.newline_type = DataStreamNewlineType.ANY;
-			dis_err.newline_type = DataStreamNewlineType.ANY;
-
-			//progress_count = 0;
-			//stdout_lines = new Gee.ArrayList<string>();
-			//stderr_lines = new Gee.ArrayList<string>();
-
-			try {
-				//start thread for reading output stream
-				Thread.create<void> (gzip_read_output_line, true);
-			} catch (Error e) {
-				log_error (e.message);
-			}
-
-			try {
-				//start thread for reading error stream
-				Thread.create<void> (gzip_read_error_line, true);
-			} catch (Error e) {
-				log_error (e.message);
-			}
-
-			//while(is_running){
-			//	sleep(100);
-			//}
-
-			return true;
-		}
-		catch (Error e) {
-			log_error (e.message);
-			return false;
-		}
-	}
-
-	private void gzip_read_error_line() {
-		try {
-			err_line = dis_err.read_line (null);
-			while (err_line != null) {
-				stderr.printf(err_line + "\n"); //print
-				err_line = dis_err.read_line (null); //read next
-			}
-		}
-		catch (Error e) {
-			log_error (e.message);
-		}
-	}
-
-	private void gzip_read_output_line() {
-		try {
-			out_line = dis_out.read_line (null);
-			while (out_line != null) {
-				if (gui_mode) {
-					progress_count += 1; //count
-					status_line = out_line;
-				}
-				else {
-					stdout.printf(out_line + "\n"); //print
-				}
-				out_line = dis_out.read_line (null);  //read next
-			}
-
-			is_running = false;
-		}
-		catch (Error e) {
-			log_error (e.message);
-		}
-	}
-
 	/* App Settings */
 
 	public bool backup_app_settings_all(Gee.ArrayList<AppConfig> config_list) {
@@ -2098,14 +1777,13 @@ public class Main : GLib.Object {
 		return app_config_list;
 	}
 
-	public void list_app_config_directories_from_backup_path(
-		string backup_path, ref Gee.ArrayList<AppConfig> app_config_list) {
-
+	public void list_app_config_directories_from_backup_path(string backup_path, ref Gee.ArrayList<AppConfig> app_config_list) {
 		string backup_dir_config = "%sconfigs/%s".printf(backup_dir, user_login);
 
 		try{
 			File f_bak = File.new_for_path (backup_path);
-			FileEnumerator enumerator = f_bak.enumerate_children ("standard::*", 0);
+			FileEnumerator enumerator = f_bak.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
+			
 			FileInfo file;
 			while ((file = enumerator.next_file ()) != null) {
 				string name = file.get_name();
@@ -2266,6 +1944,104 @@ public class Main : GLib.Object {
 			if (config.is_selected) {
 				set_directory_ownership(config.name.replace("~", user_home), user_login);
 			}
+		}
+	}
+
+	private bool run_gzip (string cmd) {
+		string[] argv = new string[1];
+		argv[0] = create_temp_bash_script(cmd);
+
+		Pid child_pid;
+		int input_fd;
+		int output_fd;
+		int error_fd;
+
+		try {
+			//execute script file
+			Process.spawn_async_with_pipes(
+			    null, //working dir
+			    argv, //argv
+			    null, //environment
+			    SpawnFlags.SEARCH_PATH,
+			    null,   // child_setup
+			    out child_pid,
+			    out input_fd,
+			    out output_fd,
+			    out error_fd);
+
+			is_running = true;
+
+			proc_id = child_pid;
+
+			//create stream readers
+			UnixInputStream uis_out = new UnixInputStream(output_fd, false);
+			UnixInputStream uis_err = new UnixInputStream(error_fd, false);
+			dis_out = new DataInputStream(uis_out);
+			dis_err = new DataInputStream(uis_err);
+			dis_out.newline_type = DataStreamNewlineType.ANY;
+			dis_err.newline_type = DataStreamNewlineType.ANY;
+
+			//progress_count = 0;
+			//stdout_lines = new Gee.ArrayList<string>();
+			//stderr_lines = new Gee.ArrayList<string>();
+
+			try {
+				//start thread for reading output stream
+				Thread.create<void> (gzip_read_output_line, true);
+			} catch (Error e) {
+				log_error (e.message);
+			}
+
+			try {
+				//start thread for reading error stream
+				Thread.create<void> (gzip_read_error_line, true);
+			} catch (Error e) {
+				log_error (e.message);
+			}
+
+			//while(is_running){
+			//	sleep(100);
+			//}
+
+			return true;
+		}
+		catch (Error e) {
+			log_error (e.message);
+			return false;
+		}
+	}
+
+	private void gzip_read_error_line() {
+		try {
+			err_line = dis_err.read_line (null);
+			while (err_line != null) {
+				stderr.printf(err_line + "\n"); //print
+				err_line = dis_err.read_line (null); //read next
+			}
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}
+	}
+
+	private void gzip_read_output_line() {
+		try {
+			out_line = dis_out.read_line (null);
+			while (out_line != null) {
+				if (gui_mode) {
+					progress_count += 1; //count
+					status_line = out_line;
+				}
+				else {
+					stdout.printf(out_line + "\n"); //print
+				}
+				out_line = dis_out.read_line (null);  //read next
+			}
+
+			is_running = false;
+		}
+		catch (Error e) {
+			log_error (e.message);
 		}
 	}
 
