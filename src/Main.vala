@@ -1012,8 +1012,24 @@ public class Main : GLib.Object {
 			        100 /var/lib/dpkg/status
 			*/
 
+			/*
+			notepadqq:
+			  Installed: 0.50.6-0~vivid1
+			  Candidate: 0.51.0-0~vivid1
+			  Version table:
+				 0.51.0-0~vivid1 0
+					500 http://ppa.launchpad.net/notepadqq-team/notepadqq/ubuntu/ vivid/main amd64 Packages
+			 *** 0.50.6-0~vivid1 0
+					100 /var/lib/dpkg/status
+			*/
+			
+			/* Note: for linking a package with it's PPA the apt-cache policy output is not reliable
+			 * Once an update is available, the ppa line for the installed version ( *** 0.50.6-0~vivid1 0)
+			 * will have '/var/lib/dpkg/status' instead of the repository URI
+			 * */
+			 
 			regex_pkg = new Regex("""^([^ \t]*):$""");
-			regex_installed_version = new Regex("""^[ \t]*\*\*\*([^ \t]*)[ \t]*[0-9]*""");
+			regex_installed_version = new Regex("""^[ \t]*[*]*[ \t]*([^ \t]*)[ \t]*[0-9]*""");
 			regex_source = new Regex("""[ \t]*[0-9]+[ \t]*([^ \t]*ubuntu.com[^ \t])[ \t]*([^ \t]*)[ \t]*([^ \t]*)""");
 			regex_launchpad = new Regex("""[ \t]*[0-9]+[ \t]*([https:/]+ppa.launchpad.net/([^ \t]*)/ubuntu/)[ \t]*([^ \t]*)[ \t]*([^ \t]*)""");
 		}
@@ -1029,7 +1045,6 @@ public class Main : GLib.Object {
 				return;
 			}
 
-			bool take_next_line = false;
 			var dis = new DataInputStream (file.read());
 			while ((line = dis.read_line (null)) != null) {
 				if (line.strip().length == 0) {
@@ -1040,65 +1055,58 @@ public class Main : GLib.Object {
 					pkg_name = match.fetch(1).strip();
 					count_pkg++;
 				}
-				else if (regex_installed_version.match (line, 0, out match)) {
-					take_next_line = true;
-					continue;
-				}
-				
-				if (take_next_line){
-					take_next_line = false;
+				else if (regex_launchpad.match (line, 0, out match)) {
 
-					if (regex_launchpad.match (line, 0, out match)) {
-						pkg_server = match.fetch(1).strip();
-						pkg_repo = match.fetch(2).strip();
-						pkg_repo_section = match.fetch(3).strip();
+					pkg_server = match.fetch(1).strip();
+					pkg_repo = match.fetch(2).strip();
+					pkg_repo_section = match.fetch(3).strip();
 
-						if (pkg_server.length == 0) {
-							continue;
-						}
-
-						//add new ppa to master list
-						if (!ppa_list_master.has_key(pkg_repo)) {
-							var ppa = new Ppa(pkg_repo);
-							ppa.is_installed = true;
-							ppa_list_master[pkg_repo] = ppa;
-						}
-
-						//update ppa and package information
-						if (ppa_list_master.has_key(pkg_repo)) {
-							var ppa = ppa_list_master[pkg_repo];
-
-							if (pkg_list_master.has_key(pkg_name)) {
-								var pkg = pkg_list_master[pkg_name];
-
-								//log_msg("%s : %s".printf(pkg_name,pkg_server));
-								
-								//update package info
-								pkg.server = pkg_server;
-								pkg.repo = pkg_repo;
-								pkg.repo_section = pkg_repo_section;
-
-								//update PPA info
-								if (pkg.is_installed) {
-									ppa.description += "%s ".printf(pkg_name);
-								}
-								ppa.all_packages += "%s ".printf(pkg_name);
-							}
-						}
+					if (pkg_server.length == 0) {
+						continue;
 					}
-					else if (regex_source.match (line, 0, out match)) {
-						pkg_server = match.fetch(1).strip();
-						pkg_repo = "official";
-						pkg_repo_section = match.fetch(2).strip();
-						//pkg_arch = match.fetch(4).strip();
 
-						//update package info
+					//add new ppa to master list
+					if (!ppa_list_master.has_key(pkg_repo)) {
+						var ppa = new Ppa(pkg_repo);
+						ppa.is_installed = true;
+						ppa_list_master[pkg_repo] = ppa;
+					}
+
+					//update ppa and package information
+					if (ppa_list_master.has_key(pkg_repo)) {
+						var ppa = ppa_list_master[pkg_repo];
+
 						if (pkg_list_master.has_key(pkg_name)) {
-							Package pkg = pkg_list_master[pkg_name];
+							var pkg = pkg_list_master[pkg_name];
+
+							//log_msg("%s : %s".printf(pkg_name,pkg_server));
+							
+							//update package info
 							pkg.server = pkg_server;
 							pkg.repo = pkg_repo;
 							pkg.repo_section = pkg_repo_section;
+
+							//update PPA info
+							if (pkg.is_installed) {
+								ppa.description += "%s ".printf(pkg_name);
+							}
+							ppa.all_packages += "%s ".printf(pkg_name);
 						}
+					}
+				}
+				else if (regex_source.match (line, 0, out match)) {
+
+					pkg_server = match.fetch(1).strip();
+					pkg_repo = "official";
+					pkg_repo_section = match.fetch(2).strip();
+					//pkg_arch = match.fetch(4).strip();
+
+					//update package info
+					if (pkg_list_master.has_key(pkg_name)) {
+						Package pkg = pkg_list_master[pkg_name];
+						pkg.server = pkg_server;
+						pkg.repo = pkg_repo;
+						pkg.repo_section = pkg_repo_section;
 					}
 				}
 			}
