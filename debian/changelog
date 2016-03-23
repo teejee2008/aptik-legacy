@@ -1,14 +1,8 @@
-aptik (2.3) trusty; urgency=low
+aptik (16.3) trusty; urgency=low
 
-  * Fixed: App settings backup list is empty when Aptik is started
-  using 'pkexec'
+  * Fixed: In the PPA backup list, the list of installed packages did
+  not contain packages which have updates available
 
-  * Added dropdown to app settings window to select username. Items
-  will be listed for selected user.
+  * Add a filter for theme type
 
-  * Added --user option to select username from command line
-
-  * Status icons will be displayed in the 'Status' dropdown for
-  saving and restoring packages
-
- -- Tony George <tony.george.kol@gmail.com>  Wed, 20 Jan 2016 10:00:00 +0530
+ -- Tony George <tony.george.kol@gmail.com>  Wed, 23 Mar 2016 10:00:00 +0530

@@ -861,6 +861,9 @@ public class Main : GLib.Object {
 		var pkg_list = new Gee.ArrayList<Package>();
 		
 		string cmd = "apt-get install -y --print-uris %s".printf(pkg_names);
+
+		log_debug("execute: " + cmd);
+		
 		string txt = execute_command_sync_get_output(cmd);
 
 		Regex regex = null;

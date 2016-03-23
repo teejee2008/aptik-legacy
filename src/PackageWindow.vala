@@ -1128,14 +1128,14 @@ public class PackageWindow : Window {
 	private void execute_in_terminal(){
 		string cmd = "";
 		if (App.pkg_list_install.length > 0){
-			cmd += "apt-get install %s".printf(App.pkg_list_install);
-			cmd += "\necho ''";
+			cmd += "apt-get install %s\n".printf(App.pkg_list_install);
+			log_debug("execute: apt-get install %s".printf(App.pkg_list_install));
 		}
 		if (App.pkg_list_deb.length > 0){
-			cmd += "gdebi %s".printf(App.gdebi_file_list);
-			cmd += "\necho ''";
-			
+			cmd += "gdebi %s\n".printf(App.gdebi_file_list);
+			log_debug("execute: gdebi %s".printf(App.gdebi_file_list));
 		}
+		cmd += "echo ''\n";
 		cmd += "\necho '" + _("Finished installing packages") + ".'";
 		cmd += "\necho '" + _("Close window to exit...") + "'";
 		cmd += "\nread dummy";
