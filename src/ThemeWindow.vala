@@ -134,7 +134,7 @@ public class ThemeWindow : Window {
 	}
 
 	private void init_filters(){
-		expander = new Gtk.Expander("Advanced Options");
+		expander = new Gtk.Expander(_("Advanced"));
 		expander.use_markup = true;
 		expander.expanded = false;
 		vbox_main.add (expander);

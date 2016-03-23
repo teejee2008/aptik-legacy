@@ -36,6 +36,7 @@ using TeeJee.Misc;
 
 public class PackageWindow : Window {
 	private Gtk.Box vbox_main;
+	private Gtk.Expander expander;
 
 	private Box hbox_filter;
 	private Entry txt_filter;
@@ -140,11 +141,17 @@ public class PackageWindow : Window {
 	}
 
 	private void init_filters() {
+
+		expander = new Gtk.Expander(_("Advanced"));
+		expander.use_markup = true;
+		expander.expanded = false;
+		vbox_main.add (expander);
+		
 		//hbox_filter
 		hbox_filter = new Box (Orientation.HORIZONTAL, 6);
 		hbox_filter.margin_left = 3;
 		hbox_filter.margin_right = 3;
-		vbox_main.pack_start (hbox_filter, false, true, 0);
+		expander.add (hbox_filter);
 
 		//filter
 		Label lbl_filter = new Label(_("Filter"));
