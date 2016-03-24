@@ -303,6 +303,11 @@ public class DownloadManager : GLib.Object{
 	private Regex regex = null;
 	private MatchInfo match;
 
+	Pid child_pid;
+	int input_fd;
+	int output_fd;
+	int error_fd;
+	
 	public signal void download_complete ();
 	
 	public enum Status{
@@ -349,11 +354,6 @@ public class DownloadManager : GLib.Object{
 		string cmd = build_command_string();
 		argv[0] = save_script(cmd);
 
-		Pid child_pid;
-		int input_fd;
-		int output_fd;
-		int error_fd;
-
 		progress_count = 0;
 		progress_total = size;
 		
@@ -369,8 +369,6 @@ public class DownloadManager : GLib.Object{
 			    out input_fd,
 			    out output_fd,
 			    out error_fd);
-
-			proc_id = child_pid;
 
 			//create stream readers
 			UnixInputStream uis_out = new UnixInputStream(output_fd, false);
@@ -417,6 +415,11 @@ public class DownloadManager : GLib.Object{
 				}
 				err_line = dis_err.read_line (null); //read next
 			}
+
+			// dispose stderr
+			dis_err.close();
+			dis_err = null;
+			GLib.FileUtils.close(error_fd);
 		}
 		catch (Error e) {
 			log_error (e.message);
@@ -442,6 +445,21 @@ public class DownloadManager : GLib.Object{
 			
 			progress_count = size;
 			progress_percent = 100;
+
+			// cleanup -----------------
+
+			// dispose stdout
+			GLib.FileUtils.close(output_fd);
+			dis_out.close();
+			dis_out = null;
+
+			// dispose stdin
+			GLib.FileUtils.close(input_fd);
+
+			// dispose child process
+			Process.close_pid(child_pid); //required on Windows, doesn't do anything on Unix
+
+			// finish ------------------
 			
 			verify_and_copy();
 			download_complete(); //signal
@@ -492,6 +510,7 @@ public class DownloadManager : GLib.Object{
 			cmd += " --show-console-readout=false";
 			cmd += " --summary-interval=1";
 			cmd += " --human-readable=false";
+			//cmd += " --direct-file-mapping=false";
 			cmd += " '%s'".printf(source_uri);
 		}
 
@@ -526,7 +545,8 @@ public class DownloadManager : GLib.Object{
 			var data_stream = new DataOutputStream(file_stream);
 			data_stream.put_string(script.str);
 			data_stream.close();
-
+			data_stream = null;
+			
 			//set execute permission
 			chmod(script_file, "u+x");
 		}
