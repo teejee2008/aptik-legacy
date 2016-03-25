@@ -785,6 +785,7 @@ namespace TeeJee.ProcessManagement{
 			    SpawnFlags.SEARCH_PATH,
 			    null,
 			    out child_pid);
+
 			return true;
 		}
 		catch (Error e){
