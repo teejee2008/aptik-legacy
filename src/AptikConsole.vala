@@ -126,6 +126,8 @@ public class AptikConsole : GLib.Object {
 			return false;
 		}
 
+		App.select_user("");
+		
 		//parse options
 		for (int k = 1; k < args.length; k++) // Oth arg is app path
 		{
@@ -217,7 +219,7 @@ public class AptikConsole : GLib.Object {
 
 			case "--list-theme":
 			case "--list-themes":
-				print_theme_list(Theme.list_themes_installed());
+				print_theme_list(Theme.list_themes_installed(App.user_login, true));
 				break;
 
 			case "--list-config":

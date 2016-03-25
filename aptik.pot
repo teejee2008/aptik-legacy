@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2016-03-25 23:07+0530\n"
+"POT-Creation-Date: 2016-03-25 23:25+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -124,7 +124,7 @@ msgstr ""
 msgid "Adding '%s'..."
 msgstr ""
 
-#: AptikConsole.vala:514
+#: AptikConsole.vala:516
 msgid "Adding PPA"
 msgstr ""
 
@@ -177,7 +177,7 @@ msgstr ""
 msgid "Aptik needs admin access to backup and restore packages."
 msgstr ""
 
-#: Main.vala:1703 Theme.vala:607
+#: Main.vala:1703 Theme.vala:621
 #, c-format
 msgid "Archiving"
 msgstr ""
@@ -492,14 +492,14 @@ msgstr ""
 msgid "Enter Passphrase"
 msgstr ""
 
-#: AptikConsole.vala:279 AptikConsole.vala:290 MainWindow.vala:482
+#: AptikConsole.vala:281 AptikConsole.vala:292 MainWindow.vala:482
 #: MountWindow.vala:516 PackageWindow.vala:980 PackageWindow.vala:994
 #: PackageWindow.vala:1076 PpaWindow.vala:495 PpaWindow.vala:580
 #: PpaWindow.vala:602 Utility.vala:101
 msgid "Error"
 msgstr ""
 
-#: Main.vala:1955 Theme.vala:648
+#: Main.vala:1955 Theme.vala:662
 #, c-format
 msgid "Extracting"
 msgstr ""
@@ -582,7 +582,7 @@ msgstr ""
 msgid "File exists"
 msgstr ""
 
-#: Main.vala:1927 Main.vala:2272 Theme.vala:633 Utility.vala:351
+#: Main.vala:1927 Main.vala:2272 Theme.vala:647 Utility.vala:351
 msgid "File not found"
 msgstr ""
 
@@ -652,7 +652,7 @@ msgstr ""
 msgid "Following packages are NOT available"
 msgstr ""
 
-#: AptikConsole.vala:479
+#: AptikConsole.vala:481
 msgid "Following packages are not available"
 msgstr ""
 
@@ -670,7 +670,7 @@ msgid ""
 "the package repositories"
 msgstr ""
 
-#: AptikConsole.vala:487 AptikConsole.vala:498
+#: AptikConsole.vala:489 AptikConsole.vala:500
 msgid "Following packages will be installed"
 msgstr ""
 
@@ -739,7 +739,7 @@ msgstr ""
 msgid "Installed Packages"
 msgstr ""
 
-#: AptikConsole.vala:279 AptikConsole.vala:290 PackageWindow.vala:1077
+#: AptikConsole.vala:281 AptikConsole.vala:292 PackageWindow.vala:1077
 #: PpaWindow.vala:496
 msgid ""
 "Internet connection is not active. Please check the connection and try again."
@@ -1182,12 +1182,17 @@ msgstr ""
 msgid "Selected directories will be replaced with files from backup."
 msgstr ""
 
-#: AptikConsole.vala:483
+#: AptikConsole.vala:485
 msgid "Selected packages are already installed"
 msgstr ""
 
 #: ThemeWindow.vala:699
 msgid "Selected themes are already installed"
+msgstr ""
+
+#: Main.vala:175
+#, c-format
+msgid "Selected user: %s"
 msgstr ""
 
 #: DonationWindow.vala:81
@@ -1363,7 +1368,7 @@ msgstr ""
 msgid "Unity Shell"
 msgstr ""
 
-#: AptikConsole.vala:346 AptikGtk.vala:103
+#: AptikConsole.vala:348 AptikGtk.vala:103
 msgid "Unknown option"
 msgstr ""
 
@@ -1371,7 +1376,7 @@ msgstr ""
 msgid "Update"
 msgstr ""
 
-#: AptikConsole.vala:525
+#: AptikConsole.vala:527
 msgid "Updating Package Information..."
 msgstr ""
 

@@ -150,10 +150,10 @@ public class Main : GLib.Object {
 	}
 
 	public void select_user(string username){
-		if (username == "(all)"){
+		if ((username ==  null)||(username == "(all)")||(username == "")){
 			all_users = true;
 			user_login = "";
-			user_home = "";
+			user_home = "/root";
 			user_uid = 0;
 			return;
 		}
@@ -161,7 +161,7 @@ public class Main : GLib.Object {
 			all_users = false;
 		}
 		
-		if ((username == null)||(username.length == 0)||(username == "root")||(username == "(all)")){
+		if (username == "root"){
 			user_login = "root";
 			user_home = "/root";
 			user_uid = 0;
@@ -172,7 +172,7 @@ public class Main : GLib.Object {
 			user_uid = get_user_id(username);
 		}
 
-		//log_msg(_("Selected user: %s").printf(user_login));
+		log_debug(_("Selected user: %s").printf(user_login));
 	}
 	
 	public bool check_dependencies(out string msg) {

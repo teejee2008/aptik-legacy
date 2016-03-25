@@ -134,7 +134,10 @@ public class Theme : GLib.Object{
 	public static void load_index(string backup_dir){
 		foreach(string subdir in new string[] { "icons","themes" }){
 			string base_dir = "%s%s".printf(backup_dir, subdir);
-			Theme.load_index_file("%s/%s".printf(base_dir,"index.list"));
+			string index_file = "%s/%s".printf(base_dir,"index.list");
+			if (file_exists(index_file)){
+				Theme.load_index_file(index_file);
+			}
 		}
 		//log_msg("load:index.list:%d".printf(type_index.size));
 	}
@@ -187,7 +190,7 @@ public class Theme : GLib.Object{
 	
 	//list installed themes ---------
 	
-	public static Gee.ArrayList<Theme> list_themes_installed(string username = ""){
+	public static Gee.ArrayList<Theme> list_themes_installed(string username = "", bool sort_by_group = false){
 		var list = new Gee.ArrayList<Theme>();
 
 		if (username.length == 0){
@@ -211,10 +214,18 @@ public class Theme : GLib.Object{
 		}
 		
 		//sort the list
-		CompareDataFunc<Theme> entry_compare = (a, b) => {
-			return strcmp(a.name, b.name);
-		};
-		list.sort((owned) entry_compare);
+		if (sort_by_group){
+			CompareDataFunc<Theme> entry_compare = (a, b) => {
+				return strcmp(a.dir_type + "/" + a.name, b.dir_type + "/" + b.name);
+			};
+			list.sort((owned) entry_compare);
+		}
+		else{
+			CompareDataFunc<Theme> entry_compare = (a, b) => {
+				return strcmp(a.name, b.name);
+			};
+			list.sort((owned) entry_compare);
+		}
 		
 		return list;
 	}
@@ -260,6 +271,7 @@ public class Theme : GLib.Object{
 		}
 		catch (Error e) {
 			log_error (e.message);
+			log_error ("In: list_themes_from_path()");
 		}
 
 		return list;
@@ -354,6 +366,7 @@ public class Theme : GLib.Object{
 		}
 		catch (Error e) {
 			log_error (e.message);
+			log_error ("In: get_theme_type_from_installed()");
 		}
 	}
 	
@@ -487,6 +500,7 @@ public class Theme : GLib.Object{
 		}
 		catch (Error e) {
 			log_error (e.message);
+			log_error ("In: list_themes_archived_from_path()");
 		}
 
 		return list;
