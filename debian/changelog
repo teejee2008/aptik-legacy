@@ -1,8 +1,28 @@
-aptik (16.3) trusty; urgency=low
+aptik (16.3) trusty; urgency=medium
+
+  * Add filter for theme type
+
+  * Added expander for hiding advanced filters
+
+  * Fixed: Application icon not displayed in Unity launcher
+
+  * Fixed: 'Too many open files' error
+
+  * Fixed: File descriptors will be closed as soon as a process is
+  complete
+
+  * Fixed: Terminal is not shown correctly while restoring packages
 
   * Fixed: In the PPA backup list, the list of installed packages did
-  not contain packages which have updates available
+  not display packages which have updates available
 
-  * Add a filter for theme type
+  * Fixed: --user option does not work with --list-themes and
+  --list-configs
 
- -- Tony George <tony.george.kol@gmail.com>  Wed, 23 Mar 2016 10:00:00 +0530
+  * Fixed: Ownership of ~/.icons and ~/.themes not set correctly
+  after extracting themes
+
+  * Removed options --{list|backup|restore}-icons
+  
+
+ -- Tony George <tony.george.kol@gmail.com>  Fri, 25 Mar 2016 10:00:00 +0530
