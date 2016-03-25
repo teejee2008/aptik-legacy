@@ -689,10 +689,6 @@ public class Theme : GLib.Object{
 			dis_out.newline_type = DataStreamNewlineType.ANY;
 			dis_err.newline_type = DataStreamNewlineType.ANY;
 
-			//progress_count = 0;
-			//stdout_lines = new Gee.ArrayList<string>();
-			//stderr_lines = new Gee.ArrayList<string>();
-
 			try {
 				//start thread for reading output stream
 				Thread.create<void> (gzip_read_output_line, true);
@@ -706,10 +702,6 @@ public class Theme : GLib.Object{
 			} catch (Error e) {
 				log_error (e.message);
 			}
-
-			//while(is_running){
-			//	sleep(100);
-			//}
 
 			return true;
 		}
@@ -740,13 +732,8 @@ public class Theme : GLib.Object{
 		try {
 			out_line = dis_out.read_line (null);
 			while (out_line != null) {
-				//if (gui_mode) {
-					progress_count += 1; //count
-					status_line = out_line;
-				//}
-				//else {
-				//	stdout.printf(out_line + "\n"); //print
-				//}
+				progress_count += 1; //count
+				status_line = out_line;
 				out_line = dis_out.read_line (null);  //read next
 			}
 
