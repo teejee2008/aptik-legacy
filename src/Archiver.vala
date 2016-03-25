@@ -75,6 +75,11 @@ public class Archiver : GLib.Object {
 	private Gee.HashMap<string, Regex> regex_list;
 	private Archive task;
 
+	Pid child_pid;
+	int input_fd;
+	int output_fd;
+	int error_fd;
+		
 	public Archiver() {
 		regex_list = new Gee.HashMap<string, Regex>();
 
@@ -139,10 +144,6 @@ public class Archiver : GLib.Object {
 
 		//log_msg(read_file(task.script_file));
 		
-		Pid child_pid;
-		int input_fd;
-		int output_fd;
-		int error_fd;
 
 		try {
 
@@ -219,9 +220,24 @@ public class Archiver : GLib.Object {
 				outLine = disOut.read_line (null);
 			}
 
-			Thread.usleep ((ulong) 0.1 * 1000000);
-			dsLog.close();
+			// cleanup -----------------
 
+			// dispose stdout
+			GLib.FileUtils.close(output_fd);
+			dis_out.close();
+			dis_out = null;
+
+			// dispose stdin
+			GLib.FileUtils.close(input_fd);
+
+			// dispose child process
+			Process.close_pid(child_pid); //required on Windows, doesn't do anything on Unix
+
+			Thread.usleep ((ulong) 0.1 * 1000000);
+			
+			dsLog.close();
+			dsLog = null;
+			
 			if (task.action == ArchiveAction.LIST){
 				task.archive_size = get_file_size_bytes(task.archive_path);
 				task.compression_ratio = (task.archive_size * 100.00) / task.base_archive.size;
@@ -246,6 +262,10 @@ public class Archiver : GLib.Object {
 				dsLog.put_string (errLine + "\n");
 				errLine = disErr.read_line (null);
 			}
+
+			disErr.close();
+			disErr = null;
+			GLib.FileUtils.close(error_fd);
 		}
 		catch (Error e) {
 			log_error (e.message);
