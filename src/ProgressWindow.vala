@@ -70,7 +70,7 @@ public class ProgressWindow : Window {
 		title = "";
 		icon = get_app_icon(16);
 		resizable = false;
-		deletable = false;
+		set_deletable(false);
 		
 		//vbox_main
 		vbox_main = new Box (Orientation.VERTICAL, 6);

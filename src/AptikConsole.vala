@@ -91,14 +91,12 @@ public class AptikConsole : GLib.Object {
 		msg += "  --list-default        " + _("List default packages for linux distribution") + "\n";
 		msg += "  --list-ppa            " + _("List PPAs") + "\n";
 		msg += "  --list-themes         " + _("List themes in /usr/share/themes") + "\n";
-		msg += "  --list-icons          " + _("List icon themes in /usr/share/icons") + "\n";
 		msg += "  --list-configs        " + _("List config dirs in /home/<user>") + "\n";
 		
 		msg += "  --backup-ppa          " + _("Backup list of PPAs") + "\n";
 		msg += "  --backup-packages     " + _("Backup list of manual and installed packages") + "\n";
 		msg += "  --backup-cache        " + _("Backup downloaded packages from APT cache") + "\n";
 		msg += "  --backup-themes       " + _("Backup themes from /usr/share/themes") + "\n";
-		msg += "  --backup-icons        " + _("Backup icons from /usr/share/icons") + "\n";
 		msg += "  --backup-configs      " + _("Backup config files from /home/<user>") + "\n";
 		msg += "  --user <username>     " + _("Select username for listing config files") + "\n";
 		
@@ -106,7 +104,6 @@ public class AptikConsole : GLib.Object {
 		msg += "  --restore-packages    " + _("Restore packages from file 'packages.list'") + "\n";
 		msg += "  --restore-cache       " + _("Restore downloaded packages to APT cache") + "\n";
 		msg += "  --restore-themes      " + _("Restore themes to /usr/share/themes") + "\n";
-		msg += "  --restore-icons       " + _("Restore icons to /usr/share/icons") + "\n";
 		msg += "  --restore-configs     " + _("Restore config files to /home/<user>") + "\n";
 		
 		//msg += "  --take-ownership      " + _("Take ownership of files in your home directory") + "\n";
@@ -223,11 +220,6 @@ public class AptikConsole : GLib.Object {
 				print_theme_list(Theme.list_themes_installed());
 				break;
 
-			//case "--list-icon":
-			//case "--list-icons":
-			//	print_theme_list(App.list_icons());
-			//	break;
-
 			case "--list-config":
 			case "--list-configs":
 				print_config_list(App.list_app_config_directories_from_home());
@@ -272,18 +264,6 @@ public class AptikConsole : GLib.Object {
 				}
 				break;
 
-			//case "--backup-icon":
-			//case "--backup-icons":
-			//	foreach(Theme theme in App.list_icons()) {
-			//		if (theme.is_selected) {
-			//			App.zip_theme(theme);
-			//			while (App.is_running) {
-			//				Thread.usleep ((ulong) 0.3 * 1000000);
-			//			}
-			//		}
-			//	}
-			//	break;
-				
 			case "--backup-appsettings":
 			case "--backup-configs":
 				var list = App.list_app_config_directories_from_home();
@@ -325,11 +305,6 @@ public class AptikConsole : GLib.Object {
 			case "--restore-themes":
 				restore_themes();
 				break;
-
-			//case "--restore-icon":
-			//case "--restore-icons":
-				//restore_themes();
-				//break;
 
 			case "--restore-appsettings":
 			case "--restore-configs":
@@ -473,13 +448,15 @@ public class AptikConsole : GLib.Object {
 	public void print_theme_list(Gee.ArrayList<Theme> theme_list) {
 		int max_length = 0;
 		foreach(Theme theme in theme_list) {
-			if (theme.name.length > max_length) {
-				max_length = theme.name.length;
+			var full_name = "%s/%s".printf(theme.dir_type,theme.name);
+			if (full_name.length > max_length) {
+				max_length = full_name.length;
 			}
 		}
 		string fmt = "%%-%ds".printf(max_length + 2);
 		foreach(Theme theme in theme_list) {
-			log_msg(fmt.printf(theme.name));
+			var full_name = "%s/%s".printf(theme.dir_type,theme.name);
+			log_msg(fmt.printf(full_name));
 		}
 	}
 

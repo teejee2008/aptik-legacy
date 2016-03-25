@@ -93,7 +93,7 @@ public class DownloadWindow : Dialog {
 		icon = get_app_icon(16);
 		set_default_size (def_width, def_height);
 		resizable = true;
-		deletable = false;
+		set_deletable(false);
 		
 		//vbox_main
 		vbox_main = get_content_area () as Gtk.Box;
