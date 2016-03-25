@@ -1332,11 +1332,6 @@ public class Main : GLib.Object {
 		string[] argv = new string[1];
 		argv[0] = save_script("apt-get -y update");
 
-		Pid child_pid;
-		int input_fd;
-		int output_fd;
-		int error_fd;
-
 		try {
 			//execute script file
 			Process.spawn_async_with_pipes(
@@ -1400,6 +1395,10 @@ public class Main : GLib.Object {
 				
 				err_line = dis_err.read_line (null); //read next
 			}
+
+			dis_err.close();
+			dis_err = null;
+			GLib.FileUtils.close(error_fd);
 		}
 		catch (Error e) {
 			log_error (e.message);
@@ -1419,6 +1418,14 @@ public class Main : GLib.Object {
 				out_line = dis_out.read_line (null);  //read next
 			}
 
+			dis_out.close();
+			dis_out = null;
+			GLib.FileUtils.close(output_fd);
+
+			GLib.FileUtils.close(input_fd);
+			
+			Process.close_pid(child_pid); //required on Windows, doesn't do anything on Unix
+			
 			is_running = false;
 		}
 		catch (Error e) {
