@@ -1007,6 +1007,8 @@ public class PackageWindow : Window {
 		dlg.show_all();
 		gtk_do_events();
 
+		gtk_set_busy(true, this);
+		
 		try {
 			is_running = true;
 			Thread.create<void> (restore_init_thread, true);
@@ -1042,6 +1044,8 @@ public class PackageWindow : Window {
 			gtk_messagebox(title, msg, this, false);
 		}
 
+		gtk_set_busy(false, this);
+		
 		dlg.close();
 		gtk_do_events();
 	}
@@ -1136,11 +1140,11 @@ public class PackageWindow : Window {
 			log_debug("execute: gdebi %s".printf(App.gdebi_file_list));
 		}
 		cmd += "echo ''\n";
-		cmd += "\necho '" + _("Finished installing packages") + ".'";
-		cmd += "\necho '" + _("Close window to exit...") + "'";
-		cmd += "\nread dummy";
+		cmd += "echo '" + _("Finished installing packages") + ".'\n";
+		cmd += "echo '" + _("Close window to exit...") + "'\n";
+		cmd += "read dummy\n";
 
-		execute_command_script_in_terminal_sync(create_temp_bash_script(cmd));
+		execute_bash_script_sync(create_temp_bash_script(cmd));
 	}
 		
 }

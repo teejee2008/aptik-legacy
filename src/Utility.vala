@@ -149,46 +149,97 @@ namespace TeeJee.FileSystem{
 	using TeeJee.ProcessManagement;
 	using TeeJee.Misc;
 
-	public string file_parent(string filePath){
-		return File.new_for_path(filePath).get_parent().get_path();
+	// path helpers ----------------------------
+	
+	public string file_parent(string file_path){
+		return File.new_for_path(file_path).get_parent().get_path();
 	}
 
-	public string file_basename(string filePath){
-		return File.new_for_path(filePath).get_basename();
+	public string file_basename(string file_path){
+		return File.new_for_path(file_path).get_basename();
 	}
+
+	// file helpers -----------------------------
 	
-	public void file_delete(string filePath){
+	public bool file_exists (string file_path){
+		/* Check if file exists */
+		return ( FileUtils.test(file_path, GLib.FileTest.EXISTS) && FileUtils.test(file_path, GLib.FileTest.IS_REGULAR));
+	}
+
+	public bool file_delete(string file_path){
 
 		/* Check and delete file */
 
 		try {
-			var file = File.new_for_path (filePath);
+			var file = File.new_for_path (file_path);
 			if (file.query_exists ()) {
 				file.delete ();
 			}
+			return true;
 		} catch (Error e) {
 	        log_error (e.message);
+	        log_error(_("Failed to delete file") + ": %s".printf(file_path));
+	        return false;
 	    }
 	}
 
-	public bool file_exists (string filePath){
+	public string? file_read (string file_path){
 
-		/* Check if file exists */
+		/* Reads text from file */
 
-		return ( FileUtils.test(filePath, GLib.FileTest.EXISTS) && FileUtils.test(filePath, GLib.FileTest.IS_REGULAR));
+		string txt;
+		size_t size;
+
+		try{
+			GLib.FileUtils.get_contents (file_path, out txt, out size);
+			return txt;
+		}
+		catch (Error e){
+	        log_error (e.message);
+	        log_error(_("Failed to read file") + ": %s".printf(file_path));
+	    }
+
+	    return null;
 	}
 
-	public void file_copy (string src_file, string dest_file){
+	public bool file_write (string file_path, string contents){
+
+		/* Write text to file */
+
+		try{
+			var file = File.new_for_path (file_path);
+			if (file.query_exists ()) {
+				file.delete ();
+			}
+			
+			var file_stream = file.create (FileCreateFlags.REPLACE_DESTINATION);
+			var data_stream = new DataOutputStream (file_stream);
+			data_stream.put_string (contents);
+			data_stream.close();
+			return true;
+		}
+		catch (Error e) {
+			log_error (e.message);
+			log_error(_("Failed to write file") + ": %s".printf(file_path));
+			return false;
+		}
+	}
+
+	public bool file_copy (string src_file, string dest_file){
 		try{
 			var file_src = File.new_for_path (src_file);
 			if (file_src.query_exists()) {
 				var file_dest = File.new_for_path (dest_file);
 				file_src.copy(file_dest,FileCopyFlags.OVERWRITE,null,null);
+				return true;
 			}
 		}
 		catch(Error e){
 	        log_error (e.message);
+	        log_error(_("Failed to copy file") + ": '%s', '%s'".printf(src_file, dest_file));
 		}
+
+		return false;
 	}
 
 	public void file_move (string src_file, string dest_file){
@@ -201,22 +252,8 @@ namespace TeeJee.FileSystem{
 		}
 		catch(Error e){
 	        log_error (e.message);
+	        log_error(_("Failed to move file") + ": '%s', '%s'".printf(src_file, dest_file));
 		}
-	}
-
-	private string MD5Sum(string path){
-		Checksum checksum = new Checksum (ChecksumType.MD5);
-		FileStream stream = FileStream.open (path, "rb");
-
-		uint8 fbuf[100];
-		size_t size;
-		while ((size = stream.read (fbuf)) > 0){
-		  checksum.update (fbuf, size);
-		}
-		
-		unowned string digest = checksum.get_string();
-
-		return digest;
 	}
 
 	public DateTime file_modified_date(string file_path){
@@ -234,14 +271,91 @@ namespace TeeJee.FileSystem{
 		
 		return (new DateTime.from_unix_utc(0)); //1970
 	}
+
+	// directory helpers ----------------------
 	
-	public bool dir_exists (string filePath){
-
+	public bool dir_exists (string dir_path){
 		/* Check if directory exists */
+		return ( FileUtils.test(dir_path, GLib.FileTest.EXISTS) && FileUtils.test(dir_path, GLib.FileTest.IS_DIR));
+	}
+	
+	public bool dir_create (string dir_path){
 
-		return ( FileUtils.test(filePath, GLib.FileTest.EXISTS) && FileUtils.test(filePath, GLib.FileTest.IS_DIR));
+		/* Creates a directory along with parents */
+
+		try{
+			var dir = File.parse_name (dir_path);
+			if (dir.query_exists () == false) {
+				dir.make_directory_with_parents (null);
+			}
+			return true;
+		}
+		catch (Error e) {
+			log_error (e.message);
+			log_error(_("Failed to create dir") + ": %s".printf(dir_path));
+			return false;
+		}
 	}
 
+	public bool dir_tar (string src_dir, string tar_file, bool recursion){
+		if (dir_exists(src_dir)) {
+			
+			if (file_exists(tar_file)){
+				file_delete(tar_file);
+			}
+
+			var src_parent = file_parent(src_dir);
+			var src_name = file_basename(src_dir);
+			
+			string cmd = "tar cvf '%s' --overwrite --%srecursion -C '%s' '%s'\n".printf(tar_file, (recursion ? "" : "no-"), src_parent, src_name);
+
+			log_debug(cmd);
+			
+			string stdout, stderr;
+			int status = execute_command_script_sync(cmd, out stdout, out stderr);
+			if (status == 0){
+				return true;
+			}
+			else{
+				log_msg(stderr);
+			}
+		}
+		else{
+			log_error(_("Dir not found") + ": %s".printf(src_dir));
+		}
+
+		return false;
+	}
+
+	public bool dir_untar (string tar_file, string dst_dir){
+		if (file_exists(tar_file)) {
+
+			if (!dir_exists(dst_dir)){
+				dir_create(dst_dir);
+			}
+			
+			string cmd = "tar xvf '%s' --overwrite --same-permissions -C '%s'\n".printf(tar_file, dst_dir);
+
+			log_debug(cmd);
+			
+			string stdout, stderr;
+			int status = execute_command_script_sync(cmd, out stdout, out stderr);
+			if (status == 0){
+				return true;
+			}
+			else{
+				log_msg(stderr);
+			}
+		}
+		else{
+			log_error(_("File not found") + ": %s".printf(tar_file));
+		}
+		
+		return false;
+	}
+
+
+	//TODO: Deprecated, Remove this
 	public bool create_dir (string filePath){
 
 		/* Creates a directory along with parents */
@@ -259,6 +373,7 @@ namespace TeeJee.FileSystem{
 		}
 	}
 
+	//TODO: Deprecated, Remove this
 	public bool move_file (string sourcePath, string destPath){
 
 		/* Move file from one location to another */
@@ -275,6 +390,7 @@ namespace TeeJee.FileSystem{
 		}
 	}
 
+	//TODO: Deprecated, Remove this
 	public bool copy_file (string sourcePath, string destPath){
 
 		/* Copy file from one location to another */
@@ -291,6 +407,7 @@ namespace TeeJee.FileSystem{
 		}
 	}
 
+	//TODO: Deprecated, Remove this
 	public string? read_file (string file_path){
 
 		/* Reads text from file */
@@ -309,6 +426,27 @@ namespace TeeJee.FileSystem{
 	    return null;
 	}
 
+	//TODO: Deprecated, Remove this
+	public bool write_file (string file_path, string contents){
+
+		/* Write text to file */
+
+		try{
+			var file = File.new_for_path (file_path);
+			if (file.query_exists ()) { file.delete (); }
+			var file_stream = file.create (FileCreateFlags.REPLACE_DESTINATION);
+			var data_stream = new DataOutputStream (file_stream);
+			data_stream.put_string (contents);
+			data_stream.close();
+			return true;
+		}
+		catch (Error e) {
+			log_error (e.message);
+			return false;
+		}
+	}
+
+	//TODO: Deprecated, Remove this
 	public DateTime? get_file_modification_time (string file_path){
 		try{
 			var file = File.new_for_path (file_path);
@@ -328,25 +466,91 @@ namespace TeeJee.FileSystem{
 		return null;
 	}
 
-	public bool write_file (string file_path, string contents){
+	// archiving and encryption ----------------
+	
+	public bool file_tar_and_encrypt (string src_file, string dst_file, string password){
+		if (file_exists(src_file)) {
+			if (file_exists(dst_file)){
+				file_delete(dst_file);
+			}
 
-		/* Write text to file */
+			var src_dir = file_parent(src_file);
+			var src_name = file_basename(src_file);
 
-		try{
-			var file = File.new_for_path (file_path);
-			if (file.query_exists ()) { file.delete (); }
-			var file_stream = file.create (FileCreateFlags.REPLACE_DESTINATION);
-			var data_stream = new DataOutputStream (file_stream);
-			data_stream.put_string (contents);
-			data_stream.close();
-			return true;
+			var dst_dir = file_parent(dst_file);
+			var dst_name = file_basename(dst_file);
+			var tar_name = dst_name[0 : dst_name.index_of(".gpg")];
+			var tar_file = "%s/%s".printf(dst_dir, tar_name);
+			
+			string cmd = "tar cvf '%s' --overwrite -C '%s' '%s'\n".printf(tar_file, src_dir, src_name);
+			cmd += "gpg --passphrase '%s' -o '%s' --symmetric '%s'\n".printf(password, dst_file, tar_file);
+			cmd += "rm -f '%s'\n".printf(tar_file);
+
+			log_debug(cmd);
+			
+			string stdout, stderr;
+			int status = execute_command_script_sync(cmd, out stdout, out stderr);
+			if (status == 0){
+				return true;
+			}
+			else{
+				log_msg(stderr);
+			}
 		}
-		catch (Error e) {
-        log_error (e.message);
-        return false;
-    }
+
+		return false;
 	}
 
+	public bool file_decrypt_and_untar (string src_file, string dst_file, string password){
+		if (file_exists(src_file)) {
+			if (file_exists(dst_file)){
+				file_delete(dst_file);
+			}
+
+			var src_dir = file_parent(src_file);
+			var src_name = file_basename(src_file);
+			var tar_name = src_name[0 : src_name.index_of(".gpg")];
+			var tar_file = "%s/%s".printf(src_dir, tar_name);
+			
+			string cmd = "";
+			cmd += "gpg --passphrase '%s' -o '%s' --decrypt '%s'\n".printf(password, tar_file, src_file);
+			cmd += "tar xvf '%s' --overwrite --same-permissions -C '%s'\n".printf(tar_file, "/");
+			cmd += "rm -f '%s'\n".printf(dst_file);
+
+			log_debug(cmd);
+			
+			string stdout, stderr;
+			int status = execute_command_script_sync(cmd, out stdout, out stderr);
+			if (status == 0){
+				return true;
+			}
+			else{
+				log_msg(stderr);
+			}
+		}
+
+		return false;
+	}
+
+	// hashing -----------
+	
+	private string MD5Sum(string path){
+		Checksum checksum = new Checksum (ChecksumType.MD5);
+		FileStream stream = FileStream.open (path, "rb");
+
+		uint8 fbuf[100];
+		size_t size;
+		while ((size = stream.read (fbuf)) > 0){
+		  checksum.update (fbuf, size);
+		}
+		
+		unowned string digest = checksum.get_string();
+
+		return digest;
+	}
+
+	// misc --------------------
+	
 	public long get_file_count(string path){
 
 		/* Return total count of files and directories */

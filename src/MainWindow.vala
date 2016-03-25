@@ -209,7 +209,7 @@ public class MainWindow : Window {
 
 		init_section_backup_themes(++row);
 		
-		//init_section_backup_mounts(++row);
+		init_section_backup_mounts(++row);
 	}
 
 	private void init_section_backup_ppa(int row) {
@@ -437,8 +437,8 @@ public class MainWindow : Window {
 		grid_backup_buttons.attach(img, 0, row, 1, 1);
 
 		//lbl_backup_mount
-		Label lbl_backup_mount = new Label (" " + _("Filesystem Mount Points"));
-		lbl_backup_mount.set_tooltip_text(_("mounts and Icons"));
+		Label lbl_backup_mount = new Label (" " + _("Filesystem Mounts"));
+		lbl_backup_mount.set_tooltip_text(_("Filesystem Mounts"));
 		lbl_backup_mount.set_use_markup(true);
 		lbl_backup_mount.halign = Align.START;
 		lbl_backup_mount.hexpand = true;
@@ -447,7 +447,7 @@ public class MainWindow : Window {
 		//btn_backup_mount
 		btn_backup_mount = new Gtk.Button.with_label (" " + _("Backup") + " ");
 		btn_backup_mount.set_size_request(button_width, button_height);
-		btn_backup_mount.set_tooltip_text(_("Backup /etc/fstab entries"));
+		btn_backup_mount.set_tooltip_text(_("Backup /etc/fstab and /etc/crypttab entries"));
 		grid_backup_buttons.attach(btn_backup_mount, 2, row, 1, 1);
 
 		btn_backup_mount.clicked.connect(()=>{
@@ -455,9 +455,32 @@ public class MainWindow : Window {
 				return;
 			}
 
-			this.hide();
-			var dlg = new MountWindow.with_parent(this,false);
-			dlg.show_all();
+			bool keyfile_used = false;
+			var list = FsTabEntry.read_crypttab_file("/etc/crypttab");
+			foreach(var fs in list){
+				if ((fs.password.length > 0) && (fs.password != "none")){
+					if (file_exists(fs.password)){
+						keyfile_used = true;
+						break;
+					}
+				}
+			}
+
+			string password = "";
+			if (keyfile_used){
+				password = prompt_for_password(true, _("Create Password"),_("Create a password for encrypting the key file backups"));
+				if (password == ""){
+					return;
+				}
+			}
+
+			bool ok = App.backup_mounts(password);
+			if (ok){
+				gtk_messagebox(_("Finished"), _("Backup taken successfully"), this, false);
+			}
+			else{
+				gtk_messagebox(_("Error"), _("Failed to save backup"), this, false);
+			}
 		});
 
 		//btn_restore_mount
@@ -470,7 +493,7 @@ public class MainWindow : Window {
 			if (!check_backup_folder()) {
 				return;
 			}
-			if (!check_backup_file("fstab.list") && !check_backup_file("crypttab.list")){
+			if (!check_backup_file("mounts/fstab") && !check_backup_file("mounts/crypttab")){
 				return;
 			}
 
@@ -714,6 +737,34 @@ public class MainWindow : Window {
 		}
 	}
 
+	private string prompt_for_password(bool confirm_password, string dlg_title, string dlg_msg){
+		var dlg = new PasswordWindow.with_parent(this, confirm_password, dlg_title, dlg_msg);
+
+		int response_id = ResponseType.NONE;
+		
+		do{
+			response_id = dlg.run();
+		}
+		while (response_id == ResponseType.NONE);
+
+		string password = "";
+		
+		switch (response_id) {
+		case Gtk.ResponseType.OK:
+			if (dlg.password.length > 0){
+				password = dlg.password;
+			}
+			break;
+		case Gtk.ResponseType.CANCEL:
+			//do nothing
+			break;
+		}
+		
+		dlg.destroy();
+
+		return password;
+	}
+	
 	/* APT Cache */
 
 	private void btn_backup_cache_clicked() {

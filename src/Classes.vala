@@ -605,23 +605,85 @@ public class DownloadManager : GLib.Object{
 
 }
 
-public class FstabEntry : GLib.Object{
+public class FsTabEntry : GLib.Object{
 	public string device = "";
 	public string mount_point = "";
 	public string fs_type = "";
 	public string options = "";
 	public string dump = "";
 	public string pass = "";
+
+	public string mapped_name = "";
+	public string password = "";
+
 	public bool is_selected = false;
 	
-	public string line{
+	public Action action = Action.NONE;
+	public DeviceType dev_type = DeviceType.REGULAR;
+	
+	public enum Action{
+		ADD,
+		MODIFY,
+		NONE
+	}
+
+	public enum DeviceType{
+		REGULAR,
+		ENCRYPTED
+	}
+	
+	public string action_display {
+		owned get{
+			switch(action){
+			case Action.NONE:
+				return _("No Change");
+			case Action.ADD:
+				return _("Add");
+			case Action.MODIFY:
+				return _("Update");
+			default:
+				return _("No Change");
+			}
+		}
+	}
+
+	public string get_line(){
+		if (dev_type == DeviceType.REGULAR){
+			return fstab_line;
+		}
+		else{
+			return crypttab_line;
+		}
+	}
+
+	public string keyfile_archive_name{
+		owned get{
+			return "key-file-" + device.down().replace("/","-") + ".tar.gpg";
+		}
+	}
+
+	public string mount_dir_archive_name{
+		owned get{
+			return "mount-point" + mount_point.down().replace("/","-") + ".tar";
+		}
+	}
+	
+	private string fstab_line{
 		owned get{
 			return "%s\t%s\t%s\t%s\t%s\t%s".printf(device,mount_point,fs_type,options,dump,pass);
 		}
 	}
 
-	public static FstabEntry create_from_line(string fstab_line){
-		var s = fstab_line;
+	private string crypttab_line{
+		owned get{
+			return "%s\t%s\t%s\t%s".printf(mapped_name,device,password,options);
+		}
+	}
+
+	// factory methods
+	
+	public static FsTabEntry create_from_fstab_line(string tab_line){
+		var s = tab_line.strip();
 
 		while (s.contains("  ")){
 			s = s.replace("  "," ");
@@ -637,40 +699,131 @@ public class FstabEntry : GLib.Object{
 
 		s = s.replace(" ","\t");
 		
-		FstabEntry fs = null;
+		FsTabEntry fs = null;
 
-		log_msg("line:" + s);
-		
 		string[] arr = s.split("\t");
-		if (arr.length >= 6){
-			fs = new FstabEntry();
+		if (arr.length == 6){
+			fs = new FsTabEntry();
 			fs.device = arr[0];
 			fs.mount_point = arr[1];
 			fs.fs_type = arr[2];
 			fs.options = arr[3];
 			fs.dump = arr[4];
 			fs.pass = arr[5];
+			fs.dev_type = DeviceType.REGULAR;
 		}
-		else{
-			log_msg("%d".printf(arr.length));
-		}
-		
+
 		return fs;
 	}
 
-	public static Gee.ArrayList<FstabEntry> read_fstab_file(){
-		var list = new Gee.ArrayList<FstabEntry>();
-		foreach(string line in read_file("/etc/fstab").split("\n")){
+	public static FsTabEntry create_from_crypttab_line(string tab_line){
+		var s = tab_line.strip();
+
+		while (s.contains("  ")){
+			s = s.replace("  "," ");
+		}
+		
+		while (s.contains(" \t")){
+			s = s.replace(" \t"," ");
+		}
+
+		while (s.contains("\t ")){
+			s = s.replace("\t "," ");
+		}
+
+		s = s.replace(" ","\t");
+		
+		FsTabEntry fs = null;
+
+		string[] arr = s.split("\t");
+		if (arr.length == 4){
+			fs = new FsTabEntry();
+			fs.mapped_name = arr[0];
+			fs.device = arr[1];
+			fs.password = arr[2];
+			fs.options = arr[3];
+			fs.dev_type = DeviceType.ENCRYPTED;
+		}
+
+		return fs;
+	}
+
+	// read file
+	
+	public static Gee.ArrayList<FsTabEntry> read_fstab_file(string tab_file){
+		var list = new Gee.ArrayList<FsTabEntry>();
+		
+		if (!file_exists(tab_file)){
+			return list;
+		}
+		
+		foreach(string line in read_file(tab_file).split("\n")){
 			if (line.strip().has_prefix("#")){
 				continue;
 			}
-			var fs = create_from_line(line);
-			if (fs == null){
-				continue;
+			var fs = create_from_fstab_line(line);
+			if (fs != null){
+				list.add(fs);
 			}
-			list.add(fs);
 		}
+		
 		return list;
 	}
-}
 
+	public static Gee.ArrayList<FsTabEntry> read_crypttab_file(string tab_file){
+		var list = new Gee.ArrayList<FsTabEntry>();
+		
+		if (!file_exists(tab_file)){
+			return list;
+		}
+		
+		foreach(string line in read_file(tab_file).split("\n")){
+			if (line.strip().has_prefix("#")){
+				continue;
+			}
+			var fs = create_from_crypttab_line(line);
+			if (fs != null){
+				list.add(fs);
+			}
+		}
+		
+		return list;
+	}
+
+	// save file
+	
+	public static bool save_fstab_file(Gee.ArrayList<FsTabEntry> list){
+		string txt = "";
+
+		bool found_root = false;
+		foreach(var fs in list){
+			if (fs.is_selected){
+				txt += "%s\n".printf(fs.get_line());
+			}
+			if (fs.mount_point == "/"){
+				found_root = true;
+			}
+		}
+
+		if (found_root){
+			bool ok = file_write("/etc/fstab",txt);
+			return ok;
+		}
+
+		return false;
+	}
+
+	public static bool save_crypttab_file(Gee.ArrayList<FsTabEntry> list){
+		string txt = "";
+
+		foreach(var fs in list){
+			if (fs.is_selected){
+				txt += "%s\n".printf(fs.get_line());
+			}
+		}
+
+		bool ok = file_write("/etc/crypttab",txt);
+		return ok;
+	}
+	
+}

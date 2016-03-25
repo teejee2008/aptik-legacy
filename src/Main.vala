@@ -2067,6 +2067,274 @@ public class Main : GLib.Object {
 		}
 	}
 
+	/* Mounts */
+
+	public bool backup_mounts(string password){
+		bool ok = false;
+		
+		string mounts_dir = backup_dir + "mounts";
+		ok = dir_create(mounts_dir);
+		if (!ok){
+			return false;
+		}
+
+		// copy /etc/fstab and /etc/crypttab to backup path ---------
+		
+		foreach(string file_name in new string[] { "fstab", "crypttab"}){
+			string src_file = "/etc/%s".printf(file_name);
+			string dst_file = "%s/%s".printf(mounts_dir, file_name);
+
+			if (file_exists(dst_file)){
+				ok = file_delete(dst_file);
+				if (!ok){
+					return false;
+				}
+			}
+			
+			if (file_exists(src_file)){
+				ok = file_copy(src_file, dst_file);
+				if (!ok){
+					return false;
+				}
+			}
+		}
+
+		// back-up key files mentioned in /etc/crypttab ---------
+		
+		var list = FsTabEntry.read_crypttab_file("/etc/crypttab");
+		foreach(var fs in list){
+			if ((fs.password.length > 0) && (fs.password != "none")){
+				if (file_exists(fs.password)){
+					string src_file = fs.password;
+					string dst_file = "%s/%s".printf(mounts_dir, fs.keyfile_archive_name);
+					ok = file_tar_and_encrypt(src_file, dst_file, password);
+					if (!ok){
+						return false;
+					}
+				}
+			}
+		}
+
+		// back-up mount directories with permissions ---------
+
+		// ** /etc/fstab only **
+		
+		list = FsTabEntry.read_fstab_file("/etc/fstab");
+		foreach(var fs in list){
+			if (fs.mount_point == "/"){
+				continue;
+			}
+			if (dir_exists(fs.mount_point)){
+				// TAR the mount directory without including contents
+				string tar_file = "%s/%s".printf(mounts_dir, fs.mount_dir_archive_name);
+				dir_tar(fs.mount_point, tar_file, false);
+			}
+		}
+
+		return true;
+	}
+
+	public bool restore_mounts(Gee.ArrayList<FsTabEntry> fstab_list, Gee.ArrayList<FsTabEntry> crypttab_list, string password){
+		bool ok = false;
+
+		string mounts_dir = backup_dir + "mounts";
+
+		log_debug(_("Restoring /etc/fstab and /etc/crypttab entries"));
+		
+		// save /etc/fstab --------------------------
+		
+		bool none_selected = true;
+		
+		foreach(var fs in fstab_list) {
+			if (fs.is_selected && (fs.action == FsTabEntry.Action.ADD)){
+				none_selected = false;
+				break;
+			}
+		}
+
+		if (!none_selected){
+			ok = FsTabEntry.save_fstab_file(fstab_list);
+			if (!ok){
+				log_error(_("Failed to save file") + ": %s".printf("/etc/fstab"));
+				return ok;
+			}
+			else{
+				log_debug(_("File updated") + ": %s".printf("/etc/fstab"));
+			}
+		}
+
+		// save /etc/crypttab --------------------------
+		
+		none_selected = true;
+		
+		foreach(var fs in crypttab_list) {
+			if (fs.is_selected && (fs.action == FsTabEntry.Action.ADD)){
+				none_selected = false;
+				break;
+			}
+		}
+
+		if (!none_selected){
+			ok = FsTabEntry.save_crypttab_file(crypttab_list);
+			if (!ok){
+				log_error(_("Failed to save file") + ": %s".printf("/etc/crypttab"));
+				return ok;
+			}
+			else{
+				log_debug(_("File updated") + ": %s".printf("/etc/crypttab"));
+			}
+		}
+
+		// restore key files -----------------
+
+		foreach(var fs in crypttab_list){
+			if (!fs.is_selected || (fs.action != FsTabEntry.Action.ADD)){
+				continue;
+			}
+			
+			if ((fs.password.length == 0) || (fs.password == "none")){ //TODO: Check REGULAR_FILE
+				continue;
+			}
+
+			if (file_exists(fs.password)){
+				log_debug(_("File exists") + ": %s".printf(fs.password));
+				continue;
+			}
+			
+			string src_file = "%s/%s".printf(mounts_dir, fs.keyfile_archive_name);
+
+			if (file_exists(src_file)){
+				string dst_file = fs.password;
+				ok = file_decrypt_and_untar(src_file, dst_file, password);
+				if (!ok){
+					log_error(_("Failed to save file") + ": %s".printf("/etc/crypttab"));
+					return false;
+				}
+				else{
+					log_debug(_("File restored") + ": %s".printf(dst_file));
+				}
+			}
+		}
+
+		// restore mount directories with permissions ---------
+
+		// ** /etc/fstab only **
+		
+		foreach(var fs in fstab_list){
+			if (!fs.is_selected || (fs.action != FsTabEntry.Action.ADD)){
+				continue;
+			}
+			
+			if (dir_exists(fs.mount_point)){
+				log_debug(_("Dir exists") + ": %s".printf(fs.mount_point));
+				continue;
+			}
+			
+			// Un-TAR the mount directory from backup
+			var tar_file = "%s/%s".printf(mounts_dir, fs.mount_dir_archive_name);
+			var dst_dir = file_parent(fs.mount_point);
+			if (file_exists(tar_file)){
+				ok = dir_untar(tar_file, dst_dir);
+				if (!ok){
+					log_error(_("Failed to restore directory") + ": %s".printf(fs.mount_point));
+					return false;
+				}
+				else{
+					log_debug(_("Directory restored") + ": %s".printf(fs.mount_point));
+				}
+			}
+			else{
+				log_error(_("File not found") + ": %s".printf(tar_file));
+			}
+		}
+		
+		return true;
+	}
+
+	public Gee.ArrayList<FsTabEntry> create_fstab_list_for_restore(){
+		string mounts_dir = backup_dir + "mounts";
+		string sys_file = "/etc/fstab";
+		string backup_file = "%s/fstab".printf(mounts_dir);
+
+		var list = new Gee.ArrayList<FsTabEntry>();
+		var list_sys = FsTabEntry.read_fstab_file(sys_file);
+		var list_bkup = FsTabEntry.read_fstab_file(backup_file);
+
+		foreach(var fs_sys in list_sys){
+			list.add(fs_sys);
+			fs_sys.is_selected = true;
+		}
+		
+		foreach(var fs_bak in list_bkup){
+			bool found = false;
+			foreach(var fs_sys in list_sys){
+				if (fs_sys.mount_point == fs_bak.mount_point){
+					found = true;
+					break;
+				}
+			}
+			if (!found){
+				// check if it needs to be added
+				switch(fs_bak.mount_point){
+				case "/":
+				case "/boot":
+				case "/boot/efi":
+				//case "/home": // home will be added if missing in sys fstab
+					// do not add
+					break;
+				default:
+					// add
+					list.add(fs_bak);
+					fs_bak.action = FsTabEntry.Action.ADD;
+					fs_bak.is_selected = true;
+					if (!fs_bak.options.contains("nofail")){
+						fs_bak.options += (fs_bak.options.length > 0) ? ",nofail" : "nofail";
+					}
+					break;
+				}
+			}
+		}
+		
+		return list;
+	}
+
+	public Gee.ArrayList<FsTabEntry> create_crypttab_list_for_restore(){
+		string mounts_dir = backup_dir + "mounts";
+		string sys_file = "/etc/crypttab";
+		string backup_file = "%s/crypttab".printf(mounts_dir);
+
+		var list = new Gee.ArrayList<FsTabEntry>();
+		var list_sys = FsTabEntry.read_crypttab_file(sys_file);
+		var list_bkup = FsTabEntry.read_crypttab_file(backup_file);
+
+		foreach(var fs_sys in list_sys){
+			list.add(fs_sys);
+			fs_sys.is_selected = true;
+		}
+		
+		foreach(var fs_bak in list_bkup){
+			bool found = false;
+			foreach(var fs_sys in list_sys){
+				if (fs_sys.mapped_name == fs_bak.mapped_name){
+					found = true;
+					break;
+				}
+			}
+			if (!found){
+				// add
+				list.add(fs_bak);
+				fs_bak.action = FsTabEntry.Action.ADD;
+				fs_bak.is_selected = true;
+				if (!fs_bak.options.contains("nofail")){
+					fs_bak.options += (fs_bak.options.length > 0) ? ",nofail" : "nofail";
+				}
+				break;
+			}
+		}
+		
+		return list;
+	}
+	
 	/* Misc */
 
 	public bool take_ownership() {

@@ -37,22 +37,30 @@ using TeeJee.Misc;
 public class MountWindow : Window {
 	private Gtk.Box vbox_main;
 
-	private Button btn_restore;
-	private Button btn_backup;
-	private Button btn_cancel;
-	//private Button btn_select_all;
-	//private Button btn_select_none;
-	
-	private TreeView tv_mount;
-	//private TreeViewColumn col_mount_status;
-	private ScrolledWindow sw_mount;
+	private Gtk.Button btn_restore;
+	private Gtk.Button btn_backup;
+	private Gtk.Button btn_cancel;
 
-	private Gee.ArrayList<FstabEntry> fstab_list;
+	private Gtk.RadioButton rbtn_fstab;
+	private Gtk.RadioButton rbtn_crypttab;
+	 
+	private Gtk.TreeView tv_mount;
+	private Gtk.ScrolledWindow sw_mount;
+	private Gtk.TreeViewColumn col_mapped_name;
+	private Gtk.TreeViewColumn col_password;
+	private Gtk.TreeViewColumn col_device;
+	private Gtk.TreeViewColumn col_fs_type;
+	private Gtk.TreeViewColumn col_mount_point;
+	private Gtk.TreeViewColumn col_dump;
+	private Gtk.TreeViewColumn col_pass;
+	
+	private Gee.ArrayList<FsTabEntry> fstab_list;
+	private Gee.ArrayList<FsTabEntry> crypttab_list;
+	private Gee.ArrayList<FsTabEntry> selected_list;
 	
 	private int def_width = 550;
 	private int def_height = 450;
 	private uint tmr_init = 0;
-	//private bool is_running = false;
 	private bool is_restore_view = false;
 
 	// init
@@ -82,6 +90,8 @@ public class MountWindow : Window {
 		vbox_main.margin = 6;
 		add (vbox_main);
 
+		init_nav_buttons();
+		
 		//treeview
 		init_treeview();
 
@@ -100,7 +110,7 @@ public class MountWindow : Window {
 			tmr_init = 0;
 		}
 
-		fstab_list = new Gee.ArrayList<FstabEntry>();
+		fstab_list = new Gee.ArrayList<FsTabEntry>();
 		
 		if (is_restore_view){
 			title = _("Restore Mount Points");
@@ -111,17 +121,34 @@ public class MountWindow : Window {
 			restore_init();
 		}
 		else{
-			title = _("Backup Mount Points");
-			
-			btn_backup.show();
-			btn_backup.visible = true;
-
-			backup_init();
+			// not used
 		}
 
 		return false;
 	}
 
+	private void init_nav_buttons(){
+		//hbox
+		var hbox = new Box(Orientation.HORIZONTAL, 6);
+		vbox_main.add(hbox);
+
+		var rbtn = new Gtk.RadioButton.with_label_from_widget (null, _("Regular Devices (/etc/fstab)"));
+		hbox.add (rbtn);
+		rbtn_fstab = rbtn;
+		rbtn.toggled.connect (btn_fstab_clicked);
+
+		rbtn = new Gtk.RadioButton.with_label_from_widget (rbtn, _("Encrypted Devices (/etc/crypttab)"));
+		hbox.add (rbtn);
+		rbtn_crypttab = rbtn;
+		rbtn.toggled.connect (btn_crypttab_clicked);
+
+		//var btn_fstab = new Gtk.Button.with_label("Regular Devices (/etc/fstab)");
+		//hbox.add(btn_fstab);
+
+		//var btn_crypttab = new Gtk.Button.with_label("Encrypted Devices (/etc/crypttab)");
+		//hbox.add(btn_crypttab);
+	}
+	
 	private void init_treeview() {
 		//tv_mount
 		tv_mount = new TreeView();
@@ -138,25 +165,28 @@ public class MountWindow : Window {
 
 		//col_mount_select ----------------------
 
-		TreeViewColumn col_mount_select = new TreeViewColumn();
-		col_mount_select.title = "";
+		var col = new TreeViewColumn();
+		col.title = "";
+		tv_mount.append_column(col);
+		var col_mount_select = col;
+
 		CellRendererToggle cell_mount_select = new CellRendererToggle ();
 		cell_mount_select.activatable = true;
-		col_mount_select.pack_start (cell_mount_select, false);
-		tv_mount.append_column(col_mount_select);
-
+		col.pack_start (cell_mount_select, false);
+		
 		col_mount_select.set_cell_data_func (cell_mount_select, (cell_layout, cell, model, iter) => {
 			bool selected;
-			FstabEntry fs;
+			FsTabEntry fs;
 			model.get (iter, 0, out selected, 1, out fs, -1);
 			(cell as Gtk.CellRendererToggle).active = selected;
 			(cell as Gtk.CellRendererToggle).sensitive = (fs.mount_point != "/");
+			(cell as Gtk.CellRendererToggle).visible = (fs.action == FsTabEntry.Action.ADD);
 		});
 
 		cell_mount_select.toggled.connect((path) => {
 			var model = (Gtk.ListStore) tv_mount.model;
 			bool selected;
-			FstabEntry fs;
+			FsTabEntry fs;
 			TreeIter iter;
 
 			model.get_iter_from_string (out iter, path);
@@ -166,121 +196,152 @@ public class MountWindow : Window {
 			fs.is_selected = !selected;
 		});
 
-		//col_mount_status ----------------------
+		//col_mapped_name ----------------------
 
-		//col_mount_status = new TreeViewColumn();
-		//col_mount_status.title = _("");
-		//col_mount_status.resizable = true;
-		//tv_mount.append_column(col_mount_status);
+		col = new TreeViewColumn();
+		col.title = _("Mapped Name");
+		col.resizable = true;
+		tv_mount.append_column(col);
+		col_mapped_name = col;
+		
+		var cell_text = new CellRendererText ();
+		cell_text.ellipsize = Pango.EllipsizeMode.END;
+		col.pack_start (cell_text, false);
 
-		//CellRendererPixbuf cell_mount_status = new CellRendererPixbuf ();
-		//col_mount_status.pack_start (cell_mount_status, false);
-		//col_mount_status.set_attributes(cell_mount_status, "pixbuf", 2);
+		col.set_cell_data_func (cell_text, (cell_layout, cell, model, iter) => {
+			FsTabEntry fs;
+			model.get (iter, 1, out fs, -1);
+			(cell as Gtk.CellRendererText).text = fs.mapped_name;
+		});
 
 		//col_device ----------------------
 
-		TreeViewColumn col_device = new TreeViewColumn();
-		col_device.title = _("Device");
-		col_device.resizable = true;
-		col_device.min_width = 180;
-		tv_mount.append_column(col_device);
+		col = new TreeViewColumn();
+		col.title = _("Device");
+		col.resizable = true;
+		col.min_width = 180;
+		tv_mount.append_column(col);
+		col_device = col;
+		
+		cell_text = new CellRendererText ();
+		cell_text.ellipsize = Pango.EllipsizeMode.END;
+		col.pack_start (cell_text, false);
 
-		CellRendererText cell_device = new CellRendererText ();
-		cell_device.ellipsize = Pango.EllipsizeMode.END;
-		col_device.pack_start (cell_device, false);
-
-		col_device.set_cell_data_func (cell_device, (cell_layout, cell, model, iter) => {
-			FstabEntry fs;
+		col.set_cell_data_func (cell_text, (cell_layout, cell, model, iter) => {
+			FsTabEntry fs;
 			model.get (iter, 1, out fs, -1);
 			(cell as Gtk.CellRendererText).text = fs.device;
 		});
 
 		//col_mount_point ----------------------
 
-		TreeViewColumn col_mount_point = new TreeViewColumn();
-		col_mount_point.title = _("Mount Point");
-		col_mount_point.resizable = true;
-		col_mount_point.min_width = 180;
-		tv_mount.append_column(col_mount_point);
+		col = new TreeViewColumn();
+		col.title = _("Mount Point");
+		col.resizable = true;
+		col.min_width = 180;
+		tv_mount.append_column(col);
+		col_mount_point = col;
+		
+		cell_text = new CellRendererText ();
+		cell_text.ellipsize = Pango.EllipsizeMode.END;
+		col.pack_start (cell_text, false);
 
-		CellRendererText cell_mount_point = new CellRendererText ();
-		cell_mount_point.ellipsize = Pango.EllipsizeMode.END;
-		col_mount_point.pack_start (cell_mount_point, false);
-
-		col_mount_point.set_cell_data_func (cell_mount_point, (cell_layout, cell, model, iter) => {
-			FstabEntry fs;
+		col.set_cell_data_func (cell_text, (cell_layout, cell, model, iter) => {
+			FsTabEntry fs;
 			model.get (iter, 1, out fs, -1);
 			(cell as Gtk.CellRendererText).text = fs.mount_point;
+		});
+
+		// col_password ----------------------
+
+		col = new TreeViewColumn();
+		col.title = _("Password / Keyfile");
+		col.resizable = true;
+		tv_mount.append_column(col);
+		col_password = col;
+		
+		cell_text = new CellRendererText ();
+		cell_text.ellipsize = Pango.EllipsizeMode.END;
+		col.pack_start (cell_text, false);
+
+		col.set_cell_data_func (cell_text, (cell_layout, cell, model, iter) => {
+			FsTabEntry fs;
+			model.get (iter, 1, out fs, -1);
+			(cell as Gtk.CellRendererText).text = fs.password;
 		});
 		
 		//col_type ----------------------
 
-		TreeViewColumn col_type = new TreeViewColumn();
-		col_type.title = _("Type");
-		col_type.resizable = true;
-		col_type.min_width = 50;
-		tv_mount.append_column(col_type);
+		col = new TreeViewColumn();
+		col.title = _("FS Type");
+		col.resizable = true;
+		col.min_width = 50;
+		tv_mount.append_column(col);
+		col_fs_type = col;
+		
+		cell_text = new CellRendererText ();
+		cell_text.ellipsize = Pango.EllipsizeMode.END;
+		col.pack_start (cell_text, false);
 
-		CellRendererText cell_type = new CellRendererText ();
-		cell_type.ellipsize = Pango.EllipsizeMode.END;
-		col_type.pack_start (cell_type, false);
-
-		col_type.set_cell_data_func (cell_type, (cell_layout, cell, model, iter) => {
-			FstabEntry fs;
+		col.set_cell_data_func (cell_text, (cell_layout, cell, model, iter) => {
+			FsTabEntry fs;
 			model.get (iter, 1, out fs, -1);
 			(cell as Gtk.CellRendererText).text = fs.fs_type;
 		});
 
 		//col_options ----------------------
 
-		TreeViewColumn col_options = new TreeViewColumn();
-		col_options.title = _("Options");
-		col_options.resizable = true;
-		col_options.min_width = 180;
-		tv_mount.append_column(col_options);
+		col = new TreeViewColumn();
+		col.title = _("Options");
+		col.resizable = true;
+		col.min_width = 180;
+		tv_mount.append_column(col);
+		//var col_options = col;
+		
+		cell_text = new CellRendererText ();
+		cell_text.ellipsize = Pango.EllipsizeMode.END;
+		col.pack_start (cell_text, false);
 
-		CellRendererText cell_options = new CellRendererText ();
-		cell_options.ellipsize = Pango.EllipsizeMode.END;
-		col_options.pack_start (cell_options, false);
-
-		col_options.set_cell_data_func (cell_options, (cell_layout, cell, model, iter) => {
-			FstabEntry fs;
+		col.set_cell_data_func (cell_text, (cell_layout, cell, model, iter) => {
+			FsTabEntry fs;
 			model.get (iter, 1, out fs, -1);
 			(cell as Gtk.CellRendererText).text = fs.options;
 		});
 
 		//col_dump ----------------------
 
-		TreeViewColumn col_dump = new TreeViewColumn();
-		col_dump.title = _("Dump");
-		col_dump.resizable = true;
-		col_dump.min_width = 10;
-		tv_mount.append_column(col_dump);
+		col = new TreeViewColumn();
+		col.title = _("Dump");
+		col.resizable = true;
+		col.min_width = 10;
+		tv_mount.append_column(col);
+		col_dump = col;
+		
+		cell_text = new CellRendererText ();
+		cell_text.ellipsize = Pango.EllipsizeMode.END;
+		col.pack_start (cell_text, false);
 
-		CellRendererText cell_dump = new CellRendererText ();
-		cell_dump.ellipsize = Pango.EllipsizeMode.END;
-		col_dump.pack_start (cell_dump, false);
-
-		col_dump.set_cell_data_func (cell_dump, (cell_layout, cell, model, iter) => {
-			FstabEntry fs;
+		col.set_cell_data_func (cell_text, (cell_layout, cell, model, iter) => {
+			FsTabEntry fs;
 			model.get (iter, 1, out fs, -1);
 			(cell as Gtk.CellRendererText).text = fs.dump;
 		});
 
 		//col_pass ----------------------
 
-		TreeViewColumn col_pass = new TreeViewColumn();
-		col_pass.title = _("Pass");
-		col_pass.resizable = true;
-		col_pass.min_width = 10;
-		tv_mount.append_column(col_pass);
+		col = new TreeViewColumn();
+		col.title = _("Pass");
+		col.resizable = true;
+		col.min_width = 10;
+		tv_mount.append_column(col);
+		col_pass = col;
+		
+		cell_text = new CellRendererText ();
+		cell_text.ellipsize = Pango.EllipsizeMode.END;
+		col.pack_start (cell_text, false);
 
-		CellRendererText cell_pass = new CellRendererText ();
-		cell_pass.ellipsize = Pango.EllipsizeMode.END;
-		col_pass.pack_start (cell_pass, false);
-
-		col_pass.set_cell_data_func (cell_pass, (cell_layout, cell, model, iter) => {
-			FstabEntry fs;
+		col.set_cell_data_func (cell_text, (cell_layout, cell, model, iter) => {
+			FsTabEntry fs;
 			model.get (iter, 1, out fs, -1);
 			(cell as Gtk.CellRendererText).text = fs.pass;
 		});
@@ -290,22 +351,6 @@ public class MountWindow : Window {
 		//hbox_mount_actions
 		Box hbox_mount_actions = new Box (Orientation.HORIZONTAL, 6);
 		vbox_main.add (hbox_mount_actions);
-
-		//btn_select_all
-		//btn_select_all = new Gtk.Button.with_label (" " + _("Select All") + " ");
-		//hbox_mount_actions.pack_start (btn_select_all, true, true, 0);
-	
-
-		//btn_select_none
-		//btn_select_none = new Gtk.Button.with_label (" " + _("Select None") + " ");
-		//hbox_mount_actions.pack_start (btn_select_none, true, true, 0);
-
-
-		//btn_backup
-		btn_backup = new Gtk.Button.with_label (" <b>" + _("Backup") + "</b> ");
-		btn_backup.no_show_all = true;
-		hbox_mount_actions.pack_start (btn_backup, true, true, 0);
-		btn_backup.clicked.connect(btn_backup_clicked);
 
 		//btn_restore
 		btn_restore = new Gtk.Button.with_label (" <b>" + _("Restore") + "</b> ");
@@ -338,74 +383,46 @@ public class MountWindow : Window {
 	// events
 
 	private void tv_mount_refresh() {
-		log_msg("here0");
-		
-		var model = new Gtk.ListStore(2, typeof(bool), typeof(FstabEntry));
+		var model = new Gtk.ListStore(2, typeof(bool), typeof(FsTabEntry));
 
-		log_msg("here");
-		
 		TreeIter iter;
-		foreach(FstabEntry fs in fstab_list) {
+		foreach(FsTabEntry fs in selected_list) {
 			//add row
 			model.append(out iter);
 			model.set (iter, 0, fs.is_selected);
 			model.set (iter, 1, fs);
 		}
 
-		log_msg("here1");
-		
 		tv_mount.set_model(model);
 		tv_mount.columns_autosize();
-
-		log_msg("here2");
 	}
 
-	// backup
+	private void btn_fstab_clicked(){
+		selected_list = fstab_list;
 
-	private void backup_init() {
-		gtk_set_busy(true, this);
+		col_device.title = _("Device");
+		col_mapped_name.visible = false;
+		col_password.visible = false;
+		col_mount_point.visible = true;
+		col_fs_type.visible = true;
+		col_dump.visible = true;
+		col_pass.visible = true;
 
-		fstab_list = FstabEntry.read_fstab_file();
-
-		if (fstab_list == null){
-			log_msg("size=null");
-		}
-		else{
-			log_msg("size=%d".printf(fstab_list.size));
-		}
-		
 		tv_mount_refresh();
-
-		gtk_set_busy(false, this);
 	}
 
-	private void btn_backup_clicked() {
-		//check if no action required
-		bool none_selected = true;
-		foreach(FstabEntry fs in fstab_list) {
-			if (fs.is_selected) {
-				none_selected = false;
-				break;
-			}
-		}
-		if (none_selected) {
-			string title = _("No Items Selected");
-			string msg = _("Select the mounts to backup");
-			gtk_messagebox(title, msg, this, false);
-			return;
-		}
+	private void btn_crypttab_clicked(){
+		selected_list = crypttab_list;
 
-		string message = _("Preparing...");
+		col_device.title = _("Encrypted Device");
+		col_mapped_name.visible = true;
+		col_password.visible = true;
+		col_mount_point.visible = false;
+		col_fs_type.visible = false;
+		col_dump.visible = false;
+		col_pass.visible = false;
 
-		var dlg = new ProgressWindow.with_parent(this, message);
-		dlg.show_all();
-		gtk_do_events();
-		
-		
-		//finish ----------------------------------
-		message = _("Backups created successfully");
-		dlg.finish(message);
-		gtk_do_events();
+		tv_mount_refresh();
 	}
 
 	// restore
@@ -413,40 +430,104 @@ public class MountWindow : Window {
 	private void restore_init() {
 		gtk_set_busy(true, this);
 
-		fstab_list = FstabEntry.read_fstab_file();
-		tv_mount_refresh();
-
-
+		fstab_list = App.create_fstab_list_for_restore();
+		crypttab_list = App.create_crypttab_list_for_restore();
+		selected_list = fstab_list;
+		
+		rbtn_fstab.active = true;
+		btn_fstab_clicked();
+		
 		gtk_set_busy(false, this);
 	}
 
 	private void btn_restore_clicked() {
-		//check if no action required
+		
+		// check if no action required ------------------
+		
 		bool none_selected = true;
-		foreach(FstabEntry fs in fstab_list) {
-			if (fs.is_selected) {
+		
+		foreach(var fs in fstab_list) {
+			if (fs.is_selected && (fs.action == FsTabEntry.Action.ADD)){
 				none_selected = false;
 				break;
 			}
 		}
+		
+		foreach(var fs in crypttab_list) {
+			if (fs.is_selected && (fs.action == FsTabEntry.Action.ADD)){
+				none_selected = false;
+				break;
+			}
+		}
+		
 		if (none_selected) {
-			string title = _("Nothing To Do");
-			string msg = _("Selected mounts are already installed");
+			string title = _("No Changes Required");
+			string msg = _("/etc/fstab and /etc/crypttab are already up-to-date");
 			gtk_messagebox(title, msg, this, false);
 			return;
 		}
 
-		//begin
-		string message = _("Preparing...");
-		var dlg = new ProgressWindow.with_parent(this, message);
-		dlg.show_all();
-		gtk_do_events();
+		bool keyfile_used = false;
+		foreach(var fs in crypttab_list){
+			if (fs.is_selected && (fs.action == FsTabEntry.Action.ADD)){
+				if ((fs.password.length > 0) && (fs.password != "none")){ //TODO: Check REGULAR_FILE
+					if (file_exists(fs.password)){
+						keyfile_used = true;
+						break;
+					}
+				}
+			}
+		}
 
-	
-		//finish ----------------------------------
-		message = _("mounts restored successfully");
-		dlg.finish(message);
-		gtk_do_events();
+		// get password ---------------------------
+		
+		string password = "";
+		if (keyfile_used){
+			password = prompt_for_password(false, _("Password Required"),_("Password is required for extracting key files from backup"));
+			if (password == ""){
+				return;
+			}
+		}
+
+		// restore ------------------------------
+		
+		bool ok = App.restore_mounts(fstab_list, crypttab_list, password);
+		
+		if (ok){
+			gtk_messagebox(_("Finished"), _("Backup taken successfully"), this, false);
+			this.close();
+		}
+		else{
+			gtk_messagebox(_("Error"), _("Failed to save backup"), this, false);
+		}
+	}
+
+	private string prompt_for_password(bool confirm_password, string dlg_title, string dlg_msg){
+		var dlg = new PasswordWindow.with_parent(this, confirm_password, dlg_title, dlg_msg);
+
+		int response_id = ResponseType.NONE;
+		
+		do{
+			response_id = dlg.run();
+		}
+		while (response_id == ResponseType.NONE);
+
+		string password = "";
+		
+		switch (response_id) {
+		case Gtk.ResponseType.OK:
+			if (dlg.password.length > 0){
+				password = dlg.password;
+			}
+			break;
+		case Gtk.ResponseType.CANCEL:
+			//do nothing
+			break;
+		}
+		
+		dlg.destroy();
+
+		return password;
 	}
 }
 
