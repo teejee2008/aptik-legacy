@@ -467,15 +467,30 @@ public class MountWindow : Window {
 			return;
 		}
 
+		// check if key file is used -----------------------
+		
 		bool keyfile_used = false;
+
+		string mounts_dir = App.backup_dir + "mounts";
+		
 		foreach(var fs in crypttab_list){
-			if (fs.is_selected && (fs.action == FsTabEntry.Action.ADD)){
-				if ((fs.password.length > 0) && (fs.password != "none")){ //TODO: Check REGULAR_FILE
-					if (file_exists(fs.password)){
-						keyfile_used = true;
-						break;
-					}
-				}
+			if (!fs.is_selected || (fs.action != FsTabEntry.Action.ADD)){
+				continue;
+			}
+			
+			if ((fs.password.length == 0) || (fs.password == "none")){ //TODO: Check REGULAR_FILE
+				continue;
+			}
+			
+			if (file_exists(fs.password)){
+				continue;
+			}
+			
+			string src_file = "%s/%s".printf(mounts_dir, fs.keyfile_archive_name);
+			
+			if (file_exists(src_file)){
+				keyfile_used = true;
+				break;
 			}
 		}
 
@@ -494,11 +509,11 @@ public class MountWindow : Window {
 		bool ok = App.restore_mounts(fstab_list, crypttab_list, password);
 		
 		if (ok){
-			gtk_messagebox(_("Finished"), _("Backup taken successfully"), this, false);
+			gtk_messagebox(_("Finished"), _("Entries updated successfully"), this, false);
 			this.close();
 		}
 		else{
-			gtk_messagebox(_("Error"), _("Failed to save backup"), this, false);
+			gtk_messagebox(_("Error"), _("Failed to update entries"), this, false);
 		}
 	}
 

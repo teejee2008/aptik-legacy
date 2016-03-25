@@ -784,7 +784,7 @@ public class Theme : GLib.Object{
 	public void update_ownership(string username) {
 		if (username.length > 0){
 			set_directory_ownership(theme_dir_path, username);
-			set_directory_ownership(base_path, username);
+			set_directory_ownership(file_basename(theme_dir_path), username);
 		}
 	}
 	

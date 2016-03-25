@@ -46,9 +46,9 @@ public class Archiver : GLib.Object {
 	private string errLine = "";
 	private string outLine = "";
 	private string tempLine;
-	private DataInputStream disOut;
-	private DataInputStream disErr;
-	private DataOutputStream dsLog;
+	private DataInputStream dis_out;
+	private DataInputStream dis_err;
+	private DataOutputStream dos_log;
 	public int exit_code = 0;
 
 	public string currentLine;
@@ -192,17 +192,17 @@ public class Archiver : GLib.Object {
 			set_priority();
 
 			//create stream readers
-			UnixInputStream uisOut = new UnixInputStream(output_fd, false);
-			UnixInputStream uisErr = new UnixInputStream(error_fd, false);
-			disOut = new DataInputStream(uisOut);
-			disErr = new DataInputStream(uisErr);
-			disOut.newline_type = DataStreamNewlineType.ANY;
-			disErr.newline_type = DataStreamNewlineType.ANY;
+			UnixInputStream uis_out = new UnixInputStream(output_fd, false);
+			UnixInputStream uis_err = new UnixInputStream(error_fd, false);
+			dis_out = new DataInputStream(uis_out);
+			dis_err = new DataInputStream(uis_err);
+			dis_out.newline_type = DataStreamNewlineType.ANY;
+			dis_err.newline_type = DataStreamNewlineType.ANY;
 
 			//create log file
 			var file = File.new_for_path(task.log_file);
 			var file_stream = file.create(FileCreateFlags.REPLACE_DESTINATION);
-			dsLog = new DataOutputStream(file_stream);
+			dos_log = new DataOutputStream(file_stream);
 			
 			//start another thread for reading error stream
 			try {
@@ -213,11 +213,11 @@ public class Archiver : GLib.Object {
 			}
 
 			//start reading output stream in current thread
-			outLine = disOut.read_line (null);
+			outLine = dis_out.read_line (null);
 			while (outLine != null) {
 				update_progress_parse_console_output (outLine.strip());
-				//dsLog.put_string (outLine + "\n");
-				outLine = disOut.read_line (null);
+				//dos_log.put_string (outLine + "\n");
+				outLine = dis_out.read_line (null);
 			}
 
 			// cleanup -----------------
@@ -235,8 +235,8 @@ public class Archiver : GLib.Object {
 
 			Thread.usleep ((ulong) 0.1 * 1000000);
 			
-			dsLog.close();
-			dsLog = null;
+			dos_log.close();
+			dos_log = null;
 			
 			if (task.action == ArchiveAction.LIST){
 				task.archive_size = get_file_size_bytes(task.archive_path);
@@ -256,15 +256,15 @@ public class Archiver : GLib.Object {
 
 	private void read_std_err() {
 		try {
-			errLine = disErr.read_line (null);
+			errLine = dis_err.read_line (null);
 			while (errLine != null) {
 				update_progress_parse_console_output(errLine.strip());
-				dsLog.put_string (errLine + "\n");
-				errLine = disErr.read_line (null);
+				dos_log.put_string (errLine + "\n");
+				errLine = dis_err.read_line (null);
 			}
 
-			disErr.close();
-			disErr = null;
+			dis_err.close();
+			dis_err = null;
 			GLib.FileUtils.close(error_fd);
 		}
 		catch (Error e) {
@@ -427,7 +427,7 @@ public class Archiver : GLib.Object {
 		/*else {
 			statusLine = tempLine;
 			try{
-				dsLog.put_string (tempLine + "\n");
+				dos_log.put_string (tempLine + "\n");
 			}
 			catch (Error e) {
 				log_error (e.message);
