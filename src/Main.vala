@@ -299,19 +299,19 @@ public class Main : GLib.Object {
 		string msg = "";
 		if (get_apt_list_modified_date().compare(pkginfo_modified_date) > 0){
 			msg = _("Reading package lists...");
-			log_msg(msg);
+			log_debug(msg);
 			status_line = msg;
 			read_package_lists();
 		}
 
 		msg = _("Reading state information...");
-		log_msg(msg);
+		log_debug(msg);
 		status_line = msg;
 		read_package_info_for_installed_packages();
 
 		if (get_apt_list_modified_date().compare(pkginfo_modified_date) > 0){
 			msg = _("Reading default package lists...");
-			log_msg(msg);
+			log_debug(msg);
 			status_line = msg;
 			read_package_info_for_default_packages();
 			read_package_info_for_manual_packages();
@@ -320,7 +320,7 @@ public class Main : GLib.Object {
 		}
 
 		msg = _("Reading deb files from backup...");
-		log_msg(msg);
+		log_debug(msg);
 		status_line = msg;
 				
 		update_deb_file_name_from_backup();
@@ -921,7 +921,7 @@ public class Main : GLib.Object {
 	
 	public Gee.HashMap<string,Ppa> list_ppas_from_etc_apt_dir(){
 		var msg = _("Reading source lists...");
-		log_msg(msg);
+		log_debug(msg);
 		status_line = msg;
 
 		var ppa_list = new Gee.HashMap<string,Ppa>();
@@ -978,7 +978,7 @@ public class Main : GLib.Object {
 	//sets: server and repo
 	public void update_info_for_repository() {
 		var msg = _("Reading package priorities...");
-		log_msg(msg);
+		log_debug(msg);
 		status_line = msg;
 		
 		string cmd = "";
