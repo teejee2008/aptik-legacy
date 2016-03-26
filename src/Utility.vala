@@ -1129,19 +1129,34 @@ namespace TeeJee.ProcessManagement{
 		return procList;
 	}
 
-
-	public void process_kill(Pid process_pid, bool killChildren = true){
+	public void process_quit(Pid process_pid, bool killChildren = true){
 
 		/* Kills specified process and its children (optional) */
 
 		int[] child_pids = get_process_children (process_pid);
-		Posix.kill (process_pid, 15);
+		Posix.kill (process_pid, Posix.SIGTERM);
 
 		if (killChildren){
 			Pid childPid;
 			foreach (long pid in child_pids){
 				childPid = (Pid) pid;
-				Posix.kill (childPid, 15);
+				Posix.kill (childPid, Posix.SIGTERM);
+			}
+		}
+	}
+	
+	public void process_kill(Pid process_pid, bool killChildren = true){
+
+		/* Kills specified process and its children (optional) */
+
+		int[] child_pids = get_process_children (process_pid);
+		Posix.kill (process_pid, Posix.SIGKILL);
+
+		if (killChildren){
+			Pid childPid;
+			foreach (long pid in child_pids){
+				childPid = (Pid) pid;
+				Posix.kill (childPid, Posix.SIGKILL);
 			}
 		}
 	}

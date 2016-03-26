@@ -352,15 +352,20 @@ public class MountWindow : Window {
 		Box hbox_mount_actions = new Box (Orientation.HORIZONTAL, 6);
 		vbox_main.add (hbox_mount_actions);
 
+		var sizegroup = new SizeGroup(SizeGroupMode.HORIZONTAL);
+		
 		//btn_restore
 		btn_restore = new Gtk.Button.with_label (" <b>" + _("Restore") + "</b> ");
 		btn_restore.no_show_all = true;
-		hbox_mount_actions.pack_start (btn_restore, true, true, 0);
+		hbox_mount_actions.pack_start (btn_restore, false, false, 0);
 		btn_restore.clicked.connect(btn_restore_clicked);
-
+		sizegroup.add_widget(btn_restore);
+		
 		//btn_cancel
 		btn_cancel = new Gtk.Button.with_label (" " + _("Close") + " ");
-		hbox_mount_actions.pack_start (btn_cancel, true, true, 0);
+		hbox_mount_actions.pack_start (btn_cancel, false, false, 0);
+		sizegroup.add_widget(btn_cancel);
+		
 		btn_cancel.clicked.connect(() => {
 			this.close();
 		});

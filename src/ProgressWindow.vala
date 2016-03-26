@@ -34,12 +34,13 @@ using TeeJee.Multimedia;
 using TeeJee.System;
 using TeeJee.Misc;
 
-public class ProgressWindow : Window {
+public class ProgressWindow : Gtk.Window {
 	private Gtk.Box vbox_main;
 	private Gtk.Spinner spinner;
 	private Gtk.Label lbl_msg;
 	private Gtk.Label lbl_status;
 	private ProgressBar progressbar;
+	private Gtk.Button btn_cancel;
 	
 	private uint tmr_init = 0;
 	private uint tmr_pulse = 0;
@@ -48,9 +49,11 @@ public class ProgressWindow : Window {
 	private int def_height = 50;
 
 	private string status_message;
+	private bool allow_cancel;
+	
 	// init
 	
-	public ProgressWindow.with_parent(Window parent, string message) {
+	public ProgressWindow.with_parent(Window parent, string message, bool allow_cancel = false) {
 		set_transient_for(parent);
 		set_modal(true);
 		set_skip_taskbar_hint(true);
@@ -61,7 +64,10 @@ public class ProgressWindow : Window {
 		App.progress_count = 0;
 		App.progress_total = 0;
 		
-		status_message = message;
+		this.status_message = message;
+		this.allow_cancel = allow_cancel;
+
+		App.cancelled = false;
 		
 		init_window();
 	}
@@ -114,7 +120,25 @@ public class ProgressWindow : Window {
 		lbl_status.margin_left = 3;
 		lbl_status.margin_right = 3;
 		vbox_main.pack_start (lbl_status, false, true, 0);
+
+		//box
+		var box = new Box (Orientation.HORIZONTAL, 6);
+		box.set_homogeneous(true);
+		vbox_main.add (box);
+
+		var sizegroup = new SizeGroup(SizeGroupMode.HORIZONTAL);
+
+		//btn
+		var button = new Gtk.Button.with_label (_("Cancel"));
+		box.pack_start (button, false, false, 0);
+		btn_cancel = button;
+		sizegroup.add_widget(button);
 		
+		button.clicked.connect(()=>{
+			App.cancelled = true;
+			btn_cancel.sensitive = false;
+		});
+
 		show_all();
 
 		tmr_init = Timeout.add(100, init_delayed);
@@ -127,7 +151,8 @@ public class ProgressWindow : Window {
 			tmr_init = 0;
 		}
 
-		//start();
+		btn_cancel.visible = allow_cancel;
+		btn_cancel.sensitive = allow_cancel;
 		
 		return false;
 	}

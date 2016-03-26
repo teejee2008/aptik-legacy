@@ -76,7 +76,8 @@ public class Main : GLib.Object {
 	public int64 progress_count;
 	public int64 progress_total;
 	public bool is_running;
-
+	public bool cancelled;
+	
 	public Gee.HashMap<string, Package> pkg_list_master;
 	//public Gee.HashMap<string, Repository> repo_list_master;
 	public Gee.HashMap<string, Ppa> ppa_list_master;
@@ -1646,6 +1647,11 @@ public class Main : GLib.Object {
 		}
 	}
 
+	public void rsync_quit(){
+		log_debug("process_quit(): %d".printf(child_pid));
+		process_quit(child_pid);
+	}
+	
 	/* App Settings */
 
 	public bool backup_app_settings_all(Gee.ArrayList<AppConfig> config_list) {

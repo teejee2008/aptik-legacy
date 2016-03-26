@@ -198,10 +198,10 @@ public class PpaWindow : Window {
 
 		TreeViewColumn col_ppa_desc = new TreeViewColumn();
 		if (is_restore_view){
-			col_ppa_desc.title = _("Available Packages");
+			col_ppa_desc.title = _("Packages");
 		}
 		else{
-			col_ppa_desc.title = _("Installed Packages");
+			col_ppa_desc.title = _("Packages");
 		}
 		col_ppa_desc.resizable = true;
 		tv_ppa.append_column(col_ppa_desc);
@@ -537,27 +537,37 @@ public class PpaWindow : Window {
 				}
 
 				ppa_list_add.add(ppa);
+
+				if (App.cancelled){
+					break;
+				}
 			}
 		}
 
-		//get total URL count
-		App.progress_total = 0;
-		App.progress_count = 0;
-		string cmd = "apt-get update -y --print-uris";
-		string txt = execute_command_sync_get_output(cmd);
-		App.progress_total += txt.split("\n").length;
+		if (!App.cancelled){
+			
+			// run 'apt-get update'----------------------
+			
+			//get total URL count
+			App.progress_total = 0;
+			App.progress_count = 0;
+			string cmd = "apt-get update -y --print-uris";
+			string txt = execute_command_sync_get_output(cmd);
+			App.progress_total += txt.split("\n").length;
 
-		//dlg.pulse_start();
-		dlg.update_message(_("Running 'apt-get update'..."));
-		dlg.update_status_line(true);
-				
-		App.apt_get_update();
-		while (App.is_running) {
-			dlg.update_progressbar();
-			//dlg.update_status_line();
-			dlg.sleep(200);
+			//dlg.pulse_start();
+			dlg.update_message(_("Running 'apt-get update'..."));
+			dlg.update_status_line(true);
+					
+			App.apt_get_update();
+			while (App.is_running) {
+				dlg.update_progressbar();
+				//dlg.update_status_line();
+				dlg.sleep(200);
+			}
 		}
-		
+
+		// close dialog
 		dlg.close();
 		dlg.destroy();
 		gtk_do_events();
@@ -565,6 +575,12 @@ public class PpaWindow : Window {
 		skip_pkg_info_update = true;
 		restore_init();
 
+		if (App.cancelled){
+			return;
+		}
+		
+		// display error message -----------------
+		
 		string error_msg = "";
 		foreach(Ppa ppa_to_add in ppa_list_add) {
 			if (App.ppa_list_master.has_key(ppa_to_add.name)){

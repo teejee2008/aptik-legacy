@@ -209,7 +209,7 @@ public class MainWindow : Window {
 
 		init_section_backup_themes(++row);
 		
-		//init_section_backup_mounts(++row);
+		init_section_backup_mounts(++row);
 	}
 
 	private void init_section_backup_ppa(int row) {
@@ -775,7 +775,7 @@ public class MainWindow : Window {
 		string archives_dir = App.backup_dir + "archives";
 		
 		string message = _("Preparing...");
-		var dlg = new ProgressWindow.with_parent(this, message);
+		var dlg = new ProgressWindow.with_parent(this, message, true);
 		dlg.show_all();
 		gtk_do_events();
 
@@ -787,13 +787,25 @@ public class MainWindow : Window {
 		while (App.is_running) {
 			dlg.update_progressbar();
 			dlg.update_status_line();
-			dlg.sleep(50);
+			dlg.sleep(100);
+			
+			if (App.cancelled){
+				App.rsync_quit();
+				gtk_do_events();
+			}
 		}
 
 		//finish ----------------------------------
-		message = _("Packages copied successfully") + " ";
-		message += _("(%ld packages in backup)").printf(get_file_count(archives_dir));
-		dlg.finish(message);
+
+		if (!App.cancelled){
+			message = _("Packages copied successfully") + " ";
+			message += _("(%ld packages in backup)").printf(get_file_count(archives_dir));
+			dlg.finish(message);
+		}
+		else{
+			dlg.destroy();
+		}
+
 		gtk_do_events();
 	}
 
@@ -813,7 +825,7 @@ public class MainWindow : Window {
 		}
 
 		string message = _("Preparing...");
-		var dlg = new ProgressWindow.with_parent(this, message);
+		var dlg = new ProgressWindow.with_parent(this, message, true);
 		dlg.show_all();
 		gtk_do_events();
 
@@ -825,13 +837,25 @@ public class MainWindow : Window {
 		while (App.is_running) {
 			dlg.update_progressbar();
 			dlg.update_status_line();
-			dlg.sleep(50);
+			dlg.sleep(100);
+			
+			if (App.cancelled){
+				App.rsync_quit();
+				gtk_do_events();
+			}
 		}
 
 		//finish ----------------------------------
-		message = _("Packages copied successfully") + " ";
-		message += _("(%ld packages in cache)").printf(get_file_count("/var/cache/apt/archives") - 2); //excluding 'lock' and 'partial'
-		dlg.finish(message);
+
+		if (!App.cancelled){
+			message = _("Packages copied successfully") + " ";
+			message += _("(%ld packages in cache)").printf(get_file_count("/var/cache/apt/archives") - 2); //excluding 'lock' and 'partial'
+			dlg.finish(message);
+		}
+		else{
+			dlg.destroy();
+		}
+
 		gtk_do_events();
 	}
 }
