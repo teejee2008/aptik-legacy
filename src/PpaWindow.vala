@@ -499,7 +499,7 @@ public class PpaWindow : Window {
 		}
 
 		var status_msg = _("Preparing...");
-		var dlg = new ProgressWindow.with_parent(this,status_msg);
+		var dlg = new ProgressWindow.with_parent(this,status_msg,true);
 		dlg.show_all();
 		gtk_do_events();
 
@@ -514,6 +514,10 @@ public class PpaWindow : Window {
 
 		var ppa_list_add = new Gee.ArrayList<Ppa>();
 		foreach(Ppa ppa in App.ppa_list_master.values) {
+			if (App.cancelled){
+				break;
+			}
+				
 			if (ppa.is_selected && !ppa.is_installed) {
 				string cmd = "add-apt-repository -y ppa:%s\n".printf(ppa.name);
 
@@ -527,6 +531,7 @@ public class PpaWindow : Window {
 					dlg.update_progressbar();
 					//dlg.update_status_line();
 					dlg.sleep(200);
+					gtk_do_events();
 				}
 
 				App.progress_count++;
@@ -537,10 +542,6 @@ public class PpaWindow : Window {
 				}
 
 				ppa_list_add.add(ppa);
-
-				if (App.cancelled){
-					break;
-				}
 			}
 		}
 
@@ -564,21 +565,25 @@ public class PpaWindow : Window {
 				dlg.update_progressbar();
 				//dlg.update_status_line();
 				dlg.sleep(200);
+				gtk_do_events();
 			}
 		}
 
-		// close dialog
+		// close dialog ------------
+		
 		dlg.close();
 		dlg.destroy();
 		gtk_do_events();
-		
-		skip_pkg_info_update = true;
-		restore_init();
 
 		if (App.cancelled){
 			return;
 		}
+
+		// refresh status -----------------
 		
+		skip_pkg_info_update = true;
+		restore_init();
+
 		// display error message -----------------
 		
 		string error_msg = "";

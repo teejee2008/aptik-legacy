@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2016-03-26 09:57+0530\n"
+"POT-Creation-Date: 2016-03-26 10:09+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -119,7 +119,7 @@ msgstr ""
 msgid "Add missing PPAs"
 msgstr ""
 
-#: PpaWindow.vala:523
+#: PpaWindow.vala:527
 #, c-format
 msgid "Adding '%s'..."
 msgstr ""
@@ -260,7 +260,7 @@ msgstr ""
 msgid "Backup config files from /home/<user>"
 msgstr ""
 
-#: PackageWindow.vala:974 PpaWindow.vala:612
+#: PackageWindow.vala:974 PpaWindow.vala:617
 msgid "Backup created successfully"
 msgstr ""
 
@@ -490,8 +490,8 @@ msgstr ""
 
 #: AptikConsole.vala:281 AptikConsole.vala:292 MainWindow.vala:482
 #: MountWindow.vala:521 PackageWindow.vala:980 PackageWindow.vala:994
-#: PackageWindow.vala:1076 PpaWindow.vala:495 PpaWindow.vala:596
-#: PpaWindow.vala:618 Utility.vala:101
+#: PackageWindow.vala:1076 PpaWindow.vala:495 PpaWindow.vala:601
+#: PpaWindow.vala:623 Utility.vala:101
 msgid "Error"
 msgstr ""
 
@@ -558,7 +558,7 @@ msgid "Failed to unzip: '%s'"
 msgstr ""
 
 #: Main.vala:710 Main.vala:745 Main.vala:1160 PackageWindow.vala:981
-#: PackageWindow.vala:995 PpaWindow.vala:619
+#: PackageWindow.vala:995 PpaWindow.vala:624
 msgid "Failed to write"
 msgstr ""
 
@@ -620,7 +620,7 @@ msgid "Filter"
 msgstr ""
 
 #: MainWindow.vala:479 MountWindow.vala:517 PackageWindow.vala:973
-#: PpaWindow.vala:611
+#: PpaWindow.vala:616
 msgid "Finished"
 msgstr ""
 
@@ -640,7 +640,7 @@ msgstr ""
 msgid "Folder not found in backup directory"
 msgstr ""
 
-#: PpaWindow.vala:597
+#: PpaWindow.vala:602
 msgid "Following PPAs could not be added"
 msgstr ""
 
@@ -775,7 +775,7 @@ msgstr ""
 msgid "List installed packages"
 msgstr ""
 
-#: PackageWindow.vala:975 PpaWindow.vala:613
+#: PackageWindow.vala:975 PpaWindow.vala:618
 msgid "List saved with file name"
 msgstr ""
 
@@ -1112,7 +1112,7 @@ msgstr ""
 msgid "Restoring /etc/fstab and /etc/crypttab entries"
 msgstr ""
 
-#: PpaWindow.vala:559
+#: PpaWindow.vala:560
 msgid "Running 'apt-get update'..."
 msgstr ""
 

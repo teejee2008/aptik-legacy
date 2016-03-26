@@ -130,6 +130,8 @@ public class ProgressWindow : Gtk.Window {
 
 		//btn
 		var button = new Gtk.Button.with_label (_("Cancel"));
+		button.margin_top = 6;
+		button.margin_bottom = 6;
 		box.pack_start (button, false, false, 0);
 		btn_cancel = button;
 		sizegroup.add_widget(button);
@@ -141,7 +143,10 @@ public class ProgressWindow : Gtk.Window {
 
 		show_all();
 
-		tmr_init = Timeout.add(100, init_delayed);
+		//btn_cancel.visible = allow_cancel;
+		btn_cancel.sensitive = allow_cancel;
+		
+		//tmr_init = Timeout.add(100, init_delayed);
 	}
 
 	private bool init_delayed() {
@@ -151,9 +156,6 @@ public class ProgressWindow : Gtk.Window {
 			tmr_init = 0;
 		}
 
-		btn_cancel.visible = allow_cancel;
-		btn_cancel.sensitive = allow_cancel;
-		
 		return false;
 	}
 
