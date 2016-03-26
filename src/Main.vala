@@ -79,7 +79,6 @@ public class Main : GLib.Object {
 	public bool cancelled;
 	
 	public Gee.HashMap<string, Package> pkg_list_master;
-	//public Gee.HashMap<string, Repository> repo_list_master;
 	public Gee.HashMap<string, Ppa> ppa_list_master;
 	public Gee.ArrayList<string> sections;
 
@@ -100,6 +99,11 @@ public class Main : GLib.Object {
 		gui_mode = _gui_mode;
 
 		pkginfo_modified_date = new DateTime.from_unix_utc(0); //1970
+
+		//initialize
+		pkg_list_master = new Gee.HashMap<string, Package>();
+		ppa_list_master = new Gee.HashMap<string, Ppa>();
+		sections = new Gee.ArrayList<string>();
 		
 		//config file
 		string home = Environment.get_home_dir();
@@ -911,13 +915,15 @@ public class Main : GLib.Object {
 	
 	/* PPA */
 
-	public void ppa_backup_init(){
-		App.read_package_info();
+	public void ppa_backup_init(bool query_pkg_info = true){
+		if (query_pkg_info){
+			App.read_package_info();
+		}
 		App.ppa_list_master = App.list_ppa();
 	}
 
-	public void ppa_restore_init(bool skip_pkg_info_update = false){
-		if (!skip_pkg_info_update){
+	public void ppa_restore_init(bool query_pkg_info = true){
+		if (query_pkg_info){
 			App.read_package_info();
 		}
 		App.ppa_list_master = App.list_ppa();

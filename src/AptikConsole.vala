@@ -212,8 +212,7 @@ public class AptikConsole : GLib.Object {
 
 			case "--list-ppa":
 			case "--list-ppas":
-				App.read_package_info();
-				App.ppa_list_master = App.list_ppa();
+				App.ppa_backup_init(show_desc);
 				foreach(Ppa ppa in App.ppa_list_master.values) {
 					ppa.is_selected = true;
 				}
@@ -233,7 +232,7 @@ public class AptikConsole : GLib.Object {
 				
 			case "--backup-ppa":
 			case "--backup-ppas":
-				App.ppa_backup_init();
+				App.ppa_backup_init(false);
 				foreach(Ppa ppa in App.ppa_list_master.values) {
 					ppa.is_selected = true;
 				}
@@ -285,7 +284,7 @@ public class AptikConsole : GLib.Object {
 					return false;
 				}
 
-				App.ppa_restore_init();
+				App.ppa_restore_init(false);
 				restore_ppa();
 				break;
 

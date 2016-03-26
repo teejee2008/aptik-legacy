@@ -53,7 +53,7 @@ public class PpaWindow : Window {
 	private bool is_running = false;
 	private bool is_restore_view = false;
 
-	private bool skip_pkg_info_update = false;
+	private bool query_pkg_info = true;
 	
 	// init
 	
@@ -461,8 +461,8 @@ public class PpaWindow : Window {
 	}
 
 	private void restore_init_thread() {
-		App.ppa_restore_init(skip_pkg_info_update);
-		skip_pkg_info_update = false;
+		App.ppa_restore_init(query_pkg_info);
+		query_pkg_info = true;
 
 		is_running = false;
 	}
@@ -573,7 +573,7 @@ public class PpaWindow : Window {
 
 		// refresh status -----------------
 		
-		skip_pkg_info_update = true;
+		query_pkg_info = false;
 		restore_init();
 
 		// display error message -----------------
