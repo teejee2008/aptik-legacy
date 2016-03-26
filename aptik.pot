@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2016-03-26 10:11+0530\n"
+"POT-Creation-Date: 2016-03-26 10:19+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -182,7 +182,7 @@ msgstr ""
 msgid "Archiving"
 msgstr ""
 
-#: ConfigWindow.vala:413 ThemeWindow.vala:608
+#: ConfigWindow.vala:413 ThemeWindow.vala:610
 msgid "Archiving..."
 msgstr ""
 
@@ -300,7 +300,7 @@ msgstr ""
 msgid "Backup themes from /usr/share/themes"
 msgstr ""
 
-#: ConfigWindow.vala:428 ThemeWindow.vala:628
+#: ConfigWindow.vala:428 ThemeWindow.vala:637
 msgid "Backups created successfully"
 msgstr ""
 
@@ -328,7 +328,7 @@ msgstr ""
 msgid "Category"
 msgstr ""
 
-#: ThemeWindow.vala:636
+#: ThemeWindow.vala:653
 msgid "Checking backups..."
 msgstr ""
 
@@ -500,7 +500,7 @@ msgstr ""
 msgid "Extracting"
 msgstr ""
 
-#: ConfigWindow.vala:485 ThemeWindow.vala:720
+#: ConfigWindow.vala:485 ThemeWindow.vala:739
 msgid "Extracting..."
 msgstr ""
 
@@ -839,7 +839,7 @@ msgstr ""
 msgid "No Packages Selected"
 msgstr ""
 
-#: ThemeWindow.vala:586
+#: ThemeWindow.vala:587
 msgid "No Themes Selected"
 msgstr ""
 
@@ -866,7 +866,7 @@ msgid "NotInstalled"
 msgstr ""
 
 #: ConfigWindow.vala:454 ConfigWindow.vala:521 PackageWindow.vala:1069
-#: PackageWindow.vala:1089 PpaWindow.vala:488 ThemeWindow.vala:698
+#: PackageWindow.vala:1089 PpaWindow.vala:488 ThemeWindow.vala:716
 msgid "Nothing To Do"
 msgstr ""
 
@@ -986,7 +986,7 @@ msgstr ""
 #: ConfigWindow.vala:404 ConfigWindow.vala:477 ConfigWindow.vala:544
 #: MainWindow.vala:777 MainWindow.vala:827 PackageWindow.vala:867
 #: PackageWindow.vala:1005 PpaWindow.vala:365 PpaWindow.vala:440
-#: PpaWindow.vala:501 ThemeWindow.vala:592 ThemeWindow.vala:705
+#: PpaWindow.vala:501 ThemeWindow.vala:593 ThemeWindow.vala:724
 msgid "Preparing..."
 msgstr ""
 
@@ -1150,7 +1150,7 @@ msgstr ""
 msgid "Select the packages to backup"
 msgstr ""
 
-#: ThemeWindow.vala:587
+#: ThemeWindow.vala:588
 msgid "Select the themes to backup"
 msgstr ""
 
@@ -1178,7 +1178,7 @@ msgstr ""
 msgid "Selected packages are already installed"
 msgstr ""
 
-#: ThemeWindow.vala:699
+#: ThemeWindow.vala:717
 msgid "Selected themes are already installed"
 msgstr ""
 
@@ -1310,7 +1310,7 @@ msgstr ""
 msgid "Themes and Icons"
 msgstr ""
 
-#: ThemeWindow.vala:751
+#: ThemeWindow.vala:776
 msgid "Themes restored successfully"
 msgstr ""
 

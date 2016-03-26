@@ -574,7 +574,8 @@ public class ThemeWindow : Window {
 	}
 	
 	private void btn_backup_clicked() {
-		//check if no action required
+		// check if no action required ----------------------
+		
 		bool none_selected = true;
 		foreach(Theme theme in theme_list_user) {
 			if (theme.is_selected) {
@@ -595,7 +596,8 @@ public class ThemeWindow : Window {
 		dlg.show_all();
 		gtk_do_events();
 		
-		//get total file count
+		// get total file count -------------------------------
+		
 		App.progress_total = 0;
 		App.progress_count = 0;
 		foreach(Theme theme in theme_list_user) {
@@ -608,9 +610,14 @@ public class ThemeWindow : Window {
 		dlg.update_message(_("Archiving..."));
 		dlg.update_status_line(true);
 		
-		//zip themes
+		// zip themes --------------------------------------
+		
 		int64 count_temp = 0;
 		foreach(Theme theme in theme_list_user) {
+			if (App.cancelled){
+				break;
+			}
+			
 			if (theme.is_selected) {
 				theme.zip(App.backup_dir, true);
 				while (theme.is_running) {
@@ -624,23 +631,34 @@ public class ThemeWindow : Window {
 			}
 		}
 
-		//finish ----------------------------------
-		message = _("Backups created successfully");
-		dlg.finish(message);
+		// finish ----------------------------------
+
+		if (!App.cancelled){
+			message = _("Backups created successfully");
+			dlg.finish(message);
+		}
+		else{
+			dlg.destroy();
+		}
+		
 		gtk_do_events();
 	}
 
 	// restore
 	
 	private void restore_init() {
+		
+		// begin ---------------------------
+		
 		string message = _("Checking backups...");
-		var dlg = new ProgressWindow.with_parent(this, message);
+		var dlg = new ProgressWindow.with_parent(this, message, true);
 		dlg.show_all();
 		gtk_do_events();
 
 		Theme.load_index(App.backup_dir);
 		
-		//get total count
+		// get total count ----------------------------
+		
 		App.progress_total = 0;
 		App.progress_count = 0;
 		foreach(string subdir in new string[] { "icons","themes" }){
@@ -656,21 +674,19 @@ public class ThemeWindow : Window {
 			log_error (e.message);
 		}
 
-		//dlg.pulse_start();
-		//dlg.update_status_line(true);
-		
 		while (is_running) {
 			dlg.update_status_line();
 			dlg.update_progressbar();
 			dlg.sleep(200);
 			gtk_do_events();
 		}
-				
-		tv_theme_refresh();
 
+		//finish ----------------------------------
+		
+		tv_theme_refresh();
+		
 		Theme.save_index(theme_list_user, App.backup_dir);
 		
-		//finish ----------------------------------
 		dlg.destroy();
 		gtk_do_events();
 	}
@@ -686,7 +702,9 @@ public class ThemeWindow : Window {
 	}
 	
 	private void btn_restore_clicked() {
-		//check if no action required
+		
+		// check if no action required ----------------------------
+		
 		bool none_selected = true;
 		foreach(Theme theme in theme_list_user) {
 			if (theme.is_selected && !theme.is_installed) {
@@ -701,13 +719,15 @@ public class ThemeWindow : Window {
 			return;
 		}
 
-		//begin
+		// begin ---------------------------------
+		
 		string message = _("Preparing...");
-		var dlg = new ProgressWindow.with_parent(this, message);
+		var dlg = new ProgressWindow.with_parent(this, message, true);
 		dlg.show_all();
 		gtk_do_events();
 
-		//get total file count
+		// get total file count ---------------------
+		
 		App.progress_total = 0;
 		App.progress_count = 0;
 		foreach(Theme theme in theme_list_user) {
@@ -716,13 +736,16 @@ public class ThemeWindow : Window {
 			}
 		}
 
-		//dlg.pulse_start();
 		dlg.update_message(_("Extracting..."));
 		dlg.update_status_line(true);
 		
-		//unzip themes
+		// unzip themes -----------------------
+		
 		int64 count_temp = 0;
 		foreach(Theme theme in theme_list_user) {
+			if (App.cancelled){
+				break;
+			}
 			if (theme.is_selected && !theme.is_installed) {
 				theme.unzip(App.user_login, true);
 				while (theme.is_running) {
@@ -740,16 +763,23 @@ public class ThemeWindow : Window {
 				theme.is_selected = false; 
 			}
 		}
+
+		// finish ----------------------------------
 		
-		foreach(Theme theme in theme_list_user){
-			theme.check_installed(App.user_login);
+		if (!App.cancelled){
+			foreach(Theme theme in theme_list_user){
+				theme.check_installed(App.user_login);
+			}
+			
+			tv_theme_refresh();
+
+			message = _("Themes restored successfully");
+			dlg.finish(message);
 		}
-		
-		tv_theme_refresh();
-		
-		//finish ----------------------------------
-		message = _("Themes restored successfully");
-		dlg.finish(message);
+		else{
+			dlg.destroy();
+		}
+
 		gtk_do_events();
 	}
 }
