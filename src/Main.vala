@@ -911,6 +911,19 @@ public class Main : GLib.Object {
 	
 	/* PPA */
 
+	public void ppa_backup_init(){
+		App.read_package_info();
+		App.ppa_list_master = App.list_ppa();
+	}
+
+	public void ppa_restore_init(bool skip_pkg_info_update = false){
+		if (!skip_pkg_info_update){
+			App.read_package_info();
+		}
+		App.ppa_list_master = App.list_ppa();
+		App.read_ppa_list();
+	}
+	
 	public Gee.HashMap<string,Ppa> list_ppa(){
 		ppa_list_master = list_ppas_from_etc_apt_dir();
 
@@ -1329,6 +1342,7 @@ public class Main : GLib.Object {
 		}
 	}
 
+
 	public bool apt_get_update () {
 		string[] argv = new string[1];
 		argv[0] = save_script("apt-get -y update");
@@ -1433,6 +1447,7 @@ public class Main : GLib.Object {
 			log_error (e.message);
 		}
 	}
+
 
 	private string save_script(string cmd){
 		var script = new StringBuilder();

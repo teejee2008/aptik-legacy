@@ -139,6 +139,10 @@ public class AptikConsole : GLib.Object {
 			case "--backup-dir":
 				k += 1;
 				App.backup_dir = args[k] + (args[k].has_suffix("/") ? "" : "/");
+				if (!dir_exists(App.backup_dir)){
+					log_error(_("Backup directory not found") + ": '%s'".printf(App.backup_dir));
+					exit(1);
+				}
 				break;
 			case "--user":
 			case "--username":
@@ -229,8 +233,7 @@ public class AptikConsole : GLib.Object {
 				
 			case "--backup-ppa":
 			case "--backup-ppas":
-				App.read_package_info();
-				App.ppa_list_master = App.list_ppa();
+				App.ppa_backup_init();
 				foreach(Ppa ppa in App.ppa_list_master.values) {
 					ppa.is_selected = true;
 				}
@@ -282,7 +285,7 @@ public class AptikConsole : GLib.Object {
 					return false;
 				}
 
-				App.read_package_info();
+				App.ppa_restore_init();
 				restore_ppa();
 				break;
 

@@ -400,12 +400,8 @@ public class PpaWindow : Window {
 	}
 
 	private void backup_init_thread() {
-		//App.read_package_info();
-		//App.ppa_list_master = App.ppa_list_master;
-		App.read_package_info();
-		App.ppa_list_master = App.list_ppa();
-		App.ppa_list_master = App.ppa_list_master;
-		//App.ppa_list_master = App.list_ppa();
+		App.ppa_backup_init();
+
 		is_running = false;
 	}
 
@@ -465,13 +461,9 @@ public class PpaWindow : Window {
 	}
 
 	private void restore_init_thread() {
-		if (!skip_pkg_info_update){
-			App.read_package_info();
-		}
+		App.ppa_restore_init(skip_pkg_info_update);
 		skip_pkg_info_update = false;
-		
-		App.ppa_list_master = App.list_ppa();
-		App.read_ppa_list();
+
 		is_running = false;
 	}
 

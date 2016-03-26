@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2016-03-26 10:19+0530\n"
+"POT-Creation-Date: 2016-03-26 10:34+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -119,12 +119,12 @@ msgstr ""
 msgid "Add missing PPAs"
 msgstr ""
 
-#: PpaWindow.vala:527
+#: PpaWindow.vala:519
 #, c-format
 msgid "Adding '%s'..."
 msgstr ""
 
-#: AptikConsole.vala:516
+#: AptikConsole.vala:519
 msgid "Adding PPA"
 msgstr ""
 
@@ -177,7 +177,7 @@ msgstr ""
 msgid "Aptik needs admin access to backup and restore packages."
 msgstr ""
 
-#: Main.vala:1709 Theme.vala:621
+#: Main.vala:1724 Theme.vala:621
 #, c-format
 msgid "Archiving"
 msgstr ""
@@ -260,12 +260,16 @@ msgstr ""
 msgid "Backup config files from /home/<user>"
 msgstr ""
 
-#: PackageWindow.vala:974 PpaWindow.vala:617
+#: PackageWindow.vala:974 PpaWindow.vala:609
 msgid "Backup created successfully"
 msgstr ""
 
 #: AptikConsole.vala:110
 msgid "Backup directory (defaults to current directory)"
+msgstr ""
+
+#: AptikConsole.vala:143
+msgid "Backup directory not found"
 msgstr ""
 
 #: AptikConsole.vala:98 MainWindow.vala:278
@@ -304,19 +308,19 @@ msgstr ""
 msgid "Backups created successfully"
 msgstr ""
 
-#: Main.vala:1875
+#: Main.vala:1890
 msgid "Bash Command History"
 msgstr ""
 
-#: Main.vala:1877
+#: Main.vala:1892
 msgid "Bash Init Script"
 msgstr ""
 
-#: Main.vala:1879
+#: Main.vala:1894
 msgid "Bash Logout Script"
 msgstr ""
 
-#: Main.vala:1523 MainWindow.vala:822
+#: Main.vala:1538 MainWindow.vala:822
 msgid "Cache backup not found in backup directory"
 msgstr ""
 
@@ -336,7 +340,7 @@ msgstr ""
 msgid "Checking installed and available packages..."
 msgstr ""
 
-#: Main.vala:1885
+#: Main.vala:1900
 msgid "Chromium Web Browser"
 msgstr ""
 
@@ -426,7 +430,7 @@ msgid ""
 "(teejeetech@gmail.com)"
 msgstr ""
 
-#: Main.vala:2260
+#: Main.vala:2275
 msgid "Dir exists"
 msgstr ""
 
@@ -434,7 +438,7 @@ msgstr ""
 msgid "Dir not found"
 msgstr ""
 
-#: Main.vala:2274
+#: Main.vala:2289
 msgid "Directory restored"
 msgstr ""
 
@@ -488,14 +492,14 @@ msgstr ""
 msgid "Enter Passphrase"
 msgstr ""
 
-#: AptikConsole.vala:281 AptikConsole.vala:292 MainWindow.vala:482
+#: AptikConsole.vala:284 AptikConsole.vala:295 MainWindow.vala:482
 #: MountWindow.vala:521 PackageWindow.vala:980 PackageWindow.vala:994
-#: PackageWindow.vala:1076 PpaWindow.vala:495 PpaWindow.vala:601
-#: PpaWindow.vala:623 Utility.vala:101
+#: PackageWindow.vala:1076 PpaWindow.vala:487 PpaWindow.vala:593
+#: PpaWindow.vala:615 Utility.vala:101
 msgid "Error"
 msgstr ""
 
-#: Main.vala:1961 Theme.vala:662
+#: Main.vala:1976 Theme.vala:662
 #, c-format
 msgid "Extracting"
 msgstr ""
@@ -508,7 +512,7 @@ msgstr ""
 msgid "FS Type"
 msgstr ""
 
-#: Main.vala:2378
+#: Main.vala:2393
 msgid "Failed to change file ownership"
 msgstr ""
 
@@ -536,7 +540,7 @@ msgstr ""
 msgid "Failed to restore"
 msgstr ""
 
-#: Main.vala:2270
+#: Main.vala:2285
 msgid "Failed to restore directory"
 msgstr ""
 
@@ -544,7 +548,7 @@ msgstr ""
 msgid "Failed to save backup"
 msgstr ""
 
-#: Main.vala:2189 Main.vala:2211 Main.vala:2241
+#: Main.vala:2204 Main.vala:2226 Main.vala:2256
 msgid "Failed to save file"
 msgstr ""
 
@@ -557,8 +561,8 @@ msgstr ""
 msgid "Failed to unzip: '%s'"
 msgstr ""
 
-#: Main.vala:710 Main.vala:745 Main.vala:1160 PackageWindow.vala:981
-#: PackageWindow.vala:995 PpaWindow.vala:624
+#: Main.vala:710 Main.vala:745 Main.vala:1173 PackageWindow.vala:981
+#: PackageWindow.vala:995 PpaWindow.vala:616
 msgid "Failed to write"
 msgstr ""
 
@@ -574,11 +578,11 @@ msgstr ""
 msgid "File Not Found"
 msgstr ""
 
-#: Main.vala:2231
+#: Main.vala:2246
 msgid "File exists"
 msgstr ""
 
-#: Main.vala:1933 Main.vala:2278 Theme.vala:647 Utility.vala:351
+#: Main.vala:1948 Main.vala:2293 Theme.vala:647 Utility.vala:351
 msgid "File not found"
 msgstr ""
 
@@ -586,20 +590,20 @@ msgstr ""
 msgid "File not found in backup directory"
 msgstr ""
 
-#: Main.vala:434 Main.vala:1053
+#: Main.vala:434 Main.vala:1066
 #, c-format
 msgid "File not found: %s"
 msgstr ""
 
-#: Main.vala:2245
+#: Main.vala:2260
 msgid "File restored"
 msgstr ""
 
-#: Main.vala:707 Main.vala:742 Main.vala:1157
+#: Main.vala:707 Main.vala:742 Main.vala:1170
 msgid "File saved"
 msgstr ""
 
-#: Main.vala:2193 Main.vala:2215
+#: Main.vala:2208 Main.vala:2230
 msgid "File updated"
 msgstr ""
 
@@ -620,7 +624,7 @@ msgid "Filter"
 msgstr ""
 
 #: MainWindow.vala:479 MountWindow.vala:517 PackageWindow.vala:973
-#: PpaWindow.vala:616
+#: PpaWindow.vala:608
 msgid "Finished"
 msgstr ""
 
@@ -628,7 +632,7 @@ msgstr ""
 msgid "Finished installing packages"
 msgstr ""
 
-#: Main.vala:1865
+#: Main.vala:1880
 msgid "Firefox Web Browser"
 msgstr ""
 
@@ -640,7 +644,7 @@ msgstr ""
 msgid "Folder not found in backup directory"
 msgstr ""
 
-#: PpaWindow.vala:602
+#: PpaWindow.vala:594
 msgid "Following PPAs could not be added"
 msgstr ""
 
@@ -648,7 +652,7 @@ msgstr ""
 msgid "Following packages are NOT available"
 msgstr ""
 
-#: AptikConsole.vala:481
+#: AptikConsole.vala:484
 msgid "Following packages are not available"
 msgstr ""
 
@@ -666,7 +670,7 @@ msgid ""
 "the package repositories"
 msgstr ""
 
-#: AptikConsole.vala:489 AptikConsole.vala:500
+#: AptikConsole.vala:492 AptikConsole.vala:503
 msgid "Following packages will be installed"
 msgstr ""
 
@@ -731,8 +735,8 @@ msgstr ""
 msgid "Installed (user)"
 msgstr ""
 
-#: AptikConsole.vala:281 AptikConsole.vala:292 PackageWindow.vala:1077
-#: PpaWindow.vala:496
+#: AptikConsole.vala:284 AptikConsole.vala:295 PackageWindow.vala:1077
+#: PpaWindow.vala:488
 msgid ""
 "Internet connection is not active. Please check the connection and try again."
 msgstr ""
@@ -775,7 +779,7 @@ msgstr ""
 msgid "List installed packages"
 msgstr ""
 
-#: PackageWindow.vala:975 PpaWindow.vala:618
+#: PackageWindow.vala:975 PpaWindow.vala:610
 msgid "List saved with file name"
 msgstr ""
 
@@ -783,11 +787,11 @@ msgstr ""
 msgid "List themes in /usr/share/themes"
 msgstr ""
 
-#: Main.vala:1871 Main.vala:1881
+#: Main.vala:1886 Main.vala:1896
 msgid "Local Fonts"
 msgstr ""
 
-#: Main.vala:1873 Main.vala:1883
+#: Main.vala:1888 Main.vala:1898
 msgid "Local Themes"
 msgstr ""
 
@@ -831,7 +835,7 @@ msgstr ""
 msgid "No Directories Selected"
 msgstr ""
 
-#: PpaWindow.vala:422
+#: PpaWindow.vala:418
 msgid "No PPA Selected"
 msgstr ""
 
@@ -866,7 +870,7 @@ msgid "NotInstalled"
 msgstr ""
 
 #: ConfigWindow.vala:454 ConfigWindow.vala:521 PackageWindow.vala:1069
-#: PackageWindow.vala:1089 PpaWindow.vala:488 ThemeWindow.vala:716
+#: PackageWindow.vala:1089 PpaWindow.vala:480 ThemeWindow.vala:716
 msgid "Nothing To Do"
 msgstr ""
 
@@ -882,7 +886,7 @@ msgstr ""
 msgid "Open backup location"
 msgstr ""
 
-#: Main.vala:1869
+#: Main.vala:1884
 msgid "Opera Web Browser"
 msgstr ""
 
@@ -890,7 +894,7 @@ msgstr ""
 msgid "Options"
 msgstr ""
 
-#: Main.vala:2374
+#: Main.vala:2389
 #, c-format
 msgid "Ownership changed to '%s' for files in directory '%s'"
 msgstr ""
@@ -985,8 +989,8 @@ msgstr ""
 
 #: ConfigWindow.vala:404 ConfigWindow.vala:477 ConfigWindow.vala:544
 #: MainWindow.vala:777 MainWindow.vala:827 PackageWindow.vala:867
-#: PackageWindow.vala:1005 PpaWindow.vala:365 PpaWindow.vala:440
-#: PpaWindow.vala:501 ThemeWindow.vala:593 ThemeWindow.vala:724
+#: PackageWindow.vala:1005 PpaWindow.vala:365 PpaWindow.vala:436
+#: PpaWindow.vala:493 ThemeWindow.vala:593 ThemeWindow.vala:724
 msgid "Preparing..."
 msgstr ""
 
@@ -1010,11 +1014,11 @@ msgstr ""
 msgid "Reading package lists..."
 msgstr ""
 
-#: Main.vala:980
+#: Main.vala:993
 msgid "Reading package priorities..."
 msgstr ""
 
-#: Main.vala:923
+#: Main.vala:936
 msgid "Reading source lists..."
 msgstr ""
 
@@ -1108,11 +1112,11 @@ msgstr ""
 msgid "Restored successfully"
 msgstr ""
 
-#: Main.vala:2173
+#: Main.vala:2188
 msgid "Restoring /etc/fstab and /etc/crypttab entries"
 msgstr ""
 
-#: PpaWindow.vala:560
+#: PpaWindow.vala:552
 msgid "Running 'apt-get update'..."
 msgstr ""
 
@@ -1138,7 +1142,7 @@ msgstr ""
 msgid "Select backup location"
 msgstr ""
 
-#: PpaWindow.vala:423
+#: PpaWindow.vala:419
 msgid "Select the PPAs to backup"
 msgstr ""
 
@@ -1158,7 +1162,7 @@ msgstr ""
 msgid "Select username for listing config files"
 msgstr ""
 
-#: PpaWindow.vala:489
+#: PpaWindow.vala:481
 msgid "Selected PPAs are already enabled on this system"
 msgstr ""
 
@@ -1174,7 +1178,7 @@ msgstr ""
 msgid "Selected directories will be replaced with files from backup."
 msgstr ""
 
-#: AptikConsole.vala:485
+#: AptikConsole.vala:488
 msgid "Selected packages are already installed"
 msgstr ""
 
@@ -1274,7 +1278,7 @@ msgstr ""
 msgid "Software Sources (Third Party PPAs)"
 msgstr ""
 
-#: Main.vala:1887
+#: Main.vala:1902
 msgid "Startup Applications"
 msgstr ""
 
@@ -1360,7 +1364,7 @@ msgstr ""
 msgid "Unity Shell"
 msgstr ""
 
-#: AptikConsole.vala:348 AptikGtk.vala:103
+#: AptikConsole.vala:351 AptikGtk.vala:103
 msgid "Unknown option"
 msgstr ""
 
@@ -1368,7 +1372,7 @@ msgstr ""
 msgid "Update"
 msgstr ""
 
-#: AptikConsole.vala:527
+#: AptikConsole.vala:530
 msgid "Updating Package Information..."
 msgstr ""
 
