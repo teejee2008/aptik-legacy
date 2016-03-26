@@ -82,7 +82,7 @@ public class ThemeWindow : Window {
 		icon = get_app_icon(16);
 		resizable = true;
 		deletable = true;
-		
+
 		//vbox_main
 		vbox_main = new Box (Orientation.VERTICAL, 6);
 		vbox_main.margin = 6;
@@ -592,7 +592,7 @@ public class ThemeWindow : Window {
 
 		string message = _("Preparing...");
 
-		var dlg = new ProgressWindow.with_parent(this, message);
+		var dlg = new ProgressWindow.with_parent(this, message, true);
 		dlg.show_all();
 		gtk_do_events();
 		

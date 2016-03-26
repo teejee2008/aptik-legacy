@@ -89,6 +89,8 @@ public class Main : GLib.Object {
 	
 	public DateTime pkginfo_modified_date;
 
+	public Gdk.WindowTypeHint temp_type = Gdk.WindowTypeHint.MENU;
+	
 	Pid child_pid;
 	int input_fd;
 	int output_fd;
@@ -837,17 +839,17 @@ public class Main : GLib.Object {
 
 			//available in repo
 			if (pkg.is_available) {
-				pkg_list_install += " %s".printf(pkg.name);
+				pkg_list_install += " %s".printf(pkg.id);
 			}
 			else{ //not available
 				
 				//DEB file available
 				if (pkg.is_deb && (pkg.deb_file_name.length > 0)) {
-					pkg_list_deb += " %s".printf(pkg.name);
+					pkg_list_deb += " %s".printf(pkg.id);
 					gdebi_file_list += " '%s/%s'".printf(deb_dir,pkg.deb_file_name);
 				}
 				else{
-					pkg_list_missing += " %s".printf(pkg.name);
+					pkg_list_missing += " %s".printf(pkg.id);
 				}
 			}
 		}

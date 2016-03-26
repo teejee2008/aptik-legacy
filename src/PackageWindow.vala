@@ -912,7 +912,7 @@ public class PackageWindow : Window {
 
 		tv_packages_refilter();
 
-		dlg.close();
+		dlg.destroy();
 		gtk_do_events();
 
 		string deb_list = "";
@@ -1046,7 +1046,7 @@ public class PackageWindow : Window {
 
 		gtk_set_busy(false, this);
 		
-		dlg.close();
+		dlg.destroy();
 		gtk_do_events();
 	}
 
@@ -1057,7 +1057,9 @@ public class PackageWindow : Window {
 	}
 
 	private void btn_restore_clicked() {
-		//check if no action required
+		
+		// check if no action required ------------------------------
+		
 		bool none_selected = true;
 		foreach(Package pkg in App.pkg_list_master.values) {
 			if (pkg.is_selected && !pkg.is_installed) {
@@ -1065,6 +1067,7 @@ public class PackageWindow : Window {
 				break;
 			}
 		}
+		
 		if (none_selected) {
 			string title = _("Nothing To Do");
 			string msg = _("There are no packages selected for installation2");

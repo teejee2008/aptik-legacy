@@ -76,7 +76,7 @@ public class PpaWindow : Window {
 		icon = get_app_icon(16);
 		resizable = true;
 		deletable = true;
-		
+
 		//vbox_main
 		vbox_main = new Box (Orientation.VERTICAL, 6);
 		vbox_main.margin = 6;
@@ -395,7 +395,7 @@ public class PpaWindow : Window {
 
 		tv_ppa_refresh();
 
-		dlg.close();
+		dlg.destroy();
 		gtk_do_events();
 	}
 
@@ -456,7 +456,7 @@ public class PpaWindow : Window {
 
 		tv_ppa_refresh();
 
-		dlg.close();
+		dlg.destroy();
 		gtk_do_events();
 	}
 
@@ -563,7 +563,6 @@ public class PpaWindow : Window {
 
 		// close dialog ------------
 		
-		dlg.close();
 		dlg.destroy();
 		gtk_do_events();
 

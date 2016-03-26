@@ -57,6 +57,7 @@ public class DownloadWindow : Dialog {
 	private int job_count = 0;
 	private int job_count_max = 3;
 	private bool user_aborted = false;
+	private bool allow_close = false;
 	
 	// init
 
@@ -84,6 +85,8 @@ public class DownloadWindow : Dialog {
 		}
 
 		// init widgets --------------------
+		
+		this.delete_event.connect(close_window);
 		
 		init_window();
 	}
@@ -145,6 +148,17 @@ public class DownloadWindow : Dialog {
 		tmr_init = Timeout.add(100, init_delayed);
 	}
 
+	private bool close_window(){
+		if (allow_close){
+			// close window
+			return false;
+		}
+		else{
+			// do not close window
+			return true;
+		}
+	}
+	
 	private bool init_delayed() {
 		/* any actions that need to run after window has been displayed */
 		if (tmr_init > 0) {

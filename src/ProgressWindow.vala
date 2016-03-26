@@ -49,7 +49,8 @@ public class ProgressWindow : Gtk.Window {
 	private int def_height = 50;
 
 	private string status_message;
-	private bool allow_cancel;
+	private bool allow_cancel = false;
+	private bool allow_close = false;
 	
 	// init
 	
@@ -58,6 +59,7 @@ public class ProgressWindow : Gtk.Window {
 		set_modal(true);
 		set_skip_taskbar_hint(true);
 		set_skip_pager_hint(true);
+		//set_type_hint(Gdk.WindowTypeHint.DIALOG);
 		window_position = WindowPosition.CENTER;
 
 		App.status_line = "";
@@ -69,9 +71,22 @@ public class ProgressWindow : Gtk.Window {
 
 		App.cancelled = false;
 		
+		this.delete_event.connect(close_window);
+		
 		init_window();
 	}
-
+	
+	private bool close_window(){
+		if (allow_close){
+			// close window
+			return false;
+		}
+		else{
+			// do not close window
+			return true;
+		}
+	}
+	
 	public void init_window () {
 		title = "";
 		icon = get_app_icon(16);
@@ -80,12 +95,11 @@ public class ProgressWindow : Gtk.Window {
 		
 		//vbox_main
 		vbox_main = new Box (Orientation.VERTICAL, 6);
-		vbox_main.margin = 6;
+		vbox_main.margin = 12;
 		vbox_main.set_size_request (def_width, def_height);
 		add (vbox_main);
 
-		var hbox_status = new Box (Orientation.HORIZONTAL, 3);
-		hbox_status.margin_top = 6;
+		var hbox_status = new Box (Orientation.HORIZONTAL, 6);
 		vbox_main.add (hbox_status);
 		
 		spinner = new Gtk.Spinner();
@@ -96,17 +110,11 @@ public class ProgressWindow : Gtk.Window {
 		lbl_msg = new Label (status_message);
 		lbl_msg.halign = Align.START;
 		lbl_msg.ellipsize = Pango.EllipsizeMode.END;
-		lbl_msg.max_width_chars = 50;
-		lbl_msg.margin_bottom = 3;
-		lbl_msg.margin_left = 3;
-		lbl_msg.margin_right = 3;
+		lbl_msg.max_width_chars = 40;
 		hbox_status.add (lbl_msg);
 
 		//progressbar
 		progressbar = new ProgressBar();
-		progressbar.margin_bottom = 3;
-		progressbar.margin_left = 3;
-		progressbar.margin_right = 3;
 		//progressbar.set_size_request(-1, 25);
 		progressbar.pulse_step = 0.1;
 		vbox_main.pack_start (progressbar, false, true, 0);
@@ -115,10 +123,7 @@ public class ProgressWindow : Gtk.Window {
 		lbl_status = new Label ("");
 		lbl_status.halign = Align.START;
 		lbl_status.ellipsize = Pango.EllipsizeMode.END;
-		lbl_status.max_width_chars = 50;
-		lbl_status.margin_bottom = 3;
-		lbl_status.margin_left = 3;
-		lbl_status.margin_right = 3;
+		lbl_status.max_width_chars = 40;
 		vbox_main.pack_start (lbl_status, false, true, 0);
 
 		//box
@@ -131,7 +136,6 @@ public class ProgressWindow : Gtk.Window {
 		//btn
 		var button = new Gtk.Button.with_label (_("Cancel"));
 		button.margin_top = 6;
-		button.margin_bottom = 6;
 		box.pack_start (button, false, false, 0);
 		btn_cancel = button;
 		sizegroup.add_widget(button);
@@ -149,15 +153,17 @@ public class ProgressWindow : Gtk.Window {
 		//tmr_init = Timeout.add(100, init_delayed);
 	}
 
-	private bool init_delayed() {
-		/* any actions that need to run after window has been displayed */
+	/*private bool init_delayed() {
+
+		// any actions that need to run after window has been displayed
+
 		if (tmr_init > 0) {
 			Source.remove(tmr_init);
 			tmr_init = 0;
 		}
 
 		return false;
-	}
+	}*/
 
 
 	// common
@@ -229,7 +235,8 @@ public class ProgressWindow : Gtk.Window {
 				Source.remove(tmr_init);
 				tmr_init = 0;
 			}
-
+			
+			allow_close = true;
 			this.close();
 			return false;
 		});
