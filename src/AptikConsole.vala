@@ -536,9 +536,16 @@ public class AptikConsole : GLib.Object {
 	}
 
 	public bool restore_themes(){
-		foreach(Theme theme in Theme.list_themes_archived(App.backup_dir)) {
+		var list = Theme.list_themes_archived(App.backup_dir);
+
+		foreach(Theme theme in list){
+			theme.check_installed(App.user_login);
+			theme.is_selected = !theme.is_installed;
+		}
+		
+		foreach(Theme theme in list) {
 			if (theme.is_selected && !theme.is_installed) {
-				theme.unzip("",false);
+				theme.unzip(App.user_login,false);
 				while (theme.is_running) {
 					Thread.usleep ((ulong) 0.3 * 1000000);
 				}

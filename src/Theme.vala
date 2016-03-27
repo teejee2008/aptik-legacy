@@ -85,9 +85,12 @@ public class Theme : GLib.Object{
 		name = _name;
 		dir_type = _type;
 		archive_path = _archive_path;
-		
+
 		check_installed("");
-		get_theme_type_from_archive();
+		
+		if (App.gui_mode){
+			get_theme_type_from_archive();
+		}
 		//base_path = _base_path;
 		//theme_dir_path = "%s/%s".printf(_base_path, name);
 	}
@@ -618,7 +621,7 @@ public class Theme : GLib.Object{
 				run_gzip(cmd);
 			}
 			else {
-				stdout.printf("%-60s".printf(_("Archiving") + " '%s'".printf(theme_dir_path)));
+				stdout.printf("%-80s".printf(_("Archiving") + " '%s'".printf(theme_dir_path)));
 				stdout.flush();
 
 				int status = Posix.system(cmd + " 1> /dev/null");
@@ -659,7 +662,7 @@ public class Theme : GLib.Object{
 			return run_gzip(cmd);
 		}
 		else {
-			stdout.printf("%-60s".printf(_("Extracting") + " '%s'".printf(theme_dir_path)));
+			stdout.printf("%-80s".printf(_("Extracting") + " '%s'".printf(theme_dir_path)));
 			stdout.flush();
 
 			int status = Posix.system(cmd + " 1> /dev/null");

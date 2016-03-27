@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2016-03-27 16:31+0530\n"
+"POT-Creation-Date: 2016-03-27 18:12+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -141,11 +141,11 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: ThemeWindow.vala:277
+#: ThemeWindow.vala:278
 msgid "All Types"
 msgstr ""
 
-#: ThemeWindow.vala:218
+#: ThemeWindow.vala:219
 msgid "All Users"
 msgstr ""
 
@@ -177,12 +177,12 @@ msgstr ""
 msgid "Aptik needs admin access to backup and restore packages."
 msgstr ""
 
-#: Main.vala:1732 Theme.vala:621
+#: Main.vala:1732 Theme.vala:624
 #, c-format
 msgid "Archiving"
 msgstr ""
 
-#: ConfigWindow.vala:413 ThemeWindow.vala:610
+#: ConfigWindow.vala:413 ThemeWindow.vala:611
 msgid "Archiving..."
 msgstr ""
 
@@ -212,7 +212,7 @@ msgstr ""
 #: ConfigWindow.vala:335 MainWindow.vala:228 MainWindow.vala:276
 #: MainWindow.vala:303 MainWindow.vala:352 MainWindow.vala:400
 #: MainWindow.vala:448 PackageManagerWindow.vala:476 PackageWindow.vala:441
-#: PpaWindow.vala:266 ThemeWindow.vala:526
+#: PpaWindow.vala:266 ThemeWindow.vala:527
 msgid "Backup"
 msgstr ""
 
@@ -236,7 +236,7 @@ msgstr ""
 msgid "Backup Directory Not Selected"
 msgstr ""
 
-#: ThemeWindow.vala:396
+#: ThemeWindow.vala:397
 msgid "Backup File"
 msgstr ""
 
@@ -304,7 +304,7 @@ msgstr ""
 msgid "Backup themes from /usr/share/themes"
 msgstr ""
 
-#: ConfigWindow.vala:428 ThemeWindow.vala:637
+#: ConfigWindow.vala:428 ThemeWindow.vala:638
 msgid "Backups created successfully"
 msgstr ""
 
@@ -332,7 +332,7 @@ msgstr ""
 msgid "Category"
 msgstr ""
 
-#: ThemeWindow.vala:653
+#: ThemeWindow.vala:654
 msgid "Checking backups..."
 msgstr ""
 
@@ -344,12 +344,12 @@ msgstr ""
 msgid "Chromium Web Browser"
 msgstr ""
 
-#: ThemeWindow.vala:298
+#: ThemeWindow.vala:299
 msgid "Cinnamon Shell"
 msgstr ""
 
 #: AboutWindow.vala:295 ConfigWindow.vala:355 MountWindow.vala:368
-#: PackageWindow.vala:453 PpaWindow.vala:278 ThemeWindow.vala:538
+#: PackageWindow.vala:453 PpaWindow.vala:278 ThemeWindow.vala:539
 msgid "Close"
 msgstr ""
 
@@ -377,7 +377,7 @@ msgstr ""
 msgid "Credits"
 msgstr ""
 
-#: ThemeWindow.vala:283
+#: ThemeWindow.vala:284
 msgid "Cursors"
 msgstr ""
 
@@ -495,12 +495,12 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: Main.vala:1984 Theme.vala:662
+#: Main.vala:1984 Theme.vala:665
 #, c-format
 msgid "Extracting"
 msgstr ""
 
-#: ConfigWindow.vala:485 ThemeWindow.vala:739
+#: ConfigWindow.vala:485 ThemeWindow.vala:740
 msgid "Extracting..."
 msgstr ""
 
@@ -582,7 +582,7 @@ msgstr ""
 msgid "File is missing"
 msgstr ""
 
-#: Main.vala:1956 Main.vala:2280 Theme.vala:647 Utility.vala:351
+#: Main.vala:1956 Main.vala:2280 Theme.vala:650 Utility.vala:351
 msgid "File not found"
 msgstr ""
 
@@ -674,15 +674,15 @@ msgstr ""
 msgid "Following packages will be installed"
 msgstr ""
 
-#: ThemeWindow.vala:286
+#: ThemeWindow.vala:287
 msgid "GTK-2"
 msgstr ""
 
-#: ThemeWindow.vala:289
+#: ThemeWindow.vala:290
 msgid "GTK-3"
 msgstr ""
 
-#: ThemeWindow.vala:292
+#: ThemeWindow.vala:293
 msgid "Gnome Shell"
 msgstr ""
 
@@ -690,7 +690,7 @@ msgstr ""
 msgid "Hide"
 msgstr ""
 
-#: ThemeWindow.vala:280
+#: ThemeWindow.vala:281
 msgid "Icons"
 msgstr ""
 
@@ -701,7 +701,7 @@ msgid ""
 "re-installing the packages."
 msgstr ""
 
-#: ThemeWindow.vala:416
+#: ThemeWindow.vala:417
 msgid "Includes"
 msgstr ""
 
@@ -711,7 +711,7 @@ msgstr ""
 
 #: PackageManagerWindow.vala:399 PackageManagerWindow.vala:634
 #: PackageManagerWindow.vala:834 PackageWindow.vala:527 PackageWindow.vala:552
-#: PackageWindow.vala:691 ThemeWindow.vala:460
+#: PackageWindow.vala:691 ThemeWindow.vala:461
 msgid "Installed"
 msgstr ""
 
@@ -809,7 +809,7 @@ msgstr ""
 msgid "Mapped Name"
 msgstr ""
 
-#: ThemeWindow.vala:301
+#: ThemeWindow.vala:302
 msgid "Metacity Window Border"
 msgstr ""
 
@@ -853,7 +853,7 @@ msgstr ""
 msgid "No Packages Selected"
 msgstr ""
 
-#: ThemeWindow.vala:587
+#: ThemeWindow.vala:588
 msgid "No Themes Selected"
 msgstr ""
 
@@ -867,7 +867,7 @@ msgstr ""
 
 #: PackageManagerWindow.vala:638 PackageManagerWindow.vala:844
 #: PackageWindow.vala:695 PackageWindow.vala:699 PackageWindow.vala:725
-#: ThemeWindow.vala:464
+#: ThemeWindow.vala:465
 msgid "Not Installed"
 msgstr ""
 
@@ -880,7 +880,7 @@ msgid "NotInstalled"
 msgstr ""
 
 #: ConfigWindow.vala:454 ConfigWindow.vala:521 PackageWindow.vala:1072
-#: PackageWindow.vala:1092 PpaWindow.vala:480 ThemeWindow.vala:716
+#: PackageWindow.vala:1092 PpaWindow.vala:480 ThemeWindow.vala:717
 msgid "Nothing To Do"
 msgstr ""
 
@@ -1000,7 +1000,7 @@ msgstr ""
 #: ConfigWindow.vala:404 ConfigWindow.vala:477 ConfigWindow.vala:544
 #: MainWindow.vala:777 MainWindow.vala:827 PackageWindow.vala:867
 #: PackageWindow.vala:1005 PpaWindow.vala:365 PpaWindow.vala:436
-#: PpaWindow.vala:493 ThemeWindow.vala:593 ThemeWindow.vala:724
+#: PpaWindow.vala:493 ThemeWindow.vala:594 ThemeWindow.vala:725
 msgid "Preparing..."
 msgstr ""
 
@@ -1055,7 +1055,7 @@ msgstr ""
 #: ConfigWindow.vala:341 MainWindow.vala:244 MainWindow.vala:283
 #: MainWindow.vala:320 MainWindow.vala:368 MainWindow.vala:416
 #: MainWindow.vala:487 MountWindow.vala:363 PackageManagerWindow.vala:482
-#: PackageWindow.vala:447 PpaWindow.vala:272 ThemeWindow.vala:532
+#: PackageWindow.vala:447 PpaWindow.vala:272 ThemeWindow.vala:533
 msgid "Restore"
 msgstr ""
 
@@ -1143,12 +1143,12 @@ msgid "Select"
 msgstr ""
 
 #: ConfigWindow.vala:315 PackageManagerWindow.vala:456 PackageWindow.vala:397
-#: PpaWindow.vala:226 ThemeWindow.vala:486
+#: PpaWindow.vala:226 ThemeWindow.vala:487
 msgid "Select All"
 msgstr ""
 
 #: ConfigWindow.vala:325 PackageManagerWindow.vala:466 PackageWindow.vala:419
-#: PpaWindow.vala:246 ThemeWindow.vala:506
+#: PpaWindow.vala:246 ThemeWindow.vala:507
 msgid "Select None"
 msgstr ""
 
@@ -1168,7 +1168,7 @@ msgstr ""
 msgid "Select the packages to backup"
 msgstr ""
 
-#: ThemeWindow.vala:588
+#: ThemeWindow.vala:589
 msgid "Select the themes to backup"
 msgstr ""
 
@@ -1196,7 +1196,7 @@ msgstr ""
 msgid "Selected packages are already installed"
 msgstr ""
 
-#: ThemeWindow.vala:717
+#: ThemeWindow.vala:718
 msgid "Selected themes are already installed"
 msgstr ""
 
@@ -1308,7 +1308,7 @@ msgstr ""
 msgid "Syntax"
 msgstr ""
 
-#: ThemeWindow.vala:399
+#: ThemeWindow.vala:400
 msgid "System Path"
 msgstr ""
 
@@ -1316,11 +1316,11 @@ msgstr ""
 msgid "The list of default packages is missing on this system"
 msgstr ""
 
-#: ThemeWindow.vala:373
+#: ThemeWindow.vala:374
 msgid "Theme"
 msgstr ""
 
-#: ThemeWindow.vala:244
+#: ThemeWindow.vala:245
 msgid "Theme Type"
 msgstr ""
 
@@ -1328,7 +1328,7 @@ msgstr ""
 msgid "Themes and Icons"
 msgstr ""
 
-#: ThemeWindow.vala:776
+#: ThemeWindow.vala:777
 msgid "Themes restored successfully"
 msgstr ""
 
@@ -1370,11 +1370,11 @@ msgstr ""
 msgid "Translators"
 msgstr ""
 
-#: ThemeWindow.vala:249
+#: ThemeWindow.vala:250
 msgid "Type of theme to display"
 msgstr ""
 
-#: ThemeWindow.vala:295
+#: ThemeWindow.vala:296
 msgid "Unity Shell"
 msgstr ""
 
@@ -1415,11 +1415,11 @@ msgstr ""
 msgid "Wrong password"
 msgstr ""
 
-#: ThemeWindow.vala:307
+#: ThemeWindow.vala:308
 msgid "XFCE Notification"
 msgstr ""
 
-#: ThemeWindow.vala:304
+#: ThemeWindow.vala:305
 msgid "XFCE Window Border"
 msgstr ""
 
@@ -1435,6 +1435,6 @@ msgstr ""
 msgid "packages listed"
 msgstr ""
 
-#: ConfigWindow.vala:175 ThemeWindow.vala:222
+#: ConfigWindow.vala:175 ThemeWindow.vala:223
 msgid "root"
 msgstr ""

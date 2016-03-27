@@ -1968,16 +1968,16 @@ namespace TeeJee.System{
 
 	public bool set_directory_ownership(string dir_name, string login_name){
 		try {
-			string cmd = "chown %s -R %s".printf(login_name, dir_name);
+			string cmd = "chown %s -R '%s'".printf(login_name, dir_name);
 			int exit_code;
 			Process.spawn_command_line_sync(cmd, null, null, out exit_code);
 
 			if (exit_code == 0){
-				log_msg(_("Set owner: %s, dir: %s").printf(login_name, dir_name));
+				log_debug(_("Set owner: %s, dir: %s").printf(login_name, dir_name));
 				return true;
 			}
 			else{
-				log_error(_("Failed to set ownership") + ": %s, %s".printf(login_name, dir_name));
+				log_error(_("Failed to set ownership") + ": %s, '%s'".printf(login_name, dir_name));
 				return false;
 			}
 		}

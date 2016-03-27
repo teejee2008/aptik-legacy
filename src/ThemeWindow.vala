@@ -180,6 +180,7 @@ public class ThemeWindow : Window {
 			if (is_restore_view){
 				foreach(Theme theme in theme_list_user){
 					theme.check_installed(App.user_login);
+					theme.is_selected = !theme.is_installed;
 				}
 				tv_theme_refresh();
 			}
