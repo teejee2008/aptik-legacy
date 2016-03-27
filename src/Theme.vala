@@ -681,7 +681,7 @@ public class Theme : GLib.Object{
 		try {
 			//execute script file
 			Process.spawn_async_with_pipes(
-			    null, //working dir
+			    App.temp_dir, //working dir
 			    argv, //argv
 			    null, //environment
 			    SpawnFlags.SEARCH_PATH,

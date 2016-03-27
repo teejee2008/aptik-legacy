@@ -1573,7 +1573,7 @@ public class Main : GLib.Object {
 		try {
 			//execute script file
 			Process.spawn_async_with_pipes(
-			    null, //working dir
+			    temp_dir, //working dir
 			    argv, //argv
 			    null, //environment
 			    SpawnFlags.SEARCH_PATH,
@@ -2031,7 +2031,7 @@ public class Main : GLib.Object {
 		try {
 			//execute script file
 			Process.spawn_async_with_pipes(
-			    null, //working dir
+			    temp_dir, //working dir
 			    argv, //argv
 			    null, //environment
 			    SpawnFlags.SEARCH_PATH,

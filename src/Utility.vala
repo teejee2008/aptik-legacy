@@ -798,7 +798,7 @@ namespace TeeJee.ProcessManagement{
 			
 			Pid child_pid;
 			Process.spawn_async_with_pipes(
-			    null, //working dir
+			    TEMP_DIR, //working dir
 			    argv, //argv
 			    env, //environment
 			    SpawnFlags.SEARCH_PATH,
