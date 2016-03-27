@@ -1110,7 +1110,7 @@ public class PackageWindow : Window {
 			dlg.close();
 			dlg.destroy();
 			gtk_do_events();
-
+			
 			if (response_code == Gtk.ResponseType.OK){
 				continue_installation = true;
 			}
@@ -1122,6 +1122,9 @@ public class PackageWindow : Window {
 		if (continue_installation){
 			execute_in_terminal_window();
 			//success/error will be displayed by apt-get in terminal
+		}
+		else{
+			this.destroy(); //will display main window
 		}
 	}
 	

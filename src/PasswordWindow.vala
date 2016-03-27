@@ -137,12 +137,14 @@ public class PasswordWindow : Gtk.Dialog {
 		btn_ok = (Gtk.Button) add_button ("_Ok", Gtk.ResponseType.NONE);
 
 		btn_ok.clicked.connect(()=>{
-			if (txt_password.text != txt_confirm.text) {
-				gtk_messagebox("Password Mismatch", "Passwords do not match", this, true);
+			if (txt_confirm.visible){
+				if (txt_password.text != txt_confirm.text) {
+					gtk_messagebox("Password Mismatch", "Passwords do not match", this, true);
+					return;
+				}
 			}
-			else{
-				this.response(Gtk.ResponseType.OK);
-			}
+			
+			this.response(Gtk.ResponseType.OK);
 		});
 		
 		btn_cancel = (Gtk.Button) add_button ("_Cancel", Gtk.ResponseType.CANCEL);
@@ -159,7 +161,12 @@ public class PasswordWindow : Gtk.Dialog {
 	}
 	
 	private void set_ok_button_state(){
-		btn_ok.sensitive = (txt_password.text.length > 0) && (txt_confirm.text.length > 0);
+		if (txt_confirm.visible){
+			btn_ok.sensitive = (txt_password.text.length > 0) && (txt_confirm.text.length > 0);
+		}
+		else{
+			btn_ok.sensitive = (txt_password.text.length > 0);
+		}
 	}
 
 	public string password{

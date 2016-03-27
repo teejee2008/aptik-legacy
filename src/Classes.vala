@@ -793,7 +793,7 @@ public class FsTabEntry : GLib.Object{
 	// save file
 	
 	public static bool save_fstab_file(Gee.ArrayList<FsTabEntry> list){
-		string txt = "";
+		string txt = "# <target name>	<source device>		<key file>	<options>\n";
 
 		bool found_root = false;
 		foreach(var fs in list){

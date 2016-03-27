@@ -2188,9 +2188,10 @@ public class Main : GLib.Object {
 		return true;
 	}
 
-	public bool restore_mounts(Gee.ArrayList<FsTabEntry> fstab_list, Gee.ArrayList<FsTabEntry> crypttab_list, string password){
+	public bool restore_mounts(Gee.ArrayList<FsTabEntry> fstab_list, Gee.ArrayList<FsTabEntry> crypttab_list, string password, out string err_msg){
 		bool ok = false;
-
+		err_msg = "";
+		
 		string mounts_dir = backup_dir + "mounts";
 
 		log_debug(_("Restoring /etc/fstab and /etc/crypttab entries"));
@@ -2217,28 +2218,6 @@ public class Main : GLib.Object {
 			}
 		}
 
-		// save /etc/crypttab --------------------------
-		
-		none_selected = true;
-		
-		foreach(var fs in crypttab_list) {
-			if (fs.is_selected && (fs.action == FsTabEntry.Action.ADD)){
-				none_selected = false;
-				break;
-			}
-		}
-
-		if (!none_selected){
-			ok = FsTabEntry.save_crypttab_file(crypttab_list);
-			if (!ok){
-				log_error(_("Failed to save file") + ": %s".printf("/etc/crypttab"));
-				return ok;
-			}
-			else{
-				log_debug(_("File updated") + ": %s".printf("/etc/crypttab"));
-			}
-		}
-
 		// restore key files -----------------
 
 		foreach(var fs in crypttab_list){
@@ -2259,9 +2238,9 @@ public class Main : GLib.Object {
 
 			if (file_exists(src_file)){
 				string dst_file = fs.password;
-				ok = file_decrypt_and_untar(src_file, dst_file, password);
+				ok = file_decrypt_and_untar(src_file, dst_file, password, out err_msg);
 				if (!ok){
-					log_error(_("Failed to save file") + ": %s".printf("/etc/crypttab"));
+					log_error(_("Failed to extract key file") + ": %s".printf(src_file));
 					return false;
 				}
 				else{
@@ -2299,6 +2278,28 @@ public class Main : GLib.Object {
 			}
 			else{
 				log_error(_("File not found") + ": %s".printf(tar_file));
+			}
+		}
+		
+		// save /etc/crypttab --------------------------
+		
+		none_selected = true;
+		
+		foreach(var fs in crypttab_list) {
+			if (fs.is_selected && (fs.action == FsTabEntry.Action.ADD)){
+				none_selected = false;
+				break;
+			}
+		}
+
+		if (!none_selected){
+			ok = FsTabEntry.save_crypttab_file(crypttab_list);
+			if (!ok){
+				log_error(_("Failed to save file") + ": %s".printf("/etc/crypttab"));
+				return ok;
+			}
+			else{
+				log_debug(_("File updated") + ": %s".printf("/etc/crypttab"));
 			}
 		}
 		
@@ -2360,7 +2361,7 @@ public class Main : GLib.Object {
 		var list = new Gee.ArrayList<FsTabEntry>();
 		var list_sys = FsTabEntry.read_crypttab_file(sys_file);
 		var list_bkup = FsTabEntry.read_crypttab_file(backup_file);
-
+		
 		foreach(var fs_sys in list_sys){
 			list.add(fs_sys);
 			fs_sys.is_selected = true;
@@ -2382,10 +2383,9 @@ public class Main : GLib.Object {
 				if (!fs_bak.options.contains("nofail")){
 					fs_bak.options += (fs_bak.options.length > 0) ? ",nofail" : "nofail";
 				}
-				break;
 			}
 		}
-		
+
 		return list;
 	}
 	

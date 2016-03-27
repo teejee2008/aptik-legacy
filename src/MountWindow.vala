@@ -511,14 +511,15 @@ public class MountWindow : Window {
 
 		// restore ------------------------------
 		
-		bool ok = App.restore_mounts(fstab_list, crypttab_list, password);
+		string err_msg = "";
+		bool ok = App.restore_mounts(fstab_list, crypttab_list, password, out err_msg);
 		
 		if (ok){
 			gtk_messagebox(_("Finished"), _("Restored successfully"), this, false);
 			this.close();
 		}
 		else{
-			gtk_messagebox(_("Error"), _("Failed to restore"), this, false);
+			gtk_messagebox(_("Error"), "%s".printf(err_msg), this, false);
 		}
 	}
 

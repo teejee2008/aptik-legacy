@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2016-03-27 08:50+0530\n"
+"POT-Creation-Date: 2016-03-27 10:13+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -426,7 +426,7 @@ msgid ""
 "(teejeetech@gmail.com)"
 msgstr ""
 
-#: Main.vala:2283
+#: Main.vala:2262
 msgid "Dir exists"
 msgstr ""
 
@@ -434,7 +434,7 @@ msgstr ""
 msgid "Dir not found"
 msgstr ""
 
-#: Main.vala:2297
+#: Main.vala:2276
 msgid "Directory restored"
 msgstr ""
 
@@ -460,7 +460,7 @@ msgstr ""
 msgid "Donations"
 msgstr ""
 
-#: DownloadWindow.vala:95
+#: DownloadWindow.vala:91
 msgid "Download"
 msgstr ""
 
@@ -468,7 +468,7 @@ msgstr ""
 msgid "Downloaded Packages (APT Cache)"
 msgstr ""
 
-#: DownloadWindow.vala:116
+#: DownloadWindow.vala:112
 msgid "Downloading packages..."
 msgstr ""
 
@@ -489,7 +489,7 @@ msgid "Enter Passphrase"
 msgstr ""
 
 #: AptikConsole.vala:283 AptikConsole.vala:294 MainWindow.vala:482
-#: MountWindow.vala:521 PackageWindow.vala:980 PackageWindow.vala:994
+#: MountWindow.vala:522 PackageWindow.vala:980 PackageWindow.vala:994
 #: PackageWindow.vala:1079 PpaWindow.vala:487 PpaWindow.vala:592
 #: PpaWindow.vala:614 Utility.vala:101
 msgid "Error"
@@ -524,6 +524,10 @@ msgstr ""
 msgid "Failed to delete file"
 msgstr ""
 
+#: Main.vala:2243
+msgid "Failed to extract key file"
+msgstr ""
+
 #: Utility.vala:255
 msgid "Failed to move file"
 msgstr ""
@@ -532,11 +536,7 @@ msgstr ""
 msgid "Failed to read file"
 msgstr ""
 
-#: MountWindow.vala:521
-msgid "Failed to restore"
-msgstr ""
-
-#: Main.vala:2293
+#: Main.vala:2272
 msgid "Failed to restore directory"
 msgstr ""
 
@@ -544,11 +544,11 @@ msgstr ""
 msgid "Failed to save backup"
 msgstr ""
 
-#: Main.vala:2212 Main.vala:2234 Main.vala:2264
+#: Main.vala:2213 Main.vala:2298
 msgid "Failed to save file"
 msgstr ""
 
-#: Utility.vala:1963
+#: Utility.vala:1980
 msgid "Failed to set ownership"
 msgstr ""
 
@@ -574,11 +574,15 @@ msgstr ""
 msgid "File Not Found"
 msgstr ""
 
-#: Main.vala:2254
+#: Main.vala:2233
 msgid "File exists"
 msgstr ""
 
-#: Main.vala:1956 Main.vala:2301 Theme.vala:647 Utility.vala:351
+#: Utility.vala:545
+msgid "File is missing"
+msgstr ""
+
+#: Main.vala:1956 Main.vala:2280 Theme.vala:647 Utility.vala:351
 msgid "File not found"
 msgstr ""
 
@@ -591,7 +595,7 @@ msgstr ""
 msgid "File not found: %s"
 msgstr ""
 
-#: Main.vala:2268
+#: Main.vala:2247
 msgid "File restored"
 msgstr ""
 
@@ -599,7 +603,7 @@ msgstr ""
 msgid "File saved"
 msgstr ""
 
-#: Main.vala:2216 Main.vala:2238
+#: Main.vala:2217 Main.vala:2302
 msgid "File updated"
 msgstr ""
 
@@ -619,12 +623,12 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
-#: MainWindow.vala:479 MountWindow.vala:517 PackageWindow.vala:973
+#: MainWindow.vala:479 MountWindow.vala:518 PackageWindow.vala:973
 #: PpaWindow.vala:607
 msgid "Finished"
 msgstr ""
 
-#: PackageWindow.vala:1147
+#: PackageWindow.vala:1150
 msgid "Finished installing packages"
 msgstr ""
 
@@ -682,7 +686,7 @@ msgstr ""
 msgid "Gnome Shell"
 msgstr ""
 
-#: PasswordWindow.vala:157
+#: PasswordWindow.vala:159
 msgid "Hide"
 msgstr ""
 
@@ -731,12 +735,12 @@ msgstr ""
 msgid "Installed (user)"
 msgstr ""
 
-#: PackageWindow.vala:1139
+#: PackageWindow.vala:1142
 #, c-format
 msgid "Installing packages from DEB files"
 msgstr ""
 
-#: PackageWindow.vala:1132
+#: PackageWindow.vala:1135
 #, c-format
 msgid "Installing packages from repos"
 msgstr ""
@@ -817,7 +821,7 @@ msgstr ""
 msgid "Missing Dependencies"
 msgstr ""
 
-#: Utility.vala:1510
+#: Utility.vala:1527
 msgid "Missing Icon"
 msgstr ""
 
@@ -919,7 +923,7 @@ msgstr ""
 msgid "PPA is Not Added"
 msgstr ""
 
-#: DownloadWindow.vala:233 PackageManagerWindow.vala:381
+#: DownloadWindow.vala:218 PackageManagerWindow.vala:381
 #: PackageWindow.vala:293
 msgid "Package"
 msgstr ""
@@ -1000,7 +1004,7 @@ msgstr ""
 msgid "Preparing..."
 msgstr ""
 
-#: PackageWindow.vala:1150
+#: PackageWindow.vala:1153
 msgid "Press ENTER to exit..."
 msgstr ""
 
@@ -1008,7 +1012,7 @@ msgstr ""
 msgid "Print debug information"
 msgstr ""
 
-#: DownloadWindow.vala:252
+#: DownloadWindow.vala:237
 msgid "Progress"
 msgstr ""
 
@@ -1118,11 +1122,11 @@ msgstr ""
 msgid "Restore themes to /usr/share/themes"
 msgstr ""
 
-#: MountWindow.vala:517
+#: MountWindow.vala:518
 msgid "Restored successfully"
 msgstr ""
 
-#: Main.vala:2196
+#: Main.vala:2197
 msgid "Restoring /etc/fstab and /etc/crypttab entries"
 msgstr ""
 
@@ -1205,12 +1209,12 @@ msgstr ""
 msgid "Send Email"
 msgstr ""
 
-#: Utility.vala:1959
+#: Utility.vala:1976
 #, c-format
 msgid "Set owner: %s, dir: %s"
 msgstr ""
 
-#: PasswordWindow.vala:106 PasswordWindow.vala:157
+#: PasswordWindow.vala:106 PasswordWindow.vala:159
 msgid "Show"
 msgstr ""
 
@@ -1264,7 +1268,7 @@ msgstr ""
 msgid "Showing unselected packages"
 msgstr ""
 
-#: ConfigWindow.vala:259 DownloadWindow.vala:213
+#: ConfigWindow.vala:259 DownloadWindow.vala:198
 msgid "Size"
 msgstr ""
 
@@ -1292,11 +1296,11 @@ msgstr ""
 msgid "Startup Applications"
 msgstr ""
 
-#: DownloadWindow.vala:194
+#: DownloadWindow.vala:179
 msgid "Status"
 msgstr ""
 
-#: Utility.vala:1201
+#: Utility.vala:1218
 msgid "Stopped"
 msgstr ""
 
@@ -1405,6 +1409,10 @@ msgstr ""
 
 #: ConfigWindow.vala:461 ConfigWindow.vala:528 Utility.vala:101
 msgid "Warning"
+msgstr ""
+
+#: Utility.vala:533
+msgid "Wrong password"
 msgstr ""
 
 #: ThemeWindow.vala:307

@@ -59,7 +59,7 @@ public class TerminalWindow : Gtk.Window {
 		parent_win = parent;
 
 		this.delete_event.connect(()=>{
-			process_quit(child_pid);
+			//process_quit(child_pid);
 			// allow window to close 
 			//return false;
 

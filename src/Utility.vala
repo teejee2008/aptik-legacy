@@ -501,7 +501,10 @@ namespace TeeJee.FileSystem{
 		return false;
 	}
 
-	public bool file_decrypt_and_untar (string src_file, string dst_file, string password){
+	public bool file_decrypt_and_untar (string src_file, string dst_file, string password, out string err_msg){
+		
+		err_msg = "";
+		
 		if (file_exists(src_file)) {
 			if (file_exists(dst_file)){
 				file_delete(dst_file);
@@ -511,11 +514,13 @@ namespace TeeJee.FileSystem{
 			var src_name = file_basename(src_file);
 			var tar_name = src_name[0 : src_name.index_of(".gpg")];
 			var tar_file = "%s/%s".printf(src_dir, tar_name);
-			
+
 			string cmd = "";
+			cmd += "rm -f '%s'\n".printf(tar_file); //gpg does not have an --overwrite switch, so remove the output tar file if it exists
 			cmd += "gpg --passphrase '%s' -o '%s' --decrypt '%s'\n".printf(password, tar_file, src_file);
-			cmd += "tar xvf '%s' --overwrite --same-permissions -C '%s'\n".printf(tar_file, "/");
-			cmd += "rm -f '%s'\n".printf(dst_file);
+			cmd += "status=$?; if [ $status -ne 0 ]; then exit $status; fi\n";
+			cmd += "tar xvf '%s' --overwrite --same-permissions -C '%s'\n".printf(tar_file, file_parent(dst_file));
+			cmd += "rm -f '%s'\n".printf(tar_file);
 
 			log_debug(cmd);
 			
@@ -524,9 +529,21 @@ namespace TeeJee.FileSystem{
 			if (status == 0){
 				return true;
 			}
-			else{
-				log_msg(stderr);
+			else if (status == 512){
+				err_msg = _("Wrong password");
+				log_error(err_msg);
+				return false;
 			}
+			else{
+				log_error("gpg status=%d".printf(status));
+				err_msg = stderr;
+				log_error(stderr);
+				return false;
+			}
+		}
+		else{
+			err_msg = _("File is missing") + ": %s".printf(src_file);
+			log_error(err_msg);
 		}
 
 		return false;
