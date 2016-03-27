@@ -793,11 +793,18 @@ public class FsTabEntry : GLib.Object{
 	// save file
 	
 	public static bool save_fstab_file(Gee.ArrayList<FsTabEntry> list){
-		string txt = "# <file system> <mount point> <type> <options> <dump> <pass>";
+		string txt = "";
+		
+		if (file_exists("/etc/fstab")){
+			txt += read_file("/etc/fstab").strip() + "\n";
+		}
+		else{
+			txt += "# <file system> <mount point> <type> <options> <dump> <pass>\n";
+		}
 		
 		bool found_root = false;
 		foreach(var fs in list){
-			if (fs.is_selected){
+			if (fs.is_selected && (fs.action == Action.ADD)){
 				txt += "%s\n".printf(fs.get_line());
 			}
 			if (fs.mount_point == "/"){
@@ -814,10 +821,17 @@ public class FsTabEntry : GLib.Object{
 	}
 
 	public static bool save_crypttab_file(Gee.ArrayList<FsTabEntry> list){
-		string txt = "# <target name> <source device> <key file> <options>\n";
-
+		string txt = "";
+		
+		if (file_exists("/etc/crypttab")){
+			txt += read_file("/etc/crypttab").strip() + "\n";
+		}
+		else{
+			txt += "# <target name> <source device> <key file> <options>\n";
+		}
+		
 		foreach(var fs in list){
-			if (fs.is_selected){
+			if (fs.is_selected && (fs.action == Action.ADD)){
 				txt += "%s\n".printf(fs.get_line());
 			}
 		}
