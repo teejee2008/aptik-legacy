@@ -209,7 +209,7 @@ public class MainWindow : Window {
 
 		init_section_backup_themes(++row);
 		
-		init_section_backup_mounts(++row);
+		//init_section_backup_mounts(++row);
 	}
 
 	private void init_section_backup_ppa(int row) {

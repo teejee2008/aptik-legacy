@@ -676,7 +676,7 @@ public class Theme : GLib.Object{
 	
 	private bool run_gzip (string cmd) {
 		string[] argv = new string[1];
-		argv[0] = create_temp_bash_script(cmd);
+		argv[0] = save_bash_script_temp(cmd);
 
 		try {
 			//execute script file

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2016-03-26 13:04+0530\n"
+"POT-Creation-Date: 2016-03-27 08:50+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -353,10 +353,6 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: PackageWindow.vala:1147
-msgid "Close window to exit..."
-msgstr ""
-
 #: Main.vala:199
 msgid "Commands listed below are not available on this system"
 msgstr ""
@@ -552,7 +548,7 @@ msgstr ""
 msgid "Failed to save file"
 msgstr ""
 
-#: Utility.vala:1953
+#: Utility.vala:1963
 msgid "Failed to set ownership"
 msgstr ""
 
@@ -628,7 +624,7 @@ msgstr ""
 msgid "Finished"
 msgstr ""
 
-#: PackageWindow.vala:1146
+#: PackageWindow.vala:1147
 msgid "Finished installing packages"
 msgstr ""
 
@@ -735,6 +731,16 @@ msgstr ""
 msgid "Installed (user)"
 msgstr ""
 
+#: PackageWindow.vala:1139
+#, c-format
+msgid "Installing packages from DEB files"
+msgstr ""
+
+#: PackageWindow.vala:1132
+#, c-format
+msgid "Installing packages from repos"
+msgstr ""
+
 #: AptikConsole.vala:283 AptikConsole.vala:294 PackageWindow.vala:1080
 #: PpaWindow.vala:488
 msgid ""
@@ -811,7 +817,7 @@ msgstr ""
 msgid "Missing Dependencies"
 msgstr ""
 
-#: Utility.vala:1500
+#: Utility.vala:1510
 msgid "Missing Icon"
 msgstr ""
 
@@ -992,6 +998,10 @@ msgstr ""
 #: PackageWindow.vala:1005 PpaWindow.vala:365 PpaWindow.vala:436
 #: PpaWindow.vala:493 ThemeWindow.vala:593 ThemeWindow.vala:724
 msgid "Preparing..."
+msgstr ""
+
+#: PackageWindow.vala:1150
+msgid "Press ENTER to exit..."
 msgstr ""
 
 #: AptikGtk.vala:120
@@ -1195,7 +1205,7 @@ msgstr ""
 msgid "Send Email"
 msgstr ""
 
-#: Utility.vala:1949
+#: Utility.vala:1959
 #, c-format
 msgid "Set owner: %s, dir: %s"
 msgstr ""
@@ -1286,7 +1296,7 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: Utility.vala:1191
+#: Utility.vala:1201
 msgid "Stopped"
 msgstr ""
 

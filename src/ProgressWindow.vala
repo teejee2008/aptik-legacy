@@ -78,11 +78,11 @@ public class ProgressWindow : Gtk.Window {
 	
 	private bool close_window(){
 		if (allow_close){
-			// close window
+			// allow window to close 
 			return false;
 		}
 		else{
-			// do not close window
+			// do not allow window to close 
 			return true;
 		}
 	}

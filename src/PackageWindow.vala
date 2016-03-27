@@ -1120,36 +1120,41 @@ public class PackageWindow : Window {
 		}
 		
 		if (continue_installation){
-			execute_in_terminal();
+			execute_in_terminal_window();
 			//success/error will be displayed by apt-get in terminal
-		}
-
-		this.present();
-		gtk_do_events();
-
-		if (continue_installation){
-			restore_init();
 		}
 	}
 	
-	private void execute_in_terminal(){
+	private void execute_in_terminal_window(){
 		string cmd = "";
 		if (App.pkg_list_install.length > 0){
+			cmd += "echo '%s'\n".printf(string.nfill(70, '*'));
+			cmd += "echo '%s:'\n".printf(_("Installing packages from repos"));
+			cmd += "echo '%s'\n".printf(string.nfill(70, '*'));
 			cmd += "apt-get install %s\n".printf(App.pkg_list_install);
 			log_debug("execute: apt-get install %s".printf(App.pkg_list_install));
 		}
 		if (App.pkg_list_deb.length > 0){
+			cmd += "echo '%s'\n".printf(string.nfill(70, '*'));
+			cmd += "echo '%s:'\n".printf(_("Installing packages from DEB files"));
+			cmd += "echo '%s'\n".printf(string.nfill(70, '*'));
+			cmd += "echo ''\n";
 			cmd += "gdebi %s\n".printf(App.gdebi_file_list);
 			log_debug("execute: gdebi %s".printf(App.gdebi_file_list));
 		}
 		cmd += "echo ''\n";
+		cmd += "echo '%s'\n".printf(string.nfill(70, '*'));
 		cmd += "echo '" + _("Finished installing packages") + ".'\n";
-		cmd += "echo '" + _("Close window to exit...") + "'\n";
+		cmd += "echo '%s'\n".printf(string.nfill(70, '*'));
+		cmd += "echo ''\n";
+		cmd += "echo '" + _("Press ENTER to exit...") + "'\n";
 		cmd += "read dummy\n";
 
-		execute_bash_script_sync(create_temp_bash_script(cmd));
-	}
+		this.hide();
 		
+		var dlg = new TerminalWindow.with_parent(this);
+		dlg.execute_script(save_bash_script_temp(cmd));
+	}
 }
 
 

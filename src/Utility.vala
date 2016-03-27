@@ -772,16 +772,18 @@ namespace TeeJee.ProcessManagement{
 
 		try {
 
-			string scriptfile = create_temp_bash_script (cmd);
+			string scriptfile = save_bash_script_temp (cmd);
 
 			string[] argv = new string[1];
 			argv[0] = scriptfile;
 
+			string[] env = Environ.get();
+			
 			Pid child_pid;
 			Process.spawn_async_with_pipes(
 			    null, //working dir
 			    argv, //argv
-			    null, //environment
+			    env, //environment
 			    SpawnFlags.SEARCH_PATH,
 			    null,
 			    out child_pid);
@@ -794,15 +796,23 @@ namespace TeeJee.ProcessManagement{
 	    }
 	}
 
-	public string? create_temp_bash_script (string script_text, bool supress_errors = false){
+	public string? save_bash_script_temp (string commands, bool force_locale = true, bool supress_errors = false){
 
 		/* Creates a temporary bash script with given commands
 		 * Returns the script file path */
 
-		var sh = "";
-		sh += "#!/bin/bash\n";
-		sh += script_text;
-
+		var script = new StringBuilder();
+		script.append ("#!/bin/bash\n");
+		script.append ("\n");
+		if (force_locale){
+			script.append ("LANG=C\n");
+		}
+		script.append ("\n");
+		script.append ("%s\n".printf(commands));
+		script.append ("\n\nexitCode=$?\n");
+		script.append ("echo ${exitCode} > ${exitCode}\n");
+		script.append ("echo ${exitCode} > status\n");
+		
 		string script_path = get_temp_file_path() + ".sh";
 
 		try{
@@ -811,7 +821,7 @@ namespace TeeJee.ProcessManagement{
 			if (file.query_exists ()) { file.delete (); }
 			var file_stream = file.create (FileCreateFlags.REPLACE_DESTINATION);
 			var data_stream = new DataOutputStream (file_stream);
-			data_stream.put_string (sh);
+			data_stream.put_string (script.str);
 			data_stream.close();
 
 			// set execute permission
@@ -821,9 +831,9 @@ namespace TeeJee.ProcessManagement{
 		}
 		catch (Error e) {
 			if (!supress_errors){
-        log_error (e.message);
+				log_error (e.message);
 			}
-    }
+		}
 
 		return null;
 	}
@@ -841,7 +851,7 @@ namespace TeeJee.ProcessManagement{
 		 * Returns exit code, output messages and error messages.
 		 * Commands are written to a temporary bash script and executed. */
 
-		string path = create_temp_bash_script(script,supress_errors);
+		string path = save_bash_script_temp(script,supress_errors);
 
 		try {
 
@@ -877,7 +887,7 @@ namespace TeeJee.ProcessManagement{
 		 * Returns exit code, output messages and error messages.
 		 * Commands are written to a temporary bash script and executed. */
 
-		string path = create_temp_bash_script(script);
+		string path = save_bash_script_temp(script);
 
 		try {
 
