@@ -17,7 +17,7 @@ long_line_behaviour=1
 long_line_column=80
 
 [files]
-current_page=17
+current_page=24
 FILE_NAME_0=12688;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FUtility.vala;0;4
 FILE_NAME_1=57971;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMain.vala;0;4
 FILE_NAME_2=1990;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FPpaWindow.vala;0;4
@@ -28,11 +28,11 @@ FILE_NAME_6=18517;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Fapti
 FILE_NAME_7=2972;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FCustomMessageDialog.vala;0;4
 FILE_NAME_8=2116;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FThemeWindow.vala;0;4
 FILE_NAME_9=1327;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FConfigWindow.vala;0;4
-FILE_NAME_10=1348;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FAptikGtk.vala;0;4
-FILE_NAME_11=7330;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FAptikConsole.vala;0;4
+FILE_NAME_10=1437;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FAptikGtk.vala;0;4
+FILE_NAME_11=1220;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FAptikConsole.vala;0;4
 FILE_NAME_12=5373;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FDownloadWindow.vala;0;4
 FILE_NAME_13=432;Conf;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fdebian%2Fcontrol;0;4
-FILE_NAME_14=567;None;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fdebian%2Fchangelog;0;4
+FILE_NAME_14=13;None;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fdebian%2Fchangelog;0;4
 FILE_NAME_15=1985;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FDonationWindow.vala;0;4
 FILE_NAME_16=581;Sh;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2Faptik-launcher;0;4
 FILE_NAME_17=13531;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMountWindow.vala;0;4
@@ -42,6 +42,7 @@ FILE_NAME_20=5251;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Fapti
 FILE_NAME_21=3718;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FPasswordWindow.vala;0;4
 FILE_NAME_22=1888;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FProgressWindow.vala;0;4
 FILE_NAME_23=1785;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FTerminalWindow.vala;0;4
+FILE_NAME_24=1165;None;0;EUTF-8;1;1;1;%2Fmedia%2Fteejee%2Fdump%2FUntitled%20Document;0;4
 
 [VTE]
 last_dir=/home/teejee

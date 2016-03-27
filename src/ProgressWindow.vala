@@ -217,6 +217,8 @@ public class ProgressWindow : Gtk.Window {
 	}
 	
 	public void finish(string message = "") {
+		btn_cancel.sensitive = false;
+		
 		pulse_stop();
 		progressbar.fraction = 1.0;
 		

@@ -85,7 +85,7 @@ public class Main : GLib.Object {
 	public string pkg_list_install = "";
 	public string pkg_list_deb = "";
 	public string pkg_list_missing = "";
-	public string gdebi_file_list = "";
+	public string gdebi_list = "";
 	
 	public DateTime pkginfo_modified_date;
 
@@ -830,7 +830,7 @@ public class Main : GLib.Object {
 		pkg_list_install = "";
 		pkg_list_missing = "";
 		pkg_list_deb = "";
-		gdebi_file_list = "";
+		gdebi_list = "";
 		
 		foreach(Package pkg in pkg_list_master.values) {
 			if (!pkg.is_selected || pkg.is_installed){
@@ -846,7 +846,7 @@ public class Main : GLib.Object {
 				//DEB file available
 				if (pkg.is_deb && (pkg.deb_file_name.length > 0)) {
 					pkg_list_deb += " %s".printf(pkg.id);
-					gdebi_file_list += " '%s/%s'".printf(deb_dir,pkg.deb_file_name);
+					gdebi_list += "'%s/%s'\n".printf(deb_dir,pkg.deb_file_name);
 				}
 				else{
 					pkg_list_missing += " %s".printf(pkg.id);
@@ -857,7 +857,7 @@ public class Main : GLib.Object {
 		pkg_list_install = pkg_list_install.strip();
 		pkg_list_deb = pkg_list_deb.strip();
 		pkg_list_missing = pkg_list_missing.strip();
-		gdebi_file_list = gdebi_file_list.strip();
+		gdebi_list = gdebi_list.strip();
 	}
 
 	public void copy_deb_file(string src_file){

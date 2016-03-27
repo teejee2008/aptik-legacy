@@ -1,28 +1,25 @@
-aptik (16.3) trusty; urgency=medium
+aptik (16.3.1) trusty; urgency=medium
 
-  * Add filter for theme type
+  * Allow user to cancel apt cache backup and restore
 
-  * Added expander for hiding advanced filters
+  * Allow user to cancel PPA restore
 
-  * Fixed: Application icon not displayed in Unity launcher
+  * Allow user to cancel theme backup and restore
 
-  * Fixed: 'Too many open files' error
-
-  * Fixed: File descriptors will be closed as soon as a process is
-  complete
-
-  * Fixed: Terminal is not shown correctly while restoring packages
-
-  * Fixed: In the PPA backup list, the list of installed packages did
-  not display packages which have updates available
-
-  * Fixed: --user option does not work with --list-themes and
-  --list-configs
-
-  * Fixed: Ownership of ~/.icons and ~/.themes not set correctly
-  after extracting themes
-
-  * Removed options --{list|backup|restore}-icons
+  * Fixed: Check if --backup-dir exists in console mode
   
+  * Fixed: --restore-ppa throws an error
 
- -- Tony George <tony.george.kol@gmail.com>  Fri, 25 Mar 2016 10:00:00 +0530
+  * Optimized commands --{list|backup|restore}-ppa to complete faster
+  in console mode
+
+  * Fixed: Unity desktop always displays window close button, even if
+  disabled in code. Button action will be disabled where not required.
+
+  * Added an embedded VTE terminal window for installing packages
+
+  * Added option to backup and restore /etc/fstab and /etc/crypttab
+  entries
+
+  
+ -- Tony George <tony.george.kol@gmail.com>  Sun, 27 Mar 2016 10:00:00 +0530

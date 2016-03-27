@@ -793,8 +793,8 @@ public class FsTabEntry : GLib.Object{
 	// save file
 	
 	public static bool save_fstab_file(Gee.ArrayList<FsTabEntry> list){
-		string txt = "# <target name>	<source device>		<key file>	<options>\n";
-
+		string txt = "# <file system> <mount point> <type> <options> <dump> <pass>";
+		
 		bool found_root = false;
 		foreach(var fs in list){
 			if (fs.is_selected){
@@ -814,7 +814,7 @@ public class FsTabEntry : GLib.Object{
 	}
 
 	public static bool save_crypttab_file(Gee.ArrayList<FsTabEntry> list){
-		string txt = "";
+		string txt = "# <target name> <source device> <key file> <options>\n";
 
 		foreach(var fs in list){
 			if (fs.is_selected){

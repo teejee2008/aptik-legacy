@@ -58,7 +58,7 @@ public class MountWindow : Window {
 	private Gee.ArrayList<FsTabEntry> crypttab_list;
 	private Gee.ArrayList<FsTabEntry> selected_list;
 	
-	private int def_width = 550;
+	private int def_width = 800;
 	private int def_height = 450;
 	private uint tmr_init = 0;
 	private bool is_restore_view = false;
@@ -179,8 +179,8 @@ public class MountWindow : Window {
 			FsTabEntry fs;
 			model.get (iter, 0, out selected, 1, out fs, -1);
 			(cell as Gtk.CellRendererToggle).active = selected;
-			(cell as Gtk.CellRendererToggle).sensitive = (fs.mount_point != "/");
-			(cell as Gtk.CellRendererToggle).visible = (fs.action == FsTabEntry.Action.ADD);
+			(cell as Gtk.CellRendererToggle).sensitive = (fs.action == FsTabEntry.Action.ADD);
+			//(cell as Gtk.CellRendererToggle).visible = (fs.action == FsTabEntry.Action.ADD);
 		});
 
 		cell_mount_select.toggled.connect((path) => {
@@ -349,22 +349,28 @@ public class MountWindow : Window {
 
 	private void init_actions() {
 		//hbox_mount_actions
-		Box hbox_mount_actions = new Box (Orientation.HORIZONTAL, 6);
-		vbox_main.add (hbox_mount_actions);
+		Box hbox = new Box (Orientation.HORIZONTAL, 6);
+		hbox.homogeneous = true;
+		vbox_main.add (hbox);
 
-		var sizegroup = new SizeGroup(SizeGroupMode.HORIZONTAL);
+		//var sizegroup = new SizeGroup(SizeGroupMode.HORIZONTAL);
+
+		var lbl = new Gtk.Label("");
+		hbox.pack_start (lbl, true, true, 0);
+
+		lbl = new Gtk.Label("");
+		hbox.pack_start (lbl, true, true, 0);
 		
 		//btn_restore
 		btn_restore = new Gtk.Button.with_label (" <b>" + _("Restore") + "</b> ");
-		btn_restore.no_show_all = true;
-		hbox_mount_actions.pack_start (btn_restore, false, false, 0);
+		hbox.pack_start (btn_restore, true, true, 0);
 		btn_restore.clicked.connect(btn_restore_clicked);
-		sizegroup.add_widget(btn_restore);
+		//sizegroup.add_widget(btn_restore);
 		
 		//btn_cancel
 		btn_cancel = new Gtk.Button.with_label (" " + _("Close") + " ");
-		hbox_mount_actions.pack_start (btn_cancel, false, false, 0);
-		sizegroup.add_widget(btn_cancel);
+		hbox.pack_start (btn_cancel, true, true, 0);
+		//sizegroup.add_widget(btn_cancel);
 		
 		btn_cancel.clicked.connect(() => {
 			this.close();

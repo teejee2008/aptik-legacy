@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2016-03-27 10:13+0530\n"
+"POT-Creation-Date: 2016-03-27 16:14+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,7 +39,7 @@ msgstr ""
 msgid "(unselected)"
 msgstr ""
 
-#: MountWindow.vala:470
+#: MountWindow.vala:476
 msgid "/etc/fstab and /etc/crypttab are already up-to-date"
 msgstr ""
 
@@ -124,7 +124,7 @@ msgstr ""
 msgid "Adding '%s'..."
 msgstr ""
 
-#: AptikConsole.vala:518
+#: AptikConsole.vala:520
 msgid "Adding PPA"
 msgstr ""
 
@@ -348,7 +348,7 @@ msgstr ""
 msgid "Cinnamon Shell"
 msgstr ""
 
-#: AboutWindow.vala:295 ConfigWindow.vala:355 MountWindow.vala:365
+#: AboutWindow.vala:295 ConfigWindow.vala:355 MountWindow.vala:371
 #: PackageWindow.vala:453 PpaWindow.vala:278 ThemeWindow.vala:538
 msgid "Close"
 msgstr ""
@@ -405,7 +405,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: MountWindow.vala:220 MountWindow.vala:408
+#: MountWindow.vala:220 MountWindow.vala:414
 msgid "Device"
 msgstr ""
 
@@ -476,7 +476,7 @@ msgstr ""
 msgid "Dump"
 msgstr ""
 
-#: MountWindow.vala:422
+#: MountWindow.vala:428
 msgid "Encrypted Device"
 msgstr ""
 
@@ -489,7 +489,7 @@ msgid "Enter Passphrase"
 msgstr ""
 
 #: AptikConsole.vala:283 AptikConsole.vala:294 MainWindow.vala:482
-#: MountWindow.vala:522 PackageWindow.vala:980 PackageWindow.vala:994
+#: MountWindow.vala:528 PackageWindow.vala:980 PackageWindow.vala:994
 #: PackageWindow.vala:1079 PpaWindow.vala:487 PpaWindow.vala:592
 #: PpaWindow.vala:614 Utility.vala:101
 msgid "Error"
@@ -623,12 +623,12 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
-#: MainWindow.vala:479 MountWindow.vala:518 PackageWindow.vala:973
+#: MainWindow.vala:479 MountWindow.vala:524 PackageWindow.vala:973
 #: PpaWindow.vala:607
 msgid "Finished"
 msgstr ""
 
-#: PackageWindow.vala:1150
+#: PackageWindow.vala:1154
 msgid "Finished installing packages"
 msgstr ""
 
@@ -735,7 +735,7 @@ msgstr ""
 msgid "Installed (user)"
 msgstr ""
 
-#: PackageWindow.vala:1142
+#: PackageWindow.vala:1143
 #, c-format
 msgid "Installing packages from DEB files"
 msgstr ""
@@ -837,7 +837,7 @@ msgstr ""
 msgid "No Change"
 msgstr ""
 
-#: MountWindow.vala:469
+#: MountWindow.vala:475
 msgid "No Changes Required"
 msgstr ""
 
@@ -957,11 +957,11 @@ msgstr ""
 msgid "Password / Keyfile"
 msgstr ""
 
-#: MountWindow.vala:506
+#: MountWindow.vala:512
 msgid "Password Required"
 msgstr ""
 
-#: MountWindow.vala:506
+#: MountWindow.vala:512
 msgid "Password is required for extracting key files from backup"
 msgstr ""
 
@@ -1004,7 +1004,7 @@ msgstr ""
 msgid "Preparing..."
 msgstr ""
 
-#: PackageWindow.vala:1153
+#: PackageWindow.vala:1157
 msgid "Press ENTER to exit..."
 msgstr ""
 
@@ -1054,7 +1054,7 @@ msgstr ""
 
 #: ConfigWindow.vala:341 MainWindow.vala:244 MainWindow.vala:283
 #: MainWindow.vala:320 MainWindow.vala:368 MainWindow.vala:416
-#: MainWindow.vala:487 MountWindow.vala:358 PackageManagerWindow.vala:482
+#: MainWindow.vala:487 MountWindow.vala:365 PackageManagerWindow.vala:482
 #: PackageWindow.vala:447 PpaWindow.vala:272 ThemeWindow.vala:532
 msgid "Restore"
 msgstr ""
@@ -1122,7 +1122,7 @@ msgstr ""
 msgid "Restore themes to /usr/share/themes"
 msgstr ""
 
-#: MountWindow.vala:518
+#: MountWindow.vala:524
 msgid "Restored successfully"
 msgstr ""
 
@@ -1386,7 +1386,7 @@ msgstr ""
 msgid "Update"
 msgstr ""
 
-#: AptikConsole.vala:529
+#: AptikConsole.vala:531
 msgid "Updating Package Information..."
 msgstr ""
 

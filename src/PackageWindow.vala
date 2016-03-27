@@ -1135,15 +1135,19 @@ public class PackageWindow : Window {
 			cmd += "echo '%s:'\n".printf(_("Installing packages from repos"));
 			cmd += "echo '%s'\n".printf(string.nfill(70, '*'));
 			cmd += "apt-get install %s\n".printf(App.pkg_list_install);
-			log_debug("execute: apt-get install %s".printf(App.pkg_list_install));
+			
+			log_debug("exec: apt-get install %s".printf(App.pkg_list_install));
 		}
 		if (App.pkg_list_deb.length > 0){
 			cmd += "echo '%s'\n".printf(string.nfill(70, '*'));
 			cmd += "echo '%s:'\n".printf(_("Installing packages from DEB files"));
 			cmd += "echo '%s'\n".printf(string.nfill(70, '*'));
 			cmd += "echo ''\n";
-			cmd += "gdebi %s\n".printf(App.gdebi_file_list);
-			log_debug("execute: gdebi %s".printf(App.gdebi_file_list));
+			
+			foreach(string line in App.gdebi_list.split("\n")){
+				cmd += "gdebi -n %s\n".printf(line);
+				log_debug("exec: gdebi -n %s\n".printf(line));
+			}
 		}
 		cmd += "echo ''\n";
 		cmd += "echo '%s'\n".printf(string.nfill(70, '*'));
