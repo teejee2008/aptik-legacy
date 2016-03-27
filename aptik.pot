@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2016-03-27 16:20+0530\n"
+"POT-Creation-Date: 2016-03-27 16:27+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,7 +39,7 @@ msgstr ""
 msgid "(unselected)"
 msgstr ""
 
-#: MountWindow.vala:476
+#: MountWindow.vala:472
 msgid "/etc/fstab and /etc/crypttab are already up-to-date"
 msgstr ""
 
@@ -348,7 +348,7 @@ msgstr ""
 msgid "Cinnamon Shell"
 msgstr ""
 
-#: AboutWindow.vala:295 ConfigWindow.vala:355 MountWindow.vala:371
+#: AboutWindow.vala:295 ConfigWindow.vala:355 MountWindow.vala:368
 #: PackageWindow.vala:453 PpaWindow.vala:278 ThemeWindow.vala:538
 msgid "Close"
 msgstr ""
@@ -405,7 +405,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: MountWindow.vala:220 MountWindow.vala:414
+#: MountWindow.vala:220 MountWindow.vala:410
 msgid "Device"
 msgstr ""
 
@@ -476,7 +476,7 @@ msgstr ""
 msgid "Dump"
 msgstr ""
 
-#: MountWindow.vala:428
+#: MountWindow.vala:424
 msgid "Encrypted Device"
 msgstr ""
 
@@ -489,7 +489,7 @@ msgid "Enter Passphrase"
 msgstr ""
 
 #: AptikConsole.vala:283 AptikConsole.vala:294 MainWindow.vala:482
-#: MountWindow.vala:528 PackageWindow.vala:980 PackageWindow.vala:994
+#: MountWindow.vala:524 PackageWindow.vala:980 PackageWindow.vala:994
 #: PackageWindow.vala:1079 PpaWindow.vala:487 PpaWindow.vala:592
 #: PpaWindow.vala:614 Utility.vala:101
 msgid "Error"
@@ -623,7 +623,7 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
-#: MainWindow.vala:479 MountWindow.vala:524 PackageWindow.vala:973
+#: MainWindow.vala:479 MountWindow.vala:520 PackageWindow.vala:973
 #: PpaWindow.vala:607
 msgid "Finished"
 msgstr ""
@@ -837,7 +837,7 @@ msgstr ""
 msgid "No Change"
 msgstr ""
 
-#: MountWindow.vala:475
+#: MountWindow.vala:471
 msgid "No Changes Required"
 msgstr ""
 
@@ -957,11 +957,11 @@ msgstr ""
 msgid "Password / Keyfile"
 msgstr ""
 
-#: MountWindow.vala:512
+#: MountWindow.vala:508
 msgid "Password Required"
 msgstr ""
 
-#: MountWindow.vala:512
+#: MountWindow.vala:508
 msgid "Password is required for extracting key files from backup"
 msgstr ""
 
@@ -1054,7 +1054,7 @@ msgstr ""
 
 #: ConfigWindow.vala:341 MainWindow.vala:244 MainWindow.vala:283
 #: MainWindow.vala:320 MainWindow.vala:368 MainWindow.vala:416
-#: MainWindow.vala:487 MountWindow.vala:365 PackageManagerWindow.vala:482
+#: MainWindow.vala:487 MountWindow.vala:363 PackageManagerWindow.vala:482
 #: PackageWindow.vala:447 PpaWindow.vala:272 ThemeWindow.vala:532
 msgid "Restore"
 msgstr ""
@@ -1122,7 +1122,7 @@ msgstr ""
 msgid "Restore themes to /usr/share/themes"
 msgstr ""
 
-#: MountWindow.vala:524
+#: MountWindow.vala:520
 msgid "Restored successfully"
 msgstr ""
 

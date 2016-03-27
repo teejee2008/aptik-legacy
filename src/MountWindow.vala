@@ -353,8 +353,6 @@ public class MountWindow : Window {
 		hbox.homogeneous = true;
 		vbox_main.add (hbox);
 
-		//var sizegroup = new SizeGroup(SizeGroupMode.HORIZONTAL);
-
 		var lbl = new Gtk.Label("");
 		hbox.pack_start (lbl, true, true, 0);
 
@@ -365,13 +363,11 @@ public class MountWindow : Window {
 		btn_restore = new Gtk.Button.with_label (" <b>" + _("Restore") + "</b> ");
 		hbox.pack_start (btn_restore, true, true, 0);
 		btn_restore.clicked.connect(btn_restore_clicked);
-		//sizegroup.add_widget(btn_restore);
-		
+
 		//btn_cancel
 		btn_cancel = new Gtk.Button.with_label (" " + _("Close") + " ");
 		hbox.pack_start (btn_cancel, true, true, 0);
-		//sizegroup.add_widget(btn_cancel);
-		
+
 		btn_cancel.clicked.connect(() => {
 			this.close();
 		});
@@ -489,7 +485,7 @@ public class MountWindow : Window {
 				continue;
 			}
 			
-			if ((fs.password.length == 0) || (fs.password == "none")){ //TODO: Check REGULAR_FILE
+			if ((fs.password.length == 0) || (fs.password == "none") || (fs.password.has_prefix("/dev/"))){
 				continue;
 			}
 			

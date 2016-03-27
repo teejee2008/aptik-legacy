@@ -2225,7 +2225,7 @@ public class Main : GLib.Object {
 				continue;
 			}
 			
-			if ((fs.password.length == 0) || (fs.password == "none")){ //TODO: Check REGULAR_FILE
+			if ((fs.password.length == 0) || (fs.password == "none") || (fs.password.has_prefix("/dev/"))){
 				continue;
 			}
 
