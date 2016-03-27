@@ -21,5 +21,6 @@ aptik (16.3.1) trusty; urgency=medium
   * Added option to backup and restore /etc/fstab and /etc/crypttab
   entries
 
-  
+  * Fixed an issue with --restore-themes command
+
  -- Tony George <tony.george.kol@gmail.com>  Sun, 27 Mar 2016 10:00:00 +0530

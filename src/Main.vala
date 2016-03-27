@@ -185,7 +185,7 @@ public class Main : GLib.Object {
 	public bool check_dependencies(out string msg) {
 		msg = "";
 
-		string[] dependencies = { "rsync", "aptitude", "apt-get", "apt-cache", "gzip", "grep", "find", "chown", "rm", "add-apt-repository", "gdebi", "aria2c" };
+		string[] dependencies = { "rsync", "aptitude", "apt-get", "apt-cache", "gzip", "grep", "find", "chown", "rm", "add-apt-repository", "gdebi", "aria2c", "tar", "gpg"};
 
 		string path;
 		foreach(string cmd_tool in dependencies) {

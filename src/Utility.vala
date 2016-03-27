@@ -733,7 +733,7 @@ namespace TeeJee.ProcessManagement{
 
 	/* Convenience functions for executing commands and managing processes */
 
-  public static void init_tmp(){
+    public static void init_tmp(){
 		string std_out, std_err;
 
 		TEMP_DIR = Environment.get_tmp_dir() + "/" + AppShortName;

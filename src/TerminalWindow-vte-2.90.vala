@@ -86,20 +86,20 @@ public class TerminalWindow : Gtk.Window {
 		term.expand = true;
 		vbox_main.add(term);
 		
-		term.input_enabled = true;
+		//term.input_enabled = true;
 		//term.pointer_autohide = true;
-		term.backspace_binding = Vte.EraseBinding.AUTO;
-		term.cursor_blink_mode = Vte.CursorBlinkMode.SYSTEM;
-		term.cursor_shape = Vte.CursorShape.UNDERLINE;
-		term.rewrap_on_resize = true;
+		//term.backspace_binding = Vte.EraseBinding.AUTO;
+		//term.cursor_blink_mode = Vte.CursorBlinkMode.SYSTEM;
+		//term.cursor_shape = Vte.CursorShape.UNDERLINE;
+		//term.rewrap_on_resize = true;
 		term.scroll_on_keystroke = true;
 		term.scroll_on_output = true;
 
-		var color = Gdk.RGBA();
-		color.parse("#FFFFFF");
+		Gdk.Color color;
+		Gdk.Color.parse("#FFFFFF", out color);
 		term.set_color_foreground(color);
 
-		color.parse("#404040");
+		Gdk.Color.parse("#404040", out color);
 		term.set_color_background(color);
 
 		term.grab_focus();
@@ -151,15 +151,14 @@ public class TerminalWindow : Gtk.Window {
 		string[] env = Environ.get();
 
 		try{
-			term.spawn_sync(
+			term.fork_command_full(
 				Vte.PtyFlags.DEFAULT, //pty_flags
 				App.temp_dir, //working_directory
 				argv, //argv
 				env, //env
 				GLib.SpawnFlags.SEARCH_PATH, //spawn_flags
 				null, //child_setup
-				out child_pid,
-				null
+				out child_pid
 			);
 		}
 		catch (Error e) {
@@ -181,15 +180,14 @@ public class TerminalWindow : Gtk.Window {
 		string[] env = Environ.get();
 
 		try{
-			term.spawn_sync(
+			term.fork_command_full(
 				Vte.PtyFlags.DEFAULT, //pty_flags
 				App.temp_dir, //working_directory
 				argv, //argv
 				env, //env
 				GLib.SpawnFlags.SEARCH_PATH, //spawn_flags
 				null, //child_setup
-				out child_pid,
-				null
+				out child_pid
 			);
 
 			term.watch_child(child_pid);
@@ -201,7 +199,7 @@ public class TerminalWindow : Gtk.Window {
 		}
 	}
 
-	public void script_exit(int status){
+	public void script_exit(){
 		this.hide();
 		//destroying parent will display main window
 		//no need to check status again
