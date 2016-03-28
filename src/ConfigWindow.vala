@@ -379,6 +379,11 @@ public class ConfigWindow : Window {
 		gtk_set_busy(true, this);
 
 		config_list_user = App.list_app_config_directories_from_home();
+
+		foreach(AppConfig config in config_list_user) {
+			config.is_selected = true;
+		}
+			
 		tv_config_refresh();
 
 		gtk_set_busy(false, this);
@@ -436,6 +441,11 @@ public class ConfigWindow : Window {
 		gtk_set_busy(true, this);
 
 		config_list_user = App.list_app_config_directories_from_backup();
+
+		foreach(AppConfig config in config_list_user) {
+			config.is_selected = true;
+		}
+		
 		tv_config_refresh();
 
 		gtk_set_busy(false, this);

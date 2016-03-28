@@ -10,7 +10,7 @@ CFLAGS=--std=c99
 app_name=aptik
 app_fullname=Aptik
 
-ifneq ("$(wildcard $(/usr/lib/libvte-2.91.so))","")
+ifneq ("$(wildcard $($(prefix)/usr/lib/libvte-2.91.so))","")
 vte_version=vte-2.91
 vte_file=TerminalWindow.vala
 else
