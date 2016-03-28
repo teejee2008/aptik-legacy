@@ -11,13 +11,13 @@ app_name=aptik
 app_fullname=Aptik
 
 vte_version=$(shell { ((ldconfig -p | grep libvte-2.91*.so) >/dev/null && echo 'vte-2.91') || echo 'vte-2.90'; } )
-def_symbol=$(shell { ((ldconfig -p | grep libvte-2.91*.so) >/dev/null && echo '-D VTE_291') || echo ''; } )
+define_symbols=$(shell { ((ldconfig -p | grep libvte-2.91*.so) >/dev/null && echo '-D VTE_291') || echo ''; } )
 
 all:
 	#build binaries
 
 	#aptik-gtk
-	valac -X -D'GETTEXT_PACKAGE="${app_name}"' --Xcc="-lm" -X -Wl,-rpath,/usr/share/${app_name}/libs ${def_symbol} --thread "Main.vala" "Classes.vala" "Utility.vala" "AptikGtk.vala" "MainWindow.vala" "PackageWindow.vala" "ProgressWindow.vala" "PpaWindow.vala" "ThemeWindow.vala" "MountWindow.vala" "ConfigWindow.vala" "CustomMessageDialog.vala" "DonationWindow.vala" "DownloadWindow.vala" "AboutWindow.vala" "Theme.vala" "Archive.vala" "Archiver.vala" "FileItem.vala" "PasswordWindow.vala" "TerminalWindow.vala" -o ${app_name}-gtk --pkg glib-2.0 --pkg gio-unix-2.0 --pkg posix --pkg gtk+-3.0 --pkg $(vte_version) --pkg gee-0.8 --pkg json-glib-1.0 
+	valac -X -D'GETTEXT_PACKAGE="${app_name}"' --Xcc="-lm" -X -Wl,-rpath,/usr/share/${app_name}/libs ${define_symbols} --thread "Main.vala" "Classes.vala" "Utility.vala" "AptikGtk.vala" "MainWindow.vala" "PackageWindow.vala" "ProgressWindow.vala" "PpaWindow.vala" "ThemeWindow.vala" "MountWindow.vala" "ConfigWindow.vala" "CustomMessageDialog.vala" "DonationWindow.vala" "DownloadWindow.vala" "AboutWindow.vala" "Theme.vala" "Archive.vala" "Archiver.vala" "FileItem.vala" "PasswordWindow.vala" "TerminalWindow.vala" -o ${app_name}-gtk --pkg glib-2.0 --pkg gio-unix-2.0 --pkg posix --pkg gtk+-3.0 --pkg $(vte_version) --pkg gee-0.8 --pkg json-glib-1.0 
 
 	#aptik
 	valac -X -D'GETTEXT_PACKAGE="${app_name}"' --Xcc="-lm" -X -Wl,-rpath,/usr/share/${app_name}/libs --thread "Main.vala" "Classes.vala" "Utility.vala" "CustomMessageDialog.vala" "AptikConsole.vala" "Theme.vala" "Archive.vala" "Archiver.vala" "FileItem.vala" -o ${app_name} --pkg glib-2.0 --pkg gio-unix-2.0 --pkg posix --pkg gtk+-3.0 --pkg gee-0.8 --pkg libsoup-2.4 --pkg json-glib-1.0

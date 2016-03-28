@@ -42,17 +42,23 @@ public class TerminalWindow : Gtk.Window {
 	private int def_height = 600;
 
 	private Pid child_pid;
-	private Gtk.Window parent_win;
+	private Gtk.Window parent_win = null;
+	public bool is_running = false;
 	
 	// init
 	
-	public TerminalWindow.with_parent(Gtk.Window parent) {
-		set_transient_for(parent);
+	public TerminalWindow.with_parent(Gtk.Window? parent, bool fullscreen = false) {
+		if (parent != null){
+			set_transient_for(parent);
+			parent_win = parent;
+		}
 		set_modal(true);
 		window_position = WindowPosition.CENTER;
 
-		parent_win = parent;
-
+		if (fullscreen){
+			fullscreen();
+		}
+		
 		this.delete_event.connect(()=>{
 			// do not allow window to close 
 			return true;
@@ -126,13 +132,16 @@ public class TerminalWindow : Gtk.Window {
 		argv[0] = "/bin/sh";
 
 		string[] env = Environ.get();
-
+		
 		try{
+
+			is_running = true;
+			
 			#if VTE_291
 			
 			term.spawn_sync(
 				Vte.PtyFlags.DEFAULT, //pty_flags
-				App.temp_dir, //working_directory
+				TEMP_DIR, //working_directory
 				argv, //argv
 				env, //env
 				GLib.SpawnFlags.SEARCH_PATH, //spawn_flags
@@ -164,18 +173,21 @@ public class TerminalWindow : Gtk.Window {
 		term.feed_child("%s\n".printf(command), -1);
 	}
 
-	public void execute_script(string script_path){
+	public void execute_script(string script_path, bool wait = false){
 		string[] argv = new string[1];
 		argv[0] = script_path;
 		
 		string[] env = Environ.get();
 
 		try{
+
+			is_running = true;
+			
 			#if VTE_291
 			
 			term.spawn_sync(
 				Vte.PtyFlags.DEFAULT, //pty_flags
-				App.temp_dir, //working_directory
+				TEMP_DIR, //working_directory
 				argv, //argv
 				env, //env
 				GLib.SpawnFlags.SEARCH_PATH, //spawn_flags
@@ -188,7 +200,7 @@ public class TerminalWindow : Gtk.Window {
 
 			term.fork_command_full(
 				Vte.PtyFlags.DEFAULT, //pty_flags
-				App.temp_dir, //working_directory
+				TEMP_DIR, //working_directory
 				argv, //argv
 				env, //env
 				GLib.SpawnFlags.SEARCH_PATH, //spawn_flags
@@ -201,6 +213,13 @@ public class TerminalWindow : Gtk.Window {
 			term.watch_child(child_pid);
 	
 			term.child_exited.connect(script_exit);
+
+			if (wait){
+				while (is_running){
+					sleep(200);
+					gtk_do_events();
+				}
+			}
 		}
 		catch (Error e) {
 			log_error (e.message);
@@ -212,10 +231,17 @@ public class TerminalWindow : Gtk.Window {
 	#else
 	public void script_exit(){
 	#endif
+
+		is_running = false;
+		
 		this.hide();
-		//destroying parent will display main window
+
 		//no need to check status again
-		parent_win.destroy();
+		
+		//destroying parent will display main window
+		if (parent != null){
+			parent_win.destroy();
+		}
 	}
 }
 
