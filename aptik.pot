@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2016-03-27 20:45+0530\n"
+"POT-Creation-Date: 2016-03-28 16:14+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -169,7 +169,7 @@ msgstr ""
 msgid "Application Settings"
 msgstr ""
 
-#: ConfigWindow.vala:504
+#: ConfigWindow.vala:514
 msgid "Application settings restored successfully"
 msgstr ""
 
@@ -182,7 +182,7 @@ msgstr ""
 msgid "Archiving"
 msgstr ""
 
-#: ConfigWindow.vala:413 ThemeWindow.vala:611
+#: ConfigWindow.vala:418 ThemeWindow.vala:611
 msgid "Archiving..."
 msgstr ""
 
@@ -304,7 +304,7 @@ msgstr ""
 msgid "Backup themes from /usr/share/themes"
 msgstr ""
 
-#: ConfigWindow.vala:428 ThemeWindow.vala:638
+#: ConfigWindow.vala:433 ThemeWindow.vala:638
 msgid "Backups created successfully"
 msgstr ""
 
@@ -397,7 +397,7 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: ConfigWindow.vala:550
+#: ConfigWindow.vala:560
 msgid "Deleting..."
 msgstr ""
 
@@ -500,7 +500,7 @@ msgstr ""
 msgid "Extracting"
 msgstr ""
 
-#: ConfigWindow.vala:485 ThemeWindow.vala:740
+#: ConfigWindow.vala:495 ThemeWindow.vala:740
 msgid "Extracting..."
 msgstr ""
 
@@ -841,7 +841,7 @@ msgstr ""
 msgid "No Changes Required"
 msgstr ""
 
-#: ConfigWindow.vala:397
+#: ConfigWindow.vala:402
 msgid "No Directories Selected"
 msgstr ""
 
@@ -879,7 +879,7 @@ msgstr ""
 msgid "NotInstalled"
 msgstr ""
 
-#: ConfigWindow.vala:454 ConfigWindow.vala:521 PackageWindow.vala:1072
+#: ConfigWindow.vala:464 ConfigWindow.vala:531 PackageWindow.vala:1072
 #: PackageWindow.vala:1092 PpaWindow.vala:480 ThemeWindow.vala:717
 msgid "Nothing To Do"
 msgstr ""
@@ -985,11 +985,11 @@ msgstr ""
 msgid "Please select the backup directory"
 msgstr ""
 
-#: ConfigWindow.vala:522
+#: ConfigWindow.vala:532
 msgid "Please select the directories to reset"
 msgstr ""
 
-#: ConfigWindow.vala:455
+#: ConfigWindow.vala:465
 msgid "Please select the directories to restore"
 msgstr ""
 
@@ -997,7 +997,7 @@ msgstr ""
 msgid "Please un-select the packages that are not required."
 msgstr ""
 
-#: ConfigWindow.vala:404 ConfigWindow.vala:477 ConfigWindow.vala:544
+#: ConfigWindow.vala:409 ConfigWindow.vala:487 ConfigWindow.vala:554
 #: MainWindow.vala:777 MainWindow.vala:827 PackageWindow.vala:867
 #: PackageWindow.vala:1005 PpaWindow.vala:365 PpaWindow.vala:436
 #: PpaWindow.vala:493 ThemeWindow.vala:594 ThemeWindow.vala:725
@@ -1160,7 +1160,7 @@ msgstr ""
 msgid "Select the PPAs to backup"
 msgstr ""
 
-#: ConfigWindow.vala:398
+#: ConfigWindow.vala:403
 msgid "Select the directories to backup"
 msgstr ""
 
@@ -1180,15 +1180,15 @@ msgstr ""
 msgid "Selected PPAs are already enabled on this system"
 msgstr ""
 
-#: ConfigWindow.vala:560
+#: ConfigWindow.vala:570
 msgid "Selected directories were deleted successfully"
 msgstr ""
 
-#: ConfigWindow.vala:529
+#: ConfigWindow.vala:539
 msgid "Selected directories will be deleted."
 msgstr ""
 
-#: ConfigWindow.vala:462
+#: ConfigWindow.vala:472
 msgid "Selected directories will be replaced with files from backup."
 msgstr ""
 
@@ -1390,7 +1390,7 @@ msgstr ""
 msgid "Updating Package Information..."
 msgstr ""
 
-#: ConfigWindow.vala:500
+#: ConfigWindow.vala:510
 msgid "Updating file ownership..."
 msgstr ""
 
@@ -1407,7 +1407,7 @@ msgstr ""
 msgid "Visit Website"
 msgstr ""
 
-#: ConfigWindow.vala:461 ConfigWindow.vala:528 Utility.vala:101
+#: ConfigWindow.vala:471 ConfigWindow.vala:538 Utility.vala:101
 msgid "Warning"
 msgstr ""
 
