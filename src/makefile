@@ -10,11 +10,8 @@ CFLAGS=--std=c99
 app_name=aptik
 app_fullname=Aptik
 
-vte_version=vte-2.90
-vte_file=TerminalWindow-vte-2.90.vala
-
-vte_version=$(shell { (ldconfig -p | grep libvte-2.91*.so) >/dev/null && echo 'vte-2.91'; } )
-vte_file=$(shell { (ldconfig -p | grep libvte-2.91*.so) >/dev/null && echo 'TerminalWindow.vala'; } )
+vte_version=$(shell { ((ldconfig -p | grep libvte-2.91*.so) >/dev/null && echo 'vte-2.91') || echo 'vte-2.90'; } )
+vte_file=$(shell { ((ldconfig -p | grep libvte-2.91*.so) >/dev/null && echo 'TerminalWindow.vala') || echo 'TerminalWindow-vte-2.90.vala'; } )
 
 all:
 	#build binaries
