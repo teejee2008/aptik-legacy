@@ -1769,16 +1769,17 @@ public class Main : GLib.Object {
 				if (!name.has_prefix(".")) {
 					continue;
 				}
-				if (name == ".config") {
-					continue;
-				}
-				if (name == ".local") {
-					continue;
-				}
-				if (name == ".gvfs") {
-					continue;
-				}
 				if (name.has_suffix(".lock")) {
+					continue;
+				}
+				switch (name.down()){
+				case ".config":
+				case ".local":
+				case ".gvfs":
+				case ".trash":
+				case ".temp":
+				case ".thumbnails":
+				case ".sudo_as_admin_successful":
 					continue;
 				}
 
@@ -1817,6 +1818,10 @@ public class Main : GLib.Object {
 				string name = file.get_name();
 				string item = base_path + "/.local/share/" + name;
 				if (name.has_suffix(".lock")) {
+					continue;
+				}
+				switch (name.down()){
+				case "trash":
 					continue;
 				}
 
