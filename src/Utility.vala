@@ -2047,6 +2047,151 @@ namespace TeeJee.System{
 			return 0;
 		}
 	}
+
+	public class SystemUser : GLib.Object {
+		public string name = "";
+		public bool is_installed = false;
+		public bool is_selected = false;
+		public Gee.HashMap<string,SystemGroup> groups;
+		
+		public static Gee.HashMap<string,SystemUser> all_users;
+
+		public SystemUser(string name){
+			this.name = name;
+		}
+		
+		public static Gee.HashMap<string,SystemUser> list_users(){
+			var list = new Gee.HashMap<string,SystemUser>();
+			
+			string cmd = "compgen -u\n";
+			log_debug(cmd);
+			
+			string stdout, stderr;
+			int status = execute_command_script_sync(cmd, out stdout, out stderr);
+			if (status == 0){
+				foreach(string line in stdout.split("\n")){
+					var item = new SystemUser(line.strip());
+					item.is_selected = true;
+					item.is_installed = true;
+					list[item.name] = item;
+				}
+			}
+			else{
+				log_msg(stderr);
+			}
+
+			return list;
+		}
+
+		public static void query_users(){
+			all_users = list_users();
+		}
+	}
+
+	public class SystemGroup : GLib.Object {
+		public string name = "";
+		public bool has_password = false;
+		public int gid = -1;
+		public string user_names = "";
+		
+		public bool is_installed = false;
+		public bool is_selected = false;
+		
+		public Gee.HashMap<string,SystemUser> users;
+		
+		public static Gee.HashMap<string,SystemGroup> all_groups;
+
+		public SystemGroup(string name){
+			this.name = name;
+		}
+		
+		public static Gee.HashMap<string,SystemGroup> list_groups(){
+			var list = new Gee.HashMap<string,SystemGroup>();
+			
+			string cmd = "compgen -g\n";
+			log_debug(cmd);
+			
+			string stdout, stderr;
+			int status = execute_command_script_sync(cmd, out stdout, out stderr);
+			if (status == 0){
+				foreach(string line in stdout.split("\n")){
+					var item = new SystemGroup(line.strip());
+					item.is_selected = true;
+					item.is_installed = true;
+					list[item.name] = item;
+				}
+			}
+			else{
+				log_msg(stderr);
+			}
+
+			return list;
+		}
+
+		public static Gee.HashMap<string,SystemGroup> read_groups_from_file(string groups_file){
+			var list = new Gee.HashMap<string,SystemGroup>();
+
+			string txt = file_read(groups_file);
+			
+			foreach(string line in txt.split("\n")){
+				var group = parse_group_file_line(line);
+				list[group.name] = group;
+			}
+
+			return list;
+		}
+
+		private static SystemGroup parse_group_file_line(string line){
+			SystemGroup group = null;
+			
+			//cdrom:x:24:teejee,user2
+			string[] fields = line.split(":");
+
+			if (fields.length == 4){
+				group = new SystemGroup(fields[0].strip());
+				group.has_password = (fields[1].strip() == "x");
+				group.gid = int.parse(fields[2].strip());
+				group.user_names = fields[3].strip();
+			}
+			
+			return group;
+		}
+
+		public static void query_groups(){
+			all_groups = read_groups_from_file("/etc/group");
+		}
+
+		public static void query_users_and_groups(){
+			if (SystemUser.all_users == null){
+				SystemUser.query_users();
+			}
+			var all_users = SystemUser.all_users;
+
+			if (SystemGroup.all_groups == null){
+				SystemGroup.query_groups();
+			}
+
+			string txt = read_file("/etc/group");
+			foreach(string line in txt.split("\n")){
+				string[] arr = line.split(":");
+				string group_name = arr[0];
+				if (!all_groups.has_key(group_name)){
+					continue;
+				}
+				var group = all_groups[group_name];
+				if (arr.length == 4){
+					group.user_names = arr[3];
+					foreach(string usr in group.user_names.split(",")){
+						if (all_users.has_key(usr)){
+							var user = all_users[usr];
+							group.users[usr] = user;
+							user.groups[group_name] = group;
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 namespace TeeJee.Misc {

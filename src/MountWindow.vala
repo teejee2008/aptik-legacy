@@ -485,7 +485,7 @@ public class MountWindow : Window {
 				continue;
 			}
 			
-			if ((fs.password.length == 0) || (fs.password == "none") || (fs.password.has_prefix("/dev/"))){
+			if (!fs.uses_keyfile()){
 				continue;
 			}
 			

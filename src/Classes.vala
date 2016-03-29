@@ -680,6 +680,10 @@ public class FsTabEntry : GLib.Object{
 		}
 	}
 
+	public bool uses_keyfile(){
+		return (password.length > 0) && (password != "none") && !password.has_prefix("/dev/");
+	}
+	
 	// factory methods
 	
 	public static FsTabEntry create_from_fstab_line(string tab_line){

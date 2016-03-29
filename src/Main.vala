@@ -2125,6 +2125,8 @@ public class Main : GLib.Object {
 
 	public bool backup_mounts(string password){
 		bool ok = false;
+
+		string user_password = password;
 		
 		string mounts_dir = backup_dir + "mounts";
 		ok = dir_create(mounts_dir);
@@ -2132,6 +2134,27 @@ public class Main : GLib.Object {
 			return false;
 		}
 
+		// check if key files are used and prompt for password -------
+
+		if (!gui_mode){
+			bool keyfile_used = false;
+			var list = FsTabEntry.read_crypttab_file("/etc/crypttab");
+			foreach(var fs in list){
+				if (fs.uses_keyfile() && file_exists(fs.password)){
+					keyfile_used = true;
+					break;
+				}
+			}
+
+			if (keyfile_used){
+				user_password = prompt_for_password(true, _("Enter password for encrypting backup"));
+				if (user_password == ""){
+					log_error(Message.PASSWORD_MISSING);
+					return false;
+				}
+			}
+		}
+		
 		// copy /etc/fstab and /etc/crypttab to backup path ---------
 		
 		foreach(string file_name in new string[] { "fstab", "crypttab"}){
@@ -2141,14 +2164,21 @@ public class Main : GLib.Object {
 			if (file_exists(dst_file)){
 				ok = file_delete(dst_file);
 				if (!ok){
+					log_error(Message.FILE_DELETE_ERROR + ": %s".printf(dst_file));
 					return false;
 				}
 			}
 			
 			if (file_exists(src_file)){
+				
 				ok = file_copy(src_file, dst_file);
+				
 				if (!ok){
+					log_error(Message.BACKUP_ERROR + ": %s".printf(src_file));
 					return false;
+				}
+				else{
+					log_msg(Message.BACKUP_SAVED + ": %s".printf(src_file));
 				}
 			}
 		}
@@ -2157,14 +2187,18 @@ public class Main : GLib.Object {
 		
 		var list = FsTabEntry.read_crypttab_file("/etc/crypttab");
 		foreach(var fs in list){
-			if ((fs.password.length > 0) && (fs.password != "none")){
-				if (file_exists(fs.password)){
-					string src_file = fs.password;
-					string dst_file = "%s/%s".printf(mounts_dir, fs.keyfile_archive_name);
-					ok = file_tar_and_encrypt(src_file, dst_file, password);
-					if (!ok){
-						return false;
-					}
+			if (fs.uses_keyfile() && file_exists(fs.password)){
+				string src_file = fs.password;
+				string dst_file = "%s/%s".printf(mounts_dir, fs.keyfile_archive_name);
+				
+				ok = file_tar_and_encrypt(src_file, dst_file, user_password);
+
+				if (!ok){
+					log_error(Message.BACKUP_ERROR + ": %s".printf(src_file));
+					return false;
+				}
+				else{
+					log_msg(Message.BACKUP_SAVED + ": %s".printf(src_file));
 				}
 			}
 		}
@@ -2181,13 +2215,23 @@ public class Main : GLib.Object {
 			if (dir_exists(fs.mount_point)){
 				// TAR the mount directory without including contents
 				string tar_file = "%s/%s".printf(mounts_dir, fs.mount_dir_archive_name);
-				dir_tar(fs.mount_point, tar_file, false);
+				
+				ok = dir_tar(fs.mount_point, tar_file, false);
+				
+				if (!ok){
+					log_error(Message.BACKUP_ERROR + ": %s".printf(fs.mount_point));
+					return false;
+				}
+				else{
+					//debug
+					log_debug(Message.BACKUP_OK + ": %s".printf(fs.mount_point));
+				}
 			}
 		}
 
 		return true;
 	}
-
+	
 	public bool restore_mounts(Gee.ArrayList<FsTabEntry> fstab_list, Gee.ArrayList<FsTabEntry> crypttab_list, string password, out string err_msg){
 		bool ok = false;
 		err_msg = "";
@@ -2208,14 +2252,19 @@ public class Main : GLib.Object {
 		}
 
 		if (!none_selected){
+			
 			ok = FsTabEntry.save_fstab_file(fstab_list);
+			
 			if (!ok){
-				log_error(_("Failed to save file") + ": %s".printf("/etc/fstab"));
+				log_error(Message.FILE_SAVE_ERROR + ": %s".printf("/etc/fstab"));
 				return ok;
 			}
 			else{
-				log_debug(_("File updated") + ": %s".printf("/etc/fstab"));
+				log_msg(Message.FILE_SAVE_OK + ": %s".printf("/etc/fstab"));
 			}
+		}
+		else{
+			log_msg(Message.NO_CHANGES_REQUIRED + ": %s".printf("/etc/fstab"));
 		}
 
 		// restore key files -----------------
@@ -2225,12 +2274,12 @@ public class Main : GLib.Object {
 				continue;
 			}
 			
-			if ((fs.password.length == 0) || (fs.password == "none") || (fs.password.has_prefix("/dev/"))){
+			if (!fs.uses_keyfile()){
 				continue;
 			}
 
 			if (file_exists(fs.password)){
-				log_debug(_("File exists") + ": %s".printf(fs.password));
+				log_debug(Message.FILE_EXISTS + ": %s".printf(fs.password));
 				continue;
 			}
 			
@@ -2240,11 +2289,11 @@ public class Main : GLib.Object {
 				string dst_file = fs.password;
 				ok = file_decrypt_and_untar(src_file, dst_file, password, out err_msg);
 				if (!ok){
-					log_error(_("Failed to extract key file") + ": %s".printf(src_file));
+					log_msg(Message.FILE_SAVE_ERROR + ": %s".printf(dst_file));
 					return false;
 				}
 				else{
-					log_debug(_("File restored") + ": %s".printf(dst_file));
+					log_msg(Message.FILE_SAVE_OK + ": %s".printf(dst_file));
 				}
 			}
 		}
@@ -2259,7 +2308,7 @@ public class Main : GLib.Object {
 			}
 			
 			if (dir_exists(fs.mount_point)){
-				log_debug(_("Dir exists") + ": %s".printf(fs.mount_point));
+				log_msg(Message.DIR_EXISTS + ": %s".printf(fs.mount_point));
 				continue;
 			}
 			
@@ -2269,15 +2318,15 @@ public class Main : GLib.Object {
 			if (file_exists(tar_file)){
 				ok = dir_untar(tar_file, dst_dir);
 				if (!ok){
-					log_error(_("Failed to restore directory") + ": %s".printf(fs.mount_point));
+					log_error(Message.DIR_CREATE_ERROR + ": %s".printf(fs.mount_point));
 					return false;
 				}
 				else{
-					log_debug(_("Directory restored") + ": %s".printf(fs.mount_point));
+					log_msg(Message.DIR_CREATE_OK + ": %s".printf(fs.mount_point));
 				}
 			}
 			else{
-				log_error(_("File not found") + ": %s".printf(tar_file));
+				log_error(Message.FILE_MISSING + ": %s".printf(tar_file));
 			}
 		}
 		
@@ -2293,19 +2342,54 @@ public class Main : GLib.Object {
 		}
 
 		if (!none_selected){
+			
 			ok = FsTabEntry.save_crypttab_file(crypttab_list);
+			
 			if (!ok){
-				log_error(_("Failed to save file") + ": %s".printf("/etc/crypttab"));
+				log_error(Message.FILE_SAVE_ERROR + ": %s".printf("/etc/crypttab"));
 				return ok;
 			}
 			else{
-				log_debug(_("File updated") + ": %s".printf("/etc/crypttab"));
+				log_msg(Message.FILE_SAVE_OK + ": %s".printf("/etc/crypttab"));
 			}
+		}
+		else{
+			log_msg(Message.NO_CHANGES_REQUIRED + ": %s".printf("/etc/crypttab"));
 		}
 		
 		return true;
 	}
 
+	public string prompt_for_password(bool confirm, string message){
+		stdout.printf(message + ":\n");
+		
+		string? line = stdin.read_line();
+		line = (line != null) ? line.strip() : "";
+		string password = line;
+
+		if (password.length == 0){
+			log_msg(_("Password cannot be empty!") + "\n");
+			return prompt_for_password(confirm, message);
+		}
+		
+		if (confirm){
+			stdout.printf(_("Enter password again to confirm") + ":\n");
+			
+			line = stdin.read_line();
+			line = (line != null) ? line.strip() : "";
+			string password2 = line;
+			if (password != password2){
+				log_msg(_("Passwords do not match!") + "\n");
+				return prompt_for_password(confirm, message);
+			}
+			else{
+				stdout.printf("\n");
+			}
+		}
+
+		return line;
+	}
+	
 	public Gee.ArrayList<FsTabEntry> create_fstab_list_for_restore(){
 		string mounts_dir = backup_dir + "mounts";
 		string sys_file = "/etc/fstab";
@@ -2420,3 +2504,29 @@ public class Main : GLib.Object {
 	}
 }
 
+public class Message : GLib.Object {
+	public const string BACKUP_OK = _("Backup completed");
+	public const string BACKUP_ERROR = _("Failed to save backup");
+	public const string BACKUP_SAVED = _("Backup saved");
+	
+	public const string RESTORE_OK = _("Restore completed");
+	public const string RESTORE_ERROR = _("Failed to restore");
+
+	public const string FILE_EXISTS = _("File exists");
+	public const string FILE_MISSING = _("File not found");
+	
+	public const string FILE_SAVE_OK = _("File saved");
+	public const string FILE_SAVE_ERROR = _("Failed to save file");
+
+	public const string FILE_DELETE_OK = _("File deleted");
+	public const string FILE_DELETE_ERROR = _("Failed to delete file");
+	
+	public const string DIR_CREATE_OK = _("Directory created");
+	public const string DIR_CREATE_ERROR = _("Failed to create directory");
+
+	public const string DIR_EXISTS = _("Directory exists");
+	public const string DIR_MISSING = _("Directory missing");
+
+	public const string NO_CHANGES_REQUIRED = _("No changes required");
+	public const string PASSWORD_MISSING = _("Password not specified!");
+}

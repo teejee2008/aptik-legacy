@@ -98,6 +98,7 @@ public class AptikConsole : GLib.Object {
 		msg += "  --backup-cache        " + _("Backup downloaded packages from APT cache") + "\n";
 		msg += "  --backup-themes       " + _("Backup themes from /usr/share/themes") + "\n";
 		msg += "  --backup-configs      " + _("Backup config files from /home/<user>") + "\n";
+		msg += "  --backup-mounts       " + _("Backup /etc/fstab and /etc/crypttab entries") + "\n";
 		msg += "  --user <username>     " + _("Select username for listing config files") + "\n";
 		
 		msg += "  --restore-ppa         " + _("Restore PPAs from file 'ppa.list'") + "\n";
@@ -105,6 +106,7 @@ public class AptikConsole : GLib.Object {
 		msg += "  --restore-cache       " + _("Restore downloaded packages to APT cache") + "\n";
 		msg += "  --restore-themes      " + _("Restore themes to /usr/share/themes") + "\n";
 		msg += "  --restore-configs     " + _("Restore config files to /home/<user>") + "\n";
+		msg += "  --restore-mounts      " + _("Restore /etc/fstab and /etc/crypttab entries") + "\n";
 		
 		//msg += "  --take-ownership      " + _("Take ownership of files in your home directory") + "\n";
 		msg += "  --backup-dir <dir>    " + _("Backup directory (defaults to current directory)") + "\n";
@@ -119,7 +121,8 @@ public class AptikConsole : GLib.Object {
 
 		bool show_desc = false;
 		bool no_prompt = false;
-
+		bool ok = false;
+		
 		if (args.length == 1) {
 			//no args given
 			log_msg(help_message());
@@ -168,6 +171,41 @@ public class AptikConsole : GLib.Object {
 		for (int k = 1; k < args.length; k++) // Oth arg is app path
 		{
 			switch (args[k].down()) {
+
+			// ppa --------------------------------------------
+			
+			case "--list-ppa":
+			case "--list-ppas":
+				App.ppa_backup_init(show_desc);
+				foreach(Ppa ppa in App.ppa_list_master.values) {
+					ppa.is_selected = true;
+				}
+				print_ppa_list(show_desc);
+				//TODO: call the faster method for getting ppas?
+				break;
+
+			case "--backup-ppa":
+			case "--backup-ppas":
+				App.ppa_backup_init(false);
+				foreach(Ppa ppa in App.ppa_list_master.values) {
+					ppa.is_selected = true;
+				}
+				//TODO: call the faster method for getting ppas?
+				return App.save_ppa_list_selected();
+				
+			case "--restore-ppa":
+			case "--restore-ppas":
+				if (!check_internet_connectivity()) {
+					log_msg(_("Error") + ": " +  _("Internet connection is not active. Please check the connection and try again."));
+					return false;
+				}
+
+				App.ppa_restore_init(false);
+				restore_ppa();
+				break;
+				
+			// package ---------------------------------------
+
 			case "--list-available":
 				App.read_package_info();
 				foreach(Package pkg in App.pkg_list_master.values) {
@@ -210,43 +248,24 @@ public class AptikConsole : GLib.Object {
 				print_package_list(show_desc);
 				break;
 
-			case "--list-ppa":
-			case "--list-ppas":
-				App.ppa_backup_init(show_desc);
-				foreach(Ppa ppa in App.ppa_list_master.values) {
-					ppa.is_selected = true;
-				}
-				print_ppa_list(show_desc);
-				//TODO: call the faster method for getting ppas?
-				break;
-
-			case "--list-theme":
-			case "--list-themes":
-				print_theme_list(Theme.list_themes_installed(App.user_login, true));
-				break;
-
-			case "--list-config":
-			case "--list-configs":
-				print_config_list(App.list_app_config_directories_from_home());
-				break;
-				
-			case "--backup-ppa":
-			case "--backup-ppas":
-				App.ppa_backup_init(false);
-				foreach(Ppa ppa in App.ppa_list_master.values) {
-					ppa.is_selected = true;
-				}
-				//TODO: call the faster method for getting ppas?
-				return App.save_ppa_list_selected();
-
 			case "--backup-package":
 			case "--backup-packages":
 				App.read_package_info();
 				foreach(Package pkg in App.pkg_list_master.values) {
 					pkg.is_selected = pkg.is_manual;
 				}
-
 				return App.save_package_list_selected();
+
+			case "--restore-package":
+			case "--restore-packages":
+				if (!check_internet_connectivity()) {
+					log_msg(_("Error") + ": " +  _("Internet connection is not active. Please check the connection and try again."));
+					return false;
+				}
+				restore_packages(no_prompt);
+				break;
+				
+			// apt cache -------------------------------------
 
 			case "--backup-cache":
 			case "--backup-apt-cache":
@@ -254,6 +273,46 @@ public class AptikConsole : GLib.Object {
 				while (App.is_running) {
 					Thread.usleep ((ulong) 0.3 * 1000000);
 				}
+				break;
+
+			case "--restore-cache":
+			case "--restore-apt-cache":
+				App.restore_apt_cache();
+				while (App.is_running) {
+					Thread.usleep ((ulong) 0.3 * 1000000);
+				}
+				break;
+				
+			// configs ---------------------------------------
+
+			case "--list-config":
+			case "--list-configs":
+				print_config_list(App.list_app_config_directories_from_home());
+				break;
+
+			case "--backup-appsettings":
+			case "--backup-configs":
+				var list = App.list_app_config_directories_from_home();
+				foreach(AppConfig conf in list){
+					conf.is_selected = true;
+				}
+				App.backup_app_settings_all(list);
+				break;
+
+			case "--restore-appsettings":
+			case "--restore-configs":
+				var list = App.list_app_config_directories_from_backup();
+				foreach(AppConfig conf in list){
+					conf.is_selected = true;
+				}
+				App.restore_app_settings_all(list);
+				break;
+				
+			// theme ---------------------------------------------
+
+			case "--list-theme":
+			case "--list-themes":
+				print_theme_list(Theme.list_themes_installed(App.user_login, true));
 				break;
 
 			case "--backup-theme":
@@ -267,58 +326,26 @@ public class AptikConsole : GLib.Object {
 					}
 				}
 				break;
-
-			case "--backup-appsettings":
-			case "--backup-configs":
-				var list = App.list_app_config_directories_from_home();
-				foreach(AppConfig conf in list){
-					conf.is_selected = true;
-				}
-				App.backup_app_settings_all(list);
-				break;
 				
-			case "--restore-ppa":
-			case "--restore-ppas":
-				if (!check_internet_connectivity()) {
-					log_msg(_("Error") + ": " +  _("Internet connection is not active. Please check the connection and try again."));
-					return false;
-				}
-
-				App.ppa_restore_init(false);
-				restore_ppa();
-				break;
-
-			case "--restore-package":
-			case "--restore-packages":
-				if (!check_internet_connectivity()) {
-					log_msg(_("Error") + ": " +  _("Internet connection is not active. Please check the connection and try again."));
-					return false;
-				}
-				restore_packages(no_prompt);
-				break;
-
-			case "--restore-cache":
-			case "--restore-apt-cache":
-				App.restore_apt_cache();
-				while (App.is_running) {
-					Thread.usleep ((ulong) 0.3 * 1000000);
-				}
-				break;
-
 			case "--restore-theme":
 			case "--restore-themes":
 				restore_themes();
 				break;
+				
+			// mount -------------------------------------------
+			
+			case "--backup-mount":
+			case "--backup-mounts":
+				backup_mounts();
+				break;
 
-			case "--restore-appsettings":
-			case "--restore-configs":
-				var list = App.list_app_config_directories_from_backup();
-				foreach(AppConfig conf in list){
-					conf.is_selected = true;
-				}
-				App.restore_app_settings_all(list);
+			case "--restore-mount":
+			case "--restore-mounts":
+				restore_mounts();
 				break;
 				
+			// other -------------------------------------------
+			
 			case "--take-ownership":
 				App.take_ownership();
 				break;
@@ -556,6 +583,38 @@ public class AptikConsole : GLib.Object {
 		}
 
 		return true;
+	}
+
+	// mounts ---------------------
+	
+	public bool backup_mounts(){
+		bool ok = App.backup_mounts("");
+		
+		if (ok){
+			log_msg(Message.BACKUP_OK);
+		}
+		else{
+			log_msg(Message.BACKUP_ERROR);
+		}
+
+		return ok;
+	}
+	
+	public bool restore_mounts(){
+		var fstab_list = App.create_fstab_list_for_restore();
+		var crypttab_list = App.create_crypttab_list_for_restore();
+
+		string err_msg = "";
+		bool ok = App.restore_mounts(fstab_list, crypttab_list, "", out err_msg);
+
+		if (ok){
+			log_msg(Message.RESTORE_OK);
+		}
+		else{
+			log_msg(Message.RESTORE_ERROR);
+		}
+		
+		return ok;
 	}
 }
 

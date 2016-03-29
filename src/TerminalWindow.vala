@@ -56,7 +56,7 @@ public class TerminalWindow : Gtk.Window {
 		window_position = WindowPosition.CENTER;
 
 		if (fullscreen){
-			fullscreen();
+			this.fullscreen();
 		}
 		
 		this.delete_event.connect(()=>{

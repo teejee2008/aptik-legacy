@@ -17,11 +17,11 @@ long_line_behaviour=1
 long_line_column=80
 
 [files]
-current_page=23
-FILE_NAME_0=22438;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FUtility.vala;0;4
+current_page=0
+FILE_NAME_0=50540;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FUtility.vala;0;4
 FILE_NAME_1=22537;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMain.vala;0;4
 FILE_NAME_2=12458;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FPpaWindow.vala;0;4
-FILE_NAME_3=6423;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMainWindow.vala;0;4
+FILE_NAME_3=6833;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMainWindow.vala;0;4
 FILE_NAME_4=1027;Make;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2Fmakefile;0;4
 FILE_NAME_5=33714;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FPackageWindow.vala;0;4
 FILE_NAME_6=2592;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FClasses.vala;0;4
@@ -41,7 +41,7 @@ FILE_NAME_19=4225;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Fapti
 FILE_NAME_20=4810;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FArchive.vala;0;4
 FILE_NAME_21=3718;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FPasswordWindow.vala;0;4
 FILE_NAME_22=5045;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FProgressWindow.vala;0;4
-FILE_NAME_23=1525;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FTerminalWindow.vala;0;4
+FILE_NAME_23=1554;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FTerminalWindow.vala;0;4
 
 [VTE]
 last_dir=/home/teejee
