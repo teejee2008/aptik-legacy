@@ -43,7 +43,7 @@ namespace TeeJee.Logging{
 	using TeeJee.Misc;
 
 	public DataOutputStream dos_log;
-
+	public string err_log;
 	public bool LOG_ENABLE = true;
 	public bool LOG_TIMESTAMP = true;
 	public bool LOG_COLORS = true;
@@ -112,8 +112,14 @@ namespace TeeJee.Logging{
 		stdout.flush();
 		
 		try {
+			string str = "[%s] %s: %s\n".printf(timestamp(), prefix, message);
+			
 			if (dos_log != null){
-				dos_log.put_string ("[%s] %s: %s\n".printf(timestamp(), prefix, message));
+				dos_log.put_string (str);
+			}
+
+			if (err_log != null){
+				err_log += str;
 			}
 		}
 		catch (Error e) {
@@ -127,16 +133,33 @@ namespace TeeJee.Logging{
 		if (LOG_DEBUG){
 			log_msg (message);
 		}
-		else{
-			try {
-				if (dos_log != null){
-					dos_log.put_string ("[%s] %s\n".printf(timestamp(), message));
-				}
-			}
-			catch (Error e) {
-				stdout.printf (e.message);
+
+		try {
+			if (dos_log != null){
+				dos_log.put_string ("[%s] %s\n".printf(timestamp(), message));
 			}
 		}
+		catch (Error e) {
+			stdout.printf (e.message);
+		}
+	}
+
+	public void show_err_log(Gtk.Window parent, bool disable_log = true){
+		if ((err_log != null) && (err_log.length > 0)){
+			gtk_messagebox(_("Error"), err_log, parent, true);
+		}
+
+		if (disable_log){
+			disable_err_log();
+		}
+	}
+
+	public void clear_err_log(){
+		err_log = "";
+	}
+
+	public void disable_err_log(){
+		err_log = null;
 	}
 }
 
@@ -732,7 +755,7 @@ namespace TeeJee.ProcessManagement{
 	public string TEMP_DIR;
 
 	/* Convenience functions for executing commands and managing processes */
-
+	
     public static void init_tmp(){
 		string std_out, std_err;
 
@@ -749,6 +772,22 @@ namespace TeeJee.ProcessManagement{
 		//log_debug("TEMP_DIR=" + TEMP_DIR);
 	}
 
+	public int exec_sync (string cmd, out string? std_out, out string? std_err){
+
+		/* Executes single command synchronously
+		 * Pipes and multiple commands are not supported */
+
+		try {
+			int status;
+			Process.spawn_command_line_sync(cmd, out std_out, out std_err, out status);
+	        return status;
+		}
+		catch (Error e){
+	        log_error (e.message);
+	        return -1;
+	    }
+	}
+	
 	public int execute_command_sync (string cmd){
 
 		/* Executes single command synchronously and returns exit code
@@ -1987,6 +2026,18 @@ namespace TeeJee.System{
 		}
 	}
 
+	public string random_string(int length = 8, string charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"){
+		string random = "";
+
+		for(int i=0;i<length;i++){
+			int random_index = Random.int_range(0,charset.length);
+			string ch = charset.get_char(charset.index_of_nth_char(random_index)).to_string();
+			random += ch;
+		}
+
+		return random;
+	}
+	
 	public class ProcStats{
 		public double user = 0;
 		public double nice = 0;
@@ -2050,146 +2101,485 @@ namespace TeeJee.System{
 
 	public class SystemUser : GLib.Object {
 		public string name = "";
-		public bool is_installed = false;
-		public bool is_selected = false;
-		public Gee.HashMap<string,SystemGroup> groups;
+		public string password = "";
+		public int uid = -1;
+		public int gid = -1;
+		public string full_name = "";
+		public string home_path = "";
+		public string shell_path = "";
 		
+		public string shadow_line = "";
+		public string pwd_hash = "";
+		public string pwd_last_changed = "";
+		public string pwd_age_min = "";
+		public string pwd_age_max = "";
+		public string pwd_warning_period = "";
+		public string pwd_inactivity_period = "";
+		public string pwd_expiraton_date = "";
+		public string reserved_field = "";
+		
+		public bool is_selected = false;
+
 		public static Gee.HashMap<string,SystemUser> all_users;
 
 		public SystemUser(string name){
 			this.name = name;
 		}
+
+		public static void query_users(){
+			all_users = read_users_from_file("/etc/passwd","/etc/shadow");
+		}
+
+		public static void query_passwords(){
+
+		}
 		
-		public static Gee.HashMap<string,SystemUser> list_users(){
-			var list = new Gee.HashMap<string,SystemUser>();
-			
-			string cmd = "compgen -u\n";
-			log_debug(cmd);
-			
-			string stdout, stderr;
-			int status = execute_command_script_sync(cmd, out stdout, out stderr);
-			if (status == 0){
-				foreach(string line in stdout.split("\n")){
-					var item = new SystemUser(line.strip());
-					item.is_selected = true;
-					item.is_installed = true;
-					list[item.name] = item;
-				}
+		public bool is_installed{
+			get {
+				return SystemUser.all_users.has_key(name);
 			}
-			else{
-				log_msg(stderr);
+		}
+
+		public static Gee.HashMap<string,SystemUser> read_users_from_file(string passwd_file, string shadow_file){
+			var list = new Gee.HashMap<string,SystemUser>();
+
+			string txt = file_read(passwd_file);
+
+			foreach(string line in txt.split("\n")){
+				if ((line == null) || (line.length == 0)){
+					continue;
+				}
+				var user = parse_line_passwd(line);
+				list[user.name] = user;
+			}
+
+			txt = file_read(shadow_file);
+
+			foreach(string line in txt.split("\n")){
+				if ((line == null) || (line.length == 0)){
+					continue;
+				}
+				var user = parse_line_shadow(line, list);
+				list[user.name] = user;
 			}
 
 			return list;
 		}
 
-		public static void query_users(){
-			all_users = list_users();
+		private static SystemUser? parse_line_passwd(string line){
+			if ((line == null) || (line.length == 0)){
+				return null;
+			}
+			
+			SystemUser user = null;
+
+			//teejee:x:504:504:Tony George:/home/teejee:/bin/bash
+			string[] fields = line.split(":");
+
+			if (fields.length == 7){
+				user = new SystemUser(fields[0].strip());
+				user.password = fields[1].strip();
+				user.uid = int.parse(fields[2].strip());
+				user.gid = int.parse(fields[3].strip());
+				user.full_name = fields[4].strip();
+				user.home_path = fields[5].strip();
+				user.shell_path = fields[6].strip();
+			}
+			
+			return user;
+		}
+
+		private static SystemUser? parse_line_shadow(string line, Gee.HashMap<string,SystemUser> list){
+			if ((line == null) || (line.length == 0)){
+				return null;
+			}
+			
+			SystemUser user = null;
+
+			//root:$1$Etg2ExUZ$F9NTP7omafhKIlqaBMqng1:15651:0:99999:7:::
+			//<username>:$<hash-algo>$<salt>$<hash>:<last-changed>:<change-interval-min>:<change-interval-max>:<change-warning-interval>:<disable-expired-account-after-days>:<days-since-account-disbaled>:<not-used>
+
+			string[] fields = line.split(":");
+
+			if (fields.length == 9){
+				string user_name = fields[0].strip();
+				if (list.has_key(user_name)){
+					user = list[user_name];
+					user.shadow_line = line;
+					user.pwd_hash = fields[1].strip();
+					user.pwd_last_changed = fields[2].strip();
+					user.pwd_age_min = fields[3].strip();
+					user.pwd_age_max = fields[4].strip();
+					user.pwd_warning_period = fields[5].strip();
+					user.pwd_inactivity_period = fields[6].strip();
+					user.pwd_expiraton_date = fields[7].strip();
+					user.reserved_field = fields[8].strip();
+					return user;
+				}
+				else{
+					log_error("user in file 'shadow' does not exist in file 'passwd'" + ": %s".printf(user_name));
+					return null;
+				}
+			}
+			else{
+				log_error("'shadow' file contains a record with non-standard fields" + ": %d".printf(fields.length));
+				return null;
+			}
+		}
+
+		public static int add_user(string user_name, bool system_account = false){
+			string std_out, std_err;
+			string cmd = "adduser%s --gecos '' --disabled-login %s".printf((system_account ? " --system" : ""), user_name);
+			log_debug(cmd);
+			int status = exec_sync(cmd, out std_out, out std_err);
+			if (status != 0){
+				log_error(std_err);
+			}
+			else{
+				//log_msg(std_out);
+			}
+			return status;
+		}
+
+		public int add(){
+			return add_user(name, is_system);
+		}
+		
+		public bool is_system{
+			get {
+				return (uid < 1000);
+			}
+		}
+
+		public string group_names{
+			owned get {
+				return "";
+			}
+		}
+
+		public bool update_passwd_file(){
+			string file_path = "/etc/passwd";
+			string txt = read_file(file_path);
+			
+			var txt_new = "";
+			foreach(string line in txt.split("\n")){
+				if (line.strip().length == 0) {
+					continue;
+				}
+				
+				string[] parts = line.split(":");
+
+				if (parts.length != 7){
+					log_error("'passwd' file contains a record with non-standard fields" + ": %d".printf(parts.length));
+					return false;
+				}
+				
+				if (parts[0].strip() == name){
+					txt_new += get_passwd_line() + "\n";
+				}
+				else{
+					txt_new += line + "\n";
+				}
+			}
+
+			file_write(file_path, txt_new);
+			
+			log_msg("Updated user settings in /etc/passwd" + ": %s".printf(name));
+			
+			return true;
+		}
+
+		public string get_passwd_line(){
+			string txt = "";
+			txt += "%s".printf(name);
+			txt += ":%s".printf(password);
+			txt += ":%d".printf(uid);
+			txt += ":%d".printf(gid);
+			txt += ":%s".printf(full_name);
+			txt += ":%s".printf(home_path);
+			txt += ":%s".printf(shell_path);
+			return txt;
+		}
+		
+		public bool update_shadow_file(){
+			string file_path = "/etc/shadow";
+			string txt = read_file(file_path);
+			
+			var txt_new = "";
+			foreach(string line in txt.split("\n")){
+				if (line.strip().length == 0) {
+					continue;
+				}
+				
+				string[] parts = line.split(":");
+
+				if (parts.length != 9){
+					log_error("'shadow' file contains a record with non-standard fields" + ": %d".printf(parts.length));
+					return false;
+				}
+				
+				if (parts[0].strip() == name){
+					txt_new += get_shadow_line() + "\n";
+				}
+				else{
+					txt_new += line + "\n";
+				}
+			}
+
+			file_write(file_path, txt_new);
+			
+			log_msg("Updated user settings in /etc/shadow" + ": %s".printf(name));
+			
+			return true;
+		}
+
+		public string get_shadow_line(){
+			string txt = "";
+			txt += "%s".printf(name);
+			txt += ":%s".printf(pwd_hash);
+			txt += ":%s".printf(pwd_last_changed);
+			txt += ":%s".printf(pwd_age_min);
+			txt += ":%s".printf(pwd_age_max);
+			txt += ":%s".printf(pwd_warning_period);
+			txt += ":%s".printf(pwd_inactivity_period);
+			txt += ":%s".printf(pwd_expiraton_date);
+			txt += ":%s".printf(reserved_field);
+			return txt;
 		}
 	}
 
 	public class SystemGroup : GLib.Object {
 		public string name = "";
-		public bool has_password = false;
+		public string password = "";
 		public int gid = -1;
 		public string user_names = "";
-		
-		public bool is_installed = false;
+
+		public string shadow_line = "";
+		public string password_hash = "";
+		public string admin_list = "";
+		public string member_list = "";
+
 		public bool is_selected = false;
-		
-		public Gee.HashMap<string,SystemUser> users;
+		public Gee.ArrayList<string> users;
 		
 		public static Gee.HashMap<string,SystemGroup> all_groups;
 
 		public SystemGroup(string name){
 			this.name = name;
-		}
-		
-		public static Gee.HashMap<string,SystemGroup> list_groups(){
-			var list = new Gee.HashMap<string,SystemGroup>();
-			
-			string cmd = "compgen -g\n";
-			log_debug(cmd);
-			
-			string stdout, stderr;
-			int status = execute_command_script_sync(cmd, out stdout, out stderr);
-			if (status == 0){
-				foreach(string line in stdout.split("\n")){
-					var item = new SystemGroup(line.strip());
-					item.is_selected = true;
-					item.is_installed = true;
-					list[item.name] = item;
-				}
-			}
-			else{
-				log_msg(stderr);
-			}
-
-			return list;
+			this.users = new Gee.ArrayList<string>();
 		}
 
-		public static Gee.HashMap<string,SystemGroup> read_groups_from_file(string groups_file){
+		public static void query_groups(){
+			all_groups = read_groups_from_file("/etc/group","/etc/gshadow");
+		}
+
+		public bool is_installed{
+			get{
+				return SystemGroup.all_groups.has_key(name);
+			}
+		}
+
+		public static Gee.HashMap<string,SystemGroup> read_groups_from_file(string group_file, string gshadow_file){
 			var list = new Gee.HashMap<string,SystemGroup>();
 
-			string txt = file_read(groups_file);
-			
+			string txt = file_read(group_file);
 			foreach(string line in txt.split("\n")){
-				var group = parse_group_file_line(line);
+				if ((line == null) || (line.length == 0)){
+					continue;
+				}
+				
+				var group = parse_line_group(line);
 				list[group.name] = group;
 			}
 
+			txt = file_read(gshadow_file);
+			foreach(string line in txt.split("\n")){
+				if ((line == null) || (line.length == 0)){
+					continue;
+				}
+				
+				parse_line_gshadow(line, list);
+			}
+
 			return list;
 		}
 
-		private static SystemGroup parse_group_file_line(string line){
-			SystemGroup group = null;
+		private static SystemGroup? parse_line_group(string line){
+			if ((line == null) || (line.length == 0)){
+				return null;
+			}
 			
+			SystemGroup group = null;
+
 			//cdrom:x:24:teejee,user2
 			string[] fields = line.split(":");
 
 			if (fields.length == 4){
 				group = new SystemGroup(fields[0].strip());
-				group.has_password = (fields[1].strip() == "x");
+				group.password = fields[1].strip();
 				group.gid = int.parse(fields[2].strip());
 				group.user_names = fields[3].strip();
+				foreach(string user_name in group.user_names.split(",")){
+					group.users.add(user_name);
+				}
 			}
 			
 			return group;
 		}
 
-		public static void query_groups(){
-			all_groups = read_groups_from_file("/etc/group");
+		private static SystemGroup? parse_line_gshadow(string line, Gee.HashMap<string,SystemGroup> list){
+			if ((line == null) || (line.length == 0)){
+				return null;
+			}
+			
+			SystemGroup group = null;
+
+			//adm:*::syslog,teejee
+			//<groupname>:<encrypted-password>:<admins>:<members>
+			string[] fields = line.split(":");
+
+			if (fields.length == 4){
+				string group_name = fields[0].strip();
+				if (list.has_key(group_name)){
+					group = list[group_name];
+					group.shadow_line = line;
+					group.password_hash = fields[1].strip();
+					group.admin_list = fields[2].strip();
+					group.member_list = fields[3].strip();
+					return group;
+				}
+				else{
+					log_error("group in file 'gshadow' does not exist in file 'group'" + ": %s".printf(group_name));
+					return null;
+				}
+			}
+			else{
+				log_error("'gshadow' file contains a record with non-standard fields" + ": %d".printf(fields.length));
+				return null;
+			}
 		}
 
-		public static void query_users_and_groups(){
-			if (SystemUser.all_users == null){
-				SystemUser.query_users();
+		public static int add_group(string group_name, bool system_account = false){
+			string std_out, std_err;
+			string cmd = "groupadd%s %s".printf((system_account)? " --system" : "", group_name);
+			int status = exec_sync(cmd, out std_out, out std_err);
+			if (status != 0){
+				log_error(std_err);
 			}
-			var all_users = SystemUser.all_users;
-
-			if (SystemGroup.all_groups == null){
-				SystemGroup.query_groups();
+			else{
+				//log_msg(std_out);
 			}
+			return status;
+		}
 
-			string txt = read_file("/etc/group");
+		public int add(){
+			return add_group(name,is_system);
+		}
+
+		public static int add_user_to_group(string user_name, string group_name){
+			string std_out, std_err;
+			string cmd = "adduser %s %s".printf(user_name, group_name);
+			log_debug(cmd);
+			int status = exec_sync(cmd, out std_out, out std_err);
+			if (status != 0){
+				log_error(std_err);
+			}
+			else{
+				//log_msg(std_out);
+			}
+			return status;
+		}
+
+		public int add_to_group(string user_name){
+			return add_user_to_group(user_name, name);
+		}
+		
+		public bool is_system{
+			get {
+				return (gid < 1000);
+			}
+		}
+
+		public bool update_group_file(){
+			string file_path = "/etc/group";
+			string txt = read_file(file_path);
+			
+			var txt_new = "";
 			foreach(string line in txt.split("\n")){
-				string[] arr = line.split(":");
-				string group_name = arr[0];
-				if (!all_groups.has_key(group_name)){
+				if (line.strip().length == 0) {
 					continue;
 				}
-				var group = all_groups[group_name];
-				if (arr.length == 4){
-					group.user_names = arr[3];
-					foreach(string usr in group.user_names.split(",")){
-						if (all_users.has_key(usr)){
-							var user = all_users[usr];
-							group.users[usr] = user;
-							user.groups[group_name] = group;
-						}
-					}
+
+				string[] parts = line.split(":");
+				
+				if (parts.length != 4){
+					log_error("'group' file contains a record with non-standard fields" + ": %d".printf(parts.length));
+					return false;
+				}
+
+				if (parts[0].strip() == name){
+					txt_new += get_group_line() + "\n";
+				}
+				else{
+					txt_new += line + "\n";
 				}
 			}
+
+			file_write(file_path, txt_new);
+			
+			log_msg("Updated group settings in /etc/group" + ": %s".printf(name));
+			
+			return true;
+		}
+
+		public string get_group_line(){
+			string txt = "";
+			txt += "%s".printf(name);
+			txt += ":%s".printf(password);
+			txt += ":%d".printf(gid);
+			txt += ":%s".printf(user_names);
+			return txt;
+		}
+	
+		public bool update_gshadow_file(){
+			string file_path = "/etc/gshadow";
+			string txt = read_file(file_path);
+			
+			var txt_new = "";
+			foreach(string line in txt.split("\n")){
+				if (line.strip().length == 0) {
+					continue;
+				}
+
+				string[] parts = line.split(":");
+				
+				if (parts.length != 4){
+					log_error("'gshadow' file contains a record with non-standard fields" + ": %d".printf(parts.length));
+					return false;
+				}
+
+				if (parts[0].strip() == name){
+					txt_new += get_gshadow_line() + "\n";
+				}
+				else{
+					txt_new += line + "\n";
+				}
+			}
+
+			file_write(file_path, txt_new);
+			
+			log_msg("Updated group settings in /etc/gshadow" + ": %s".printf(name));
+			
+			return true;
+		}
+
+		public string get_gshadow_line(){
+			string txt = "";
+			txt += "%s".printf(name);
+			txt += ":%s".printf(password_hash);
+			txt += ":%s".printf(admin_list);
+			txt += ":%s".printf(member_list);
+			return txt;
 		}
 	}
 }

@@ -505,7 +505,7 @@ public class MountWindow : Window {
 		
 		string password = "";
 		if (keyfile_used){
-			password = prompt_for_password(false, _("Password Required"),_("Password is required for extracting key files from backup"));
+			password = PasswordWindow.prompt_user(this, false, _("Password Required"), Message.ENTER_PASSWORD_RESTORE);
 			if (password == ""){
 				return;
 			}
@@ -517,40 +517,12 @@ public class MountWindow : Window {
 		bool ok = App.restore_mounts(fstab_list, crypttab_list, password, out err_msg);
 		
 		if (ok){
-			gtk_messagebox(_("Finished"), _("Restored successfully"), this, false);
+			gtk_messagebox(_("Finished"), Message.RESTORE_OK, this, false);
 			this.close();
 		}
 		else{
-			gtk_messagebox(_("Error"), "%s".printf(err_msg), this, false);
+			gtk_messagebox(_("Error"), Message.RESTORE_ERROR + "\n\n%s".printf(err_msg), this, false);
 		}
-	}
-
-	private string prompt_for_password(bool confirm_password, string dlg_title, string dlg_msg){
-		var dlg = new PasswordWindow.with_parent(this, confirm_password, dlg_title, dlg_msg);
-
-		int response_id = ResponseType.NONE;
-		
-		do{
-			response_id = dlg.run();
-		}
-		while (response_id == ResponseType.NONE);
-
-		string password = "";
-		
-		switch (response_id) {
-		case Gtk.ResponseType.OK:
-			if (dlg.password.length > 0){
-				password = dlg.password;
-			}
-			break;
-		case Gtk.ResponseType.CANCEL:
-			//do nothing
-			break;
-		}
-		
-		dlg.destroy();
-
-		return password;
 	}
 }
 

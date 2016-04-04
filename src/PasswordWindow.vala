@@ -42,8 +42,9 @@ public class PasswordWindow : Gtk.Dialog {
 	private Gtk.Button btn_ok;
 	private Gtk.Button btn_cancel;
 	private string message;
+	private bool confirm_password = false;
 	
-	public PasswordWindow.with_parent(Window parent, bool confirm_password, string title = "Password Required", string message = "") {
+	public PasswordWindow.with_parent(Gtk.Window parent, bool confirm_password, string title = "Password Required", string message = "") {
 		set_transient_for(parent);
 		set_modal(true);
 
@@ -54,6 +55,7 @@ public class PasswordWindow : Gtk.Dialog {
 
 		show_all();
 
+		this.confirm_password = confirm_password;
 		txt_confirm.visible = confirm_password;
 		lbl_message.visible = (message.length > 0);
 	}
@@ -65,11 +67,11 @@ public class PasswordWindow : Gtk.Dialog {
 		deletable = false;
 		icon = get_app_icon(16);
 		
-		//vbox_main
+		// vbox_main
 		vbox_main = get_content_area () as Gtk.Box;
 		vbox_main.margin = 6;
 
-		//grid
+		// grid
 		var grid = new Grid();
 		grid.set_column_spacing (6);
 		grid.set_row_spacing (6);
@@ -78,7 +80,7 @@ public class PasswordWindow : Gtk.Dialog {
 
 		int row = -1;
 
-		//lbl_message
+		// lbl_message
 		lbl_message = new Gtk.Label(message);
 		lbl_message.xalign = (float) 0.0;
 		lbl_message.wrap = true;
@@ -89,7 +91,7 @@ public class PasswordWindow : Gtk.Dialog {
 
 		// password -------------------------------------------
 		
-		//txt_password
+		// txt_password
 		var txt = new Gtk.Entry();
 		txt.placeholder_text = _("Enter Passphrase");
 		txt.hexpand = true;	
@@ -98,24 +100,26 @@ public class PasswordWindow : Gtk.Dialog {
 		grid.attach(txt, 0, ++row, 1, 1);
 		txt_password = txt;
 		
-		//icon
+		// icon
 		var img = get_shared_icon("gtk-lock","lock.svg",16);
 		if (img != null){
 			txt.secondary_icon_pixbuf = img.pixbuf;
 		}
 		txt.set_icon_tooltip_text(EntryIconPosition.SECONDARY, _("Show"));
 
-		//icon click
+		// icon click
 		txt.icon_press.connect((p0, p1) => {
 			password_visibility_toggle();
 		});
 
-		//ok button state
+		// ok button state
 		txt.key_release_event.connect((event)=>{
 			set_ok_button_state();
 			return true;
 		});
 
+		//this.add_events(Gdk.EventMask.KEY_PRESS_MASK);
+		
 		// confirm -------------------------------------
 		
 		//txt_confirm
@@ -132,26 +136,58 @@ public class PasswordWindow : Gtk.Dialog {
 			return true;
 		});
 
-		//actions -----------------------------------
+		// click OK on ENTER key press -------------
+		
+		if (confirm_password){
+			txt_confirm.activate.connect (() => {
+				btn_ok_clicked();
+			});
+		}
+		else{
+			txt_password.activate.connect (() => {
+				btn_ok_clicked();
+			});
+		}
+		
+		// actions -----------------------------------
 		
 		btn_ok = (Gtk.Button) add_button ("_Ok", Gtk.ResponseType.NONE);
 
-		btn_ok.clicked.connect(()=>{
-			if (txt_confirm.visible){
-				if (txt_password.text != txt_confirm.text) {
-					gtk_messagebox("Password Mismatch", "Passwords do not match", this, true);
-					return;
-				}
-			}
-			
-			this.response(Gtk.ResponseType.OK);
-		});
+		btn_ok.clicked.connect(btn_ok_clicked);
 		
 		btn_cancel = (Gtk.Button) add_button ("_Cancel", Gtk.ResponseType.CANCEL);
 
 		set_ok_button_state();
 	}
 
+	public static string prompt_user(Gtk.Window parent, bool confirm_password, string dlg_title, string dlg_msg){
+		var dlg = new PasswordWindow.with_parent(parent, confirm_password, dlg_title, dlg_msg);
+
+		int response_id = ResponseType.NONE;
+		
+		do{
+			response_id = dlg.run();
+		}
+		while (response_id == ResponseType.NONE);
+
+		string user_password = "";
+		
+		switch (response_id) {
+		case Gtk.ResponseType.OK:
+			if (dlg.password.length > 0){
+				user_password = dlg.password;
+			}
+			break;
+		case Gtk.ResponseType.CANCEL:
+			//do nothing
+			break;
+		}
+		
+		dlg.destroy();
+
+		return user_password;
+	}
+	
 	private void password_visibility_toggle(){
 		txt_password.set_visibility(!txt_password.get_visibility());
 		txt_confirm.set_visibility(txt_password.get_visibility());
@@ -173,6 +209,17 @@ public class PasswordWindow : Gtk.Dialog {
 		owned get {
 			return txt_password.text.strip();
 		}
+	}
+
+	private void btn_ok_clicked(){
+		if (confirm_password){
+			if (txt_password.text != txt_confirm.text) {
+				gtk_messagebox("Password Mismatch", "Passwords do not match", this, true);
+				return;
+			}
+		}
+		
+		this.response(Gtk.ResponseType.OK);
 	}
 }
 

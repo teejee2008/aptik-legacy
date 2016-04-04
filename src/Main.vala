@@ -82,6 +82,9 @@ public class Main : GLib.Object {
 	public Gee.HashMap<string, Ppa> ppa_list_master;
 	public Gee.ArrayList<string> sections;
 
+	public Gee.HashMap<string,SystemUser> user_list_bak;
+	public Gee.HashMap<string,SystemGroup> group_list_bak;
+	
 	public string pkg_list_install = "";
 	public string pkg_list_deb = "";
 	public string pkg_list_missing = "";
@@ -2139,27 +2142,6 @@ public class Main : GLib.Object {
 			return false;
 		}
 
-		// check if key files are used and prompt for password -------
-
-		if (!gui_mode){
-			bool keyfile_used = false;
-			var list = FsTabEntry.read_crypttab_file("/etc/crypttab");
-			foreach(var fs in list){
-				if (fs.uses_keyfile() && file_exists(fs.password)){
-					keyfile_used = true;
-					break;
-				}
-			}
-
-			if (keyfile_used){
-				user_password = prompt_for_password(true, _("Enter password for encrypting backup"));
-				if (user_password == ""){
-					log_error(Message.PASSWORD_MISSING);
-					return false;
-				}
-			}
-		}
-		
 		// copy /etc/fstab and /etc/crypttab to backup path ---------
 		
 		foreach(string file_name in new string[] { "fstab", "crypttab"}){
@@ -2193,6 +2175,15 @@ public class Main : GLib.Object {
 		var list = FsTabEntry.read_crypttab_file("/etc/crypttab");
 		foreach(var fs in list){
 			if (fs.uses_keyfile() && file_exists(fs.password)){
+				// get password if empty
+				if (user_password.length == 0){
+					user_password = prompt_for_password(true, Message.ENTER_PASSWORD_BACKUP);
+					if (user_password.length == 0){
+						log_error(Message.PASSWORD_MISSING);
+						return false;
+					}
+				}
+			
 				string src_file = fs.password;
 				string dst_file = "%s/%s".printf(mounts_dir, fs.keyfile_archive_name);
 				
@@ -2240,11 +2231,13 @@ public class Main : GLib.Object {
 	public bool restore_mounts(Gee.ArrayList<FsTabEntry> fstab_list, Gee.ArrayList<FsTabEntry> crypttab_list, string password, out string err_msg){
 		bool ok = false;
 		err_msg = "";
+
+		string user_password = password;
 		
 		string mounts_dir = backup_dir + "mounts";
 
 		log_debug(_("Restoring /etc/fstab and /etc/crypttab entries"));
-		
+
 		// save /etc/fstab --------------------------
 		
 		bool none_selected = true;
@@ -2291,8 +2284,19 @@ public class Main : GLib.Object {
 			string src_file = "%s/%s".printf(mounts_dir, fs.keyfile_archive_name);
 
 			if (file_exists(src_file)){
+				// get password if empty
+				if (user_password.length == 0){
+					user_password = prompt_for_password(false, Message.ENTER_PASSWORD_RESTORE);
+					if (user_password.length == 0){
+						log_error(Message.PASSWORD_MISSING);
+						return false;
+					}
+				}
+
 				string dst_file = fs.password;
-				ok = file_decrypt_and_untar(src_file, dst_file, password, out err_msg);
+				
+				ok = file_decrypt_and_untar(src_file, dst_file, user_password, out err_msg);
+				
 				if (!ok){
 					log_msg(Message.FILE_SAVE_ERROR + ": %s".printf(dst_file));
 					return false;
@@ -2373,7 +2377,7 @@ public class Main : GLib.Object {
 		string password = line;
 
 		if (password.length == 0){
-			log_msg(_("Password cannot be empty!") + "\n");
+			log_msg("%s\n".printf(Message.PASSWORD_EMPTY));
 			return prompt_for_password(confirm, message);
 		}
 		
@@ -2384,7 +2388,7 @@ public class Main : GLib.Object {
 			line = (line != null) ? line.strip() : "";
 			string password2 = line;
 			if (password != password2){
-				log_msg(_("Passwords do not match!") + "\n");
+				log_msg("%s\n".printf(Message.PASSWORD_NOT_MATCHING));
 				return prompt_for_password(confirm, message);
 			}
 			else{
@@ -2477,7 +2481,309 @@ public class Main : GLib.Object {
 
 		return list;
 	}
-	
+
+	/* Users and Groups */
+
+	public bool backup_users_and_groups(string password){
+		bool ok = false;
+		
+		string user_password = password;
+		
+		string users_dir = backup_dir + "users";
+		ok = dir_create(users_dir);
+		if (!ok){
+			return false;
+		}
+
+		// get password --------------------------
+
+		if (user_password == ""){
+			user_password = prompt_for_password(true, Message.ENTER_PASSWORD_BACKUP);
+			if (user_password == ""){
+				log_error(Message.PASSWORD_MISSING);
+				return false;
+			}
+		}
+
+		// copy files to backup path ---------
+		
+		foreach(string file_name in new string[] { "passwd", "shadow", "group", "gshadow"}){
+			string src_file = "/etc/%s".printf(file_name);
+			string dst_file = "%s/%s.tar.gpg".printf(users_dir, file_name);
+
+			if (file_exists(dst_file)){
+				ok = file_delete(dst_file);
+				if (!ok){
+					log_error(Message.FILE_DELETE_ERROR + ": %s".printf(dst_file));
+					return false;
+				}
+			}
+			
+			if (file_exists(src_file)){
+			
+				ok = file_tar_and_encrypt(src_file, dst_file, user_password);
+
+				if (!ok){
+					log_error(Message.BACKUP_ERROR + ": %s".printf(src_file));
+					return false;
+				}
+				else{
+					log_msg(Message.BACKUP_SAVED + ": %s".printf(src_file));
+				}
+			}
+		}
+
+		return true;
+	}
+
+
+	public bool restore_users_and_groups_init(string password){
+		string users_dir = App.backup_dir + "users";
+
+		string user_password = password;
+
+		// get password if empty -----------------------------
+		
+		if (user_password.length == 0){
+			user_password = prompt_for_password(true, Message.ENTER_PASSWORD_RESTORE);
+			if (user_password.length == 0){
+				log_error(Message.PASSWORD_MISSING);
+				return false;
+			}
+		}
+
+		// query users and groups from system -------------------
+		
+		SystemUser.query_users();
+		SystemGroup.query_groups();
+
+		// decrypt all GPG files from backup ---------------------
+
+		user_list_bak = new Gee.HashMap<string,SystemUser>();
+		group_list_bak = new Gee.HashMap<string,SystemGroup>();
+		
+		foreach(string file_name in new string[]{ "passwd","shadow","group","gshadow" }){
+			string gpg_file = "%s/%s.tar.gpg".printf(users_dir,file_name);
+			string temp_file = "%s/%s".printf(TEMP_DIR,file_name);
+			string err_msg = "";
+			bool ok = file_decrypt_and_untar(gpg_file, temp_file, user_password, out err_msg);
+			if (!ok || !file_exists(temp_file)){
+				log_msg(Message.FILE_DECRYPT_ERROR + ": %s".printf(gpg_file));
+				return false;
+			}
+		}
+		
+		// read passwd and shadow files ---------------------
+		
+		var file_1 = "%s/%s".printf(TEMP_DIR,"passwd");
+		var file_2 = "%s/%s".printf(TEMP_DIR,"shadow");
+
+		user_list_bak = SystemUser.read_users_from_file(file_1, file_2);
+
+		file_delete(file_1);
+		file_delete(file_2);
+		
+		foreach(string file_name in new string[]{ "passwd","shadow" }){
+			string gpg_file = "%s/%s.tar.gpg".printf(users_dir,file_name);
+			log_debug(Message.FILE_READ_OK + ": %s".printf(gpg_file));
+		}
+
+		// read group and gshadow files ---------------------
+		
+		file_1 = "%s/%s".printf(TEMP_DIR,"group");
+		file_2 = "%s/%s".printf(TEMP_DIR,"gshadow");
+
+		group_list_bak = SystemGroup.read_groups_from_file(file_1, file_2);
+		
+		file_delete(file_1);
+		file_delete(file_2);
+		
+		foreach(string file_name in new string[]{ "group","gshadow" }){
+			string gpg_file = "%s/%s.tar.gpg".printf(users_dir,file_name);
+			log_debug(Message.FILE_READ_OK + ": %s".printf(gpg_file));
+		}
+
+		// select defaults ----------------------------------
+		
+		foreach(var user in user_list_bak.values){
+			user.is_selected = !user.is_installed;
+		}
+
+		foreach(var group in group_list_bak.values){
+			group.is_selected = !group.is_installed;
+		}
+
+		return true;
+	}
+
+	public bool restore_users_and_groups(){
+		bool ok = true;
+
+		//LOG_TIMESTAMP = false;
+		
+		// add users and primary groups ---------------------------
+		
+		foreach(var user in user_list_bak.values){
+			if (SystemUser.all_users.has_key(user.name)){
+				continue;
+			}
+
+			if (!user.is_selected || user.is_system){
+				continue;
+			}
+
+			ok = (user.add() == 0);
+			
+			if (!ok){
+				log_error(Message.USER_ADD_ERROR + ": %s".printf(user.name));
+				return false;
+			}
+			else{
+				log_msg(Message.USER_ADD_OK + ": %s".printf(user.name));
+			}
+		}
+
+		// re-query users and groups from system
+		SystemUser.query_users();
+		SystemGroup.query_groups();
+
+		// add groups ---------------------------
+
+		foreach(var group in group_list_bak.values){
+
+			if (SystemGroup.all_groups.has_key(group.name)){
+				continue;
+			}
+
+			if (!group.is_selected || group.is_system){
+				continue;
+			}
+			
+			ok = (group.add() == 0);
+			
+			if (!ok){
+				log_error(Message.GROUP_ADD_ERROR + ": %s".printf(group.name));
+				return false;
+			}
+			else{
+				log_msg(Message.GROUP_ADD_OK + ": %s".printf(group.name));
+			}
+		}
+
+		// re-query groups from system
+		SystemGroup.query_groups();
+
+		// add users to groups --------------------------------------
+
+		foreach(var group_bak in group_list_bak.values){
+			// skip missing group
+			if (!SystemGroup.all_groups.has_key(group_bak.name)){
+				continue;
+			}
+
+			foreach(var user_name_bak in group_bak.users){
+				SystemUser user_bak = null;
+				if (user_list_bak.has_key(user_name_bak)){
+					user_bak = user_list_bak[user_name_bak];
+				}
+				else{
+					log_error("Backup group user missing in backup users list" + ": %s, %s".printf(group_bak.name, user_name_bak));
+					return false;
+				}
+				
+				// skip missing users
+				if (!SystemUser.all_users.has_key(user_name_bak)){
+					continue;
+				}
+
+				// skip if system group already contains user
+				var sys_group = SystemGroup.all_groups[group_bak.name];
+				if (sys_group.users.contains(user_name_bak)){
+					continue;
+				}
+				
+				// check if either user or group is selected
+				if (!user_bak.is_selected && !group_bak.is_selected){
+					continue;
+				}
+				
+				// add user to group
+				group_bak.add_to_group(user_name_bak);
+				
+				if (!ok){
+					log_error(Message.GROUP_ADD_USER_ERROR + ": %s, %s".printf(user_name_bak, group_bak.name));
+					return false;
+				}
+				else{
+					log_msg(Message.GROUP_ADD_USER_OK + ": %s, %s".printf(user_name_bak, group_bak.name));
+				}
+			}
+		}
+
+		SystemUser.query_users();
+		SystemGroup.query_groups();
+
+		// restore user and group passwords and other settings ------
+
+		foreach(var user in SystemUser.all_users.values){
+			SystemUser? user_bak = null;
+			if (user_list_bak.has_key(user.name)){
+				user_bak = user_list_bak[user.name];
+			}
+			else{
+				continue;
+			}
+			if (!user_bak.is_selected){
+				continue;
+			}
+
+			user.password = user_bak.password;
+			user.full_name = user_bak.full_name;
+			user.home_path = user_bak.home_path;
+			user.shell_path = user_bak.shell_path;
+			
+			user.update_passwd_file();
+
+			user.pwd_hash = user_bak.pwd_hash;
+			user.pwd_last_changed = user_bak.pwd_last_changed;
+			user.pwd_age_min = user_bak.pwd_age_min;
+			user.pwd_age_max = user_bak.pwd_age_max;
+			user.pwd_warning_period = user_bak.pwd_warning_period;
+			user.pwd_inactivity_period = user_bak.pwd_inactivity_period;
+			user.pwd_expiraton_date = user_bak.pwd_expiraton_date;
+			user.reserved_field = user_bak.reserved_field;
+			
+			user.update_shadow_file();
+		}
+
+		foreach(var group in SystemGroup.all_groups.values){
+			SystemGroup? group_bak = null;
+			if (group_list_bak.has_key(group.name)){
+				group_bak = group_list_bak[group.name];
+			}
+			else{
+				continue;
+			}
+			if (!group_bak.is_selected){
+				continue;
+			}
+
+			group.password = group_bak.password;
+			// keep name, gid, usernames
+			group.update_group_file();
+
+			group.password = group_bak.password;
+			// keep name, admin, members
+			group.update_gshadow_file();
+		}
+
+		// re-query users and groups from system
+		SystemUser.query_users();
+		SystemGroup.query_groups();
+
+		return ok;
+	}
+
 	/* Misc */
 
 	public bool take_ownership() {
@@ -2510,28 +2816,47 @@ public class Main : GLib.Object {
 }
 
 public class Message : GLib.Object {
-	public const string BACKUP_OK = _("Backup completed");
-	public const string BACKUP_ERROR = _("Failed to save backup");
-	public const string BACKUP_SAVED = _("Backup saved");
+	public static const string BACKUP_OK = _("Backup completed");
+	public static const string BACKUP_ERROR = _("Backup completed with errors");
+	public static const string BACKUP_SAVED = _("Backup saved");
 	
-	public const string RESTORE_OK = _("Restore completed");
-	public const string RESTORE_ERROR = _("Failed to restore");
+	public static const string RESTORE_OK = _("Restore completed");
+	public static const string RESTORE_ERROR = _("Restore completed with errors");
 
-	public const string FILE_EXISTS = _("File exists");
-	public const string FILE_MISSING = _("File not found");
+	public static const string FILE_EXISTS = _("File exists");
+	public static const string FILE_MISSING = _("File not found");
 	
-	public const string FILE_SAVE_OK = _("File saved");
-	public const string FILE_SAVE_ERROR = _("Failed to save file");
+	public static const string FILE_SAVE_OK = _("File saved");
+	public static const string FILE_SAVE_ERROR = _("Failed to save file");
 
-	public const string FILE_DELETE_OK = _("File deleted");
-	public const string FILE_DELETE_ERROR = _("Failed to delete file");
+	public static const string FILE_READ_OK = _("File read");
+	public static const string FILE_READ_ERROR = _("Failed to read file");
 	
-	public const string DIR_CREATE_OK = _("Directory created");
-	public const string DIR_CREATE_ERROR = _("Failed to create directory");
+	public static const string FILE_DECRYPT_OK = _("File decrypted");
+	public static const string FILE_DECRYPT_ERROR = _("Failed to decrypt file");
+	
+	public static const string FILE_DELETE_OK = _("File deleted");
+	public static const string FILE_DELETE_ERROR = _("Failed to delete file");
+	
+	public static const string DIR_CREATE_OK = _("Directory created");
+	public static const string DIR_CREATE_ERROR = _("Failed to create directory");
 
-	public const string DIR_EXISTS = _("Directory exists");
-	public const string DIR_MISSING = _("Directory missing");
+	public static const string DIR_EXISTS = _("Directory exists");
+	public static const string DIR_MISSING = _("Directory missing");
 
-	public const string NO_CHANGES_REQUIRED = _("No changes required");
-	public const string PASSWORD_MISSING = _("Password not specified!");
+	public static const string USER_ADD_OK = _("User added");
+	public static const string USER_ADD_ERROR = _("Failed to add user");
+
+	public static const string GROUP_ADD_OK = _("Group added");
+	public static const string GROUP_ADD_ERROR = _("Failed to add group");
+
+	public static const string GROUP_ADD_USER_OK = _("User added to group");
+	public static const string GROUP_ADD_USER_ERROR = _("Failed to add user to group");
+	
+	public static const string NO_CHANGES_REQUIRED = _("No changes required");
+	public static const string PASSWORD_MISSING = _("Password not specified!");
+	public static const string ENTER_PASSWORD_BACKUP = _("Enter password for encrypting backup");
+	public static const string ENTER_PASSWORD_RESTORE = _("Enter password for decrypting backup");
+	public static const string PASSWORD_EMPTY = _("Password cannot be empty!");
+	public static const string PASSWORD_NOT_MATCHING = _("Passwords do not match!");
 }

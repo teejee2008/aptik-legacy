@@ -344,6 +344,23 @@ public class AptikConsole : GLib.Object {
 				restore_mounts();
 				break;
 				
+			// users -------------------------------------------
+
+			case "--list-user":
+			case "--list-users":
+				list_users_and_groups();
+				break;
+				
+			case "--backup-user":
+			case "--backup-users":
+				backup_users_and_groups();
+				break;
+
+			case "--restore-user":
+			case "--restore-users":
+				restore_users_and_groups();
+				break;
+
 			// other -------------------------------------------
 			
 			case "--take-ownership":
@@ -614,6 +631,105 @@ public class AptikConsole : GLib.Object {
 			log_msg(Message.RESTORE_ERROR);
 		}
 		
+		return ok;
+	}
+
+	// users and groups ----------------------------
+
+	/*public Gee.ArrayList<T> get_sorted_list(){
+		var list = new Gee.ArrayList<SystemUser>();
+		foreach(var item in list.values){
+			list.add(item);
+		}
+		CompareDataFunc<SystemUser> entry_compare = (a, b) => {
+			return strcmp(a.dir_type + "/" + a.name, b.dir_type + "/" + b.name);
+		};
+	}*/
+	
+	public bool list_users_and_groups(){
+		bool ok = true;
+
+		SystemUser.query_users();
+		SystemGroup.query_groups();
+
+		// sort users -----------------
+		
+		var list = new Gee.ArrayList<SystemUser>();
+		foreach(var item in SystemUser.all_users.values){
+			list.add(item);
+		}
+		CompareDataFunc<SystemUser> func_group = (a, b) => {
+			return strcmp(a.name, b.name);
+		};
+		list.sort((owned) func_group);
+
+		// print users -----------------
+		
+		log_msg("%5s %-15s".printf("UID", "User"));
+		log_msg(string.nfill(70,'-'));
+		foreach(var user in list){
+			if (!user.is_system){
+				log_msg("%5d %-15s".printf(user.uid, user.name));
+			}
+		}
+		log_msg("");
+
+		// sort groups -----------------
+		
+		var list_group = new Gee.ArrayList<SystemGroup>();
+		foreach(var item in SystemGroup.all_groups.values){
+			list_group.add(item);
+		}
+		CompareDataFunc<SystemGroup> func = (a, b) => {
+			return strcmp(a.name, b.name);
+		};
+		list_group.sort((owned) func);
+
+		// print groups -----------------
+		
+		log_msg("%5s %-15s %s".printf("GID","Group","Users"));
+		log_msg(string.nfill(70,'-'));
+		foreach(var group in list_group){
+			if (!group.is_system){
+				log_msg("%5d %-15s %s".printf(group.gid, group.name, group.user_names));
+			}
+		}
+		log_msg("");
+		
+		return ok;
+	}
+
+	public bool backup_users_and_groups(){
+		bool ok = App.backup_users_and_groups("");
+		
+		if (ok){
+			log_msg(Message.BACKUP_OK);
+		}
+		else{
+			log_msg(Message.BACKUP_ERROR);
+		}
+
+		return ok;
+	}
+
+	public bool restore_users_and_groups(){
+		bool ok = true;
+
+		ok = App.restore_users_and_groups_init("");
+		
+		if (!ok){
+			return ok;
+		}
+
+		ok = App.restore_users_and_groups();
+		
+		if (ok){
+			log_msg(Message.RESTORE_OK);
+		}
+		else{
+			log_msg(Message.RESTORE_ERROR);
+		}
+
 		return ok;
 	}
 }

@@ -63,6 +63,9 @@ public class MainWindow : Window {
 
 	private Button btn_restore_mount;
 	private Button btn_backup_mount;
+
+	private Button btn_restore_user;
+	private Button btn_backup_user;
 	
 	private Button btn_software_manager;
 
@@ -212,46 +215,6 @@ public class MainWindow : Window {
 		init_section_backup_themes(++row);
 		
 		init_section_backup_mounts(++row);
-	}
-
-	private void init_section_backup_users(int row) {
-		var img = get_shared_icon("config-users", "system-users.svg", icon_size_list);
-		grid_backup_buttons.attach(img, 0, row, 1, 1);
-
-		//lbl_backup_mount
-		Label lbl_backup_mount = new Label (" " + _("Users & Groups"));
-		lbl_backup_mount.set_tooltip_text(_("Users and groups"));
-		lbl_backup_mount.set_use_markup(true);
-		lbl_backup_mount.halign = Align.START;
-		lbl_backup_mount.hexpand = true;
-		grid_backup_buttons.attach(lbl_backup_mount, 1, row, 1, 1);
-
-		//btn_backup_mount
-		btn_backup_mount = new Gtk.Button.with_label (" " + _("Backup") + " ");
-		btn_backup_mount.set_size_request(button_width, button_height);
-		btn_backup_mount.set_tooltip_text(_("Backup users and groups"));
-		grid_backup_buttons.attach(btn_backup_mount, 2, row, 1, 1);
-
-		btn_backup_mount.clicked.connect(()=>{
-			if (!check_backup_folder()) {
-				return;
-			}
-
-			
-		});
-
-		//btn_restore_mount
-		btn_restore_mount = new Gtk.Button.with_label (" " + _("Restore") + " ");
-		btn_restore_mount.set_size_request(button_width, button_height);
-		btn_restore_mount.set_tooltip_text(_("Restore sers and groups"));
-		grid_backup_buttons.attach(btn_restore_mount, 3, row, 1, 1);
-
-		btn_restore_mount.clicked.connect(()=>{
-			if (!check_backup_folder()) {
-				return;
-			}
-			
-		});
 	}
 
 	private void init_section_backup_ppa(int row) {
@@ -508,7 +471,7 @@ public class MainWindow : Window {
 
 			string password = "";
 			if (keyfile_used){
-				password = prompt_for_password(true, _("Create Password"),_("Create a password for encrypting the key file backups"));
+				password = PasswordWindow.prompt_user(this, true, _("Create Password"),Message.ENTER_PASSWORD_BACKUP);
 				if (password == ""){
 					return;
 				}
@@ -517,10 +480,10 @@ public class MainWindow : Window {
 			bool ok = App.backup_mounts(password);
 			
 			if (ok){
-				gtk_messagebox(_("Finished"), _("Backup taken successfully"), this, false);
+				gtk_messagebox(_("Finished"), Message.BACKUP_OK, this, false);
 			}
 			else{
-				gtk_messagebox(_("Error"), _("Failed to save backup"), this, false);
+				gtk_messagebox(_("Error"), Message.BACKUP_ERROR, this, false);
 			}
 		});
 
@@ -540,10 +503,82 @@ public class MainWindow : Window {
 
 			this.hide();
 			var dlg = new MountWindow.with_parent(this,true);
-			dlg.show_all();
+			//dlg.show_all();
 		});
 	}
 
+	private void init_section_backup_users(int row) {
+		var img = get_shared_icon("config-users", "system-users.svg", icon_size_list);
+		grid_backup_buttons.attach(img, 0, row, 1, 1);
+
+		//label
+		var label = new Label (" " + _("Users &amp; Groups"));
+		label.set_tooltip_text(_("Users and groups"));
+		label.set_use_markup(true);
+		label.halign = Align.START;
+		label.hexpand = true;
+		grid_backup_buttons.attach(label, 1, row, 1, 1);
+
+		//btn_backup_user
+		var button = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		button.set_size_request(button_width, button_height);
+		button.set_tooltip_text(_("Backup users and groups"));
+		grid_backup_buttons.attach(button, 2, row, 1, 1);
+		btn_backup_user = button;
+		
+		button.clicked.connect(()=>{
+			if (!check_backup_folder()) {
+				return;
+			}
+
+			string password = PasswordWindow.prompt_user(this, true, _("Create Password"), Message.ENTER_PASSWORD_BACKUP);
+			if (password.length == 0){
+				return;
+			}
+			
+			bool ok = App.backup_users_and_groups(password);
+
+			if (ok){
+				gtk_messagebox("", Message.BACKUP_OK, this, false);
+			}
+			else{
+				gtk_messagebox("", Message.BACKUP_ERROR, this, true);
+			}
+		});
+
+		//btn_restore_user
+		button = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		button.set_size_request(button_width, button_height);
+		button.set_tooltip_text(_("Restore users and groups"));
+		grid_backup_buttons.attach(button, 3, row, 1, 1);
+		btn_restore_user = button;
+		
+		button.clicked.connect(()=>{
+			if (!check_backup_folder()) {
+				return;
+			}
+			if (!check_backup_file("users/passwd.tar.gpg") || !check_backup_file("users/shadow.tar.gpg") || !check_backup_file("users/group.tar.gpg")){
+				return;
+			}
+
+			string password = PasswordWindow.prompt_user(this, false, _("Enter Password"), Message.ENTER_PASSWORD_RESTORE);
+			if (password.length == 0){
+				return;
+			}
+
+			clear_err_log();
+			bool ok = App.restore_users_and_groups_init(password);
+			show_err_log(this);
+			
+			if (!ok){
+				return;
+			}
+
+			this.hide();
+			var dlg = new UserAccountWindow.with_parent(this,true);
+			//dlg.show_all();
+		});
+	}
 
 	private void init_section_tools() {
 		// lbl_header_tools
@@ -778,34 +813,6 @@ public class MainWindow : Window {
 		}
 	}
 
-	private string prompt_for_password(bool confirm_password, string dlg_title, string dlg_msg){
-		var dlg = new PasswordWindow.with_parent(this, confirm_password, dlg_title, dlg_msg);
-
-		int response_id = ResponseType.NONE;
-		
-		do{
-			response_id = dlg.run();
-		}
-		while (response_id == ResponseType.NONE);
-
-		string password = "";
-		
-		switch (response_id) {
-		case Gtk.ResponseType.OK:
-			if (dlg.password.length > 0){
-				password = dlg.password;
-			}
-			break;
-		case Gtk.ResponseType.CANCEL:
-			//do nothing
-			break;
-		}
-		
-		dlg.destroy();
-
-		return password;
-	}
-	
 	/* APT Cache */
 
 	private void btn_backup_cache_clicked() {
