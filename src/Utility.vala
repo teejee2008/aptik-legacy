@@ -524,9 +524,7 @@ namespace TeeJee.FileSystem{
 		return false;
 	}
 
-	public bool file_decrypt_and_untar (string src_file, string dst_file, string password, out string err_msg){
-		
-		err_msg = "";
+	public bool file_decrypt_and_untar (string src_file, string dst_file, string password){
 		
 		if (file_exists(src_file)) {
 			if (file_exists(dst_file)){
@@ -552,21 +550,13 @@ namespace TeeJee.FileSystem{
 			if (status == 0){
 				return true;
 			}
-			else if (status == 512){
-				err_msg = _("Wrong password");
-				log_error(err_msg);
-				return false;
-			}
 			else{
-				log_error("gpg status=%d".printf(status));
-				err_msg = stderr;
 				log_error(stderr);
 				return false;
 			}
 		}
 		else{
-			err_msg = _("File is missing") + ": %s".printf(src_file);
-			log_error(err_msg);
+			log_error(_("File is missing") + ": %s".printf(src_file));
 		}
 
 		return false;
@@ -1789,16 +1779,9 @@ namespace TeeJee.System{
 		string std_err;
 		string std_out;
 
-		//try {
-			//string cmd = "ping -c 1 google.com";
-			//Process.spawn_command_line_sync(cmd, out std_out, out std_err, out exit_code);
-			string cmd = "ping -q -w 1 -c 1 `ip r | grep default | cut -d ' ' -f 3`\n";
-			cmd += "exit $?";
-			exit_code = execute_command_script_sync(cmd, out std_out, out std_err, false);
-		//}
-		//catch (Error e){
-	    //    log_error (e.message);
-	    //}
+		string cmd = "ping -q -w 1 -c 1 `ip r | grep default | cut -d ' ' -f 3`\n";
+		cmd += "exit $?";
+		exit_code = execute_command_script_sync(cmd, out std_out, out std_err, false);
 
 	    return (exit_code == 0);
 	}

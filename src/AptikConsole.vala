@@ -39,7 +39,7 @@ using TeeJee.Misc;
 public Main App;
 public const string AppName = "Aptik Migration Utility";
 public const string AppShortName = "aptik";
-public const string AppVersion = "16.3.3";
+public const string AppVersion = "16.4";
 public const string AppAuthor = "Tony George";
 public const string AppAuthorEmail = "teejeetech@gmail.com";
 
@@ -621,8 +621,7 @@ public class AptikConsole : GLib.Object {
 		var fstab_list = App.create_fstab_list_for_restore();
 		var crypttab_list = App.create_crypttab_list_for_restore();
 
-		string err_msg = "";
-		bool ok = App.restore_mounts(fstab_list, crypttab_list, "", out err_msg);
+		bool ok = App.restore_mounts(fstab_list, crypttab_list, "");
 
 		if (ok){
 			log_msg(Message.RESTORE_OK);

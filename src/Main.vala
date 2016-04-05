@@ -2228,9 +2228,8 @@ public class Main : GLib.Object {
 		return true;
 	}
 	
-	public bool restore_mounts(Gee.ArrayList<FsTabEntry> fstab_list, Gee.ArrayList<FsTabEntry> crypttab_list, string password, out string err_msg){
+	public bool restore_mounts(Gee.ArrayList<FsTabEntry> fstab_list, Gee.ArrayList<FsTabEntry> crypttab_list, string password){
 		bool ok = false;
-		err_msg = "";
 
 		string user_password = password;
 		
@@ -2294,8 +2293,8 @@ public class Main : GLib.Object {
 				}
 
 				string dst_file = fs.password;
-				
-				ok = file_decrypt_and_untar(src_file, dst_file, user_password, out err_msg);
+
+				ok = file_decrypt_and_untar(src_file, dst_file, user_password);
 				
 				if (!ok){
 					log_msg(Message.FILE_SAVE_ERROR + ": %s".printf(dst_file));
@@ -2565,8 +2564,7 @@ public class Main : GLib.Object {
 		foreach(string file_name in new string[]{ "passwd","shadow","group","gshadow" }){
 			string gpg_file = "%s/%s.tar.gpg".printf(users_dir,file_name);
 			string temp_file = "%s/%s".printf(TEMP_DIR,file_name);
-			string err_msg = "";
-			bool ok = file_decrypt_and_untar(gpg_file, temp_file, user_password, out err_msg);
+			bool ok = file_decrypt_and_untar(gpg_file, temp_file, user_password);
 			if (!ok || !file_exists(temp_file)){
 				log_msg(Message.FILE_DECRYPT_ERROR + ": %s".printf(gpg_file));
 				return false;

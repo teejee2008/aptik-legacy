@@ -110,7 +110,7 @@ public class UserAccountWindow : Window {
 		//fstab_list = new Gee.ArrayList<FsTabEntry>();
 		
 		if (is_restore_view){
-			title = _("Restore Mount Points");
+			title = _("Restore Users and Groups");
 			
 			btn_restore.show();
 			btn_restore.visible = true;
