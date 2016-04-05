@@ -931,10 +931,10 @@ namespace TeeJee.ProcessManagement{
 		}
 		catch (Error e){
 			if (!supress_errors){
-        log_error (e.message);
+				log_error (e.message);
 			}
-      return -1;
-	  }
+			return -1;
+		}
 	}
 
 	public int execute_command_script_sync2 (string script){
@@ -1789,13 +1789,16 @@ namespace TeeJee.System{
 		string std_err;
 		string std_out;
 
-		try {
-			string cmd = "ping -c 1 google.com";
-			Process.spawn_command_line_sync(cmd, out std_out, out std_err, out exit_code);
-		}
-		catch (Error e){
-	        log_error (e.message);
-	    }
+		//try {
+			//string cmd = "ping -c 1 google.com";
+			//Process.spawn_command_line_sync(cmd, out std_out, out std_err, out exit_code);
+			string cmd = "ping -q -w 1 -c 1 `ip r | grep default | cut -d ' ' -f 3`\n";
+			cmd += "exit $?";
+			exit_code = execute_command_script_sync(cmd, out std_out, out std_err, false);
+		//}
+		//catch (Error e){
+	    //    log_error (e.message);
+	    //}
 
 	    return (exit_code == 0);
 	}
