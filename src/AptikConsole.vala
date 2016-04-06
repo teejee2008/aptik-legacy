@@ -129,8 +129,6 @@ public class AptikConsole : GLib.Object {
 			return false;
 		}
 
-		App.select_user("");
-		
 		//parse options
 		for (int k = 1; k < args.length; k++) // Oth arg is app path
 		{
@@ -165,6 +163,10 @@ public class AptikConsole : GLib.Object {
 				log_msg(help_message());
 				return true;
 			}
+		}
+
+		if (App.user_login.length == 0){
+			App.select_user("");
 		}
 
 		//parse commands
@@ -292,11 +294,28 @@ public class AptikConsole : GLib.Object {
 
 			case "--backup-appsettings":
 			case "--backup-configs":
-				var list = App.list_app_config_directories_from_home();
-				foreach(AppConfig conf in list){
-					conf.is_selected = true;
+			case "--backup-config":
+				if (App.user_login.length == 0){
+					foreach(string username in list_dir_names("/home")){
+						App.select_user(username);
+
+						var list = App.list_app_config_directories_from_home();
+						foreach(AppConfig conf in list){
+							conf.is_selected = true;
+						}
+						App.backup_app_settings_all(list);
+
+						log_msg("");
+					}
 				}
-				App.backup_app_settings_all(list);
+				else{
+					var list = App.list_app_config_directories_from_home();
+					foreach(AppConfig conf in list){
+						conf.is_selected = true;
+					}
+					App.backup_app_settings_all(list);
+				}
+				
 				break;
 
 			case "--restore-appsettings":

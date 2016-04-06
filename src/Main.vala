@@ -154,7 +154,9 @@ public class Main : GLib.Object {
 		}
 
 		//get user info
-		select_user(get_user_login());
+		if (gui_mode){
+			select_user(get_user_login());
+		}
 		
 		NATIVE_ARCH = execute_command_sync_get_output("dpkg --print-architecture").strip();
 
@@ -184,7 +186,10 @@ public class Main : GLib.Object {
 			user_uid = get_user_id(username);
 		}
 
-		log_debug(_("Selected user: %s").printf(user_login));
+		log_msg(string.nfill(70,'-'));
+		log_msg(_("Selected user: %s, %s").printf(user_login,user_home));
+		log_msg(string.nfill(70,'-'));
+		log_msg("");
 	}
 	
 	public bool check_dependencies(out string msg) {
