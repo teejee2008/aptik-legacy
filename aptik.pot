@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2016-04-06 15:03+0530\n"
+"POT-Creation-Date: 2016-04-06 15:08+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -124,7 +124,7 @@ msgstr ""
 msgid "Adding '%s'..."
 msgstr ""
 
-#: AptikConsole.vala:583
+#: AptikConsole.vala:598
 msgid "Adding PPA"
 msgstr ""
 
@@ -694,7 +694,7 @@ msgstr ""
 msgid "Following packages are NOT available"
 msgstr ""
 
-#: AptikConsole.vala:546
+#: AptikConsole.vala:561
 msgid "Following packages are not available"
 msgstr ""
 
@@ -712,7 +712,7 @@ msgid ""
 "the package repositories"
 msgstr ""
 
-#: AptikConsole.vala:554 AptikConsole.vala:565
+#: AptikConsole.vala:569 AptikConsole.vala:580
 msgid "Following packages will be installed"
 msgstr ""
 
@@ -1295,7 +1295,7 @@ msgstr ""
 msgid "Selected directories will be replaced with files from backup."
 msgstr ""
 
-#: AptikConsole.vala:550
+#: AptikConsole.vala:565
 msgid "Selected packages are already installed"
 msgstr ""
 
@@ -1494,7 +1494,7 @@ msgstr ""
 msgid "Unity Shell"
 msgstr ""
 
-#: AptikConsole.vala:413 AptikGtk.vala:103
+#: AptikConsole.vala:428 AptikGtk.vala:103
 msgid "Unknown option"
 msgstr ""
 
@@ -1502,7 +1502,7 @@ msgstr ""
 msgid "Update"
 msgstr ""
 
-#: AptikConsole.vala:594
+#: AptikConsole.vala:609
 msgid "Updating Package Information..."
 msgstr ""
 

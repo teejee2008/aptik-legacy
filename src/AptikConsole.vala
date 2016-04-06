@@ -320,11 +320,26 @@ public class AptikConsole : GLib.Object {
 
 			case "--restore-appsettings":
 			case "--restore-configs":
-				var list = App.list_app_config_directories_from_backup();
-				foreach(AppConfig conf in list){
-					conf.is_selected = true;
+				if (App.user_login.length == 0){
+					foreach(string username in list_dir_names("/home")){
+						App.select_user(username);
+						
+						var list = App.list_app_config_directories_from_backup();
+						foreach(AppConfig conf in list){
+							conf.is_selected = true;
+						}
+						App.restore_app_settings_all(list);
+
+						log_msg("");
+					}
 				}
-				App.restore_app_settings_all(list);
+				else{
+					var list = App.list_app_config_directories_from_backup();
+					foreach(AppConfig conf in list){
+						conf.is_selected = true;
+					}
+					App.restore_app_settings_all(list);
+				}
 				break;
 				
 			// theme ---------------------------------------------
