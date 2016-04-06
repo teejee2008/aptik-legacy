@@ -103,6 +103,8 @@ public class Main : GLib.Object {
 
 		gui_mode = _gui_mode;
 
+		LOG_TIMESTAMP = false;
+		
 		pkginfo_modified_date = new DateTime.from_unix_utc(0); //1970
 
 		//initialize
@@ -2187,7 +2189,7 @@ public class Main : GLib.Object {
 				string src_file = fs.password;
 				string dst_file = "%s/%s".printf(mounts_dir, fs.keyfile_archive_name);
 				
-				ok = file_tar_and_encrypt(src_file, dst_file, user_password);
+				ok = file_tar_encrypt(src_file, dst_file, user_password);
 
 				if (!ok){
 					log_error(Message.BACKUP_ERROR + ": %s".printf(src_file));
@@ -2294,7 +2296,7 @@ public class Main : GLib.Object {
 
 				string dst_file = fs.password;
 
-				ok = file_decrypt_and_untar(src_file, dst_file, user_password);
+				ok = decrypt_and_untar(src_file, dst_file, user_password);
 				
 				if (!ok){
 					log_msg(Message.FILE_SAVE_ERROR + ": %s".printf(dst_file));
@@ -2520,7 +2522,7 @@ public class Main : GLib.Object {
 			
 			if (file_exists(src_file)){
 			
-				ok = file_tar_and_encrypt(src_file, dst_file, user_password);
+				ok = file_tar_encrypt(src_file, dst_file, user_password);
 
 				if (!ok){
 					log_error(Message.BACKUP_ERROR + ": %s".printf(src_file));
@@ -2556,49 +2558,34 @@ public class Main : GLib.Object {
 		SystemUser.query_users();
 		SystemGroup.query_groups();
 
-		// decrypt all GPG files from backup ---------------------
-
-		user_list_bak = new Gee.HashMap<string,SystemUser>();
-		group_list_bak = new Gee.HashMap<string,SystemGroup>();
-		
-		foreach(string file_name in new string[]{ "passwd","shadow","group","gshadow" }){
-			string gpg_file = "%s/%s.tar.gpg".printf(users_dir,file_name);
-			string temp_file = "%s/%s".printf(TEMP_DIR,file_name);
-			bool ok = file_decrypt_and_untar(gpg_file, temp_file, user_password);
-			if (!ok || !file_exists(temp_file)){
-				log_msg(Message.FILE_DECRYPT_ERROR + ": %s".printf(gpg_file));
-				return false;
-			}
-		}
-		
 		// read passwd and shadow files ---------------------
 		
-		var file_1 = "%s/%s".printf(TEMP_DIR,"passwd");
-		var file_2 = "%s/%s".printf(TEMP_DIR,"shadow");
+		var file_1 = "%s/%s.tar.gpg".printf(users_dir,"passwd");
+		var file_2 = "%s/%s.tar.gpg".printf(users_dir,"shadow");
 
-		user_list_bak = SystemUser.read_users_from_file(file_1, file_2);
+		user_list_bak = SystemUser.read_users_from_file(file_1, file_2, user_password);
 
-		file_delete(file_1);
-		file_delete(file_2);
-		
-		foreach(string file_name in new string[]{ "passwd","shadow" }){
-			string gpg_file = "%s/%s.tar.gpg".printf(users_dir,file_name);
-			log_debug(Message.FILE_READ_OK + ": %s".printf(gpg_file));
+		if (user_list_bak.size > 0){
+			log_debug(Message.FILE_READ_OK + ": %s".printf(file_1));
+			log_debug(Message.FILE_READ_OK + ": %s".printf(file_2));
 		}
-
+		else{
+			return false;
+		}
+		
 		// read group and gshadow files ---------------------
 		
-		file_1 = "%s/%s".printf(TEMP_DIR,"group");
-		file_2 = "%s/%s".printf(TEMP_DIR,"gshadow");
+		file_1 = "%s/%s.tar.gpg".printf(users_dir,"group");
+		file_2 = "%s/%s.tar.gpg".printf(users_dir,"gshadow");
 
-		group_list_bak = SystemGroup.read_groups_from_file(file_1, file_2);
-		
-		file_delete(file_1);
-		file_delete(file_2);
-		
-		foreach(string file_name in new string[]{ "group","gshadow" }){
-			string gpg_file = "%s/%s.tar.gpg".printf(users_dir,file_name);
-			log_debug(Message.FILE_READ_OK + ": %s".printf(gpg_file));
+		group_list_bak = SystemGroup.read_groups_from_file(file_1, file_2, user_password);
+
+		if (group_list_bak.size > 0){
+			log_debug(Message.FILE_READ_OK + ": %s".printf(file_1));
+			log_debug(Message.FILE_READ_OK + ": %s".printf(file_2));
+		}
+		else{
+			return false;
 		}
 
 		// select defaults ----------------------------------

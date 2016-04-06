@@ -119,7 +119,7 @@ namespace TeeJee.Logging{
 			}
 
 			if (err_log != null){
-				err_log += str;
+				err_log += "%s\n".printf(message);
 			}
 		}
 		catch (Error e) {
@@ -377,7 +377,6 @@ namespace TeeJee.FileSystem{
 		return false;
 	}
 
-
 	//TODO: Deprecated, Remove this
 	public bool create_dir (string filePath){
 
@@ -490,8 +489,8 @@ namespace TeeJee.FileSystem{
 	}
 
 	// archiving and encryption ----------------
-	
-	public bool file_tar_and_encrypt (string src_file, string dst_file, string password){
+
+	public bool file_tar_encrypt (string src_file, string dst_file, string password){
 		if (file_exists(src_file)) {
 			if (file_exists(dst_file)){
 				file_delete(dst_file);
@@ -524,8 +523,40 @@ namespace TeeJee.FileSystem{
 		return false;
 	}
 
-	public bool file_decrypt_and_untar (string src_file, string dst_file, string password){
+	public string file_decrypt_untar_read (string src_file, string password){
 		
+		if (file_exists(src_file)) {
+			
+			//var src_name = file_basename(src_file);
+			//var tar_name = src_name[0 : src_name.index_of(".gpg")];
+			//var tar_file = "%s/%s".printf(TEMP_DIR, tar_name);
+			//var temp_file = "%s/%s".printf(TEMP_DIR, random_string());
+
+			string cmd = "";
+			cmd += "gpg --quiet --no-verbose --passphrase '%s' -o- --decrypt '%s'".printf(password, src_file);
+			cmd += " | tar xf - --to-stdout 2>/dev/null\n";
+			cmd += "exit $?\n";
+			
+			log_debug(cmd);
+			
+			string std_out, std_err;
+			int status = execute_command_script_sync(cmd, out std_out, out std_err);
+			if (status == 0){
+				return std_out;
+			}
+			else{
+				log_error(std_err);
+				return "";
+			}
+		}
+		else{
+			log_error(_("File is missing") + ": %s".printf(src_file));
+		}
+
+		return "";
+	}
+
+	public bool decrypt_and_untar (string src_file, string dst_file, string password){
 		if (file_exists(src_file)) {
 			if (file_exists(dst_file)){
 				file_delete(dst_file);
@@ -537,7 +568,7 @@ namespace TeeJee.FileSystem{
 			var tar_file = "%s/%s".printf(src_dir, tar_name);
 
 			string cmd = "";
-			cmd += "rm -f '%s'\n".printf(tar_file); //gpg does not have an --overwrite switch, so remove the output tar file if it exists
+			cmd += "rm -f '%s'\n".printf(tar_file); // gpg cannot overwrite - remove tar file if it exists
 			cmd += "gpg --passphrase '%s' -o '%s' --decrypt '%s'\n".printf(password, tar_file, src_file);
 			cmd += "status=$?; if [ $status -ne 0 ]; then exit $status; fi\n";
 			cmd += "tar xvf '%s' --overwrite --same-permissions -C '%s'\n".printf(tar_file, file_parent(dst_file));
@@ -561,6 +592,45 @@ namespace TeeJee.FileSystem{
 
 		return false;
 	}
+
+	/*public string file_decrypt_untar_readv2 (string src_file, string password){
+		
+		if (file_exists(src_file)) {
+			
+			var src_name = file_basename(src_file);
+			var tar_name = src_name[0 : src_name.index_of(".gpg")];
+			var tar_file = "%s/%s".printf(TEMP_DIR, tar_name);
+			var temp_file = "%s/%s".printf(TEMP_DIR, random_string());
+
+			string cmd = "";
+			cmd += "rm -f '%s'\n".printf(tar_file); // gpg cannot overwrite, so remove tar file if it exists
+			cmd += "gpg --quiet --no-verbose --passphrase '%s' -o '%s' --decrypt '%s'\n".printf(password, tar_file, src_file);
+			cmd += "status=$?; if [ $status -ne 0 ]; then exit $status; fi\n";
+			cmd += "tar xvf '%s' --to-stdout 1> '%s'\n".printf(tar_file, temp_file);
+			cmd += "rm -f '%s'\n".printf(tar_file);
+			cmd += "exit $?\n";
+			
+			log_debug(cmd);
+			
+			string stdout, stderr;
+			int status = execute_command_script_sync(cmd, out stdout, out stderr);
+			if (status == 0){
+				if (file_exists(temp_file)){
+					var txt = read_file(temp_file);
+					file_delete(temp_file);
+					return txt;
+				}
+			}
+			else{
+				log_error(stderr);
+			}
+		}
+		else{
+			log_error(_("File is missing") + ": %s".printf(src_file));
+		}
+
+		return "";
+	}*/
 
 	// hashing -----------
 	
@@ -749,12 +819,12 @@ namespace TeeJee.ProcessManagement{
     public static void init_tmp(){
 		string std_out, std_err;
 
-		TEMP_DIR = Environment.get_tmp_dir() + "/" + AppShortName;
+		TEMP_DIR = Environment.get_tmp_dir() + "/" + AppShortName + "/" + random_string();
 		create_dir(TEMP_DIR);
 
 		execute_command_script_sync("echo 'ok'",out std_out,out std_err, true);
 		if ((std_out == null)||(std_out.strip() != "ok")){
-			TEMP_DIR = Environment.get_home_dir() + "/.temp/" + AppShortName;
+			TEMP_DIR = Environment.get_home_dir() + "/.temp/" + AppShortName + "/" + random_string();
 			execute_command_sync("rm -rf '%s'".printf(TEMP_DIR));
 			create_dir(TEMP_DIR);
 		}
@@ -2113,7 +2183,7 @@ namespace TeeJee.System{
 		}
 
 		public static void query_users(){
-			all_users = read_users_from_file("/etc/passwd","/etc/shadow");
+			all_users = read_users_from_file("/etc/passwd","/etc/shadow","");
 		}
 
 		public static void query_passwords(){
@@ -2126,27 +2196,57 @@ namespace TeeJee.System{
 			}
 		}
 
-		public static Gee.HashMap<string,SystemUser> read_users_from_file(string passwd_file, string shadow_file){
+		public static Gee.HashMap<string,SystemUser> read_users_from_file(
+			string passwd_file, string shadow_file, string password){
+			
 			var list = new Gee.HashMap<string,SystemUser>();
 
-			string txt = file_read(passwd_file);
+			// read 'passwd' file ---------------------------------
+			
+			string txt = "";
+
+			if (passwd_file.has_suffix(".tar.gpg")){
+				txt = file_decrypt_untar_read(passwd_file, password);
+			}
+			else{
+				txt = file_read(passwd_file);
+			}
+
+			if (txt.length == 0){
+				return list;
+			}
 
 			foreach(string line in txt.split("\n")){
 				if ((line == null) || (line.length == 0)){
 					continue;
 				}
 				var user = parse_line_passwd(line);
-				list[user.name] = user;
+				if (user != null){
+					list[user.name] = user;
+				}
 			}
 
-			txt = file_read(shadow_file);
+
+			// read 'shadow' file ---------------------------------
+			
+			txt = "";
+			
+			if (shadow_file.has_suffix(".tar.gpg")){
+				txt = file_decrypt_untar_read(shadow_file, password);
+			}
+			else{
+				txt = file_read(shadow_file);
+			}
+
+			if (txt.length == 0){
+				return list;
+			}
 
 			foreach(string line in txt.split("\n")){
 				if ((line == null) || (line.length == 0)){
 					continue;
 				}
-				var user = parse_line_shadow(line, list);
-				list[user.name] = user;
+				parse_line_shadow(line, list);
 			}
 
 			return list;
@@ -2170,6 +2270,10 @@ namespace TeeJee.System{
 				user.full_name = fields[4].strip();
 				user.home_path = fields[5].strip();
 				user.shell_path = fields[6].strip();
+			}
+			else{
+				log_error("'passwd' file contains a record with non-standard fields" + ": %d".printf(fields.length));
+				return null;
 			}
 			
 			return user;
@@ -2356,7 +2460,7 @@ namespace TeeJee.System{
 		}
 
 		public static void query_groups(){
-			all_groups = read_groups_from_file("/etc/group","/etc/gshadow");
+			all_groups = read_groups_from_file("/etc/group","/etc/gshadow", "");
 		}
 
 		public bool is_installed{
@@ -2365,20 +2469,50 @@ namespace TeeJee.System{
 			}
 		}
 
-		public static Gee.HashMap<string,SystemGroup> read_groups_from_file(string group_file, string gshadow_file){
+		public static Gee.HashMap<string,SystemGroup> read_groups_from_file(string group_file, string gshadow_file, string password){
 			var list = new Gee.HashMap<string,SystemGroup>();
 
-			string txt = file_read(group_file);
+			// read 'group' file -------------------------------
+			
+			string txt = "";
+			
+			if (group_file.has_suffix(".tar.gpg")){
+				txt = file_decrypt_untar_read(group_file, password);
+			}
+			else{
+				txt = file_read(group_file);
+			}
+			
+			if (txt.length == 0){
+				return list;
+			}
+			
 			foreach(string line in txt.split("\n")){
 				if ((line == null) || (line.length == 0)){
 					continue;
 				}
 				
 				var group = parse_line_group(line);
-				list[group.name] = group;
+				if (group != null){
+					list[group.name] = group;
+				}
 			}
 
-			txt = file_read(gshadow_file);
+			// read 'gshadow' file -------------------------------
+
+			txt = "";
+			
+			if (gshadow_file.has_suffix(".tar.gpg")){
+				txt = file_decrypt_untar_read(gshadow_file, password);
+			}
+			else{
+				txt = file_read(gshadow_file);
+			}
+			
+			if (txt.length == 0){
+				return list;
+			}
+			
 			foreach(string line in txt.split("\n")){
 				if ((line == null) || (line.length == 0)){
 					continue;
@@ -2408,6 +2542,10 @@ namespace TeeJee.System{
 				foreach(string user_name in group.user_names.split(",")){
 					group.users.add(user_name);
 				}
+			}
+			else{
+				log_error("'group' file contains a record with non-standard fields" + ": %d".printf(fields.length));
+				return null;
 			}
 			
 			return group;

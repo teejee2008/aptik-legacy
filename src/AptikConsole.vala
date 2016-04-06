@@ -635,13 +635,13 @@ public class AptikConsole : GLib.Object {
 
 	// users and groups ----------------------------
 
-	/*public Gee.ArrayList<T> get_sorted_list(){
-		var list = new Gee.ArrayList<SystemUser>();
-		foreach(var item in list.values){
+	/*public Gee.ArrayList<T> get_sorted_list(Gee.HashMap<string,T> items){
+		var list = new Gee.ArrayList<T>();
+		foreach(var item in items.values){
 			list.add(item);
 		}
-		CompareDataFunc<SystemUser> entry_compare = (a, b) => {
-			return strcmp(a.dir_type + "/" + a.name, b.dir_type + "/" + b.name);
+		CompareDataFunc<T> func = (a, b) => {
+			return strcmp(a.name, b.name);
 		};
 	}*/
 	
