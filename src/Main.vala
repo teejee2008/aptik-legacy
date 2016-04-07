@@ -1819,43 +1819,57 @@ public class Main : GLib.Object {
 					break;
 				}
 			}
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}
 
+		try{
 			//list all items in .config
 			File f_home_config = File.new_for_path (base_path + "/.config");
-			enumerator = f_home_config.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
-			while ((file = enumerator.next_file ()) != null) {
-				string name = file.get_name();
-				string item = base_path + "/.config/" + name;
-				if (name.has_suffix(".lock")) {
-					continue;
+			if (f_home_config.query_exists()){
+				enumerator = f_home_config.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
+				while ((file = enumerator.next_file ()) != null) {
+					string name = file.get_name();
+					string item = base_path + "/.config/" + name;
+					if (name.has_suffix(".lock")) {
+						continue;
+					}
+
+					AppConfig entry = new AppConfig("~/.config/%s".printf(name));
+					entry.bytes = dir_size(item);
+					entry.size = format_file_size(entry.bytes);
+					entry.description = get_config_dir_description(entry.name);
+					app_config_list.add(entry);
 				}
-
-				AppConfig entry = new AppConfig("~/.config/%s".printf(name));
-				entry.bytes = dir_size(item);
-				entry.size = format_file_size(entry.bytes);
-				entry.description = get_config_dir_description(entry.name);
-				app_config_list.add(entry);
 			}
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}
 
+		try{
 			//list all items in .local/share
 			var f_home_local = File.new_for_path (base_path + "/.local/share");
-			enumerator = f_home_local.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
-			while ((file = enumerator.next_file ()) != null) {
-				string name = file.get_name();
-				string item = base_path + "/.local/share/" + name;
-				if (name.has_suffix(".lock")) {
-					continue;
-				}
-				switch (name.down()){
-				case "trash":
-					continue;
-				}
+			if (f_home_local.query_exists()){
+				enumerator = f_home_local.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
+				while ((file = enumerator.next_file ()) != null) {
+					string name = file.get_name();
+					string item = base_path + "/.local/share/" + name;
+					if (name.has_suffix(".lock")) {
+						continue;
+					}
+					switch (name.down()){
+					case "trash":
+						continue;
+					}
 
-				AppConfig entry = new AppConfig("~/.local/share/%s".printf(name));
-				entry.bytes = dir_size(item);
-				entry.size = format_file_size(entry.bytes);
-				entry.description = get_config_dir_description(entry.name);
-				app_config_list.add(entry);
+					AppConfig entry = new AppConfig("~/.local/share/%s".printf(name));
+					entry.bytes = dir_size(item);
+					entry.size = format_file_size(entry.bytes);
+					entry.description = get_config_dir_description(entry.name);
+					app_config_list.add(entry);
+				}
 			}
 		}
 		catch (Error e) {

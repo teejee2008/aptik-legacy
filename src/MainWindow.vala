@@ -67,12 +67,6 @@ public class MainWindow : Window {
 	private Button btn_restore_user;
 	private Button btn_backup_user;
 
-	private Button btn_backup_all;
-	private Button btn_restore_all;
-	private Button btn_settings;
-	
-	private Button btn_software_manager;
-
 	private ProgressBar progressbar;
 	private Label lbl_status;
 
@@ -222,7 +216,7 @@ public class MainWindow : Window {
 		
 		init_section_backup_mounts(++row);
 
-		init_section_one_click(++row);
+		//init_section_one_click(++row);
 	}
 
 	private void init_section_backup_ppa(int row) {
@@ -588,131 +582,6 @@ public class MainWindow : Window {
 		});
 	}
 
-	private void init_section_one_click(int row) {
-
-		// lbl_header_backup
-		var label = new Label ("<b>" + _("One-Click Backup &amp; Restore") + "</b>");
-		label.set_use_markup(true);
-		label.halign = Align.START;
-		label.margin_top = 12;
-		label.margin_bottom = 6;
-		vbox_main.add(label);
-
-		row++;
-
-		var hbox = new Gtk.Box (Orientation.HORIZONTAL, 6);
-		//hbox.homogeneous = true;
-		hbox.margin_left = 6;
-		vbox_main.add(hbox);
-		
-		//btn_backup_all
-		var button = new Gtk.Button.with_label (" " + _("Backup") + " ");
-		button.set_size_request(button_width, button_height);
-		button.set_tooltip_text(_("Backup all items"));
-		button.image = get_shared_icon("", "backup.svg", 32);
-		button.image_position = PositionType.LEFT;
-		hbox.pack_start(button, false, false, 0);
-		btn_backup_all = button;
-		
-		button.clicked.connect(btn_backup_all_clicked);
-
-		//btn_restore_all
-		button = new Gtk.Button.with_label (" " + _("Restore") + " ");
-		button.set_size_request(button_width, button_height);
-		button.set_tooltip_text(_("Restore all items"));
-		button.image = get_shared_icon("", "restore.svg", 32);
-		button.image_position = PositionType.LEFT;
-		hbox.pack_start(button, false, false, 0);
-		btn_restore_all = button;
-
-		button.clicked.connect(btn_restore_all_clicked);
-
-		//btn_settings
-		button = new Gtk.Button.with_label (" " + _("Settings") + " ");
-		button.set_size_request(button_width, button_height);
-		button.set_tooltip_text(_("Settings"));
-		button.image = get_shared_icon("", "config.svg", 32);
-		button.image_position = PositionType.LEFT;
-		hbox.pack_start(button, false, false, 0);
-		btn_settings = button;
-
-		button.clicked.connect(btn_settings_clicked);
-		
-		label = new Gtk.Label("");
-		hbox.pack_start (label, true, true, 0);
-	}
-
-	private void init_section_tools() {
-		// lbl_header_tools
-		Label lbl_header_tools = new Label ("<b>" + _("Tools &amp; Tweaks") + "</b>");
-		lbl_header_tools.set_use_markup(true);
-		lbl_header_tools.halign = Align.START;
-		lbl_header_tools.margin_top = 6;
-		lbl_header_tools.margin_bottom = 6;
-		vbox_main.pack_start (lbl_header_tools, false, true, 0);
-
-		//grid_backup_tools
-		Grid grid_backup_tools = new Grid();
-		grid_backup_tools.set_column_spacing (6);
-		grid_backup_tools.set_row_spacing (6);
-		grid_backup_tools.margin_left = 6;
-		vbox_main.pack_start (grid_backup_tools, false, true, 0);
-
-		int row = 1;
-
-		//btn_software_manager
-		btn_software_manager = new Gtk.Button.with_label (" " + _("Software Manager") + " ");
-		btn_software_manager.set_size_request(button_width, button_height);
-		btn_software_manager.set_tooltip_text(_("Add &amp; Remove Software Packages"));
-		grid_backup_tools.attach(btn_software_manager, 0, row, 1, 1);
-
-		btn_software_manager.clicked.connect(() => {
-			//var win = new PackageManagerWindow.with_parent(this);
-			//win.title = "Aptik Package Manager" + " v" + AppVersion;
-			//win.show_all();
-			//dialog.destroy();
-		});
-
-		//btn_battery_monitor
-		/*var btn_battery_monitor = new Gtk.Button.with_label (" " + _("Battery Monitor") + " ");
-		btn_battery_monitor.set_size_request(button_width, button_height);
-		btn_battery_monitor.set_tooltip_text(_("View battery statistics"));
-		grid_backup_tools.attach(btn_battery_monitor, 1, row, 1, 1);
-
-		string path = get_cmd_path("aptik-bmon-gtk");
-		btn_battery_monitor.sensitive = (path != null) && (path.length > 0);
-
-		btn_battery_monitor.clicked.connect(() => {
-			Posix.system("aptik-bmon-gtk");
-		});
-		
-				//btn_mount_manager
-			 	var btn_mount_manager = new Gtk.Button.with_label (" " + _("Mount Manager") + " ");
-				btn_mount_manager.set_size_request(button_width,button_height);
-				btn_mount_manager.set_tooltip_text(_("Add &amp; Remove Software Packages"));
-				grid_backup_tools.attach(btn_mount_manager,1,row,1,1);
-
-
-				//btn_ssd_tweaks
-			 	var btn_ssd_tweaks = new Gtk.Button.with_label (" " + _("SSD Tweaks") + " ");
-				btn_ssd_tweaks.set_size_request(button_width,button_height);
-				btn_ssd_tweaks.set_tooltip_text(_("Add &amp; Remove Software Packages"));
-				grid_backup_tools.attach(btn_ssd_tweaks,2,row,1,1);
-
-				//btn_icon_explorer
-			 	var btn_icon_explorer = new Gtk.Button.with_label (" " + _("Icon Explorer") + " ");
-				btn_icon_explorer.set_size_request(button_width,button_height);
-				btn_icon_explorer.set_tooltip_text(_("Add &amp; Remove Software Packages"));
-				grid_backup_tools.attach(btn_icon_explorer,0,++row,1,1);
-
-				//btn_brightness_fix
-				var btn_brightness_fix = new Gtk.Button.with_label (" " + _("Brightness Fix") + " ");
-				btn_brightness_fix.set_size_request(button_width,button_height);
-				btn_brightness_fix.set_tooltip_text(_("Fix for maintaining display brightness level after reboot"));
-				grid_backup_tools.attach(btn_brightness_fix,0,++row,1,1);
-				*/
-	}
-
 	private void init_section_status() {
 		//lbl_status
 		lbl_status = new Label ("");
@@ -741,9 +610,12 @@ public class MainWindow : Window {
 		//toolbar_bottom
 		toolbar_bottom = new Gtk.Toolbar();
 		toolbar_bottom.toolbar_style = ToolbarStyle.BOTH;
-		toolbar_bottom.margin_top = 12;
+		toolbar_bottom.margin_top = 24;
 		vbox_main.add(toolbar_bottom);
 
+		int BUTTON_SIZE = 80;
+		int ICON_SIZE = 32;
+		
 		//remove toolbar background
 		var css_provider = new Gtk.CssProvider();
 		var toolbar_css = ".toolbar2 { background: alpha (@bg_color, 0.0); border-color: transparent; }";
@@ -754,21 +626,51 @@ public class MainWindow : Window {
         }
 		toolbar_bottom.get_style_context().add_provider(css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
 		toolbar_bottom.get_style_context().add_class("toolbar2");
+
+		//btn_donate
+		var button = new Gtk.ToolButton.from_stock ("");
+		button.label = _("Backup All");
+		button.set_tooltip_text (_("Backup All Items"));
+		button.icon_widget = get_shared_icon("", "backup.svg", ICON_SIZE);
+		toolbar_bottom.add(button);
+		button.set_size_request(BUTTON_SIZE,-1);
+		
+		button.clicked.connect(btn_backup_all_clicked);
+		
+		button = new Gtk.ToolButton.from_stock ("");
+		button.label = _("Restore All");
+		button.set_tooltip_text (_("Restore All Items"));
+		button.icon_widget = get_shared_icon("", "restore.svg", ICON_SIZE);
+		toolbar_bottom.add(button);
+		button.set_size_request(BUTTON_SIZE,-1);
+		
+		button.clicked.connect(btn_restore_all_clicked);
+		
+		button = new Gtk.ToolButton.from_stock ("");
+		button.label = _("Settings");
+		button.set_tooltip_text (_("Settings"));
+		button.icon_widget = get_shared_icon("", "config.svg", ICON_SIZE);
+		toolbar_bottom.add(button);
+		button.set_size_request(BUTTON_SIZE,-1);
+		
+		button.clicked.connect(btn_settings_clicked);
 		
 		//separator
 		var separator = new Gtk.SeparatorToolItem();
 		separator.set_draw (false);
 		separator.set_expand (true);
-		toolbar_bottom.add(separator);
+		//toolbar_bottom.add(separator);
 
 		//btn_donate
-		btn_donate = new Gtk.ToolButton.from_stock ("gtk-missing-image");
-		btn_donate.label = _("Donate");
-		btn_donate.set_tooltip_text (_("Donate"));
-		btn_donate.icon_widget = get_shared_icon("donate", "donate.svg", 32);
-		toolbar_bottom.add(btn_donate);
+		button = new Gtk.ToolButton.from_stock ("gtk-missing-image");
+		button.label = _("Donate");
+		button.set_tooltip_text (_("Donate"));
+		button.icon_widget = get_shared_icon("donate", "donate.svg", ICON_SIZE);
+		toolbar_bottom.add(button);
+		button.set_size_request(BUTTON_SIZE,-1);
+		btn_donate = button;
 
-		btn_donate.clicked.connect(() => {
+		button.clicked.connect(() => {
 			var dialog = new DonationWindow();
 			dialog.set_transient_for(this);
 			dialog.show_all();
@@ -777,13 +679,15 @@ public class MainWindow : Window {
 		});
 
 		//btn_about
-		btn_about = new Gtk.ToolButton.from_stock ("gtk-about");
-		btn_about.label = _("About");
-		btn_about.set_tooltip_text (_("Application Info"));
-		btn_about.icon_widget = get_shared_icon("", "help-info.svg", 32);
-		toolbar_bottom.add(btn_about);
+		button = new Gtk.ToolButton.from_stock ("gtk-about");
+		button.label = _("About");
+		button.set_tooltip_text (_("Application Info"));
+		button.icon_widget = get_shared_icon("", "help-info.svg", ICON_SIZE);
+		toolbar_bottom.add(button);
+		btn_about = button;
+		button.set_size_request(BUTTON_SIZE,-1);
 
-		btn_about.clicked.connect (btn_about_clicked);
+		button.clicked.connect (btn_about_clicked);
 	}
 
 	private void btn_about_clicked () {

@@ -38,6 +38,7 @@ public class TerminalWindow : Gtk.Window {
 	private Gtk.Box vbox_main;
 	private Vte.Terminal term;
 	private Gtk.Button btn_cancel;
+	private Gtk.Button btn_close;
 	private Gtk.ScrolledWindow scroll_win;
 
 	private int def_width = 800;
@@ -45,7 +46,6 @@ public class TerminalWindow : Gtk.Window {
 
 	private Pid child_pid;
 	private Gtk.Window parent_win = null;
-	public bool allow_user_cancel = false;
 
 	public bool cancelled = false;
 	public bool is_running = false;
@@ -66,14 +66,15 @@ public class TerminalWindow : Gtk.Window {
 			this.fullscreen();
 		}
 
-		this.allow_user_cancel = show_cancel_button;
-		
 		this.delete_event.connect(cancel_window_close);
 		
 		init_window();
 
 		show_all();
 
+		btn_cancel.visible = false;
+		btn_close.visible = false;
+		
 		if (show_cancel_button){
 			allow_cancel();
 		}
@@ -167,6 +168,15 @@ public class TerminalWindow : Gtk.Window {
 		btn_cancel.clicked.connect(()=>{
 			cancelled = true;
 			terminate_child();
+		});
+
+		//btn_close
+		button = new Gtk.Button.with_label (_("Close"));
+		hbox.pack_start (button, true, true, 0);
+		btn_close = button;
+		
+		btn_close.clicked.connect(()=>{
+			this.destroy();
 		});
 
 		label = new Gtk.Label("");
@@ -289,6 +299,9 @@ public class TerminalWindow : Gtk.Window {
 		is_running = false;
 
 		Process.close_pid(child_pid); //required on Windows, doesn't do anything on Unix
+
+		btn_cancel.visible = false;
+		btn_close.visible = true;
 		
 		script_complete();
 	}
@@ -299,8 +312,6 @@ public class TerminalWindow : Gtk.Window {
 	}
 
 	public void allow_cancel(){
-		allow_user_cancel = true;
-
 		btn_cancel.visible = true;
 		vbox_main.margin = 3;
 	}

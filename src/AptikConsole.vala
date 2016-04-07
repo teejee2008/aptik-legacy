@@ -758,6 +758,10 @@ public class AptikConsole : GLib.Object {
 		
 		if (App.user_login.length == 0){
 			foreach(string username in list_dir_names("/home")){
+				if (username == "PinguyBuilder"){
+					continue;
+				}
+			
 				App.select_user(username);
 
 				var list = App.list_app_config_directories_from_home();
