@@ -37,17 +37,24 @@ using TeeJee.Misc;
 public class TerminalWindow : Gtk.Window {
 	private Gtk.Box vbox_main;
 	private Vte.Terminal term;
-	
+	private Gtk.Button btn_cancel;
+	private Gtk.ScrolledWindow scroll_win;
+
 	private int def_width = 800;
 	private int def_height = 600;
 
 	private Pid child_pid;
 	private Gtk.Window parent_win = null;
+	public bool allow_user_cancel = false;
+
+	public bool cancelled = false;
 	public bool is_running = false;
+	
+	public signal void script_complete();
 	
 	// init
 	
-	public TerminalWindow.with_parent(Gtk.Window? parent, bool fullscreen = false) {
+	public TerminalWindow.with_parent(Gtk.Window? parent, bool fullscreen = false, bool show_cancel_button = false) {
 		if (parent != null){
 			set_transient_for(parent);
 			parent_win = parent;
@@ -58,13 +65,23 @@ public class TerminalWindow : Gtk.Window {
 		if (fullscreen){
 			this.fullscreen();
 		}
+
+		this.allow_user_cancel = show_cancel_button;
 		
-		this.delete_event.connect(()=>{
-			// do not allow window to close 
-			return true;
-		});
+		this.delete_event.connect(cancel_window_close);
 		
 		init_window();
+
+		show_all();
+
+		if (show_cancel_button){
+			allow_cancel();
+		}
+	}
+
+	public bool cancel_window_close(){
+		// do not allow window to close 
+		return true;
 	}
 
 	public void init_window () {
@@ -83,8 +100,14 @@ public class TerminalWindow : Gtk.Window {
 		
 		term = new Vte.Terminal();
 		term.expand = true;
-		vbox_main.add(term);
 
+		//sw_ppa
+		scroll_win = new Gtk.ScrolledWindow(null, null);
+		scroll_win.set_shadow_type (ShadowType.ETCHED_IN);
+		scroll_win.add (term);
+		scroll_win.expand = true;
+		vbox_main.add(scroll_win);
+		
 		#if VTE_291
 		
 		term.input_enabled = true;
@@ -124,7 +147,33 @@ public class TerminalWindow : Gtk.Window {
 		
 		term.grab_focus();
 		
-		show_all();
+		// add cancel button --------------
+
+		var hbox = new Box (Orientation.HORIZONTAL, 6);
+		hbox.homogeneous = true;
+		vbox_main.add (hbox);
+
+		var label = new Gtk.Label("");
+		hbox.pack_start (label, true, true, 0);
+		
+		label = new Gtk.Label("");
+		hbox.pack_start (label, true, true, 0);
+		
+		//btn_cancel
+		var button = new Gtk.Button.with_label (_("Cancel"));
+		hbox.pack_start (button, true, true, 0);
+		btn_cancel = button;
+		
+		btn_cancel.clicked.connect(()=>{
+			cancelled = true;
+			terminate_child();
+		});
+
+		label = new Gtk.Label("");
+		hbox.pack_start (label, true, true, 0);
+
+		label = new Gtk.Label("");
+		hbox.pack_start (label, true, true, 0);
 	}
 
 	public void start_shell(){
@@ -169,6 +218,11 @@ public class TerminalWindow : Gtk.Window {
 		}
 	}
 
+	public void terminate_child(){
+		btn_cancel.sensitive = false;
+		process_quit(child_pid);
+	}
+	
 	public void execute_command(string command){
 		term.feed_child("%s\n".printf(command), -1);
 	}
@@ -190,7 +244,7 @@ public class TerminalWindow : Gtk.Window {
 				TEMP_DIR, //working_directory
 				argv, //argv
 				env, //env
-				GLib.SpawnFlags.SEARCH_PATH, //spawn_flags
+				GLib.SpawnFlags.SEARCH_PATH | GLib.SpawnFlags.DO_NOT_REAP_CHILD, //spawn_flags
 				null, //child_setup
 				out child_pid,
 				null
@@ -199,11 +253,11 @@ public class TerminalWindow : Gtk.Window {
 			#else
 
 			term.fork_command_full(
-				Vte.PtyFlags.DEFAULT, //pty_flags
+				//Vte.PtyFlags.DEFAULT, //pty_flags
 				TEMP_DIR, //working_directory
 				argv, //argv
 				env, //env
-				GLib.SpawnFlags.SEARCH_PATH, //spawn_flags
+				GLib.SpawnFlags.SEARCH_PATH | GLib.SpawnFlags.DO_NOT_REAP_CHILD, //spawn_flags
 				null, //child_setup
 				out child_pid
 			);
@@ -233,15 +287,22 @@ public class TerminalWindow : Gtk.Window {
 	#endif
 
 		is_running = false;
-		
-		this.hide();
 
-		//no need to check status again
+		Process.close_pid(child_pid); //required on Windows, doesn't do anything on Unix
 		
-		//destroying parent will display main window
-		if (parent != null){
-			parent_win.destroy();
-		}
+		script_complete();
+	}
+
+	public void allow_window_close(){
+		this.delete_event.disconnect(cancel_window_close);
+		this.deletable = true;
+	}
+
+	public void allow_cancel(){
+		allow_user_cancel = true;
+
+		btn_cancel.visible = true;
+		vbox_main.margin = 3;
 	}
 }
 

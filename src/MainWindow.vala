@@ -66,11 +66,17 @@ public class MainWindow : Window {
 
 	private Button btn_restore_user;
 	private Button btn_backup_user;
+
+	private Button btn_backup_all;
+	private Button btn_restore_all;
+	private Button btn_settings;
 	
 	private Button btn_software_manager;
 
 	private ProgressBar progressbar;
 	private Label lbl_status;
+
+	private TerminalWindow term;
 
 	int def_width = 400;
 	int def_height = -1;
@@ -88,7 +94,7 @@ public class MainWindow : Window {
 		icon = get_app_icon(16);
 
 		//vboxMain
-		vbox_main = new Box (Orientation.VERTICAL, 0);
+		vbox_main = new Box (Orientation.VERTICAL, 6);
 		vbox_main.margin = 12;
 		add (vbox_main);
 
@@ -106,14 +112,14 @@ public class MainWindow : Window {
 	}
 
 	private void init_section_backup_location() {
-		// lbl_header_location
-		Label lbl_header_location = new Label ("<b>" + _("Backup Directory") + "</b>");
-		lbl_header_location.set_use_markup(true);
-		lbl_header_location.halign = Align.START;
-		//lbl_header_location.margin_top = 6;
-		lbl_header_location.margin_bottom = 6;
-		vbox_main.pack_start (lbl_header_location, false, true, 0);
-
+		// header
+		var label = new Label ("<b>" + _("Backup Directory") + "</b>");
+		label.set_use_markup(true);
+		label.halign = Align.START;
+		//label.margin_top = 12;
+		label.margin_bottom = 6;
+		vbox_main.pack_start (label, false, true, 0);
+		
 		//vbox_backup_dir
 		Box hbox_backup_dir = new Box (Gtk.Orientation.HORIZONTAL, 6);
 		vbox_main.pack_start (hbox_backup_dir, false, true, 0);
@@ -186,12 +192,12 @@ public class MainWindow : Window {
 	
 	private void init_section_backup() {
 		// lbl_header_backup
-		Label lbl_header_backup = new Label ("<b>" + _("Backup &amp; Restore") + "</b>");
-		lbl_header_backup.set_use_markup(true);
-		lbl_header_backup.halign = Align.START;
-		lbl_header_backup.margin_top = 12;
-		lbl_header_backup.margin_bottom = 6;
-		vbox_main.pack_start (lbl_header_backup, false, true, 0);
+		var label = new Label ("<b>" + _("Backup &amp; Restore") + "</b>");
+		label.set_use_markup(true);
+		label.halign = Align.START;
+		label.margin_top = 12;
+		label.margin_bottom = 6;
+		vbox_main.pack_start (label, false, true, 0);
 
 		//grid_backup_buttons
 		grid_backup_buttons = new Grid();
@@ -215,6 +221,8 @@ public class MainWindow : Window {
 		init_section_backup_themes(++row);
 		
 		init_section_backup_mounts(++row);
+
+		init_section_one_click(++row);
 	}
 
 	private void init_section_backup_ppa(int row) {
@@ -338,6 +346,79 @@ public class MainWindow : Window {
 			this.hide();
 			var dlg = new PackageWindow.with_parent(this,true);
 			dlg.show_all();
+		});
+	}
+
+	private void init_section_backup_users(int row) {
+		var img = get_shared_icon("config-users", "system-users.svg", icon_size_list);
+		grid_backup_buttons.attach(img, 0, row, 1, 1);
+
+		//label
+		var label = new Label (" " + _("Users &amp; Groups"));
+		label.set_tooltip_text(_("Users and groups"));
+		label.set_use_markup(true);
+		label.halign = Align.START;
+		label.hexpand = true;
+		grid_backup_buttons.attach(label, 1, row, 1, 1);
+
+		//btn_backup_user
+		var button = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		button.set_size_request(button_width, button_height);
+		button.set_tooltip_text(_("Backup users and groups"));
+		grid_backup_buttons.attach(button, 2, row, 1, 1);
+		btn_backup_user = button;
+		
+		button.clicked.connect(()=>{
+			if (!check_backup_folder()) {
+				return;
+			}
+
+			string password = PasswordWindow.prompt_user(this, true, _("Create Password"), Message.ENTER_PASSWORD_BACKUP);
+			if (password.length == 0){
+				return;
+			}
+			
+			bool ok = App.backup_users_and_groups(password);
+
+			if (ok){
+				gtk_messagebox("", Message.BACKUP_OK, this, false);
+			}
+			else{
+				gtk_messagebox("", Message.BACKUP_ERROR, this, true);
+			}
+		});
+
+		//btn_restore_user
+		button = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		button.set_size_request(button_width, button_height);
+		button.set_tooltip_text(_("Restore users and groups"));
+		grid_backup_buttons.attach(button, 3, row, 1, 1);
+		btn_restore_user = button;
+		
+		button.clicked.connect(()=>{
+			if (!check_backup_folder()) {
+				return;
+			}
+			if (!check_backup_file("users/passwd.tar.gpg") || !check_backup_file("users/shadow.tar.gpg") || !check_backup_file("users/group.tar.gpg")){
+				return;
+			}
+
+			string password = PasswordWindow.prompt_user(this, false, _("Enter Password"), Message.ENTER_PASSWORD_RESTORE);
+			if (password.length == 0){
+				return;
+			}
+
+			clear_err_log();
+			bool ok = App.restore_users_and_groups_init(password);
+			show_err_log(this);
+			
+			if (!ok){
+				return;
+			}
+
+			this.hide();
+			var dlg = new UserAccountWindow.with_parent(this,true);
+			//dlg.show_all();
 		});
 	}
 
@@ -507,77 +588,58 @@ public class MainWindow : Window {
 		});
 	}
 
-	private void init_section_backup_users(int row) {
-		var img = get_shared_icon("config-users", "system-users.svg", icon_size_list);
-		grid_backup_buttons.attach(img, 0, row, 1, 1);
+	private void init_section_one_click(int row) {
 
-		//label
-		var label = new Label (" " + _("Users &amp; Groups"));
-		label.set_tooltip_text(_("Users and groups"));
+		// lbl_header_backup
+		var label = new Label ("<b>" + _("One-Click Backup &amp; Restore") + "</b>");
 		label.set_use_markup(true);
 		label.halign = Align.START;
-		label.hexpand = true;
-		grid_backup_buttons.attach(label, 1, row, 1, 1);
+		label.margin_top = 12;
+		label.margin_bottom = 6;
+		vbox_main.add(label);
 
-		//btn_backup_user
+		row++;
+
+		var hbox = new Gtk.Box (Orientation.HORIZONTAL, 6);
+		//hbox.homogeneous = true;
+		hbox.margin_left = 6;
+		vbox_main.add(hbox);
+		
+		//btn_backup_all
 		var button = new Gtk.Button.with_label (" " + _("Backup") + " ");
 		button.set_size_request(button_width, button_height);
-		button.set_tooltip_text(_("Backup users and groups"));
-		grid_backup_buttons.attach(button, 2, row, 1, 1);
-		btn_backup_user = button;
+		button.set_tooltip_text(_("Backup all items"));
+		button.image = get_shared_icon("", "backup.svg", 32);
+		button.image_position = PositionType.LEFT;
+		hbox.pack_start(button, false, false, 0);
+		btn_backup_all = button;
 		
-		button.clicked.connect(()=>{
-			if (!check_backup_folder()) {
-				return;
-			}
+		button.clicked.connect(btn_backup_all_clicked);
 
-			string password = PasswordWindow.prompt_user(this, true, _("Create Password"), Message.ENTER_PASSWORD_BACKUP);
-			if (password.length == 0){
-				return;
-			}
-			
-			bool ok = App.backup_users_and_groups(password);
-
-			if (ok){
-				gtk_messagebox("", Message.BACKUP_OK, this, false);
-			}
-			else{
-				gtk_messagebox("", Message.BACKUP_ERROR, this, true);
-			}
-		});
-
-		//btn_restore_user
+		//btn_restore_all
 		button = new Gtk.Button.with_label (" " + _("Restore") + " ");
 		button.set_size_request(button_width, button_height);
-		button.set_tooltip_text(_("Restore users and groups"));
-		grid_backup_buttons.attach(button, 3, row, 1, 1);
-		btn_restore_user = button;
+		button.set_tooltip_text(_("Restore all items"));
+		button.image = get_shared_icon("", "restore.svg", 32);
+		button.image_position = PositionType.LEFT;
+		hbox.pack_start(button, false, false, 0);
+		btn_restore_all = button;
+
+		button.clicked.connect(btn_restore_all_clicked);
+
+		//btn_settings
+		button = new Gtk.Button.with_label (" " + _("Settings") + " ");
+		button.set_size_request(button_width, button_height);
+		button.set_tooltip_text(_("Settings"));
+		button.image = get_shared_icon("", "config.svg", 32);
+		button.image_position = PositionType.LEFT;
+		hbox.pack_start(button, false, false, 0);
+		btn_settings = button;
+
+		button.clicked.connect(btn_settings_clicked);
 		
-		button.clicked.connect(()=>{
-			if (!check_backup_folder()) {
-				return;
-			}
-			if (!check_backup_file("users/passwd.tar.gpg") || !check_backup_file("users/shadow.tar.gpg") || !check_backup_file("users/group.tar.gpg")){
-				return;
-			}
-
-			string password = PasswordWindow.prompt_user(this, false, _("Enter Password"), Message.ENTER_PASSWORD_RESTORE);
-			if (password.length == 0){
-				return;
-			}
-
-			clear_err_log();
-			bool ok = App.restore_users_and_groups_init(password);
-			show_err_log(this);
-			
-			if (!ok){
-				return;
-			}
-
-			this.hide();
-			var dlg = new UserAccountWindow.with_parent(this,true);
-			//dlg.show_all();
-		});
+		label = new Gtk.Label("");
+		hbox.pack_start (label, true, true, 0);
 	}
 
 	private void init_section_tools() {
@@ -679,7 +741,7 @@ public class MainWindow : Window {
 		//toolbar_bottom
 		toolbar_bottom = new Gtk.Toolbar();
 		toolbar_bottom.toolbar_style = ToolbarStyle.BOTH;
-		toolbar_bottom.margin_top = 24;
+		toolbar_bottom.margin_top = 12;
 		vbox_main.add(toolbar_bottom);
 
 		//remove toolbar background
@@ -905,6 +967,97 @@ public class MainWindow : Window {
 		}
 
 		gtk_do_events();
+	}
+
+	/* One-click */
+
+	private void btn_backup_all_clicked() {
+		if (!check_backup_folder()) {
+			return;
+		}
+
+		App.cmd_arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"), Message.ENTER_PASSWORD_BACKUP);
+		if (App.cmd_arg_password.length == 0){
+			return;
+		}
+		
+		this.hide();
+
+		App.task_list = BackupTask.create_list();
+		App.backup_mode = true;
+
+		term = new TerminalWindow.with_parent(this, false, true);
+		term.script_complete.connect(all_tasks_complete);
+		term.destroy.connect(()=>{
+			this.present();
+		});
+
+		string sh = "";
+		foreach(var task in App.task_list){
+			if (!task.is_selected){
+				continue;
+			}
+			
+			var cmd = (App.backup_mode) ? task.backup_cmd : task.restore_cmd;
+			sh += "echo '%s'\n".printf(string.nfill(70,'='));
+			sh += "echo '%s'\n".printf(task.display_name);
+			sh += "echo '%s'\n".printf(string.nfill(70,'='));
+			sh += "%s\n".printf(cmd);
+			sh += "echo ''\n";
+		}
+
+		term.execute_script(save_bash_script_temp(sh));
+	}
+	
+	private void btn_restore_all_clicked() {
+		if (!check_backup_folder()) {
+			return;
+		}
+
+		App.cmd_arg_password = PasswordWindow.prompt_user(this, false, _("Enter Password"), Message.ENTER_PASSWORD_RESTORE);
+		if (App.cmd_arg_password.length == 0){
+			return;
+		}
+
+		this.hide();
+
+		App.task_list = BackupTask.create_list();
+		App.backup_mode = false;
+		
+		term = new TerminalWindow.with_parent(this, false, true);
+		term.script_complete.connect(all_tasks_complete);
+		term.destroy.connect(()=>{
+			this.present();
+		});
+
+		string sh = "";
+		foreach(var task in App.task_list){
+			if (!task.is_selected){
+				continue;
+			}
+			
+			string cmd = (App.backup_mode) ? task.backup_cmd : task.restore_cmd;
+			sh += "echo '%s'\n".printf(string.nfill(70,'='));
+			sh += "echo '%s'\n".printf(task.display_name);
+			sh += "echo '%s'\n".printf(string.nfill(70,'='));
+			sh += "%s\n".printf(cmd);
+			sh += "echo ''\n";
+		}
+
+		term.execute_script(save_bash_script_temp(sh));
+	}
+
+	private void all_tasks_complete(){
+		term.script_complete.disconnect(all_tasks_complete);
+		term.execute_script(save_bash_script_temp("echo\necho 'Close window to exit...'\n"));
+		term.allow_window_close();
+	}
+
+	private void btn_settings_clicked(){
+		App.task_list = BackupTask.create_list();
+		var dlg = new OneClickSettingsDialog.with_parent(this);
+		dlg.run();
+		dlg.destroy();
 	}
 }
 

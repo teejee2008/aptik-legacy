@@ -50,12 +50,12 @@ public class PasswordWindow : Gtk.Dialog {
 
 		this.message = message;
 		this.title = title;
-
+		this.confirm_password = confirm_password;
+		
 		init_window();
 
 		show_all();
 
-		this.confirm_password = confirm_password;
 		txt_confirm.visible = confirm_password;
 		lbl_message.visible = (message.length > 0);
 	}

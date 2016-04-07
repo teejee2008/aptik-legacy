@@ -63,6 +63,8 @@ public class PackageWindow : Window {
 	private bool is_running = false;
 	private bool is_restore_view = false;
 
+	private TerminalWindow term;
+	
 	private const Gtk.TargetEntry[] targets = {
 		{ "text/uri-list", 0, 0}
 	};
@@ -1159,8 +1161,14 @@ public class PackageWindow : Window {
 
 		this.hide();
 		
-		var dlg = new TerminalWindow.with_parent(this);
-		dlg.execute_script(save_bash_script_temp(cmd));
+		term = new TerminalWindow.with_parent(this);
+		term.script_complete.connect(close_terminal);
+		term.execute_script(save_bash_script_temp(cmd));
+	}
+
+	public void close_terminal(){
+		term.destroy();
+		this.destroy(); //close this window and display main window
 	}
 }
 

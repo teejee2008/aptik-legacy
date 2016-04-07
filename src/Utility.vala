@@ -144,6 +144,10 @@ namespace TeeJee.Logging{
 		}
 	}
 
+	public void log_draw_line(){
+		log_msg(string.nfill(70,'='));
+	}
+	
 	public void show_err_log(Gtk.Window parent, bool disable_log = true){
 		if ((err_log != null) && (err_log.length > 0)){
 			gtk_messagebox(_("Error"), err_log, parent, true);
@@ -694,7 +698,18 @@ namespace TeeJee.FileSystem{
 		return -1;
 	}
 
-	public string get_file_size_formatted(string path){
+	public uint64 dir_size(string path){
+		/* Returns size of directories */
+
+		string cmd = "";
+		string output = "";
+
+		cmd = "du -s \"%s\"".printf(path);
+		output = execute_command_sync_get_output(cmd);
+		return uint64.parse(output.split("\t")[0].strip()) * 1024;
+	}
+	
+	public string get_file_size_formatted2(string path){
 
 		/* Returns size of files and directories in KB*/
 
@@ -706,7 +721,7 @@ namespace TeeJee.FileSystem{
 		return output.split("\t")[0].strip();
 	}
 
-	public string format_file_size (int64 size, bool binary_units = false){
+	public string format_file_size (uint64 size, bool binary_units = false){
 		int64 KB = binary_units ? 1024 : 1000;
 		int64 MB = binary_units ? 1024 * KB : 1000 * KB;
 		int64 GB = binary_units ? 1024 * MB : 1000 * MB;

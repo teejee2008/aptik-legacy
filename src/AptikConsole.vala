@@ -62,7 +62,7 @@ public class AptikConsole : GLib.Object {
 		init_tmp();
 
 		App = new Main(args, false);
-
+		
 		var console =  new AptikConsole();
 		bool is_success = console.parse_arguments(args);
 		App.exit_app();
@@ -84,35 +84,63 @@ public class AptikConsole : GLib.Object {
 		msg += "\n";
 		msg += _("Options") + ":\n";
 		msg += "\n";
+		msg += _("Common") + ":\n";
+		msg += "\n";
+		msg += "  --backup-dir <dir>    " + _("Backup directory (defaults to current directory)") + "\n";
+		msg += "  --user <username>     " + _("Select username for listing config files") + "\n";
+		msg += "  --password <password> " + _("Specify password for encrypting and decrypting backups") + "\n";
+		msg += "  --[show-]desc         " + _("Show package description if available") + "\n";
+		msg += "  --yes                 " + _("Assume Yes for all prompts") + "\n";
+		msg += "  --h[elp]              " + _("Show all options") + "\n";
+		msg += "\n";
+		msg += _("Software Sources (PPAs)") + ":\n";
+		msg += "\n";
+		msg += "  --list-ppa            " + _("List PPAs") + "\n";
+		msg += "  --backup-ppa          " + _("Backup list of PPAs") + "\n";
+		msg += "  --restore-ppa         " + _("Restore PPAs from file 'ppa.list'") + "\n";
+		msg += "\n";
+		msg += _("Downloaded Packages (APT Cache)") + ":\n";
+		msg += "\n";
+		msg += "  --backup-cache        " + _("Backup downloaded packages from APT cache") + "\n";
+		msg += "  --restore-cache       " + _("Restore downloaded packages to APT cache") + "\n";
+		msg += "\n";
+		msg += _("Software Selections (Installed Packages)") + ":\n";
+		msg += "\n";
 		msg += "  --list-available      " + _("List available packages") + "\n";
 		msg += "  --list-installed      " + _("List installed packages") + "\n";
 		msg += "  --list-auto[matic]    " + _("List auto-installed packages") + "\n";
 		msg += "  --list-{manual|extra} " + _("List extra packages installed by user") + "\n";
 		msg += "  --list-default        " + _("List default packages for linux distribution") + "\n";
-		msg += "  --list-ppa            " + _("List PPAs") + "\n";
-		msg += "  --list-themes         " + _("List themes in /usr/share/themes") + "\n";
-		msg += "  --list-configs        " + _("List config dirs in /home/<user>") + "\n";
-		
-		msg += "  --backup-ppa          " + _("Backup list of PPAs") + "\n";
 		msg += "  --backup-packages     " + _("Backup list of manual and installed packages") + "\n";
-		msg += "  --backup-cache        " + _("Backup downloaded packages from APT cache") + "\n";
-		msg += "  --backup-themes       " + _("Backup themes from /usr/share/themes") + "\n";
-		msg += "  --backup-configs      " + _("Backup config files from /home/<user>") + "\n";
-		msg += "  --backup-mounts       " + _("Backup /etc/fstab and /etc/crypttab entries") + "\n";
-		msg += "  --user <username>     " + _("Select username for listing config files") + "\n";
-		
-		msg += "  --restore-ppa         " + _("Restore PPAs from file 'ppa.list'") + "\n";
 		msg += "  --restore-packages    " + _("Restore packages from file 'packages.list'") + "\n";
-		msg += "  --restore-cache       " + _("Restore downloaded packages to APT cache") + "\n";
-		msg += "  --restore-themes      " + _("Restore themes to /usr/share/themes") + "\n";
+		msg += "\n";
+		msg += _("Users and groups") + ":\n";
+		msg += "\n";
+		msg += "  --backup-users        " + _("Backup users and groups") + "\n";
+		msg += "  --restore-users       " + _("Restore users and groups") + "\n";
+		msg += "\n";
+		msg += _("Application Settings") + ":\n";
+		msg += "\n";
+		msg += "  --list-configs        " + _("List config dirs in /home/<user>") + "\n";
+		msg += "  --backup-configs      " + _("Backup config files from /home/<user>") + "\n";
 		msg += "  --restore-configs     " + _("Restore config files to /home/<user>") + "\n";
+		msg += "  --size-limit <bytes>  " + _("Skip config dirs larger than specified size") + "\n";
+		msg += "\n";
+		msg += _("Themes and Icons") + ":\n";
+		msg += "\n";
+		msg += "  --list-themes         " + _("List themes in /usr/share/themes") + "\n";
+		msg += "  --backup-themes       " + _("Backup themes from /usr/share/themes") + "\n";
+		msg += "  --restore-themes      " + _("Restore themes to /usr/share/themes") + "\n";
+		msg += "\n";
+		msg += _("Filesystem Mounts") + ":\n";
+		msg += "\n";
+		msg += "  --backup-mounts       " + _("Backup /etc/fstab and /etc/crypttab entries") + "\n";
 		msg += "  --restore-mounts      " + _("Restore /etc/fstab and /etc/crypttab entries") + "\n";
-		
-		//msg += "  --take-ownership      " + _("Take ownership of files in your home directory") + "\n";
-		msg += "  --backup-dir <dir>    " + _("Backup directory (defaults to current directory)") + "\n";
-		msg += "  --[show-]desc         " + _("Show package description if available") + "\n";
-		msg += "  --yes                 " + _("Assume Yes for all prompts") + "\n";
-		msg += "  --h[elp]              " + _("Show all options") + "\n";
+		msg += "\n";
+		msg += _("All Items") + ":\n";
+		msg += "\n";
+		msg += "  --backup-all          " + _("Backup all items") + "\n";
+		msg += "  --restore-all         " + _("Restore all items") + "\n";
 		msg += "\n";
 		return msg;
 	}
@@ -150,12 +178,21 @@ public class AptikConsole : GLib.Object {
 				k += 1;
 				App.select_user(args[k]);
 				break;
+			case "--size-limit":
+			case "--limit-size":
+				k += 1;
+				App.cmd_arg_size_limit = uint64.parse(args[k]);
+				break;
 			case "-y":
 			case "--yes":
 				no_prompt = true;
 				break;
 			case "--debug":
 				LOG_DEBUG = true;
+				break;
+			case "--password":
+				k += 1;
+				App.cmd_arg_password = args[k];
 				break;
 			case "--help":
 			case "--h":
@@ -188,24 +225,12 @@ public class AptikConsole : GLib.Object {
 
 			case "--backup-ppa":
 			case "--backup-ppas":
-				App.ppa_backup_init(false);
-				foreach(Ppa ppa in App.ppa_list_master.values) {
-					ppa.is_selected = true;
-				}
-				//TODO: call the faster method for getting ppas?
-				return App.save_ppa_list_selected();
+				return backup_ppa();
 				
 			case "--restore-ppa":
 			case "--restore-ppas":
-				if (!check_internet_connectivity()) {
-					log_msg(_("Error") + ": " +  _("Internet connection is not active. Please check the connection and try again."));
-					return false;
-				}
+				return restore_ppa();
 
-				App.ppa_restore_init(false);
-				restore_ppa();
-				break;
-				
 			// package ---------------------------------------
 
 			case "--list-available":
@@ -252,40 +277,23 @@ public class AptikConsole : GLib.Object {
 
 			case "--backup-package":
 			case "--backup-packages":
-				App.read_package_info();
-				foreach(Package pkg in App.pkg_list_master.values) {
-					pkg.is_selected = pkg.is_manual;
-				}
-				return App.save_package_list_selected();
+				return backup_packages();
 
 			case "--restore-package":
 			case "--restore-packages":
-				if (!check_internet_connectivity()) {
-					log_msg(_("Error") + ": " +  _("Internet connection is not active. Please check the connection and try again."));
-					return false;
-				}
-				restore_packages(no_prompt);
-				break;
+				return restore_packages(no_prompt);
 				
 			// apt cache -------------------------------------
 
 			case "--backup-cache":
 			case "--backup-apt-cache":
-				App.backup_apt_cache();
-				while (App.is_running) {
-					Thread.usleep ((ulong) 0.3 * 1000000);
-				}
-				break;
+				return backup_cache();
 
 			case "--restore-cache":
 			case "--restore-apt-cache":
-				App.restore_apt_cache();
-				while (App.is_running) {
-					Thread.usleep ((ulong) 0.3 * 1000000);
-				}
-				break;
+				return restore_cache();
 				
-			// configs ---------------------------------------
+			// config ---------------------------------------
 
 			case "--list-config":
 			case "--list-configs":
@@ -295,52 +303,11 @@ public class AptikConsole : GLib.Object {
 			case "--backup-appsettings":
 			case "--backup-configs":
 			case "--backup-config":
-				if (App.user_login.length == 0){
-					foreach(string username in list_dir_names("/home")){
-						App.select_user(username);
-
-						var list = App.list_app_config_directories_from_home();
-						foreach(AppConfig conf in list){
-							conf.is_selected = true;
-						}
-						App.backup_app_settings_all(list);
-
-						log_msg("");
-					}
-				}
-				else{
-					var list = App.list_app_config_directories_from_home();
-					foreach(AppConfig conf in list){
-						conf.is_selected = true;
-					}
-					App.backup_app_settings_all(list);
-				}
-				
-				break;
+				return backup_config();
 
 			case "--restore-appsettings":
 			case "--restore-configs":
-				if (App.user_login.length == 0){
-					foreach(string username in list_dir_names("/home")){
-						App.select_user(username);
-						
-						var list = App.list_app_config_directories_from_backup();
-						foreach(AppConfig conf in list){
-							conf.is_selected = true;
-						}
-						App.restore_app_settings_all(list);
-
-						log_msg("");
-					}
-				}
-				else{
-					var list = App.list_app_config_directories_from_backup();
-					foreach(AppConfig conf in list){
-						conf.is_selected = true;
-					}
-					App.restore_app_settings_all(list);
-				}
-				break;
+				return restore_config();
 				
 			// theme ---------------------------------------------
 
@@ -351,49 +318,43 @@ public class AptikConsole : GLib.Object {
 
 			case "--backup-theme":
 			case "--backup-themes":
-				foreach(Theme theme in Theme.list_themes_installed()) {
-					if (theme.is_selected) {
-						theme.zip(App.backup_dir,false);
-						while (theme.is_running) {
-							Thread.usleep ((ulong) 0.3 * 1000000);
-						}
-					}
-				}
-				break;
+				return backup_themes();
 				
 			case "--restore-theme":
 			case "--restore-themes":
-				restore_themes();
-				break;
-				
+				return restore_themes();
+
 			// mount -------------------------------------------
 			
 			case "--backup-mount":
 			case "--backup-mounts":
-				backup_mounts();
-				break;
+				return backup_mounts();
 
 			case "--restore-mount":
 			case "--restore-mounts":
-				restore_mounts();
-				break;
-				
+				return restore_mounts();
+
 			// users -------------------------------------------
 
 			case "--list-user":
 			case "--list-users":
-				list_users_and_groups();
-				break;
-				
+				return list_users_and_groups();
+
 			case "--backup-user":
 			case "--backup-users":
-				backup_users_and_groups();
-				break;
+				return backup_users_and_groups();
 
 			case "--restore-user":
 			case "--restore-users":
-				restore_users_and_groups();
-				break;
+				return restore_users_and_groups();
+
+			// all ---------------------------------------------
+
+			case "--backup-all":
+				return backup_all();
+
+			case "--restore-all":
+				return restore_all();
 
 			// other -------------------------------------------
 			
@@ -419,6 +380,9 @@ public class AptikConsole : GLib.Object {
 			case "--user":
 			case "--username":
 			case "--backup-dir":
+			case "--size-limit":
+			case "--limit-size":
+			case "--password":
 				k += 1;
 				//handled already - do nothing
 				break;
@@ -549,8 +513,110 @@ public class AptikConsole : GLib.Object {
 		}
 	}
 
-	public bool restore_packages(bool no_prompt) {
+	// ppa -----------------------
+
+	public bool backup_ppa() {
+		App.ppa_backup_init(false);
+		foreach(Ppa ppa in App.ppa_list_master.values) {
+			ppa.is_selected = true;
+		}
+		
+		//TODO: call the faster method for getting ppas?
+		bool ok = App.save_ppa_list_selected();
+		
+		if (ok){
+			log_msg(Message.BACKUP_OK);
+		}
+		else{
+			log_msg(Message.BACKUP_ERROR);
+		}
+
+		return ok;
+	}
+	
+	public bool restore_ppa() {
+		if (!App.check_backup_file("ppa.list")) {
+			return false;
+		}
+		
+		if (!check_internet_connectivity()) {
+			log_msg(_("Error") + ": " +  _("Internet connection is not active. Please check the connection and try again."));
+			return false;
+		}
+
+		App.ppa_restore_init(false);
+		
+		bool run_apt_update = false;
+		foreach(Ppa ppa in App.ppa_list_master.values) {
+			if (ppa.is_selected && !ppa.is_installed) {
+				log_msg(_("Adding PPA") + " '%s'".printf(ppa.name));
+
+				Posix.system("sudo apt-add-repository -y ppa:%s".printf(ppa.name));
+				//exit code is not reliable (always 0?)
+
+				run_apt_update = true;
+				log_msg("");
+			}
+		}
+
+		if (run_apt_update) {
+			log_msg(_("Updating Package Information..."));
+			Posix.system("sudo apt-get -y update");
+		}
+
+		log_msg(Message.RESTORE_OK);
+		
+		return true;
+	}
+
+	// cache ----------------------
+
+	public bool backup_cache(){
+		App.backup_apt_cache();
+		while (App.is_running) {
+			sleep(500);
+		}
+		log_msg(Message.BACKUP_OK);
+		return true;
+	}
+
+	public bool restore_cache(){
+		App.restore_apt_cache();
+		while (App.is_running) {
+			sleep(500);
+		}
+		log_msg(Message.RESTORE_OK);
+		return true;
+	}
+	
+	// packages --------------------------
+
+	public bool backup_packages(){
+		App.read_package_info();
+		foreach(Package pkg in App.pkg_list_master.values) {
+			pkg.is_selected = pkg.is_manual;
+		}
+		bool ok = App.save_package_list_selected();
+
+		if (ok){
+			log_msg(Message.BACKUP_OK);
+		}
+		else{
+			log_msg(Message.BACKUP_ERROR);
+		}
+
+		return ok;
+	}
+
+	public bool restore_packages(bool no_prompt){
+		bool ok = true;
+		
 		if (!App.check_backup_file("packages.list")) {
+			return false;
+		}
+		
+		if (!check_internet_connectivity()) {
+			log_msg(_("Error") + ": " +  _("Internet connection is not active. Please check the connection and try again."));
 			return false;
 		}
 
@@ -574,7 +640,9 @@ public class AptikConsole : GLib.Object {
 					command = "apt-fast";
 				}
 
-				Posix.system("%s%s install %s".printf(command, (no_prompt) ? " -y" : "", App.pkg_list_install));
+				int status = Posix.system("%s%s install %s".printf(command, (no_prompt) ? " -y" : "", App.pkg_list_install));
+
+				ok = ok && (status == 0);
 			}
 			if (App.pkg_list_deb.length > 0){
 				log_msg(_("Following packages will be installed") + ":\n%s\n".printf(App.pkg_list_deb));
@@ -583,79 +651,6 @@ public class AptikConsole : GLib.Object {
 				}
 			}
 		}
-
-		return true;
-	}
-
-	public bool restore_ppa() {
-		if (!App.check_backup_file("ppa.list")) {
-			return false;
-		}
-
-		bool run_apt_update = false;
-		foreach(Ppa ppa in App.ppa_list_master.values) {
-			if (ppa.is_selected && !ppa.is_installed) {
-				log_msg(_("Adding PPA") + " '%s'".printf(ppa.name));
-
-				Posix.system("sudo apt-add-repository -y ppa:%s".printf(ppa.name));
-				//exit code is not reliable (always 0?)
-
-				run_apt_update = true;
-				log_msg("");
-			}
-		}
-
-		if (run_apt_update) {
-			log_msg(_("Updating Package Information..."));
-			Posix.system("sudo apt-get -y update");
-		}
-
-		return true;
-	}
-
-	public bool restore_themes(){
-		var list = Theme.list_themes_archived(App.backup_dir);
-
-		foreach(Theme theme in list){
-			theme.check_installed(App.user_login);
-			theme.is_selected = !theme.is_installed;
-		}
-		
-		foreach(Theme theme in list) {
-			if (theme.is_selected && !theme.is_installed) {
-				theme.unzip(App.user_login,false);
-				while (theme.is_running) {
-					Thread.usleep ((ulong) 0.3 * 1000000);
-				}
-
-				theme.update_permissions();
-				theme.update_ownership(App.user_login);
-			}
-		}
-
-		return true;
-	}
-
-	// mounts ---------------------
-	
-	public bool backup_mounts(){
-		bool ok = App.backup_mounts("");
-		
-		if (ok){
-			log_msg(Message.BACKUP_OK);
-		}
-		else{
-			log_msg(Message.BACKUP_ERROR);
-		}
-
-		return ok;
-	}
-	
-	public bool restore_mounts(){
-		var fstab_list = App.create_fstab_list_for_restore();
-		var crypttab_list = App.create_crypttab_list_for_restore();
-
-		bool ok = App.restore_mounts(fstab_list, crypttab_list, "");
 
 		if (ok){
 			log_msg(Message.RESTORE_OK);
@@ -666,19 +661,9 @@ public class AptikConsole : GLib.Object {
 		
 		return ok;
 	}
-
+	
 	// users and groups ----------------------------
 
-	/*public Gee.ArrayList<T> get_sorted_list(Gee.HashMap<string,T> items){
-		var list = new Gee.ArrayList<T>();
-		foreach(var item in items.values){
-			list.add(item);
-		}
-		CompareDataFunc<T> func = (a, b) => {
-			return strcmp(a.name, b.name);
-		};
-	}*/
-	
 	public bool list_users_and_groups(){
 		bool ok = true;
 
@@ -765,5 +750,243 @@ public class AptikConsole : GLib.Object {
 
 		return ok;
 	}
+
+	// configs ------------------------
+
+	public bool backup_config(){
+		bool ok = true;
+		
+		if (App.user_login.length == 0){
+			foreach(string username in list_dir_names("/home")){
+				App.select_user(username);
+
+				var list = App.list_app_config_directories_from_home();
+				foreach(AppConfig conf in list){
+					conf.is_selected = true;
+				}
+
+				var status = App.backup_app_settings_all(list);
+				ok = ok && status;
+				
+				log_msg("");
+			}
+		}
+		else{
+			var list = App.list_app_config_directories_from_home();
+			foreach(AppConfig conf in list){
+				conf.is_selected = true;
+			}
+
+			var status = App.backup_app_settings_all(list);
+			ok = ok && status;
+		}
+
+		if (ok){
+			log_msg(Message.BACKUP_OK);
+		}
+		else{
+			log_msg(Message.BACKUP_ERROR);
+		}
+
+		return ok;
+	}
+
+	public bool restore_config(){
+		bool ok = true;
+		
+		if (App.user_login.length == 0){
+			foreach(string username in list_dir_names("/home")){
+				App.select_user(username);
+				
+				var list = App.list_app_config_directories_from_backup();
+				foreach(AppConfig conf in list){
+					conf.is_selected = true;
+				}
+
+				var status = App.restore_app_settings_all(list);
+				ok = ok && status;
+			
+				log_msg("");
+			}
+		}
+		else{
+			var list = App.list_app_config_directories_from_backup();
+			foreach(AppConfig conf in list){
+				conf.is_selected = true;
+			}
+
+			var status = App.restore_app_settings_all(list);
+			ok = ok && status;
+		}
+
+		if (ok){
+			log_msg(Message.RESTORE_OK);
+		}
+		else{
+			log_msg(Message.RESTORE_ERROR);
+		}
+		
+		return ok;
+	}
+
+	// themes ----------------------
+
+	public bool backup_themes(){
+		bool ok = true;
+
+		foreach(Theme theme in Theme.list_themes_installed()) {
+			if (theme.is_selected) {
+				theme.zip(App.backup_dir,false);
+				while (theme.is_running) {
+					sleep(500);
+				}
+			}
+		}
+				
+		if (ok){
+			log_msg(Message.BACKUP_OK);
+		}
+		else{
+			log_msg(Message.BACKUP_ERROR);
+		}
+
+		return ok;
+	}
+
+	public bool restore_themes(){
+		bool ok = true;
+		
+		var list = Theme.list_themes_archived(App.backup_dir);
+
+		foreach(Theme theme in list){
+			theme.check_installed(App.user_login);
+			theme.is_selected = !theme.is_installed;
+		}
+		
+		foreach(Theme theme in list) {
+			if (theme.is_selected && !theme.is_installed) {
+				theme.unzip(App.user_login,false);
+				while (theme.is_running) {
+					sleep(500);
+				}
+
+				theme.update_permissions();
+				theme.update_ownership(App.user_login);
+			}
+		}
+
+		if (ok){
+			log_msg(Message.RESTORE_OK);
+		}
+		else{
+			log_msg(Message.RESTORE_ERROR);
+		}
+
+		return ok;
+	}
+	
+	// mounts ---------------------
+	
+	public bool backup_mounts(){
+		bool ok = App.backup_mounts("");
+		
+		if (ok){
+			log_msg(Message.BACKUP_OK);
+		}
+		else{
+			log_msg(Message.BACKUP_ERROR);
+		}
+
+		return ok;
+	}
+	
+	public bool restore_mounts(){
+		var fstab_list = App.create_fstab_list_for_restore();
+		var crypttab_list = App.create_crypttab_list_for_restore();
+
+		bool ok = App.restore_mounts(fstab_list, crypttab_list, "");
+
+		if (ok){
+			log_msg(Message.RESTORE_OK);
+		}
+		else{
+			log_msg(Message.RESTORE_ERROR);
+		}
+		
+		return ok;
+	}
+
+	// all items ----------------------------------
+
+	public bool backup_all(){
+		bool ok = false;
+
+		App.task_list = BackupTask.create_list();
+		App.backup_mode = true;
+
+		foreach(var task in App.task_list){
+			if (!task.is_selected){
+				continue;
+			}
+
+			log_msg("");
+			log_draw_line();
+			string mode = (App.backup_mode) ? _("Backup") : _("Restore");
+			log_msg("%s - %s".printf(mode,task.display_name));
+			log_draw_line();
+			log_msg("");
+			
+			string cmd = (App.backup_mode) ? task.backup_cmd : task.restore_cmd;
+
+			log_debug(cmd);
+			
+			Posix.system(cmd);
+		}
+		
+		if (ok){
+			log_msg(Message.BACKUP_OK);
+		}
+		else{
+			log_msg(Message.BACKUP_ERROR);
+		}
+
+		return ok;
+	}
+
+	public bool restore_all(){
+		bool ok = false;
+
+		App.task_list = BackupTask.create_list();
+		App.backup_mode = false;
+
+		foreach(var task in App.task_list){
+			if (!task.is_selected){
+				continue;
+			}
+
+			log_msg("");
+			log_draw_line();
+			string mode = (App.backup_mode) ? _("Backup") : _("Restore");
+			log_msg("%s - %s".printf(mode,task.display_name));
+			log_draw_line();
+			log_msg("");
+			
+			string cmd = (App.backup_mode) ? task.backup_cmd : task.restore_cmd;
+
+			log_debug(cmd);
+			
+			Posix.system(cmd);
+		}
+		
+		if (ok){
+			log_msg(Message.BACKUP_OK);
+		}
+		else{
+			log_msg(Message.BACKUP_ERROR);
+		}
+
+		return ok;
+	}
+
 }
 

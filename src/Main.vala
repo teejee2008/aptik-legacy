@@ -84,11 +84,18 @@ public class Main : GLib.Object {
 
 	public Gee.HashMap<string,SystemUser> user_list_bak;
 	public Gee.HashMap<string,SystemGroup> group_list_bak;
-	
+
+	public Gee.ArrayList<BackupTask> task_list;
+	public string selected_tasks = "";
+	public bool backup_mode = false;
+
 	public string pkg_list_install = "";
 	public string pkg_list_deb = "";
 	public string pkg_list_missing = "";
 	public string gdebi_list = "";
+
+	public string cmd_arg_password = "";
+	public uint64 cmd_arg_size_limit = 0;
 	
 	public DateTime pkginfo_modified_date;
 
@@ -256,6 +263,7 @@ public class Main : GLib.Object {
 		var config = new Json.Object();
 
 		config.set_string_member("backup_dir", backup_dir);
+		config.set_string_member("selected_tasks", selected_tasks);
 
 		var json = new Json.Generator();
 		json.pretty = true;
@@ -295,6 +303,8 @@ public class Main : GLib.Object {
 			backup_dir = val;
 		}
 
+		selected_tasks = json_get_string(config, "selected_tasks", "");
+
 		if (gui_mode) {
 			log_msg(_("App config loaded") + ": '%s'".printf(this.app_conf_path));
 		}
@@ -302,6 +312,9 @@ public class Main : GLib.Object {
 
 	public string backup_dir {
 		owned get{
+			if (_backup_dir == null){
+				_backup_dir = "";
+			}
 			return _backup_dir.has_suffix("/") ? _backup_dir : _backup_dir + "/";
 		}
 		set{
@@ -718,13 +731,6 @@ public class Main : GLib.Object {
 		}
 
 		bool is_success = write_file(list_file, text);
-
-		if (is_success) {
-			log_msg(_("File saved") + " '%s'".printf(PKG_LIST_BAK));
-		}
-		else {
-			log_error(_("Failed to write")  + " '%s'".printf(PKG_LIST_BAK));
-		}
 
 		return is_success;
 	}
@@ -1183,13 +1189,6 @@ public class Main : GLib.Object {
 		}
 
 		bool is_success = write_file(ppa_list_file, text);
-
-		if (is_success) {
-			log_msg(_("File saved") + " '%s'".printf(file_name));
-		}
-		else {
-			log_error(_("Failed to write")  + " '%s'".printf(file_name));
-		}
 
 		return is_success;
 	}
@@ -1688,15 +1687,24 @@ public class Main : GLib.Object {
 	/* App Settings */
 
 	public bool backup_app_settings_all(Gee.ArrayList<AppConfig> config_list) {
+		bool ok = true;
+		
 		backup_app_settings_init(config_list);
 
 		foreach(AppConfig config in config_list) {
-			if (config.is_selected) { 
-				backup_app_settings_single(config);
+			if (!config.is_selected) {
+				continue;
 			}
+
+			if ((App.cmd_arg_size_limit > 0) && (config.bytes > App.cmd_arg_size_limit)){
+				continue;
+			}
+
+			var status = backup_app_settings_single(config);
+			ok = ok && status;
 		}
 
-		return true;
+		return ok;
 	}
 
 	public void backup_app_settings_init(Gee.ArrayList<AppConfig> config_list){
@@ -1704,9 +1712,15 @@ public class Main : GLib.Object {
 		progress_total = 0;
 		progress_count = 0;
 		foreach(AppConfig config in config_list) {
-			if (config.is_selected) {
-				progress_total += (int) get_file_count(config.path);
+			if (!config.is_selected) {
+				continue;
 			}
+
+			if ((App.cmd_arg_size_limit > 0) && (config.bytes > App.cmd_arg_size_limit)){
+				continue;
+			}
+			
+			progress_total += (int) get_file_count(config.path);
 		}
 	}
 	
@@ -1749,7 +1763,7 @@ public class Main : GLib.Object {
 				else {
 					stdout.printf("[ status=%d ]\n".printf(status));
 				}
-				//return (status == 0);
+				return (status == 0);
 			}
 
 			return true;
@@ -1794,7 +1808,8 @@ public class Main : GLib.Object {
 				}
 
 				AppConfig entry = new AppConfig("~/%s".printf(name));
-				entry.size = get_file_size_formatted(item);
+				entry.bytes = dir_size(item);
+				entry.size = format_file_size(entry.bytes);
 				entry.description = get_config_dir_description(entry.name);
 				app_config_list.add(entry);
 
@@ -1816,7 +1831,8 @@ public class Main : GLib.Object {
 				}
 
 				AppConfig entry = new AppConfig("~/.config/%s".printf(name));
-				entry.size = get_file_size_formatted(item);
+				entry.bytes = dir_size(item);
+				entry.size = format_file_size(entry.bytes);
 				entry.description = get_config_dir_description(entry.name);
 				app_config_list.add(entry);
 			}
@@ -1836,7 +1852,8 @@ public class Main : GLib.Object {
 				}
 
 				AppConfig entry = new AppConfig("~/.local/share/%s".printf(name));
-				entry.size = get_file_size_formatted(item);
+				entry.bytes = dir_size(item);
+				entry.size = format_file_size(entry.bytes);
 				entry.description = get_config_dir_description(entry.name);
 				app_config_list.add(entry);
 			}
@@ -1929,15 +1946,18 @@ public class Main : GLib.Object {
 	}
 
 	public bool restore_app_settings_all(Gee.ArrayList<AppConfig> config_list) {
+		bool ok = true;
+		
 		restore_app_settings_init(config_list);
 		
 		foreach(AppConfig config in config_list) {
 			if (config.is_selected) {
-				restore_app_settings_single(config);
+				var status = restore_app_settings_single(config);
+				ok = ok && status;
 			}
 		}
 
-		return true;
+		return ok;
 	}
 
 	public void restore_app_settings_init(Gee.ArrayList<AppConfig> config_list) {
@@ -2182,7 +2202,13 @@ public class Main : GLib.Object {
 		var list = FsTabEntry.read_crypttab_file("/etc/crypttab");
 		foreach(var fs in list){
 			if (fs.uses_keyfile() && file_exists(fs.password)){
-				// get password if empty
+				
+				// get password -----------------------------
+
+				if ((user_password.length == 0) && (cmd_arg_password.length > 0)){
+					user_password = cmd_arg_password;
+				}
+				
 				if (user_password.length == 0){
 					user_password = prompt_for_password(true, Message.ENTER_PASSWORD_BACKUP);
 					if (user_password.length == 0){
@@ -2290,7 +2316,13 @@ public class Main : GLib.Object {
 			string src_file = "%s/%s".printf(mounts_dir, fs.keyfile_archive_name);
 
 			if (file_exists(src_file)){
-				// get password if empty
+				
+				// get password -----------------------------
+
+				if ((user_password.length == 0) && (cmd_arg_password.length > 0)){
+					user_password = cmd_arg_password;
+				}
+				
 				if (user_password.length == 0){
 					user_password = prompt_for_password(false, Message.ENTER_PASSWORD_RESTORE);
 					if (user_password.length == 0){
@@ -2492,7 +2524,7 @@ public class Main : GLib.Object {
 
 	public bool backup_users_and_groups(string password){
 		bool ok = false;
-		
+
 		string user_password = password;
 		
 		string users_dir = backup_dir + "users";
@@ -2503,9 +2535,13 @@ public class Main : GLib.Object {
 
 		// get password --------------------------
 
-		if (user_password == ""){
+		if ((user_password.length == 0) && (cmd_arg_password.length > 0)){
+			user_password = cmd_arg_password;
+		}
+		
+		if (user_password.length == 0){
 			user_password = prompt_for_password(true, Message.ENTER_PASSWORD_BACKUP);
-			if (user_password == ""){
+			if (user_password.length == 0){
 				log_error(Message.PASSWORD_MISSING);
 				return false;
 			}
@@ -2542,13 +2578,16 @@ public class Main : GLib.Object {
 		return true;
 	}
 
-
 	public bool restore_users_and_groups_init(string password){
 		string users_dir = App.backup_dir + "users";
 
 		string user_password = password;
 
 		// get password if empty -----------------------------
+
+		if ((user_password.length == 0) && (cmd_arg_password.length > 0)){
+			user_password = cmd_arg_password;
+		}
 		
 		if (user_password.length == 0){
 			user_password = prompt_for_password(true, Message.ENTER_PASSWORD_RESTORE);
@@ -2776,6 +2815,105 @@ public class Main : GLib.Object {
 
 	/* Misc */
 
+	public bool run_cmd (string cmd) {
+		string[] argv = new string[1];
+		argv[0] = save_script(cmd);
+
+		try {
+			//execute script file
+			Process.spawn_async_with_pipes(
+			    temp_dir, //working dir
+			    argv, //argv
+			    null, //environment
+			    SpawnFlags.SEARCH_PATH,
+			    null,   // child_setup
+			    out child_pid,
+			    out input_fd,
+			    out output_fd,
+			    out error_fd);
+
+			is_running = true;
+
+			proc_id = child_pid;
+
+			//create stream readers
+			UnixInputStream uis_out = new UnixInputStream(output_fd, false);
+			UnixInputStream uis_err = new UnixInputStream(error_fd, false);
+			dis_out = new DataInputStream(uis_out);
+			dis_err = new DataInputStream(uis_err);
+			dis_out.newline_type = DataStreamNewlineType.ANY;
+			dis_err.newline_type = DataStreamNewlineType.ANY;
+
+			//progress_count = 0;
+			stdout_lines = new Gee.ArrayList<string>();
+			stderr_lines = new Gee.ArrayList<string>();
+
+			try {
+				//start thread for reading output stream
+				Thread.create<void> (aptik_read_output_line, true);
+			} catch (Error e) {
+				log_error (e.message);
+			}
+
+			try {
+				//start thread for reading error stream
+				Thread.create<void> (aptik_read_error_line, true);
+			} catch (Error e) {
+				log_error (e.message);
+			}
+
+			while (is_running){
+				sleep(500);
+			}
+
+			return true;
+		}
+		catch (Error e) {
+			log_error (e.message);
+			return false;
+		}
+	}
+
+	private void aptik_read_error_line() {
+		try {
+			err_line = dis_err.read_line (null);
+			while (err_line != null) {
+				stderr.printf(err_line);
+				err_line = dis_err.read_line (null); //read next
+			}
+
+			dis_err.close();
+			dis_err = null;
+			GLib.FileUtils.close(error_fd);
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}
+	}
+
+	private void aptik_read_output_line() {
+		try {
+			out_line = dis_out.read_line (null);
+			while (out_line != null) {
+				stdout.printf(out_line);
+				out_line = dis_out.read_line (null);  //read next
+			}
+
+			dis_out.close();
+			dis_out = null;
+			GLib.FileUtils.close(output_fd);
+
+			GLib.FileUtils.close(input_fd);
+			
+			Process.close_pid(child_pid); //required on Windows, doesn't do anything on Unix
+			
+			is_running = false;
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}
+	}
+
 	public bool take_ownership() {
 		bool is_success = set_directory_ownership(user_home, user_login);
 		if (is_success) {
@@ -2802,6 +2940,121 @@ public class Main : GLib.Object {
 		catch (Error e) {
 			log_error (e.message);
 		}
+	}
+}
+
+public class BackupTask : GLib.Object {
+	public string name = "";
+	public string display_name = "";
+	public bool is_started = false;
+	public bool is_completed = false;
+	public bool is_selected = true;
+	private string _backup_cmd = "";
+	private string _restore_cmd = "";
+
+	private BackupTask(string name, string display_name){
+		this.name = name;
+		this.display_name = display_name;
+
+		/*string cmd = "";
+		cmd += string.nfill(70,'=') + "\n";
+		cmd += "echo '%s'\n".printf(display_name);
+		cmd += string.nfill(70,'=') + "\n";
+
+		_backup_cmd = cmd;
+		_restore_cmd = cmd;*/
+	}
+
+	public string backup_cmd {
+		owned get{
+			return _backup_cmd;
+		}
+		set{
+			var cmd = "";
+			//cmd += "echo '%s'\n".printf(string.nfill(70,'='));
+			//cmd += "echo '%s'\n".printf(display_name);
+			//cmd += "echo '%s'\n".printf(string.nfill(70,'='));
+			//cmd += "%s\n".printf(value);
+			//cmd += "echo\n";
+			cmd = value;
+			_backup_cmd = cmd;
+		}
+	}
+
+	public string restore_cmd {
+		owned get{
+			return _restore_cmd;
+		}
+		set{
+			var cmd = "";
+			//cmd += "echo '%s'\n".printf(string.nfill(70,'='));
+			//cmd += "echo '%s'\n".printf(display_name);
+			//cmd += "echo '%s'\n".printf(string.nfill(70,'='));
+			//cmd += "%s\n".printf(value);
+			//cmd += "echo\n";
+			cmd = value;
+			_restore_cmd = cmd;
+		}
+	}
+	
+	public static Gee.ArrayList<BackupTask> create_list(){
+		var list = new Gee.ArrayList<BackupTask>();
+		
+		var task = new BackupTask("ppa",_("Software Sources (PPAs)"));
+		task.backup_cmd = "aptik --backup-dir '%s' --backup-ppa".printf(App.backup_dir);
+		task.restore_cmd = "aptik --backup-dir '%s' --restore-ppas".printf(App.backup_dir);
+		list.add(task);
+		
+		task = new BackupTask("cache",_("Downloaded Packages (APT Cache)"));
+		task.backup_cmd = "aptik --backup-dir '%s' --backup-cache".printf(App.backup_dir);
+		task.restore_cmd = "aptik --backup-dir '%s' --restore-cache".printf(App.backup_dir);
+		list.add(task);
+		
+		task = new BackupTask("package",_("Software Selections (Installed Packages)"));
+		task.backup_cmd = "aptik --backup-dir '%s' --backup-packages".printf(App.backup_dir);
+		task.restore_cmd = "aptik --backup-dir '%s' --restore-packages".printf(App.backup_dir);
+		list.add(task);
+
+		task = new BackupTask("user",_("Users and groups"));
+		task.backup_cmd = "aptik --backup-dir '%s' --password '%s' --backup-users".printf(App.backup_dir, App.cmd_arg_password);
+		task.restore_cmd = "aptik --backup-dir '%s' --password '%s' --restore-users".printf(App.backup_dir, App.cmd_arg_password);
+		list.add(task);
+
+		task = new BackupTask("config",_("Application Settings"));
+		task.backup_cmd = "aptik --backup-dir '%s' --size-limit %lld --backup-configs".printf(App.backup_dir, App.cmd_arg_size_limit);
+		task.restore_cmd = "aptik --backup-dir '%s' --restore-configs".printf(App.backup_dir);
+		list.add(task);
+		
+		task = new BackupTask("theme",_("Themes and Icons"));
+		task.backup_cmd = "aptik --backup-dir '%s' --backup-themes".printf(App.backup_dir);
+		task.restore_cmd = "aptik --backup-dir '%s' --restore-themes".printf(App.backup_dir);
+		list.add(task);
+
+		task = new BackupTask("mount",_("Filesystem Mounts"));
+		task.backup_cmd = "aptik --backup-dir '%s' --password '%s' --backup-mounts".printf(App.backup_dir, App.cmd_arg_password);
+		task.restore_cmd = "aptik --backup-dir '%s' --password '%s' --restore-mounts".printf(App.backup_dir, App.cmd_arg_password);
+		list.add(task);
+
+		string[] arr = App.selected_tasks.strip().split(",");
+
+		if (arr.length == 0){
+			foreach(var item in list){
+				item.is_selected = true;
+			}
+		}
+		else{
+			foreach(var item in list){
+				item.is_selected = false;
+				foreach(string selected_name in arr){
+					if (item.name == selected_name){
+						item.is_selected = true;
+						break;
+					}
+				}
+			}
+		}
+		
+		return list;
 	}
 }
 
