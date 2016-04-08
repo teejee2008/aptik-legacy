@@ -2175,10 +2175,17 @@ namespace TeeJee.System{
 		public string password = "";
 		public int uid = -1;
 		public int gid = -1;
-		public string full_name = "";
+		public string user_info = "";
 		public string home_path = "";
 		public string shell_path = "";
-		
+
+		public string full_name = "";
+		public string room_num = "";
+		public string phone_work = "";
+		public string phone_home = "";
+		public string other_info = "";
+
+		//public string
 		public string shadow_line = "";
 		public string pwd_hash = "";
 		public string pwd_last_changed = "";
@@ -2201,10 +2208,6 @@ namespace TeeJee.System{
 			all_users = read_users_from_file("/etc/passwd","/etc/shadow","");
 		}
 
-		public static void query_passwords(){
-
-		}
-		
 		public bool is_installed{
 			get {
 				return SystemUser.all_users.has_key(name);
@@ -2282,9 +2285,26 @@ namespace TeeJee.System{
 				user.password = fields[1].strip();
 				user.uid = int.parse(fields[2].strip());
 				user.gid = int.parse(fields[3].strip());
-				user.full_name = fields[4].strip();
+				user.user_info = fields[4].strip();
 				user.home_path = fields[5].strip();
 				user.shell_path = fields[6].strip();
+
+				string[] arr = user.user_info.split(",");
+				if (arr.length >= 1){
+					user.full_name = arr[0];
+				}
+				if (arr.length >= 2){
+					user.room_num = arr[1];
+				}
+				if (arr.length >= 3){
+					user.phone_work = arr[2];
+				}
+				if (arr.length >= 4){
+					user.phone_home = arr[3];
+				}
+				if (arr.length >= 5){
+					user.other_info = arr[4];
+				}
 			}
 			else{
 				log_error("'passwd' file contains a record with non-standard fields" + ": %d".printf(fields.length));
@@ -2400,7 +2420,7 @@ namespace TeeJee.System{
 			txt += ":%s".printf(password);
 			txt += ":%d".printf(uid);
 			txt += ":%d".printf(gid);
-			txt += ":%s".printf(full_name);
+			txt += ":%s".printf(user_info);
 			txt += ":%s".printf(home_path);
 			txt += ":%s".printf(shell_path);
 			return txt;

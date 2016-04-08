@@ -85,6 +85,8 @@ public class Main : GLib.Object {
 	public Gee.HashMap<string,SystemUser> user_list_bak;
 	public Gee.HashMap<string,SystemGroup> group_list_bak;
 
+	public Gee.ArrayList<SystemUser> user_list_home;
+	
 	public Gee.ArrayList<BackupTask> task_list;
 	public string selected_tasks = "";
 	public bool backup_mode = false;
@@ -168,6 +170,8 @@ public class Main : GLib.Object {
 		NATIVE_ARCH = execute_command_sync_get_output("dpkg --print-architecture").strip();
 
 		Theme.init();
+
+		user_list_home_init();
 	}
 
 	public void select_user(string username){
@@ -2760,7 +2764,7 @@ public class Main : GLib.Object {
 			}
 
 			user.password = user_bak.password;
-			user.full_name = user_bak.full_name;
+			user.user_info = user_bak.user_info;
 			user.home_path = user_bak.home_path;
 			user.shell_path = user_bak.shell_path;
 			
@@ -2806,6 +2810,90 @@ public class Main : GLib.Object {
 		return ok;
 	}
 
+	/* Home */
+
+	public void user_list_home_init(){
+		
+		// query users ----------------
+		
+		SystemUser.query_users();
+
+		// build list -----------------
+		
+		var list = new Gee.ArrayList<SystemUser>();
+		foreach(var user in SystemUser.all_users.values){
+			if (user.is_system){
+				continue;
+			}
+
+			if ((user.home_path.length == 0) || !dir_exists(user.home_path)){
+				continue;
+			}
+
+			user.is_selected = true;
+			
+			list.add(user);
+		}
+		
+		//sort ------
+		
+		CompareDataFunc<SystemUser> func = (a, b) => {
+			return strcmp(a.name, b.name);
+		};
+		list.sort((owned)func);
+		
+		user_list_home = list;
+	}
+	
+	public string backup_home_get_script(){
+		string sh = "";
+		
+		foreach(var user in user_list_home){
+			if (user.is_selected){
+				var bak_dir = "%s%s/%s".printf(backup_dir, "home", user.name);
+
+				var cmd = "";
+				cmd += "mkdir -p '%s'\n".printf(bak_dir);
+				cmd += "export PASSPHRASE='%s'\n".printf(App.arg_password);
+				cmd += "duplicity --verbosity i '%s' 'file://%s'\n".printf(user.home_path, bak_dir);
+				cmd += "unset PASSPHRASE\n";
+
+				sh += "echo '%s'\n".printf(string.nfill(70,'='));
+				sh += "echo '%s'\n".printf(user.name);
+				sh += "echo '%s'\n".printf(string.nfill(70,'='));
+				sh += "%s\n".printf(cmd);
+				sh += "echo ''\n";
+			}
+		}
+
+		return sh;
+	}
+
+	public string restore_home_get_script(){
+		string sh = "";
+		
+		foreach(var user in user_list_home){
+			if (user.is_selected){
+				var bak_dir = "%s%s/%s".printf(backup_dir, "home", user.name);
+				
+				var cmd = "";
+				cmd += "mkdir -p '%s'\n".printf(user.home_path);
+				cmd += "export PASSPHRASE='%s'\n".printf(App.arg_password);
+				cmd += "duplicity --verbosity i 'file://%s' '%s'\n".printf(bak_dir, user.home_path);
+				cmd += "unset PASSPHRASE\n";
+				
+				sh += "";
+				sh += "echo '%s'\n".printf(string.nfill(70,'='));
+				sh += "echo '%s'\n".printf(user.name);
+				sh += "echo '%s'\n".printf(string.nfill(70,'='));
+				sh += "%s\n".printf(cmd);
+				sh += "echo ''\n";
+			}
+		}
+
+		return sh;
+	}
+	
 	/* Misc */
 
 	public bool run_cmd (string cmd) {

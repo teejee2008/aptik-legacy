@@ -622,27 +622,7 @@ public class MainWindow : Window {
 		grid_backup_buttons.attach(button, 2, row, 1, 1);
 		btn_backup_home = button;
 		
-		button.clicked.connect(()=>{
-			if (!check_backup_folder()) {
-				return;
-			}
-
-			if (App.arg_password.length == 0){
-				App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"),Message.ENTER_PASSWORD_BACKUP);
-				if (App.arg_password == ""){
-					return;
-				}
-			}
-
-			bool ok = App.backup_mounts();
-			
-			if (ok){
-				gtk_messagebox(_("Finished"), Message.BACKUP_OK, this, false);
-			}
-			else{
-				gtk_messagebox(_("Error"), Message.BACKUP_ERROR, this, false);
-			}
-		});
+		button.clicked.connect(btn_backup_home_clicked);
 
 		// btn_restore_home
 		button = new Gtk.Button.with_label (" " + _("Restore") + " ");
@@ -651,18 +631,7 @@ public class MainWindow : Window {
 		grid_backup_buttons.attach(button, 3, row, 1, 1);
 		btn_restore_home = button;
 		
-		button.clicked.connect(()=>{
-			if (!check_backup_folder()) {
-				return;
-			}
-			if (!check_backup_file("mounts/fstab") && !check_backup_file("mounts/crypttab")){
-				return;
-			}
-
-			//this.hide();
-			//var dlg = new MountWindow.with_parent(this,true);
-			//dlg.show_all();
-		});
+		button.clicked.connect(btn_restore_home_clicked);
 	}
 
 	private void init_section_status() {
@@ -958,13 +927,82 @@ public class MainWindow : Window {
 
 	/* Home */
 
-	private void btn_backup_home(){
+	private void btn_backup_home_clicked(){
+		if (!check_backup_folder()) {
+			return;
+		}
 
+		// get password --------------------
+
+		if (App.arg_password.length == 0){
+			App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"),Message.ENTER_PASSWORD_BACKUP);
+			if (App.arg_password == ""){
+				return;
+			}
+		}
+
+		// select users ------------------------------
+
+		var dlg = new UserSelectionDialog.with_parent(this, true);
+		int response = dlg.run();
+		if (response == Gtk.ResponseType.ACCEPT){
+
+			this.hide();
+			
+			term = new TerminalWindow.with_parent(this, false, true);
+			term.script_complete.connect(all_tasks_complete);
+			term.destroy.connect(()=>{
+				this.present();
+			});
+			
+			term.execute_script(save_bash_script_temp(App.backup_home_get_script()));
+			
+			dlg.destroy();
+		}
+		else{
+			dlg.destroy();
+			return;
+		}
 	}
 
-	private void btn_restore_home(){
+	private void btn_restore_home_clicked(){
+		if (!check_backup_folder()) {
+			return;
+		}
 
+		// get password --------------------
+		
+		if (App.arg_password.length == 0){
+			App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"),Message.ENTER_PASSWORD_BACKUP);
+			if (App.arg_password == ""){
+				return;
+			}
+		}
+
+		// select users ------------------------------
+		
+		var dlg = new UserSelectionDialog.with_parent(this, true);
+		int response = dlg.run();
+		if (response == Gtk.ResponseType.ACCEPT){
+
+			this.hide();
+			
+			term = new TerminalWindow.with_parent(this, false, true);
+			term.script_complete.connect(all_tasks_complete);
+			term.destroy.connect(()=>{
+				this.present();
+			});
+			
+			term.execute_script(save_bash_script_temp(App.restore_home_get_script()));
+
+			dlg.destroy();
+		}
+		else{
+			dlg.destroy();
+			return;
+		}
 	}
+	
 	/* One-click */
 
 	private void btn_backup_all_clicked() {

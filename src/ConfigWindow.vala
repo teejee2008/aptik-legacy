@@ -173,7 +173,7 @@ public class ConfigWindow : Window {
 		index++;
 		store.append(out iter);
 		store.set (iter, 0, _("root"), 1, "root", -1);
-		
+
 		foreach (string username in list_dir_names("/home")) {
 			if (username == "PinguyBuilder"){
 				continue;
