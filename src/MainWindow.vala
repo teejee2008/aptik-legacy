@@ -64,6 +64,9 @@ public class MainWindow : Window {
 	private Button btn_restore_mount;
 	private Button btn_backup_mount;
 
+	private Button btn_restore_home;
+	private Button btn_backup_home;
+	
 	private Button btn_restore_user;
 	private Button btn_backup_user;
 
@@ -207,37 +210,38 @@ public class MainWindow : Window {
 		init_section_backup_cache(++row);
 
 		init_section_backup_packages(++row);
+		
+		init_section_backup_themes(++row);
+		
+		init_section_backup_mounts(++row);
 
 		init_section_backup_users(++row);
 		
 		init_section_backup_configs(++row);
 
-		init_section_backup_themes(++row);
-		
-		init_section_backup_mounts(++row);
-
-		//init_section_one_click(++row);
+		init_section_backup_home(++row);
 	}
 
 	private void init_section_backup_ppa(int row) {
 		var img = get_shared_icon("x-system-software-sources", "ppa.svg", icon_size_list);
 		grid_backup_buttons.attach(img, 0, row, 1, 1);
 
-		//lbl_backup_ppa
-		Label lbl_backup_ppa = new Label (" " + _("Software Sources (PPAs)"));
-		lbl_backup_ppa.set_tooltip_text(_("Software Sources (Third Party PPAs)"));
-		lbl_backup_ppa.set_use_markup(true);
-		lbl_backup_ppa.halign = Align.START;
-		lbl_backup_ppa.hexpand = true;
-		grid_backup_buttons.attach(lbl_backup_ppa, 1, row, 1, 1);
+		// label
+		var label = new Label (" " + _("Software Sources (PPAs)"));
+		label.set_tooltip_text(_("Software Sources (Third Party PPAs)"));
+		label.set_use_markup(true);
+		label.halign = Align.START;
+		label.hexpand = true;
+		grid_backup_buttons.attach(label, 1, row, 1, 1);
 
-		//btn_backup_ppa
-		btn_backup_ppa = new Gtk.Button.with_label (" " + _("Backup") + " ");
-		btn_backup_ppa.set_size_request(button_width, button_height);
-		btn_backup_ppa.set_tooltip_text(_("Backup the list of installed PPAs"));
-		grid_backup_buttons.attach(btn_backup_ppa, 2, row, 1, 1);
-
-		btn_backup_ppa.clicked.connect(()=>{
+		// btn_backup_ppa
+		var button = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		button.set_size_request(button_width, button_height);
+		button.set_tooltip_text(_("Backup the list of installed PPAs"));
+		grid_backup_buttons.attach(button, 2, row, 1, 1);
+		btn_backup_ppa = button;
+		
+		button.clicked.connect(()=>{
 			if (!check_backup_folder()) {
 				return;
 			}
@@ -247,13 +251,14 @@ public class MainWindow : Window {
 			dlg.show_all();
 		});
 
-		//btn_restore_ppa
-		btn_restore_ppa = new Gtk.Button.with_label (" " + _("Restore") + " ");
-		btn_restore_ppa.set_size_request(button_width, button_height);
-		btn_restore_ppa.set_tooltip_text(_("Add missing PPAs"));
-		grid_backup_buttons.attach(btn_restore_ppa, 3, row, 1, 1);
-
-		btn_restore_ppa.clicked.connect(()=>{
+		// btn_restore_ppa
+		button = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		button.set_size_request(button_width, button_height);
+		button.set_tooltip_text(_("Add missing PPAs"));
+		grid_backup_buttons.attach(button, 3, row, 1, 1);
+		btn_restore_ppa = button;
+		
+		button.clicked.connect(()=>{
 			if (!check_backup_folder()) {
 				return;
 			}
@@ -271,49 +276,54 @@ public class MainWindow : Window {
 		var img = get_shared_icon("download", "cache.svg", icon_size_list);
 		grid_backup_buttons.attach(img, 0, row, 1, 1);
 
-		//lbl_backup_cache
-		Label lbl_backup_cache = new Label (" " + _("Downloaded Packages (APT Cache)"));
-		lbl_backup_cache.set_tooltip_text(_("Downloaded Packages (APT Cache)"));
-		lbl_backup_cache.set_use_markup(true);
-		lbl_backup_cache.halign = Align.START;
-		lbl_backup_cache.hexpand = true;
-		grid_backup_buttons.attach(lbl_backup_cache, 1, row, 1, 1);
+		// label
+		var label = new Label (" " + _("Downloaded Packages (APT Cache)"));
+		label.set_tooltip_text(_("Downloaded Packages (APT Cache)"));
+		label.set_use_markup(true);
+		label.halign = Align.START;
+		label.hexpand = true;
+		grid_backup_buttons.attach(label, 1, row, 1, 1);
 
-		//btn_backup_cache
-		btn_backup_cache = new Gtk.Button.with_label (" " + _("Backup") + " ");
-		btn_backup_cache.set_size_request(button_width, button_height);
-		btn_backup_cache.set_tooltip_text(_("Backup downloaded packages from APT cache"));
-		btn_backup_cache.clicked.connect(btn_backup_cache_clicked);
-		grid_backup_buttons.attach(btn_backup_cache, 2, row, 1, 1);
+		// btn_backup_cache
+		var button = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		button.set_size_request(button_width, button_height);
+		button.set_tooltip_text(_("Backup downloaded packages from APT cache"));
+		grid_backup_buttons.attach(button, 2, row, 1, 1);
+		btn_backup_cache = button;
 
-		//btn_restore_cache
-		btn_restore_cache = new Gtk.Button.with_label (" " + _("Restore") + " ");
-		btn_restore_cache.set_size_request(button_width, button_height);
-		btn_restore_cache.set_tooltip_text(_("Restore downloaded packages to APT cache"));
-		btn_restore_cache.clicked.connect(btn_restore_cache_clicked);
-		grid_backup_buttons.attach(btn_restore_cache, 3, row, 1, 1);
+		button.clicked.connect(btn_backup_cache_clicked);
+		
+		// btn_restore_cache
+		button = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		button.set_size_request(button_width, button_height);
+		button.set_tooltip_text(_("Restore downloaded packages to APT cache"));
+		grid_backup_buttons.attach(button, 3, row, 1, 1);
+		btn_restore_cache = button;
+		
+		button.clicked.connect(btn_restore_cache_clicked);
 	}
 
 	private void init_section_backup_packages(int row) {
 		var img = get_shared_icon("gnome-package", "package.svg", icon_size_list);
 		grid_backup_buttons.attach(img, 0, row, 1, 1);
 
-		//lbl_backup_packages
-		Label lbl_backup_packages = new Label (" " + _("Software Selections"));
-		lbl_backup_packages.set_tooltip_text(_("Software Selections (Installed Packages)"));
-		lbl_backup_packages.set_use_markup(true);
-		lbl_backup_packages.halign = Align.START;
-		lbl_backup_packages.hexpand = true;
-		grid_backup_buttons.attach(lbl_backup_packages, 1, row, 1, 1);
+		// label
+		var label = new Label (" " + _("Software Selections"));
+		label.set_tooltip_text(_("Software Selections (Installed Packages)"));
+		label.set_use_markup(true);
+		label.halign = Align.START;
+		label.hexpand = true;
+		grid_backup_buttons.attach(label, 1, row, 1, 1);
 
-		//btn_backup_packages
-		btn_backup_packages = new Gtk.Button.with_label (" " + _("Backup") + " ");
-		btn_backup_packages.set_size_request(button_width, button_height);
-		btn_backup_packages.set_tooltip_text(_("Backup the list of installed packages"));
-		btn_backup_packages.vexpand = false;
-		grid_backup_buttons.attach(btn_backup_packages, 2, row, 1, 1);
-
-		btn_backup_packages.clicked.connect(()=>{
+		// btn_backup_packages
+		var button = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		button.set_size_request(button_width, button_height);
+		button.set_tooltip_text(_("Backup the list of installed packages"));
+		button.vexpand = false;
+		grid_backup_buttons.attach(button, 2, row, 1, 1);
+		btn_backup_packages = button;
+		
+		button.clicked.connect(()=>{
 			if (!check_backup_folder()) {
 				return;
 			}
@@ -323,13 +333,14 @@ public class MainWindow : Window {
 			dlg.show_all();
 		});
 
-		//btn_restore_packages
-		btn_restore_packages = new Gtk.Button.with_label (" " + _("Restore") + " ");
-		btn_restore_packages.set_size_request(button_width, button_height);
-		btn_restore_packages.set_tooltip_text(_("Install missing packages"));
-		grid_backup_buttons.attach(btn_restore_packages, 3, row, 1, 1);
-
-		btn_restore_packages.clicked.connect(()=>{
+		// btn_restore_packages
+		button = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		button.set_size_request(button_width, button_height);
+		button.set_tooltip_text(_("Install missing packages"));
+		grid_backup_buttons.attach(button, 3, row, 1, 1);
+		btn_restore_packages = button;
+		
+		button.clicked.connect(()=>{
 			if (!check_backup_folder()) {
 				return;
 			}
@@ -347,7 +358,7 @@ public class MainWindow : Window {
 		var img = get_shared_icon("config-users", "system-users.svg", icon_size_list);
 		grid_backup_buttons.attach(img, 0, row, 1, 1);
 
-		//label
+		// label
 		var label = new Label (" " + _("Users &amp; Groups"));
 		label.set_tooltip_text(_("Users and groups"));
 		label.set_use_markup(true);
@@ -425,21 +436,22 @@ public class MainWindow : Window {
 		var img = get_shared_icon("gnome-settings", "config.svg", icon_size_list);
 		grid_backup_buttons.attach(img, 0, row, 1, 1);
 
-		//lbl_backup_config
-		Label lbl_backup_config = new Label (" " + _("Application Settings"));
-		lbl_backup_config.set_tooltip_text(_("Application Settings"));
-		lbl_backup_config.set_use_markup(true);
-		lbl_backup_config.halign = Align.START;
-		lbl_backup_config.hexpand = true;
-		grid_backup_buttons.attach(lbl_backup_config, 1, row, 1, 1);
+		// label
+		var label = new Label (" " + _("User Application Settings"));
+		label.set_tooltip_text(_("Application Settings"));
+		label.set_use_markup(true);
+		label.halign = Align.START;
+		label.hexpand = true;
+		grid_backup_buttons.attach(label, 1, row, 1, 1);
 
-		//btn_backup_config
-		btn_backup_config = new Gtk.Button.with_label (" " + _("Backup") + " ");
-		btn_backup_config.set_size_request(button_width, button_height);
-		btn_backup_config.set_tooltip_text(_("Backup application settings"));
-		grid_backup_buttons.attach(btn_backup_config, 2, row, 1, 1);
-
-		btn_backup_config.clicked.connect(()=>{
+		// btn_backup_config
+		var button = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		button.set_size_request(button_width, button_height);
+		button.set_tooltip_text(_("Backup application settings"));
+		grid_backup_buttons.attach(button, 2, row, 1, 1);
+		btn_backup_config = button;
+		
+		button.clicked.connect(()=>{
 			if (!check_backup_folder()) {
 				return;
 			}
@@ -449,13 +461,14 @@ public class MainWindow : Window {
 			dlg.show_all();
 		});
 
-		//btn_restore_config
-		btn_restore_config = new Gtk.Button.with_label (" " + _("Restore") + " ");
-		btn_restore_config.set_size_request(button_width, button_height);
-		btn_restore_config.set_tooltip_text(_("Restore application settings"));
-		grid_backup_buttons.attach(btn_restore_config, 3, row, 1, 1);
-
-		btn_restore_config.clicked.connect(()=>{
+		// btn_restore_config
+		button = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		button.set_size_request(button_width, button_height);
+		button.set_tooltip_text(_("Restore application settings"));
+		grid_backup_buttons.attach(button, 3, row, 1, 1);
+		btn_restore_config = button;
+		
+		button.clicked.connect(()=>{
 			if (!check_backup_folder()) {
 				return;
 			}
@@ -473,21 +486,22 @@ public class MainWindow : Window {
 		var img = get_shared_icon("preferences-theme", "theme.svg", icon_size_list);
 		grid_backup_buttons.attach(img, 0, row, 1, 1);
 
-		//lbl_backup_theme
-		Label lbl_backup_theme = new Label (" " + _("Themes and Icons"));
-		lbl_backup_theme.set_tooltip_text(_("Themes and Icons"));
-		lbl_backup_theme.set_use_markup(true);
-		lbl_backup_theme.halign = Align.START;
-		lbl_backup_theme.hexpand = true;
-		grid_backup_buttons.attach(lbl_backup_theme, 1, row, 1, 1);
+		// label
+		var label = new Label (" " + _("Themes and Icons"));
+		label.set_tooltip_text(_("Themes and Icons"));
+		label.set_use_markup(true);
+		label.halign = Align.START;
+		label.hexpand = true;
+		grid_backup_buttons.attach(label, 1, row, 1, 1);
 
-		//btn_backup_theme
-		btn_backup_theme = new Gtk.Button.with_label (" " + _("Backup") + " ");
-		btn_backup_theme.set_size_request(button_width, button_height);
-		btn_backup_theme.set_tooltip_text(_("Backup themes and icons"));
-		grid_backup_buttons.attach(btn_backup_theme, 2, row, 1, 1);
-
-		btn_backup_theme.clicked.connect(()=>{
+		// btn_backup_theme
+		var button = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		button.set_size_request(button_width, button_height);
+		button.set_tooltip_text(_("Backup themes and icons"));
+		grid_backup_buttons.attach(button, 2, row, 1, 1);
+		btn_backup_theme = button;
+		
+		button.clicked.connect(()=>{
 			if (!check_backup_folder()) {
 				return;
 			}
@@ -497,13 +511,14 @@ public class MainWindow : Window {
 			dlg.show_all();
 		});
 
-		//btn_restore_theme
-		btn_restore_theme = new Gtk.Button.with_label (" " + _("Restore") + " ");
-		btn_restore_theme.set_size_request(button_width, button_height);
-		btn_restore_theme.set_tooltip_text(_("Restore themes and icons"));
-		grid_backup_buttons.attach(btn_restore_theme, 3, row, 1, 1);
+		// btn_restore_theme
+		button = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		button.set_size_request(button_width, button_height);
+		button.set_tooltip_text(_("Restore themes and icons"));
+		grid_backup_buttons.attach(button, 3, row, 1, 1);
+		btn_restore_theme = button;
 
-		btn_restore_theme.clicked.connect(()=>{
+		button.clicked.connect(()=>{
 			if (!check_backup_folder()) {
 				return;
 			}
@@ -521,21 +536,22 @@ public class MainWindow : Window {
 		var img = get_shared_icon("gtk-harddisk", "mount.svg", icon_size_list);
 		grid_backup_buttons.attach(img, 0, row, 1, 1);
 
-		//lbl_backup_mount
-		Label lbl_backup_mount = new Label (" " + _("Filesystem Mounts"));
-		lbl_backup_mount.set_tooltip_text(_("Filesystem Mounts"));
-		lbl_backup_mount.set_use_markup(true);
-		lbl_backup_mount.halign = Align.START;
-		lbl_backup_mount.hexpand = true;
-		grid_backup_buttons.attach(lbl_backup_mount, 1, row, 1, 1);
+		//label
+		var label = new Label (" " + _("Filesystem Mounts"));
+		label.set_tooltip_text(_("Filesystem Mounts"));
+		label.set_use_markup(true);
+		label.halign = Align.START;
+		label.hexpand = true;
+		grid_backup_buttons.attach(label, 1, row, 1, 1);
 
-		//btn_backup_mount
-		btn_backup_mount = new Gtk.Button.with_label (" " + _("Backup") + " ");
-		btn_backup_mount.set_size_request(button_width, button_height);
-		btn_backup_mount.set_tooltip_text(_("Backup /etc/fstab and /etc/crypttab entries"));
-		grid_backup_buttons.attach(btn_backup_mount, 2, row, 1, 1);
-
-		btn_backup_mount.clicked.connect(()=>{
+		// btn_backup_mount
+		var button = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		button.set_size_request(button_width, button_height);
+		button.set_tooltip_text(_("Backup /etc/fstab and /etc/crypttab entries"));
+		grid_backup_buttons.attach(button, 2, row, 1, 1);
+		btn_backup_mount = button;
+		
+		button.clicked.connect(()=>{
 			if (!check_backup_folder()) {
 				return;
 			}
@@ -566,13 +582,14 @@ public class MainWindow : Window {
 			}
 		});
 
-		//btn_restore_mount
-		btn_restore_mount = new Gtk.Button.with_label (" " + _("Restore") + " ");
-		btn_restore_mount.set_size_request(button_width, button_height);
-		btn_restore_mount.set_tooltip_text(_("Restore /etc/fstab entries"));
-		grid_backup_buttons.attach(btn_restore_mount, 3, row, 1, 1);
-
-		btn_restore_mount.clicked.connect(()=>{
+		// btn_restore_mount
+		button = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		button.set_size_request(button_width, button_height);
+		button.set_tooltip_text(_("Restore /etc/fstab entries"));
+		grid_backup_buttons.attach(button, 3, row, 1, 1);
+		btn_restore_mount = button;
+		
+		button.clicked.connect(()=>{
 			if (!check_backup_folder()) {
 				return;
 			}
@@ -582,6 +599,68 @@ public class MainWindow : Window {
 
 			this.hide();
 			var dlg = new MountWindow.with_parent(this,true);
+			//dlg.show_all();
+		});
+	}
+
+	private void init_section_backup_home(int row) {
+		var img = get_shared_icon("", "home.svg", icon_size_list);
+		grid_backup_buttons.attach(img, 0, row, 1, 1);
+
+		// label
+		var label = new Label (" " + _("User Data (Home Directory)"));
+		label.set_tooltip_text(_("User data in home directory"));
+		label.set_use_markup(true);
+		label.halign = Align.START;
+		label.hexpand = true;
+		grid_backup_buttons.attach(label, 1, row, 1, 1);
+
+		// btn_backup_home
+		var button = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		button.set_size_request(button_width, button_height);
+		button.set_tooltip_text(_("Backup visible (non-hidden) files and directories in user's HOME directory"));
+		grid_backup_buttons.attach(button, 2, row, 1, 1);
+		btn_backup_home = button;
+		
+		button.clicked.connect(()=>{
+			if (!check_backup_folder()) {
+				return;
+			}
+
+			if (App.arg_password.length == 0){
+				App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"),Message.ENTER_PASSWORD_BACKUP);
+				if (App.arg_password == ""){
+					return;
+				}
+			}
+
+			bool ok = App.backup_mounts();
+			
+			if (ok){
+				gtk_messagebox(_("Finished"), Message.BACKUP_OK, this, false);
+			}
+			else{
+				gtk_messagebox(_("Error"), Message.BACKUP_ERROR, this, false);
+			}
+		});
+
+		// btn_restore_home
+		button = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		button.set_size_request(button_width, button_height);
+		button.set_tooltip_text(_("Restore visible (non-hidden) files and directories in user's HOME directory"));
+		grid_backup_buttons.attach(button, 3, row, 1, 1);
+		btn_restore_home = button;
+		
+		button.clicked.connect(()=>{
+			if (!check_backup_folder()) {
+				return;
+			}
+			if (!check_backup_file("mounts/fstab") && !check_backup_file("mounts/crypttab")){
+				return;
+			}
+
+			//this.hide();
+			//var dlg = new MountWindow.with_parent(this,true);
 			//dlg.show_all();
 		});
 	}
@@ -877,6 +956,15 @@ public class MainWindow : Window {
 		gtk_do_events();
 	}
 
+	/* Home */
+
+	private void btn_backup_home(){
+
+	}
+
+	private void btn_restore_home(){
+
+	}
 	/* One-click */
 
 	private void btn_backup_all_clicked() {

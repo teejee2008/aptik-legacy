@@ -3016,7 +3016,7 @@ public class BackupTask : GLib.Object {
 		task.restore_cmd = "aptik --backup-dir '%s' --password '%s' --restore-users".printf(App.backup_dir, App.arg_password);
 		list.add(task);
 
-		task = new BackupTask("config",_("Application Settings"));
+		task = new BackupTask("config",_("User Application Settings"));
 		task.backup_cmd = "aptik --backup-dir '%s' --size-limit %lld --backup-configs".printf(App.backup_dir, App.cmd_arg_size_limit);
 		task.restore_cmd = "aptik --backup-dir '%s' --restore-configs".printf(App.backup_dir);
 		list.add(task);
