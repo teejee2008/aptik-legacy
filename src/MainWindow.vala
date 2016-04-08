@@ -614,7 +614,7 @@ public class MainWindow : Window {
 		vbox_main.add(toolbar_bottom);
 
 		int BUTTON_SIZE = 80;
-		int ICON_SIZE = 32;
+		int ICON_SIZE = 48;
 		
 		//remove toolbar background
 		var css_provider = new Gtk.CssProvider();
@@ -880,9 +880,14 @@ public class MainWindow : Window {
 			return;
 		}
 
-		App.cmd_arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"), Message.ENTER_PASSWORD_BACKUP);
-		if (App.cmd_arg_password.length == 0){
-			return;
+		if (App.selected_tasks.contains("user")
+			||App.selected_tasks.contains("mount")
+			||App.selected_tasks.contains("config")){
+				
+			App.cmd_arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"), Message.ENTER_PASSWORD_BACKUP);
+			if (App.cmd_arg_password.length == 0){
+				return;
+			}
 		}
 		
 		this.hide();
@@ -918,9 +923,14 @@ public class MainWindow : Window {
 			return;
 		}
 
-		App.cmd_arg_password = PasswordWindow.prompt_user(this, false, _("Enter Password"), Message.ENTER_PASSWORD_RESTORE);
-		if (App.cmd_arg_password.length == 0){
-			return;
+		if (App.selected_tasks.contains("user")
+			||App.selected_tasks.contains("mount")
+			||App.selected_tasks.contains("config")){
+				
+			App.cmd_arg_password = PasswordWindow.prompt_user(this, false, _("Enter Password"), Message.ENTER_PASSWORD_RESTORE);
+			if (App.cmd_arg_password.length == 0){
+				return;
+			}
 		}
 
 		this.hide();

@@ -1780,13 +1780,13 @@ public class Main : GLib.Object {
 
 	public Gee.ArrayList<AppConfig> list_app_config_directories_from_path(string base_path) {
 		var app_config_list = new Gee.ArrayList<AppConfig>();
+		FileInfo file;
 		
 		try
 		{
 			//list all items in home except .config and .local
 			File f_home = File.new_for_path (base_path);
 			FileEnumerator enumerator = f_home.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
-			FileInfo file;
 			while ((file = enumerator.next_file ()) != null) {
 				string name = file.get_name();
 				string item = base_path + "/" + name;
@@ -1828,7 +1828,7 @@ public class Main : GLib.Object {
 			//list all items in .config
 			File f_home_config = File.new_for_path (base_path + "/.config");
 			if (f_home_config.query_exists()){
-				enumerator = f_home_config.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
+				var enumerator = f_home_config.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
 				while ((file = enumerator.next_file ()) != null) {
 					string name = file.get_name();
 					string item = base_path + "/.config/" + name;
@@ -1852,7 +1852,7 @@ public class Main : GLib.Object {
 			//list all items in .local/share
 			var f_home_local = File.new_for_path (base_path + "/.local/share");
 			if (f_home_local.query_exists()){
-				enumerator = f_home_local.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
+				var enumerator = f_home_local.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
 				while ((file = enumerator.next_file ()) != null) {
 					string name = file.get_name();
 					string item = base_path + "/.local/share/" + name;
