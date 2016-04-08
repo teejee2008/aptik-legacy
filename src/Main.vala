@@ -90,6 +90,7 @@ public class Main : GLib.Object {
 	public Gee.ArrayList<BackupTask> task_list;
 	public string selected_tasks = "";
 	public bool backup_mode = false;
+	public bool dup_mode_full = true;
 
 	public string pkg_list_install = "";
 	public string pkg_list_deb = "";
@@ -2219,14 +2220,12 @@ public class Main : GLib.Object {
 		foreach(var fs in list){
 			if (fs.uses_keyfile() && file_exists(fs.password)){
 				
-				// get password -----------------------------
-
+				// get and check password -------------------
+				
+				prompt_for_password(true);
 				if (arg_password.length == 0){
-					arg_password = prompt_for_password(true, Message.ENTER_PASSWORD_BACKUP);
-					if (arg_password.length == 0){
-						log_error(Message.PASSWORD_MISSING);
-						return false;
-					}
+					log_error(Message.PASSWORD_MISSING);
+					return false;
 				}
 			
 				string src_file = fs.password;
@@ -2327,14 +2326,12 @@ public class Main : GLib.Object {
 
 			if (file_exists(src_file)){
 				
-				// get password -----------------------------
-
+				// get and check password -------------------
+				
+				prompt_for_password(false);
 				if (arg_password.length == 0){
-					arg_password = prompt_for_password(false, Message.ENTER_PASSWORD_RESTORE);
-					if (arg_password.length == 0){
-						log_error(Message.PASSWORD_MISSING);
-						return false;
-					}
+					log_error(Message.PASSWORD_MISSING);
+					return false;
 				}
 
 				string dst_file = fs.password;
@@ -2414,36 +2411,6 @@ public class Main : GLib.Object {
 		return true;
 	}
 
-	public string prompt_for_password(bool confirm, string message){
-		stdout.printf(message + ":\n");
-		
-		string? line = stdin.read_line();
-		line = (line != null) ? line.strip() : "";
-		string password = line;
-
-		if (password.length == 0){
-			log_msg("%s\n".printf(Message.PASSWORD_EMPTY));
-			return prompt_for_password(confirm, message);
-		}
-		
-		if (confirm){
-			stdout.printf(_("Enter password again to confirm") + ":\n");
-			
-			line = stdin.read_line();
-			line = (line != null) ? line.strip() : "";
-			string password2 = line;
-			if (password != password2){
-				log_msg("%s\n".printf(Message.PASSWORD_NOT_MATCHING));
-				return prompt_for_password(confirm, message);
-			}
-			else{
-				stdout.printf("\n");
-			}
-		}
-
-		return line;
-	}
-	
 	public Gee.ArrayList<FsTabEntry> create_fstab_list_for_restore(){
 		string mounts_dir = backup_dir + "mounts";
 		string sys_file = "/etc/fstab";
@@ -2538,14 +2505,12 @@ public class Main : GLib.Object {
 			return false;
 		}
 
-		// get password --------------------------
-
+		// get and check password -------------------
+		
+		prompt_for_password(true);
 		if (arg_password.length == 0){
-			arg_password = prompt_for_password(true, Message.ENTER_PASSWORD_BACKUP);
-			if (arg_password.length == 0){
-				log_error(Message.PASSWORD_MISSING);
-				return false;
-			}
+			log_error(Message.PASSWORD_MISSING);
+			return false;
 		}
 
 		// copy files to backup path ---------
@@ -2582,14 +2547,12 @@ public class Main : GLib.Object {
 	public bool restore_users_and_groups_init(string password){
 		string users_dir = App.backup_dir + "users";
 
-		// get password if empty -----------------------------
-
+		// get and check password -------------------
+		
+		prompt_for_password(false);
 		if (arg_password.length == 0){
-			arg_password = prompt_for_password(true, Message.ENTER_PASSWORD_RESTORE);
-			if (arg_password.length == 0){
-				log_error(Message.PASSWORD_MISSING);
-				return false;
-			}
+			log_error(Message.PASSWORD_MISSING);
+			return false;
 		}
 
 		// query users and groups from system -------------------
@@ -2855,7 +2818,10 @@ public class Main : GLib.Object {
 				var cmd = "";
 				cmd += "mkdir -p '%s'\n".printf(bak_dir);
 				cmd += "export PASSPHRASE='%s'\n".printf(App.arg_password);
-				cmd += "duplicity --verbosity i '%s' 'file://%s'\n".printf(user.home_path, bak_dir);
+				
+				cmd += "duplicity%s --verbosity i '%s' --exclude '**/.*' 'file://%s'\n".printf(
+				((dup_mode_full) ? " full" : ""), user.home_path, bak_dir);
+				
 				cmd += "unset PASSPHRASE\n";
 
 				sh += "echo '%s'\n".printf(string.nfill(70,'='));
@@ -2879,7 +2845,7 @@ public class Main : GLib.Object {
 				var cmd = "";
 				cmd += "mkdir -p '%s'\n".printf(user.home_path);
 				cmd += "export PASSPHRASE='%s'\n".printf(App.arg_password);
-				cmd += "duplicity --verbosity i 'file://%s' '%s'\n".printf(bak_dir, user.home_path);
+				cmd += "duplicity --verbosity i --exclude '**/.*' 'file://%s' '%s'\n".printf(bak_dir, user.home_path);
 				cmd += "unset PASSPHRASE\n";
 				
 				sh += "";
@@ -2895,6 +2861,44 @@ public class Main : GLib.Object {
 	}
 	
 	/* Misc */
+
+	public void prompt_for_password (bool encrypt_mode){
+
+		if (arg_password.length != 0){
+			return;
+		}
+
+		string message = (encrypt_mode) ? Message.ENTER_PASSWORD_BACKUP : Message.ENTER_PASSWORD_RESTORE;
+		stdout.printf(message + ":\n");
+		
+		string? line = stdin.read_line();
+		line = (line != null) ? line.strip() : "";
+		string password = line;
+
+		if (password.length == 0){
+			log_msg("%s\n".printf(Message.PASSWORD_EMPTY));
+			prompt_for_password(encrypt_mode);
+			return;
+		}
+		
+		if (encrypt_mode){
+			stdout.printf(_("Enter password again to confirm") + ":\n");
+			
+			line = stdin.read_line();
+			line = (line != null) ? line.strip() : "";
+			string password2 = line;
+			if (password != password2){
+				log_msg("%s\n".printf(Message.PASSWORD_NOT_MATCHING));
+				prompt_for_password(encrypt_mode);
+				return;
+			}
+			else{
+				stdout.printf("\n");
+			}
+		}
+
+		arg_password = line;
+	}
 
 	public bool run_cmd (string cmd) {
 		string[] argv = new string[1];
@@ -3099,6 +3103,16 @@ public class BackupTask : GLib.Object {
 		string msg = _("apt-get exited with an error. Review the error message above and re-run the restore again.");
 		task.restore_cmd += "\nstatus=$?; if [ $status -ne 0 ]; then echo '\n\n%s\n\n'; exit $status; fi\n".printf(msg);
 
+		task = new BackupTask("mount",_("Filesystem Mounts"));
+		task.backup_cmd = "aptik --backup-dir '%s' --password '%s' --backup-mounts".printf(App.backup_dir, App.arg_password);
+		task.restore_cmd = "aptik --backup-dir '%s' --password '%s' --restore-mounts".printf(App.backup_dir, App.arg_password);
+		list.add(task);
+		
+		task = new BackupTask("theme",_("Themes and Icons"));
+		task.backup_cmd = "aptik --backup-dir '%s' --backup-themes".printf(App.backup_dir);
+		task.restore_cmd = "aptik --backup-dir '%s' --restore-themes".printf(App.backup_dir);
+		list.add(task);
+		
 		task = new BackupTask("user",_("Users and groups"));
 		task.backup_cmd = "aptik --backup-dir '%s' --password '%s' --backup-users".printf(App.backup_dir, App.arg_password);
 		task.restore_cmd = "aptik --backup-dir '%s' --password '%s' --restore-users".printf(App.backup_dir, App.arg_password);
@@ -3108,15 +3122,10 @@ public class BackupTask : GLib.Object {
 		task.backup_cmd = "aptik --backup-dir '%s' --size-limit %lld --backup-configs".printf(App.backup_dir, App.cmd_arg_size_limit);
 		task.restore_cmd = "aptik --backup-dir '%s' --restore-configs".printf(App.backup_dir);
 		list.add(task);
-		
-		task = new BackupTask("theme",_("Themes and Icons"));
-		task.backup_cmd = "aptik --backup-dir '%s' --backup-themes".printf(App.backup_dir);
-		task.restore_cmd = "aptik --backup-dir '%s' --restore-themes".printf(App.backup_dir);
-		list.add(task);
 
-		task = new BackupTask("mount",_("Filesystem Mounts"));
-		task.backup_cmd = "aptik --backup-dir '%s' --password '%s' --backup-mounts".printf(App.backup_dir, App.arg_password);
-		task.restore_cmd = "aptik --backup-dir '%s' --password '%s' --restore-mounts".printf(App.backup_dir, App.arg_password);
+		task = new BackupTask("home",_("User Data (Home directory)"));
+		task.backup_cmd = "aptik --backup-dir '%s' --password '%s' --backup-home".printf(App.backup_dir, App.arg_password);
+		task.restore_cmd = "aptik --backup-dir '%s' --password '%s' --restore-home".printf(App.backup_dir, App.arg_password);
 		list.add(task);
 
 		string[] arr = App.selected_tasks.strip().split(",");

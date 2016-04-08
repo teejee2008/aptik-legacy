@@ -981,7 +981,7 @@ public class MainWindow : Window {
 
 		// select users ------------------------------
 		
-		var dlg = new UserSelectionDialog.with_parent(this, true);
+		var dlg = new UserSelectionDialog.with_parent(this, false);
 		int response = dlg.run();
 		if (response == Gtk.ResponseType.ACCEPT){
 

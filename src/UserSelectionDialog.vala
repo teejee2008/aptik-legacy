@@ -35,9 +35,10 @@ using TeeJee.System;
 using TeeJee.Misc;
 
 public class UserSelectionDialog : Gtk.Dialog {
-
+	private Gtk.Box vbox_main;
 	private Gtk.TreeView tv;
-
+	private Gtk.ComboBox cmb_dup_mode;
+	
 	public Gee.ArrayList<SystemUser> user_list;
 	public bool backup_mode = true;
 	
@@ -53,16 +54,34 @@ public class UserSelectionDialog : Gtk.Dialog {
 		set_transient_for(parent);
 		set_modal(true);
 
+		title = (backup_mode) ? _("Backup") : _("Restore");
+		
 		this.backup_mode = backup_mode;
 		
 		// get content area
-		var vbox_main = get_content_area();
-		vbox_main.spacing = 6;
-		vbox_main.margin = 6;
-		//vbox_main.margin_bottom = 12;
-		vbox_main.set_size_request(300,300);
 
-		var label = new Label(_("Select items to backup and restore"));
+		vbox_main = new Gtk.Box(Orientation.VERTICAL, 6);
+		vbox_main.margin = 12;
+		//vbox_main.set_size_request(300,300);
+		get_content_area().add(vbox_main);
+		
+		init_ui();
+		
+        show_all();
+	}
+
+	private void init_ui(){
+		init_ui_users();
+		
+		if (backup_mode){
+			init_ui_mode();
+		}
+		
+		init_ui_actions();
+	}
+
+	private void init_ui_users(){
+		var label = new Label(_("Select users"));
 		label.xalign = (float) 0.0;
 		vbox_main.add (label);
 
@@ -76,6 +95,7 @@ public class UserSelectionDialog : Gtk.Dialog {
 
 		var sw_cols = new ScrolledWindow(tv.get_hadjustment(), tv.get_vadjustment());
 		sw_cols.set_shadow_type (ShadowType.ETCHED_IN);
+		sw_cols.set_size_request(300,200);
 		sw_cols.add (tv);
 		vbox_main.pack_start (sw_cols, true, true, 0);
 	
@@ -154,9 +174,59 @@ public class UserSelectionDialog : Gtk.Dialog {
 		}
 		
 		tv.model = store;
+	}
 
-		// actions -------------------------
+	private void init_ui_mode(){
+		// hbox
+		var hbox = new Box (Orientation.HORIZONTAL, 6);
+		vbox_main.pack_start(hbox, false, true, 0);
+
+		// label
+		var label = new Label(_("Backup Mode"));
+		label.xalign = (float) 0.0;
+		hbox.pack_start (label, true, true, 0);
+
+		// combo
+		var combo = new ComboBox();
+		var tt = _("Full - Remove previous backup and create new\nIncremental - Keep existing backup and save changes");
+		combo.set_tooltip_text(tt);
+		hbox.pack_start (combo, false, false, 0);
+		cmb_dup_mode = combo;
+
+		var cell_text = new CellRendererText();
+		combo.pack_start(cell_text, false );
+		combo.set_cell_data_func (cell_text, (cell_text, cell, model, iter) => {
+			string text;
+			model.get (iter, 0, out text, -1);
+			(cell as Gtk.CellRendererText).text = text;
+		});
+
+		combo.changed.connect(()=>{
+			App.dup_mode_full = (cmb_dup_mode.active == 0);
+		});
+
+		// add data ------------
+
+		var store = new Gtk.ListStore(2, typeof (string), typeof (string));
+		TreeIter iter;
+
+		store.append(out iter);
+		store.set (iter, 0, _("Full"), 1, "full", -1);
+
+		store.append(out iter);
+		store.set (iter, 0, _("Incremental"), 1, "incr", -1);
 		
+		combo.set_model (store);
+
+		if (App.dup_mode_full){
+			combo.active = 0;
+		}
+		else{
+			combo.active = 1;
+		}
+	}
+	
+	private void init_ui_actions(){
 		// ok
         var button = (Button) add_button ((backup_mode) ? _("Backup") : _("Restore"), Gtk.ResponseType.ACCEPT);
         button.clicked.connect (()=>{
@@ -169,9 +239,8 @@ public class UserSelectionDialog : Gtk.Dialog {
         button.clicked.connect (()=>{
 			this.close();
 		});
-
-        show_all();
 	}
+
 }
 
 

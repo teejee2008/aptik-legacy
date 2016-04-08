@@ -137,6 +137,11 @@ public class AptikConsole : GLib.Object {
 		msg += "  --backup-mounts       " + _("Backup /etc/fstab and /etc/crypttab entries") + "\n";
 		msg += "  --restore-mounts      " + _("Restore /etc/fstab and /etc/crypttab entries") + "\n";
 		msg += "\n";
+		msg += _("User Data / Home Directory") + ":\n";
+		msg += "\n";
+		msg += "  --backup-home         " + _("Backup user-created data in user's home directory") + "\n";
+		msg += "  --restore-home        " + _("Restore user-created data in user's home directory") + "\n";
+		msg += "\n";
 		msg += _("All Items") + ":\n";
 		msg += "\n";
 		msg += "  --backup-all          " + _("Backup all items") + "\n";
@@ -308,6 +313,16 @@ public class AptikConsole : GLib.Object {
 			case "--restore-appsettings":
 			case "--restore-configs":
 				return restore_config();
+
+			// home -------------------------------------
+
+			case "--backup-user-data":
+			case "--backup-home":
+				return backup_home();
+
+			case "--restore-user-data":
+			case "--restore-home":
+				return restore_home();
 				
 			// theme ---------------------------------------------
 
@@ -909,6 +924,62 @@ public class AptikConsole : GLib.Object {
 		var crypttab_list = App.create_crypttab_list_for_restore();
 
 		bool ok = App.restore_mounts(fstab_list, crypttab_list, "");
+
+		if (ok){
+			log_msg(Message.RESTORE_OK);
+		}
+		else{
+			log_msg(Message.RESTORE_ERROR);
+		}
+		
+		return ok;
+	}
+
+	// mounts ---------------------
+	
+	public bool backup_home(){
+
+		// get password -------------------
+		
+		App.prompt_for_password(true);
+		
+		if (App.arg_password.length == 0){
+			log_error(Message.PASSWORD_MISSING);
+			return false;
+		}
+
+		// backup ------------------
+		
+		int status = Posix.system("%s\n".printf(save_bash_script_temp(App.backup_home_get_script())));
+			
+		bool ok = (status == 0);
+		
+		if (ok){
+			log_msg(Message.BACKUP_OK);
+		}
+		else{
+			log_msg(Message.BACKUP_ERROR);
+		}
+
+		return ok;
+	}
+	
+	public bool restore_home(){
+		
+		// get password -------------------
+		
+		App.prompt_for_password(false);
+		
+		if (App.arg_password.length == 0){
+			log_error(Message.PASSWORD_MISSING);
+			return false;
+		}
+
+		// restore ------------
+		
+		int status = Posix.system("%s\n".printf(save_bash_script_temp(App.restore_home_get_script())));
+			
+		bool ok = (status == 0);
 
 		if (ok){
 			log_msg(Message.RESTORE_OK);
