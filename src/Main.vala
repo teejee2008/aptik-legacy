@@ -2023,7 +2023,7 @@ public class Main : GLib.Object {
 		}
 
 		//unzip selected items to home directory
-		cmd = "tar xzvf '%s' -C '%s' %s".printf(zip_file, base_dir_target, name);
+		cmd = "tar xzvf '%s' -C '%s' '%s'".printf(zip_file, base_dir_target, name);
 		status_line = "";
 
 		if (gui_mode) {
