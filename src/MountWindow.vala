@@ -503,10 +503,9 @@ public class MountWindow : Window {
 
 		// get password ---------------------------
 		
-		string password = "";
-		if (keyfile_used){
-			password = PasswordWindow.prompt_user(this, false, _("Password Required"), Message.ENTER_PASSWORD_RESTORE);
-			if (password == ""){
+		if (keyfile_used && (App.arg_password.length == 0)){
+			App.arg_password = PasswordWindow.prompt_user(this, false, _("Password Required"), Message.ENTER_PASSWORD_RESTORE);
+			if (App.arg_password == ""){
 				return;
 			}
 		}
@@ -514,12 +513,15 @@ public class MountWindow : Window {
 		// restore ------------------------------
 		
 		clear_err_log();
-		bool ok = App.restore_mounts(fstab_list, crypttab_list, password);
+		bool ok = App.restore_mounts(fstab_list, crypttab_list, App.arg_password);
 		show_err_log(this);
 		
 		if (ok){
 			gtk_messagebox(_("Finished"), Message.RESTORE_OK, this, false);
 			this.close();
+		}
+		else{
+			App.arg_password = ""; // forget password (may be incorrect)
 		}
 	}
 }

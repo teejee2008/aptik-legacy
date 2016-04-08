@@ -367,12 +367,14 @@ public class MainWindow : Window {
 				return;
 			}
 
-			string password = PasswordWindow.prompt_user(this, true, _("Create Password"), Message.ENTER_PASSWORD_BACKUP);
-			if (password.length == 0){
-				return;
+			if (App.arg_password.length == 0){
+				App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"), Message.ENTER_PASSWORD_BACKUP);
+				if (App.arg_password.length == 0){
+					return;
+				}
 			}
 			
-			bool ok = App.backup_users_and_groups(password);
+			bool ok = App.backup_users_and_groups(App.arg_password);
 
 			if (ok){
 				gtk_messagebox("", Message.BACKUP_OK, this, false);
@@ -397,16 +399,19 @@ public class MainWindow : Window {
 				return;
 			}
 
-			string password = PasswordWindow.prompt_user(this, false, _("Enter Password"), Message.ENTER_PASSWORD_RESTORE);
-			if (password.length == 0){
-				return;
+			if (App.arg_password.length == 0){
+				App.arg_password = PasswordWindow.prompt_user(this, false, _("Enter Password"), Message.ENTER_PASSWORD_RESTORE);
+				if (App.arg_password.length == 0){
+					return;
+				}
 			}
 
 			clear_err_log();
-			bool ok = App.restore_users_and_groups_init(password);
+			bool ok = App.restore_users_and_groups_init(App.arg_password);
 			show_err_log(this);
 			
 			if (!ok){
+				App.arg_password = ""; // forget password (may be incorrect)
 				return;
 			}
 
@@ -544,15 +549,14 @@ public class MainWindow : Window {
 				}
 			}
 
-			string password = "";
-			if (keyfile_used){
-				password = PasswordWindow.prompt_user(this, true, _("Create Password"),Message.ENTER_PASSWORD_BACKUP);
-				if (password == ""){
+			if (keyfile_used && (App.arg_password.length == 0)){
+				App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"),Message.ENTER_PASSWORD_BACKUP);
+				if (App.arg_password == ""){
 					return;
 				}
 			}
 
-			bool ok = App.backup_mounts(password);
+			bool ok = App.backup_mounts();
 			
 			if (ok){
 				gtk_messagebox(_("Finished"), Message.BACKUP_OK, this, false);
@@ -884,8 +888,8 @@ public class MainWindow : Window {
 			||App.selected_tasks.contains("mount")
 			||App.selected_tasks.contains("config")){
 				
-			App.cmd_arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"), Message.ENTER_PASSWORD_BACKUP);
-			if (App.cmd_arg_password.length == 0){
+			App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"), Message.ENTER_PASSWORD_BACKUP);
+			if (App.arg_password.length == 0){
 				return;
 			}
 		}
@@ -927,8 +931,8 @@ public class MainWindow : Window {
 			||App.selected_tasks.contains("mount")
 			||App.selected_tasks.contains("config")){
 				
-			App.cmd_arg_password = PasswordWindow.prompt_user(this, false, _("Enter Password"), Message.ENTER_PASSWORD_RESTORE);
-			if (App.cmd_arg_password.length == 0){
+			App.arg_password = PasswordWindow.prompt_user(this, false, _("Enter Password"), Message.ENTER_PASSWORD_RESTORE);
+			if (App.arg_password.length == 0){
 				return;
 			}
 		}

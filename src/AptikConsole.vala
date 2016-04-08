@@ -192,7 +192,7 @@ public class AptikConsole : GLib.Object {
 				break;
 			case "--password":
 				k += 1;
-				App.cmd_arg_password = args[k];
+				App.arg_password = args[k];
 				break;
 			case "--help":
 			case "--h":
@@ -892,7 +892,7 @@ public class AptikConsole : GLib.Object {
 	// mounts ---------------------
 	
 	public bool backup_mounts(){
-		bool ok = App.backup_mounts("");
+		bool ok = App.backup_mounts();
 		
 		if (ok){
 			log_msg(Message.BACKUP_OK);
