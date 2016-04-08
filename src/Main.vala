@@ -3029,6 +3029,9 @@ public class BackupTask : GLib.Object {
 		task.restore_cmd = "aptik --backup-dir '%s' --restore-packages".printf(App.backup_dir);
 		list.add(task);
 
+		string msg = _("apt-get exited with an error. Review the error message above and re-run the restore again.");
+		task.restore_cmd += "\nstatus=$?; if [ $status -ne 0 ]; then echo '\n\n%s\n\n'; exit $status; fi\n".printf(msg);
+
 		task = new BackupTask("user",_("Users and groups"));
 		task.backup_cmd = "aptik --backup-dir '%s' --password '%s' --backup-users".printf(App.backup_dir, App.cmd_arg_password);
 		task.restore_cmd = "aptik --backup-dir '%s' --password '%s' --restore-users".printf(App.backup_dir, App.cmd_arg_password);
