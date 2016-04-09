@@ -234,6 +234,9 @@ namespace TeeJee.FileSystem{
 		/* Write text to file */
 
 		try{
+
+			dir_create(file_parent(file_path));
+			
 			var file = File.new_for_path (file_path);
 			if (file.query_exists ()) {
 				file.delete ();
@@ -2078,7 +2081,7 @@ namespace TeeJee.System{
 
 	public bool set_directory_ownership(string dir_name, string login_name){
 		try {
-			string cmd = "chown %s -R '%s'".printf(login_name, dir_name);
+			string cmd = "chown %s:%s -R '%s'".printf(login_name, login_name, dir_name);
 			int exit_code;
 			Process.spawn_command_line_sync(cmd, null, null, out exit_code);
 
@@ -2975,6 +2978,32 @@ namespace TeeJee.Misc {
 		return millis;
 	}
 
+	public string string_replace(string str, string search, string replacement, int count = -1){
+		string[] arr = str.split(search);
+		string new_txt = "";
+		bool first = true;
+		
+		foreach(string part in arr){
+			if (first){
+				new_txt += part;
+			}
+			else{
+				if (count == 0){
+					new_txt += search;
+					new_txt += part;
+				}
+				else{
+					new_txt += replacement;
+					new_txt += part;
+					count--;
+				}
+			}
+			first = false;
+		}
+
+		return new_txt;
+	}
+	
 	public string escape_html(string html){
 		return html
 		.replace("&","&amp;")

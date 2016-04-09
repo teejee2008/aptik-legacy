@@ -90,8 +90,9 @@ public class Main : GLib.Object {
 	public Gee.ArrayList<BackupTask> task_list;
 	public string selected_tasks = "";
 	public bool backup_mode = false;
-	public bool dup_mode_full = true;
-
+	public bool dup_mode_full = false;
+	public FileItem home_tree;
+	
 	public string pkg_list_install = "";
 	public string pkg_list_deb = "";
 	public string pkg_list_missing = "";
@@ -121,7 +122,8 @@ public class Main : GLib.Object {
 		pkg_list_master = new Gee.HashMap<string, Package>();
 		ppa_list_master = new Gee.HashMap<string, Ppa>();
 		sections = new Gee.ArrayList<string>();
-		
+		home_tree = null;
+
 		//config file
 		string home = Environment.get_home_dir();
 		app_conf_path = home + "/.config/aptik.json";
@@ -172,7 +174,7 @@ public class Main : GLib.Object {
 
 		Theme.init();
 
-		user_list_home_init();
+		init_user_list_home();
 	}
 
 	public void select_user(string username){
@@ -1976,6 +1978,8 @@ public class Main : GLib.Object {
 			}
 		}
 
+		update_ownership(config_list);
+
 		return ok;
 	}
 
@@ -2775,7 +2779,7 @@ public class Main : GLib.Object {
 
 	/* Home */
 
-	public void user_list_home_init(){
+	public void init_user_list_home(){
 		
 		// query users ----------------
 		
@@ -2807,6 +2811,14 @@ public class Main : GLib.Object {
 		
 		user_list_home = list;
 	}
+
+	public void init_home_tree(){
+		home_tree = new FileItem.dummy_root();
+
+		foreach (var user in user_list_home) {
+			home_tree.add_child_from_disk(user.home_path,1);
+		}
+	}
 	
 	public string backup_home_get_script(){
 		string sh = "";
@@ -2814,13 +2826,19 @@ public class Main : GLib.Object {
 		foreach(var user in user_list_home){
 			if (user.is_selected){
 				var bak_dir = "%s%s/%s".printf(backup_dir, "home", user.name);
-
+				var exclude_list = "%s/exclude.list".printf(bak_dir);
+				create_dir(bak_dir);
+				if (file_exists(exclude_list)){
+					file_delete(exclude_list);
+				}
+				file_write(exclude_list, exclude_list_create());
+				
 				var cmd = "";
-				cmd += "mkdir -p '%s'\n".printf(bak_dir);
+				
 				cmd += "export PASSPHRASE='%s'\n".printf(App.arg_password);
 				
-				cmd += "duplicity%s --verbosity i '%s' --exclude '**/.*' 'file://%s'\n".printf(
-				((dup_mode_full) ? " full" : ""), user.home_path, bak_dir);
+				cmd += "duplicity%s --verbosity i --exclude-globbing-filelist '%s' '%s' 'file://%s'\n".printf(
+				((dup_mode_full) ? " full" : ""), exclude_list, user.home_path, bak_dir);
 				
 				cmd += "unset PASSPHRASE\n";
 
@@ -2841,12 +2859,22 @@ public class Main : GLib.Object {
 		foreach(var user in user_list_home){
 			if (user.is_selected){
 				var bak_dir = "%s%s/%s".printf(backup_dir, "home", user.name);
-				
+				var exclude_list = "%s/exclude.list".printf(bak_dir);
+				create_dir(bak_dir);
+				if (file_exists(exclude_list)){
+					file_delete(exclude_list);
+				}
+				file_write(exclude_list, exclude_list_create());
+
 				var cmd = "";
-				cmd += "mkdir -p '%s'\n".printf(user.home_path);
+				
 				cmd += "export PASSPHRASE='%s'\n".printf(App.arg_password);
-				cmd += "duplicity --verbosity i --exclude '**/.*' 'file://%s' '%s'\n".printf(bak_dir, user.home_path);
+				
+				cmd += "duplicity --verbosity i --exclude-globbing-filelist '%s' 'file://%s' '%s'\n".printf(exclude_list, bak_dir, user.home_path);
+				
 				cmd += "unset PASSPHRASE\n";
+
+				log_debug(cmd);
 				
 				sh += "";
 				sh += "echo '%s'\n".printf(string.nfill(70,'='));
@@ -2859,7 +2887,30 @@ public class Main : GLib.Object {
 
 		return sh;
 	}
-	
+
+	public string exclude_list_create(){
+		string txt = "";
+		
+		if (App.home_tree != null){
+			foreach(var home in App.home_tree.children.values){
+				exclude_list_append(home, ref txt, home.file_path);
+			}
+		}
+
+		txt += "%s\n".printf("**/.*");
+		return txt;
+	}
+
+	public void exclude_list_append(FileItem item, ref string txt, string base_dir){
+		if (item.is_selected){
+			//txt += "%s\n".printf(string_replace(item.file_path, base_dir, "**", 1));
+			txt += "%s\n".printf(item.file_path);
+		}
+		foreach(var child in item.children.values){
+			exclude_list_append(child, ref txt, base_dir);
+		}
+	}
+
 	/* Misc */
 
 	public void prompt_for_password (bool encrypt_mode){

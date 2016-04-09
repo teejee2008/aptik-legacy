@@ -42,12 +42,13 @@ public class FileItem : GLib.Object {
 	public FileType file_type = FileType.REGULAR;
 	public DateTime modified;
 
+	public bool is_selected = false;
 	public bool is_symlink = false;
 	public string symlink_target = "";
 
 	public FileItem parent;
 	public Gee.HashMap<string, FileItem> children;
-	public Archive task_ref;
+	public Archive? task_ref;
 	
 	public long file_count = 0;
 	public long dir_count = 0;
@@ -70,21 +71,28 @@ public class FileItem : GLib.Object {
 		children = new Gee.HashMap<string, FileItem>();
 	}
 
-	public FileItem.base_archive(Archive _task_ref, string name = "New Archive") {
+	public FileItem.base_archive(Archive? _task_ref, string name = "New Archive") {
 		init();
 		file_name = name;
 		task_ref = _task_ref;
 	}
 
-	public FileItem.dummy(Archive _task_ref, FileType _file_type) {
+	public FileItem.dummy(Archive? _task_ref, FileType _file_type) {
 		init();
 		is_dummy = true;
 		file_type = _file_type;
 		task_ref = _task_ref;
 	}
 
+	public FileItem.dummy_root() {
+		init();
+
+		file_name = "dummy";
+		file_location = "";
+	}
+
 	//private
-	private FileItem.from_path_and_type(Archive _task_ref, string _file_path, FileType _file_type) {
+	private FileItem.from_path_and_type(Archive? _task_ref, string _file_path, FileType _file_type) {
 		init();
 
 		file_path = _file_path;
@@ -112,7 +120,15 @@ public class FileItem : GLib.Object {
 
 		//set parent and child
 		item.parent = this;
-		this.children[item.file_name] = item;
+
+		bool existing_file = false;
+		if (!this.children.has_key(item.file_name)){
+			this.children[item.file_name] = item;
+		}
+		else{
+			existing_file = true;
+			item = this.children[item.file_name];
+		}
 
 		if (item_file_type == FileType.REGULAR) {
 
@@ -125,18 +141,20 @@ public class FileItem : GLib.Object {
 			}
 
 			//update file counts
-			this.file_count++;
-			this.file_count_total++;
-			this._size += item_size;
-			this._size_compressed += item_size_compressed;
+			if (!existing_file){
+				this.file_count++;
+				this.file_count_total++;
+				this._size += item_size;
+				this._size_compressed += item_size_compressed;
 
-			//update file count and size of parent dirs
-			var temp = this;
-			while (temp.parent != null) {
-				temp.parent.file_count_total++;
-				temp.parent._size += item_size;
-				temp.parent._size_compressed += item_size_compressed;
-				temp = temp.parent;
+				//update file count and size of parent dirs
+				var temp = this;
+				while (temp.parent != null) {
+					temp.parent.file_count_total++;
+					temp.parent._size += item_size;
+					temp.parent._size_compressed += item_size_compressed;
+					temp = temp.parent;
+				}
 			}
 
 			try {
@@ -147,16 +165,20 @@ public class FileItem : GLib.Object {
 			}
 		}
 		else {
-			//update dir counts
-			this.dir_count++;
-			this.dir_count_total++;
-			//this.size += _size; //size will be updated when children are added
 
-			//update dir count of parent dirs
-			var temp = this;
-			while (temp.parent != null) {
-				temp.parent.dir_count_total++;
-				temp = temp.parent;
+			if (!existing_file){
+				
+				//update dir counts
+				this.dir_count++;
+				this.dir_count_total++;
+				//this.size += _size; //size will be updated when children are added
+
+				//update dir count of parent dirs
+				var temp = this;
+				while (temp.parent != null) {
+					temp.parent.dir_count_total++;
+					temp = temp.parent;
+				}
 			}
 
 			try {
@@ -172,6 +194,39 @@ public class FileItem : GLib.Object {
 		return item;
 	}
 
+	public void clear_children() {
+		this.children.clear();
+	}
+	
+	public void query_children(int depth = -1) {
+		FileEnumerator enumerator;
+		FileInfo info;
+		File file = File.parse_name (file_path);
+
+		if (!file.query_exists()) {
+			return;
+		}
+		
+		if ((file_type == FileType.DIRECTORY) && !is_symlink) {
+			if (depth == 0){
+				return;
+			}
+				
+			try{
+				//recurse children
+				enumerator = file.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
+				while ((info = enumerator.next_file()) != null) {
+					string child_name = info.get_name();
+					string child_path = "%s/%s".printf(file_path, child_name);
+					this.add_child_from_disk(child_path, depth - 1);
+				}
+			}
+			catch (Error e) {
+				log_error (e.message);
+			}
+		}
+	}
+	
 	public FileItem remove_child(string child_name) {
 		FileItem child = null;
 
@@ -230,9 +285,11 @@ public class FileItem : GLib.Object {
 		return child;
 	}
 
-	public FileItem add_child_from_disk(string item_file_path) {
+	public FileItem add_child_from_disk(string item_file_path, int depth = -1) {
 		FileItem item = null;
 
+		//log_debug("add_child_from_disk: %02d: %s".printf(depth, item_file_path));
+		
 		try {
 			FileEnumerator enumerator;
 			FileInfo info;
@@ -291,11 +348,13 @@ public class FileItem : GLib.Object {
 				item.modified = item_modified;
 
 				if ((item.file_type == FileType.DIRECTORY) && !item.is_symlink) {
-					//recurse children
-					enumerator = file.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
-					while ((info = enumerator.next_file()) != null) {
-						string child_path = "%s/%s".printf(item_file_path, info.get_name());
-						item.add_child_from_disk(child_path);
+					if (depth != 0){
+						//recurse children
+						enumerator = file.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
+						while ((info = enumerator.next_file()) != null) {
+							string child_path = "%s/%s".printf(item_file_path, info.get_name());
+							item.add_child_from_disk(child_path, depth - 1);
+						}
 					}
 				}
 			}

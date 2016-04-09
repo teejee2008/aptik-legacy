@@ -36,11 +36,16 @@ using TeeJee.Misc;
 
 public class UserSelectionDialog : Gtk.Dialog {
 	private Gtk.Box vbox_main;
-	private Gtk.TreeView tv;
+	private Gtk.TreeView tv_users;
+	private Gtk.TreeView tv_exclude;
 	private Gtk.ComboBox cmb_dup_mode;
+	private Gtk.Notebook notebook;
+	private Gtk.Box vbox_gen;
+	private Gtk.Box vbox_exclude;
 	
 	public Gee.ArrayList<SystemUser> user_list;
 	public bool backup_mode = true;
+	private uint tmr_init = 0;
 	
 	public UserSelectionDialog.with_parent(Window parent, bool backup_mode) {
 		set_transient_for(parent);
@@ -49,7 +54,7 @@ public class UserSelectionDialog : Gtk.Dialog {
 		set_skip_pager_hint(true);
 		window_position = WindowPosition.CENTER_ON_PARENT;
 		deletable = false;
-		resizable = false;
+		resizable = true;
 		
 		set_transient_for(parent);
 		set_modal(true);
@@ -58,16 +63,66 @@ public class UserSelectionDialog : Gtk.Dialog {
 		
 		this.backup_mode = backup_mode;
 		
-		// get content area
-
+		//content area
 		vbox_main = new Gtk.Box(Orientation.VERTICAL, 6);
-		vbox_main.margin = 12;
-		//vbox_main.set_size_request(300,300);
+		vbox_main.margin = 6;
+		vbox_main.set_size_request(300,300);
 		get_content_area().add(vbox_main);
+
+		// notebook
+		notebook = new Gtk.Notebook();
+		notebook.expand = true;
+		vbox_main.pack_start(notebook, true, true, 0);
+		
+		// tab general --------------
+
+		var label = new Label(title);
+		label.xalign = (float) 0.0;
+
+		vbox_gen = new Gtk.Box(Orientation.VERTICAL, 6);
+		vbox_gen.margin = 6;
+		
+		notebook.append_page(vbox_gen, label);
+
+		// tab exclude --------------
+
+		label = new Label(_("Exclude"));
+		label.xalign = (float) 0.0;
+
+		vbox_exclude = new Gtk.Box(Orientation.VERTICAL, 6);
+		vbox_exclude.margin = 6;
+
+		notebook.append_page(vbox_exclude, label);
+
+		// ---------
 		
 		init_ui();
 		
         show_all();
+        
+		tmr_init = Timeout.add(100, init_delayed);
+	}
+
+	private bool init_delayed() {
+		/* any actions that need to run after window has been displayed */
+		if (tmr_init > 0) {
+			Source.remove(tmr_init);
+			tmr_init = 0;
+		}
+
+		notebook.switch_page.connect((page, num)=>{
+			if (num == 1){
+				if (App.home_tree == null){
+					gtk_set_busy(true, this);
+					App.init_home_tree();
+					gtk_set_busy(false, this);
+				}
+
+				tv_exclude_refresh();
+			}
+		});
+
+		return false;
 	}
 
 	private void init_ui(){
@@ -76,28 +131,32 @@ public class UserSelectionDialog : Gtk.Dialog {
 		if (backup_mode){
 			init_ui_mode();
 		}
+
+		init_ui_exclude();
 		
 		init_ui_actions();
 	}
 
 	private void init_ui_users(){
+		
 		var label = new Label(_("Select users"));
 		label.xalign = (float) 0.0;
-		vbox_main.add (label);
+		vbox_gen.add (label);
 
 		// add treeview ---------------------------------
 		
-		tv = new TreeView();
+		var tv = new TreeView();
 		tv.get_selection().mode = SelectionMode.MULTIPLE;
 		tv.set_tooltip_text (_("Select items to backup and restore"));
 		tv.headers_visible = true;
+		tv_users = tv;
 		//tv.reorderable = true;
 
 		var sw_cols = new ScrolledWindow(tv.get_hadjustment(), tv.get_vadjustment());
 		sw_cols.set_shadow_type (ShadowType.ETCHED_IN);
 		sw_cols.set_size_request(300,200);
 		sw_cols.add (tv);
-		vbox_main.pack_start (sw_cols, true, true, 0);
+		vbox_gen.pack_start (sw_cols, true, true, 0);
 	
 		// column -------------------------------------
 		
@@ -179,12 +238,12 @@ public class UserSelectionDialog : Gtk.Dialog {
 	private void init_ui_mode(){
 		// hbox
 		var hbox = new Box (Orientation.HORIZONTAL, 6);
-		vbox_main.pack_start(hbox, false, true, 0);
+		vbox_gen.pack_start(hbox, false, true, 0);
 
 		// label
 		var label = new Label(_("Backup Mode"));
 		label.xalign = (float) 0.0;
-		hbox.pack_start (label, true, true, 0);
+		hbox.pack_start (label, false, false, 0);
 
 		// combo
 		var combo = new ComboBox();
@@ -225,7 +284,181 @@ public class UserSelectionDialog : Gtk.Dialog {
 			combo.active = 1;
 		}
 	}
+
+	private void init_ui_exclude(){
+		
+		var label = new Label(_("Select items to exclude"));
+		label.xalign = (float) 0.0;
+		vbox_exclude.add (label);
+
+		// add treeview ---------------------------------
+		
+		var tv = new TreeView();
+		tv.get_selection().mode = SelectionMode.MULTIPLE;
+		tv.set_tooltip_text (_("Select items to backup and restore"));
+		//tv.headers_visible = true;
+		tv.headers_visible = false;
+		tv.activate_on_single_click = true;
+		//tv.reorderable = true;
+		tv_exclude = tv;
+		
+		var sw_cols = new ScrolledWindow(tv.get_hadjustment(), tv.get_vadjustment());
+		sw_cols.set_shadow_type (ShadowType.ETCHED_IN);
+		sw_cols.set_size_request(300,200);
+		sw_cols.add (tv);
+		vbox_exclude.pack_start (sw_cols, true, true, 0);
 	
+		// column -------------------------------------
+		
+		var col = new TreeViewColumn();
+		col.title = _("Item");
+		col.expand = true;
+		tv.append_column(col);
+
+		// cell toggle
+		var cell_select = new CellRendererToggle ();
+		cell_select.activatable = true;
+		col.pack_start (cell_select, false);
+		col.set_cell_data_func (cell_select, (cell_layout, cell, model, iter) => {
+			bool selected;
+			model.get (iter, 0, out selected, -1);
+			(cell as Gtk.CellRendererToggle).active = selected;
+		});
+
+		cell_select.toggled.connect((path) => {
+			var model = (Gtk.TreeStore) tv.model;
+			bool selected;
+			FileItem fi;
+
+			TreeIter iter;
+			model.get_iter_from_string (out iter, path);
+			model.get (iter, 0, out selected, 1, out fi, -1);
+
+			fi.is_selected = !selected;
+
+			model.set(iter, 0, fi.is_selected);
+		});
+		
+		// cell icon
+		var cell_pix = new CellRendererPixbuf ();
+		cell_pix.xpad = 1;
+		col.pack_start (cell_pix, false);
+		
+		// render icon
+		col.set_cell_data_func (cell_pix, (cell_layout, cell, model, iter) => {
+			FileItem item;
+			model.get (iter, 1, out item, -1);
+
+			if (item.is_dummy) {
+				(cell as Gtk.CellRendererPixbuf).icon_name = "gtk-directory";
+			}
+			else {
+				if (item.is_symlink) {
+					(cell as Gtk.CellRendererPixbuf).icon_name = "emblem-symbolic-link";
+				}
+				else if (item.icon != null) {
+					(cell as Gtk.CellRendererPixbuf).gicon = item.icon;
+				}
+				else {
+					(cell as Gtk.CellRendererPixbuf).icon_name = "gtk-file";
+				}
+			}
+		});
+		
+		// cell text
+		var cellText = new CellRendererText();
+		cellText.ellipsize = Pango.EllipsizeMode.END;
+		col.pack_start (cellText, false);
+
+		// render text
+		col.set_cell_data_func (cellText, (cell_layout, cell, model, iter)=>{
+			FileItem fi;
+			model.get (iter, 1, out fi, -1);
+			(cell as Gtk.CellRendererText).text = fi.file_name;
+		});
+
+		tv_exclude.row_expanded.connect(tv_exclude_row_expanded);
+	}
+
+	private void tv_exclude_refresh(){
+		TreeIter iter0;
+		var model = new Gtk.TreeStore (2, typeof(bool), typeof(FileItem));
+		foreach (var fi in App.home_tree.children.values) {
+			model.append (out iter0, null);
+			model.set (iter0, 0, fi.is_selected);
+			model.set (iter0, 1, fi);
+
+			tv_append_to_iter(ref model, ref iter0, fi, false);
+		}
+		
+		tv_exclude.model = model;
+	}
+
+	private void tv_exclude_row_expanded(TreeIter iter0, TreePath path){
+		TreeStore model = (Gtk.TreeStore) tv_exclude.model;
+		FileItem item0, item1;
+		model.get (iter0, 1, out item0, -1);
+
+		//log_debug("\nexpand:%s\n".printf(item0.file_name));
+		
+		TreeIter iter1;
+		bool iterExists = model.iter_children (out iter1, iter0);
+		while (iterExists) {
+			model.get (iter1, 1, out item1, -1);
+
+			//log_debug("\nquery:%s\n".printf(item1.file_name));
+			item1.query_children(1);
+			
+			tv_append_to_iter(ref model, ref iter1, item1, false);
+
+			iterExists = model.iter_next (ref iter1);
+		}
+	}
+	
+	private TreeIter? tv_append_to_iter(ref TreeStore model, ref TreeIter iter0, FileItem? item, bool addItem = true) {
+		//append sub-directories to the nav pane iter
+		
+		TreeIter iter1 = iter0;
+		if (addItem && (item.parent != null)) {
+
+			if (item.file_name.has_prefix(".")){
+				return null;
+			}
+
+			//log_debug("append_iter: %s".printf(item.file_name));
+			
+			model.append (out iter1, iter0);
+			model.set (iter1, 0, item.is_selected);
+			model.set (iter1, 1, item);
+		}
+
+		var list = new ArrayList<FileItem>();
+		foreach(string key in item.children.keys) {
+			var child = item.children[key];
+			//if ((child.file_type == FileType.DIRECTORY) && !child.is_symlink) {
+				list.add(child);
+			//}
+		}
+
+		list.sort((a, b) => {
+			if ((a.file_type == FileType.DIRECTORY) && (b.file_type != FileType.DIRECTORY)){
+				return -1;
+			}
+			else if ((a.file_type != FileType.DIRECTORY) && (b.file_type == FileType.DIRECTORY)){
+				return 1;
+			}
+			else{
+				return strcmp(a.file_name, b.file_name);
+			}
+		});
+
+		foreach(var child in list) {
+			tv_append_to_iter(ref model, ref iter1, child);
+		}
+
+		return iter1;
+	}
+
 	private void init_ui_actions(){
 		// ok
         var button = (Button) add_button ((backup_mode) ? _("Backup") : _("Restore"), Gtk.ResponseType.ACCEPT);

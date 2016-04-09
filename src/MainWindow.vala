@@ -934,12 +934,14 @@ public class MainWindow : Window {
 
 		// get password --------------------
 
-		if (App.arg_password.length == 0){
+		// ask always - since we are not checking for error, we cannot reset a bad password
+		
+		//if (App.arg_password.length == 0){
 			App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"),Message.ENTER_PASSWORD_BACKUP);
 			if (App.arg_password == ""){
 				return;
 			}
-		}
+		//}
 
 		// select users ------------------------------
 
@@ -971,13 +973,15 @@ public class MainWindow : Window {
 		}
 
 		// get password --------------------
+
+		// ask always - since we are not checking for error, we cannot reset a bad password
 		
-		if (App.arg_password.length == 0){
+		//if (App.arg_password.length == 0){
 			App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"),Message.ENTER_PASSWORD_BACKUP);
 			if (App.arg_password == ""){
 				return;
 			}
-		}
+		//}
 
 		// select users ------------------------------
 		
@@ -1012,7 +1016,7 @@ public class MainWindow : Window {
 
 		if (App.selected_tasks.contains("user")
 			||App.selected_tasks.contains("mount")
-			||App.selected_tasks.contains("config")){
+			||App.selected_tasks.contains("home")){
 				
 			App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"), Message.ENTER_PASSWORD_BACKUP);
 			if (App.arg_password.length == 0){
@@ -1055,7 +1059,7 @@ public class MainWindow : Window {
 
 		if (App.selected_tasks.contains("user")
 			||App.selected_tasks.contains("mount")
-			||App.selected_tasks.contains("config")){
+			||App.selected_tasks.contains("home")){
 				
 			App.arg_password = PasswordWindow.prompt_user(this, false, _("Enter Password"), Message.ENTER_PASSWORD_RESTORE);
 			if (App.arg_password.length == 0){
