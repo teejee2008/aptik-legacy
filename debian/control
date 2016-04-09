@@ -10,7 +10,7 @@ Homepage: http://teejeetech.blogspot.in/
 
 Package: aptik
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, rsync, aptitude, gdebi, aria2
+Depends: ${shlibs:Depends}, ${misc:Depends}, rsync, aptitude, gdebi, aria2, duplicity
 #Recommends: 
 Description: Utility to backup and restore PPAs and packages.
  Command line utility to simplify re-installation of software packages

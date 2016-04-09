@@ -186,7 +186,7 @@ public class AptikConsole : GLib.Object {
 			case "--size-limit":
 			case "--limit-size":
 				k += 1;
-				App.cmd_arg_size_limit = uint64.parse(args[k]);
+				App.arg_size_limit = uint64.parse(args[k]);
 				break;
 			case "-y":
 			case "--yes":

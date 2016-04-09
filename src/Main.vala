@@ -99,7 +99,7 @@ public class Main : GLib.Object {
 	public string gdebi_list = "";
 
 	public string arg_password = "";
-	public uint64 cmd_arg_size_limit = 0;
+	public uint64 arg_size_limit = 0;
 	
 	public DateTime pkginfo_modified_date;
 
@@ -209,7 +209,7 @@ public class Main : GLib.Object {
 	public bool check_dependencies(out string msg) {
 		msg = "";
 
-		string[] dependencies = { "rsync", "aptitude", "apt-get", "apt-cache", "gzip", "grep", "find", "chown", "rm", "add-apt-repository", "gdebi", "aria2c", "tar", "gpg"};
+		string[] dependencies = { "rsync", "aptitude", "apt-get", "apt-cache", "gzip", "grep", "find", "chown", "rm", "add-apt-repository", "gdebi", "aria2c", "tar", "gpg", "duplicity"};
 
 		string path;
 		foreach(string cmd_tool in dependencies) {
@@ -1703,7 +1703,7 @@ public class Main : GLib.Object {
 				continue;
 			}
 
-			if ((App.cmd_arg_size_limit > 0) && (config.bytes > App.cmd_arg_size_limit)){
+			if ((App.arg_size_limit > 0) && (config.bytes > App.arg_size_limit)){
 				continue;
 			}
 
@@ -1723,7 +1723,7 @@ public class Main : GLib.Object {
 				continue;
 			}
 
-			if ((App.cmd_arg_size_limit > 0) && (config.bytes > App.cmd_arg_size_limit)){
+			if ((App.arg_size_limit > 0) && (config.bytes > App.arg_size_limit)){
 				continue;
 			}
 			
@@ -2870,7 +2870,7 @@ public class Main : GLib.Object {
 				
 				cmd += "export PASSPHRASE='%s'\n".printf(App.arg_password);
 				
-				cmd += "duplicity --verbosity i --exclude-globbing-filelist '%s' 'file://%s' '%s'\n".printf(exclude_list, bak_dir, user.home_path);
+				cmd += "duplicity --verbosity i --force --exclude-globbing-filelist '%s' 'file://%s' '%s'\n".printf(exclude_list, bak_dir, user.home_path);
 				
 				cmd += "unset PASSPHRASE\n";
 
@@ -3170,7 +3170,7 @@ public class BackupTask : GLib.Object {
 		list.add(task);
 
 		task = new BackupTask("config",_("User Application Settings"));
-		task.backup_cmd = "aptik --backup-dir '%s' --size-limit %lld --backup-configs".printf(App.backup_dir, App.cmd_arg_size_limit);
+		task.backup_cmd = "aptik --backup-dir '%s' --size-limit %lld --backup-configs".printf(App.backup_dir, App.arg_size_limit);
 		task.restore_cmd = "aptik --backup-dir '%s' --restore-configs".printf(App.backup_dir);
 		list.add(task);
 

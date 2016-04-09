@@ -191,7 +191,7 @@ public class OneClickSettingsDialog : Gtk.Dialog {
 
 		App.selected_tasks = s;
 
-		App.cmd_arg_size_limit = (uint64) (spin_size_limit.get_value() * 1024);
+		App.arg_size_limit = (uint64) (spin_size_limit.get_value() * 1024);
 	}
 }
 
