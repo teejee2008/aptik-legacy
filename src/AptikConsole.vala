@@ -657,6 +657,13 @@ public class AptikConsole : GLib.Object {
 
 				int status = Posix.system("%s%s install %s".printf(command, (no_prompt) ? " -y" : "", App.pkg_list_install));
 
+				if (status != 0){
+					Posix.system("echo '\n\n%s\n' \n".printf(string.nfill(70,'=')));
+					Posix.system("echo '%s\n' \n".printf(Message.APT_GET_ERROR));
+					Posix.system("echo '%s\n\n' \n".printf(string.nfill(70,'=')));
+					return false;
+				}
+	
 				ok = ok && (status == 0);
 			}
 			if (App.pkg_list_deb.length > 0){

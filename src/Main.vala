@@ -2842,9 +2842,9 @@ public class Main : GLib.Object {
 				
 				cmd += "unset PASSPHRASE\n";
 
-				sh += "echo '%s'\n".printf(string.nfill(70,'='));
+				sh += "echo '%s'\n".printf(string.nfill(70,'-'));
 				sh += "echo '%s'\n".printf(user.name);
-				sh += "echo '%s'\n".printf(string.nfill(70,'='));
+				sh += "echo '%s'\n".printf(string.nfill(70,'-'));
 				sh += "%s\n".printf(cmd);
 				sh += "echo ''\n";
 			}
@@ -2877,9 +2877,9 @@ public class Main : GLib.Object {
 				log_debug(cmd);
 				
 				sh += "";
-				sh += "echo '%s'\n".printf(string.nfill(70,'='));
+				sh += "echo '%s'\n".printf(string.nfill(70,'-'));
 				sh += "echo '%s'\n".printf(user.name);
-				sh += "echo '%s'\n".printf(string.nfill(70,'='));
+				sh += "echo '%s'\n".printf(string.nfill(70,'-'));
 				sh += "%s\n".printf(cmd);
 				sh += "echo ''\n";
 			}
@@ -3151,9 +3151,6 @@ public class BackupTask : GLib.Object {
 		task.restore_cmd = "aptik --backup-dir '%s' --restore-packages".printf(App.backup_dir);
 		list.add(task);
 
-		string msg = _("apt-get exited with an error. Review the error message above and re-run the restore again.");
-		task.restore_cmd += "\nstatus=$?; if [ $status -ne 0 ]; then echo '\n\n%s\n\n'; exit $status; fi\n".printf(msg);
-
 		task = new BackupTask("mount",_("Filesystem Mounts"));
 		task.backup_cmd = "aptik --backup-dir '%s' --password '%s' --backup-mounts".printf(App.backup_dir, App.arg_password);
 		task.restore_cmd = "aptik --backup-dir '%s' --password '%s' --restore-mounts".printf(App.backup_dir, App.arg_password);
@@ -3203,6 +3200,8 @@ public class BackupTask : GLib.Object {
 }
 
 public class Message : GLib.Object {
+	public static const string APT_GET_ERROR = _("Package installation has failed. Un-select the packages mentioned in the above error message and run the restore again.");
+	
 	public static const string BACKUP_OK = _("Backup completed");
 	public static const string BACKUP_ERROR = _("Backup completed with errors");
 	public static const string BACKUP_SAVED = _("Backup saved");
