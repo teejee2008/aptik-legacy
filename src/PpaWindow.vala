@@ -101,7 +101,7 @@ public class PpaWindow : Window {
 		}
 
 		if (is_restore_view){
-			title = _("Restore Software Sources");
+			title = _("Restore");
 			
 			btn_restore.show();
 			btn_restore.visible = true;
@@ -109,7 +109,7 @@ public class PpaWindow : Window {
 			restore_init();
 		}
 		else{
-			title = _("Backup Software Sources");
+			title = _("Backup");
 			
 			btn_backup.show();
 			btn_backup.visible = true;
@@ -421,13 +421,22 @@ public class PpaWindow : Window {
 			return;
 		}
 
-		gtk_set_busy(true, this);
-
-		if (save_ppa_list_selected(true)) {
-			this.close();
+		var status_msg = _("Saving...");
+		var dlg = new ProgressWindow.with_parent(this,status_msg,true);
+		dlg.show_all();
+		gtk_do_events();
+			
+		bool ok = App.save_ppa_list_selected();
+		var message = "";
+		
+		if (ok){
+			message = Message.BACKUP_OK;
+		}
+		else{
+			message = Message.BACKUP_ERROR;
 		}
 
-		gtk_set_busy(false, this);
+		dlg.finish(message);
 	}
 
 	// restore
@@ -477,7 +486,7 @@ public class PpaWindow : Window {
 			}
 		}
 		if (none_selected) {
-			string title = _("Nothing To Do");
+			string title = Message.NO_CHANGES_REQUIRED;
 			string msg = _("Selected PPAs are already enabled on this system");
 			gtk_messagebox(title, msg, this, false);
 			return;
@@ -485,7 +494,7 @@ public class PpaWindow : Window {
 
 		if (!check_internet_connectivity()) {
 			string title = _("Error");
-			string msg = _("Internet connection is not active. Please check the connection and try again.");
+			string msg = Message.INTERNET_OFFLINE;
 			gtk_messagebox(title, msg, this, false);
 			return;
 		}
@@ -596,28 +605,6 @@ public class PpaWindow : Window {
 
 		gtk_do_events();
 	}
-
-	private bool save_ppa_list_selected(bool show_on_success) {
-		string file_name = "ppa.list";
-
-		bool is_success = App.save_ppa_list_selected();
-
-		if (is_success) {
-			if (show_on_success) {
-				string title = _("Finished");
-				string msg = Message.BACKUP_OK;
-				gtk_messagebox(title, msg, this, false);
-			}
-		}
-		else {
-			string title = _("Error");
-			string msg = Message.BACKUP_ERROR;
-			gtk_messagebox(title, msg, this, true);
-		}
-
-		return is_success;
-	}
-
 }
 
 

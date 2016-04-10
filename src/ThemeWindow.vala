@@ -112,7 +112,7 @@ public class ThemeWindow : Window {
 		cmb_type_refresh();
 		
 		if (is_restore_view){
-			title = _("Restore Themes");
+			title = _("Restore");
 			col_theme_status.visible = true;
 			
 			btn_restore.show();
@@ -121,7 +121,7 @@ public class ThemeWindow : Window {
 			restore_init();
 		}
 		else{
-			title = _("Backup Themes");
+			title = _("Backup");
 			col_theme_status.visible = false;
 			
 			btn_backup.show();
@@ -635,7 +635,7 @@ public class ThemeWindow : Window {
 		// finish ----------------------------------
 
 		if (!App.cancelled){
-			message = _("Backups created successfully");
+			message = Message.BACKUP_OK;
 			dlg.finish(message);
 		}
 		else{
@@ -774,7 +774,7 @@ public class ThemeWindow : Window {
 			
 			tv_theme_refresh();
 
-			message = _("Themes restored successfully");
+			message = Message.RESTORE_OK;
 			dlg.finish(message);
 		}
 		else{

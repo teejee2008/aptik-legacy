@@ -75,7 +75,7 @@ public class MainWindow : Window {
 
 	private TerminalWindow term;
 
-	int def_width = 400;
+	int def_width = 450;
 	int def_height = -1;
 
 	int icon_size_list = 22;
@@ -87,12 +87,13 @@ public class MainWindow : Window {
 		window_position = WindowPosition.CENTER;
 		resizable = false;
 		destroy.connect (Gtk.main_quit);
-		set_default_size (def_width, def_height);
+		//set_default_size (def_width, def_height);
 		icon = get_app_icon(16);
 
 		//vboxMain
 		vbox_main = new Box (Orientation.VERTICAL, 6);
 		vbox_main.margin = 12;
+		vbox_main.set_size_request (def_width, def_height);
 		add (vbox_main);
 
 		//actions ---------------------------------------------
@@ -196,7 +197,7 @@ public class MainWindow : Window {
 
 		//grid_backup_buttons
 		grid_backup_buttons = new Grid();
-		grid_backup_buttons.set_column_spacing (12);
+		grid_backup_buttons.set_column_spacing (6);
 		grid_backup_buttons.set_row_spacing (6);
 		grid_backup_buttons.margin_left = 6;
 		vbox_main.pack_start (grid_backup_buttons, false, true, 0);
@@ -225,15 +226,15 @@ public class MainWindow : Window {
 		grid_backup_buttons.attach(img, 0, row, 1, 1);
 
 		// label
-		var label = new Label (" " + _("Software Sources (PPAs)"));
-		label.set_tooltip_text(_("Software Sources (Third Party PPAs)"));
+		var label = new Label (Message.TASK_PPA);
+		label.set_tooltip_text(_("Backup the list of Launchpad PPAs and re-add missing PPAs"));
 		label.set_use_markup(true);
 		label.halign = Align.START;
 		label.hexpand = true;
 		grid_backup_buttons.attach(label, 1, row, 1, 1);
 
 		// btn_backup_ppa
-		var button = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		var button = new Gtk.Button.with_label (_("Backup"));
 		button.set_size_request(button_width, button_height);
 		button.set_tooltip_text(_("Backup the list of installed PPAs"));
 		grid_backup_buttons.attach(button, 2, row, 1, 1);
@@ -250,7 +251,7 @@ public class MainWindow : Window {
 		});
 
 		// btn_restore_ppa
-		button = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		button = new Gtk.Button.with_label (_("Restore"));
 		button.set_size_request(button_width, button_height);
 		button.set_tooltip_text(_("Add missing PPAs"));
 		grid_backup_buttons.attach(button, 3, row, 1, 1);
@@ -275,26 +276,24 @@ public class MainWindow : Window {
 		grid_backup_buttons.attach(img, 0, row, 1, 1);
 
 		// label
-		var label = new Label (" " + _("Downloaded Packages (APT Cache)"));
-		label.set_tooltip_text(_("Downloaded Packages (APT Cache)"));
+		var label = new Label (Message.TASK_CACHE);
+		label.set_tooltip_text(_("Backup downloaded packages in /var/cache/apt"));
 		label.set_use_markup(true);
 		label.halign = Align.START;
 		label.hexpand = true;
 		grid_backup_buttons.attach(label, 1, row, 1, 1);
 
 		// btn_backup_cache
-		var button = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		var button = new Gtk.Button.with_label (_("Backup"));
 		button.set_size_request(button_width, button_height);
-		button.set_tooltip_text(_("Backup downloaded packages from APT cache"));
 		grid_backup_buttons.attach(button, 2, row, 1, 1);
 		btn_backup_cache = button;
 
 		button.clicked.connect(btn_backup_cache_clicked);
 		
 		// btn_restore_cache
-		button = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		button = new Gtk.Button.with_label (_("Restore"));
 		button.set_size_request(button_width, button_height);
-		button.set_tooltip_text(_("Restore downloaded packages to APT cache"));
 		grid_backup_buttons.attach(button, 3, row, 1, 1);
 		btn_restore_cache = button;
 		
@@ -306,17 +305,16 @@ public class MainWindow : Window {
 		grid_backup_buttons.attach(img, 0, row, 1, 1);
 
 		// label
-		var label = new Label (" " + _("Software Selections"));
-		label.set_tooltip_text(_("Software Selections (Installed Packages)"));
+		var label = new Label (Message.TASK_PACKAGE);
+		label.set_tooltip_text(_("Backup the list of installed packages and re-install missing packages"));
 		label.set_use_markup(true);
 		label.halign = Align.START;
 		label.hexpand = true;
 		grid_backup_buttons.attach(label, 1, row, 1, 1);
 
 		// btn_backup_packages
-		var button = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		var button = new Gtk.Button.with_label (_("Backup"));
 		button.set_size_request(button_width, button_height);
-		button.set_tooltip_text(_("Backup the list of installed packages"));
 		button.vexpand = false;
 		grid_backup_buttons.attach(button, 2, row, 1, 1);
 		btn_backup_packages = button;
@@ -332,9 +330,8 @@ public class MainWindow : Window {
 		});
 
 		// btn_restore_packages
-		button = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		button = new Gtk.Button.with_label (_("Restore"));
 		button.set_size_request(button_width, button_height);
-		button.set_tooltip_text(_("Install missing packages"));
 		grid_backup_buttons.attach(button, 3, row, 1, 1);
 		btn_restore_packages = button;
 		
@@ -357,7 +354,7 @@ public class MainWindow : Window {
 		grid_backup_buttons.attach(img, 0, row, 1, 1);
 
 		// label
-		var label = new Label (" " + _("Users &amp; Groups"));
+		var label = new Label (Message.TASK_USER);
 		label.set_tooltip_text(_("Users and groups"));
 		label.set_use_markup(true);
 		label.halign = Align.START;
@@ -365,9 +362,8 @@ public class MainWindow : Window {
 		grid_backup_buttons.attach(label, 1, row, 1, 1);
 
 		//btn_backup_user
-		var button = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		var button = new Gtk.Button.with_label (_("Backup"));
 		button.set_size_request(button_width, button_height);
-		button.set_tooltip_text(_("Backup users and groups"));
 		grid_backup_buttons.attach(button, 2, row, 1, 1);
 		btn_backup_user = button;
 		
@@ -394,9 +390,8 @@ public class MainWindow : Window {
 		});
 
 		//btn_restore_user
-		button = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		button = new Gtk.Button.with_label (_("Restore"));
 		button.set_size_request(button_width, button_height);
-		button.set_tooltip_text(_("Restore users and groups"));
 		grid_backup_buttons.attach(button, 3, row, 1, 1);
 		btn_restore_user = button;
 		
@@ -435,17 +430,16 @@ public class MainWindow : Window {
 		grid_backup_buttons.attach(img, 0, row, 1, 1);
 
 		// label
-		var label = new Label (" " + _("User Application Settings"));
-		label.set_tooltip_text(_("Application Settings"));
+		var label = new Label (Message.TASK_CONFIG);
+		label.set_tooltip_text(_("Backup application configuration directories (starting with '.') in user's home"));
 		label.set_use_markup(true);
 		label.halign = Align.START;
 		label.hexpand = true;
 		grid_backup_buttons.attach(label, 1, row, 1, 1);
 
 		// btn_backup_config
-		var button = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		var button = new Gtk.Button.with_label (_("Backup"));
 		button.set_size_request(button_width, button_height);
-		button.set_tooltip_text(_("Backup application settings"));
 		grid_backup_buttons.attach(button, 2, row, 1, 1);
 		btn_backup_config = button;
 		
@@ -460,9 +454,8 @@ public class MainWindow : Window {
 		});
 
 		// btn_restore_config
-		button = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		button = new Gtk.Button.with_label (_("Restore"));
 		button.set_size_request(button_width, button_height);
-		button.set_tooltip_text(_("Restore application settings"));
 		grid_backup_buttons.attach(button, 3, row, 1, 1);
 		btn_restore_config = button;
 		
@@ -485,17 +478,16 @@ public class MainWindow : Window {
 		grid_backup_buttons.attach(img, 0, row, 1, 1);
 
 		// label
-		var label = new Label (" " + _("Themes and Icons"));
-		label.set_tooltip_text(_("Themes and Icons"));
+		var label = new Label (Message.TASK_THEME);
+		label.set_tooltip_text(_("Backup themes, icons and cursors in /usr/share/icons and /usr/share/themes"));
 		label.set_use_markup(true);
 		label.halign = Align.START;
 		label.hexpand = true;
 		grid_backup_buttons.attach(label, 1, row, 1, 1);
 
 		// btn_backup_theme
-		var button = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		var button = new Gtk.Button.with_label (_("Backup"));
 		button.set_size_request(button_width, button_height);
-		button.set_tooltip_text(_("Backup themes and icons"));
 		grid_backup_buttons.attach(button, 2, row, 1, 1);
 		btn_backup_theme = button;
 		
@@ -510,9 +502,8 @@ public class MainWindow : Window {
 		});
 
 		// btn_restore_theme
-		button = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		button = new Gtk.Button.with_label (_("Restore"));
 		button.set_size_request(button_width, button_height);
-		button.set_tooltip_text(_("Restore themes and icons"));
 		grid_backup_buttons.attach(button, 3, row, 1, 1);
 		btn_restore_theme = button;
 
@@ -535,17 +526,16 @@ public class MainWindow : Window {
 		grid_backup_buttons.attach(img, 0, row, 1, 1);
 
 		//label
-		var label = new Label (" " + _("Filesystem Mounts"));
-		label.set_tooltip_text(_("Filesystem Mounts"));
+		var label = new Label (Message.TASK_MOUNT);
+		label.set_tooltip_text(_("Backup /etc/fstab and /etc/crypttab entries"));
 		label.set_use_markup(true);
 		label.halign = Align.START;
 		label.hexpand = true;
 		grid_backup_buttons.attach(label, 1, row, 1, 1);
 
 		// btn_backup_mount
-		var button = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		var button = new Gtk.Button.with_label (_("Backup"));
 		button.set_size_request(button_width, button_height);
-		button.set_tooltip_text(_("Backup /etc/fstab and /etc/crypttab entries"));
 		grid_backup_buttons.attach(button, 2, row, 1, 1);
 		btn_backup_mount = button;
 		
@@ -572,9 +562,8 @@ public class MainWindow : Window {
 		});
 
 		// btn_restore_mount
-		button = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		button = new Gtk.Button.with_label (_("Restore"));
 		button.set_size_request(button_width, button_height);
-		button.set_tooltip_text(_("Restore /etc/fstab entries"));
 		grid_backup_buttons.attach(button, 3, row, 1, 1);
 		btn_restore_mount = button;
 		
@@ -604,26 +593,24 @@ public class MainWindow : Window {
 		grid_backup_buttons.attach(img, 0, row, 1, 1);
 
 		// label
-		var label = new Label (" " + _("User Data (Home Directory)"));
-		label.set_tooltip_text(_("User data in home directory"));
+		var label = new Label (Message.TASK_HOME);
+		label.set_tooltip_text(_("Backup visible (non-hidden) files and directories in user's home"));
 		label.set_use_markup(true);
 		label.halign = Align.START;
 		label.hexpand = true;
 		grid_backup_buttons.attach(label, 1, row, 1, 1);
 
 		// btn_backup_home
-		var button = new Gtk.Button.with_label (" " + _("Backup") + " ");
+		var button = new Gtk.Button.with_label (_("Backup"));
 		button.set_size_request(button_width, button_height);
-		button.set_tooltip_text(_("Backup visible (non-hidden) files and directories in user's HOME directory"));
 		grid_backup_buttons.attach(button, 2, row, 1, 1);
 		btn_backup_home = button;
 		
 		button.clicked.connect(btn_backup_home_clicked);
 
 		// btn_restore_home
-		button = new Gtk.Button.with_label (" " + _("Restore") + " ");
+		button = new Gtk.Button.with_label (_("Restore"));
 		button.set_size_request(button_width, button_height);
-		button.set_tooltip_text(_("Restore visible (non-hidden) files and directories in user's HOME directory"));
 		grid_backup_buttons.attach(button, 3, row, 1, 1);
 		btn_restore_home = button;
 		
@@ -778,7 +765,6 @@ public class MainWindow : Window {
 	}
 
 	private bool check_backup_folder() {
-		log_msg("backup_path='%s'".printf(App.backup_dir));
 		if ((App.backup_dir != null) && dir_exists (App.backup_dir)) {
 			return true;
 		}
@@ -861,8 +847,8 @@ public class MainWindow : Window {
 		//finish ----------------------------------
 
 		if (!App.cancelled){
-			message = _("Packages copied successfully") + " ";
-			message += _("(%ld packages in backup)").printf(get_file_count(archives_dir));
+			message = Message.BACKUP_OK;
+			message += " " + _("(%ld packages in backup)").printf(get_file_count(archives_dir));
 			dlg.finish(message);
 		}
 		else{
@@ -911,8 +897,8 @@ public class MainWindow : Window {
 		//finish ----------------------------------
 
 		if (!App.cancelled){
-			message = _("Packages copied successfully") + " ";
-			message += _("(%ld packages in cache)").printf(get_file_count("/var/cache/apt/archives") - 2); //excluding 'lock' and 'partial'
+			message = Message.RESTORE_OK;
+			message += " " + _("(%ld packages in cache)").printf(get_file_count("/var/cache/apt/archives") - 2); //excluding 'lock' and 'partial'
 			dlg.finish(message);
 		}
 		else{

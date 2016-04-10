@@ -93,18 +93,18 @@ public class AptikConsole : GLib.Object {
 		msg += "  --yes                 " + _("Assume Yes for all prompts") + "\n";
 		msg += "  --h[elp]              " + _("Show all options") + "\n";
 		msg += "\n";
-		msg += _("Software Sources (PPAs)") + ":\n";
+		msg += "%s:\n".printf(Message.TASK_PPA);
 		msg += "\n";
 		msg += "  --list-ppa            " + _("List PPAs") + "\n";
 		msg += "  --backup-ppa          " + _("Backup list of PPAs") + "\n";
 		msg += "  --restore-ppa         " + _("Restore PPAs from file 'ppa.list'") + "\n";
 		msg += "\n";
-		msg += _("Downloaded Packages (APT Cache)") + ":\n";
+		msg += "%s:\n".printf(Message.TASK_CACHE);
 		msg += "\n";
 		msg += "  --backup-cache        " + _("Backup downloaded packages from APT cache") + "\n";
 		msg += "  --restore-cache       " + _("Restore downloaded packages to APT cache") + "\n";
 		msg += "\n";
-		msg += _("Software Selections (Installed Packages)") + ":\n";
+		msg += "%s:\n".printf(Message.TASK_PACKAGE);
 		msg += "\n";
 		msg += "  --list-available      " + _("List available packages") + "\n";
 		msg += "  --list-installed      " + _("List installed packages") + "\n";
@@ -114,30 +114,30 @@ public class AptikConsole : GLib.Object {
 		msg += "  --backup-packages     " + _("Backup list of manual and installed packages") + "\n";
 		msg += "  --restore-packages    " + _("Restore packages from file 'packages.list'") + "\n";
 		msg += "\n";
-		msg += _("Users and groups") + ":\n";
+		msg += "%s:\n".printf(Message.TASK_USER);
 		msg += "\n";
 		msg += "  --backup-users        " + _("Backup users and groups") + "\n";
 		msg += "  --restore-users       " + _("Restore users and groups") + "\n";
 		msg += "\n";
-		msg += _("Application Settings") + ":\n";
+		msg += "%s:\n".printf(Message.TASK_CONFIG);
 		msg += "\n";
 		msg += "  --list-configs        " + _("List config dirs in /home/<user>") + "\n";
 		msg += "  --backup-configs      " + _("Backup config files from /home/<user>") + "\n";
 		msg += "  --restore-configs     " + _("Restore config files to /home/<user>") + "\n";
 		msg += "  --size-limit <bytes>  " + _("Skip config dirs larger than specified size") + "\n";
 		msg += "\n";
-		msg += _("Themes and Icons") + ":\n";
+		msg += "%s:\n".printf(Message.TASK_THEME);
 		msg += "\n";
 		msg += "  --list-themes         " + _("List themes in /usr/share/themes") + "\n";
 		msg += "  --backup-themes       " + _("Backup themes from /usr/share/themes") + "\n";
 		msg += "  --restore-themes      " + _("Restore themes to /usr/share/themes") + "\n";
 		msg += "\n";
-		msg += _("Filesystem Mounts") + ":\n";
+		msg += "%s:\n".printf(Message.TASK_MOUNT);
 		msg += "\n";
 		msg += "  --backup-mounts       " + _("Backup /etc/fstab and /etc/crypttab entries") + "\n";
 		msg += "  --restore-mounts      " + _("Restore /etc/fstab and /etc/crypttab entries") + "\n";
 		msg += "\n";
-		msg += _("User Data / Home Directory") + ":\n";
+		msg += "%s:\n".printf(Message.TASK_HOME);
 		msg += "\n";
 		msg += "  --backup-home         " + _("Backup user-created data in user's home directory") + "\n";
 		msg += "  --restore-home        " + _("Restore user-created data in user's home directory") + "\n";
@@ -555,7 +555,7 @@ public class AptikConsole : GLib.Object {
 		}
 		
 		if (!check_internet_connectivity()) {
-			log_msg(_("Error") + ": " +  _("Internet connection is not active. Please check the connection and try again."));
+			log_msg(_("Error") + ": " +  Message.INTERNET_OFFLINE);
 			return false;
 		}
 
@@ -631,7 +631,7 @@ public class AptikConsole : GLib.Object {
 		}
 		
 		if (!check_internet_connectivity()) {
-			log_msg(_("Error") + ": " +  _("Internet connection is not active. Please check the connection and try again."));
+			log_msg(_("Error") + ": " + Message.INTERNET_OFFLINE);
 			return false;
 		}
 

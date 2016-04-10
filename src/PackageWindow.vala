@@ -121,7 +121,7 @@ public class PackageWindow : Window {
 		}
 
 		if (is_restore_view){
-			title = _("Restore Software Selections");
+			title = _("Restore");
 			
 			btn_restore.show();
 			btn_restore.visible = true;
@@ -129,7 +129,7 @@ public class PackageWindow : Window {
 			restore_init();
 		}
 		else{
-			title = _("Backup Software Selections");
+			title = _("Backup");
 			
 			btn_backup.show();
 			btn_backup.visible = true;
@@ -334,42 +334,6 @@ public class PackageWindow : Window {
 			
 			(cell as Gtk.CellRendererText).text = pkg.deb_file_name;
 		});
-		
-		//col_pkg_installed ----------------------
-
-		/*TreeViewColumn col_pkg_installed = new TreeViewColumn();
-		col_pkg_installed.title = _("Installed");
-		col_pkg_installed.resizable = true;
-		col_pkg_installed.min_width = 120;
-		tv_packages.append_column(col_pkg_installed);
-
-		CellRendererText cell_pkg_installed = new CellRendererText ();
-		cell_pkg_installed.ellipsize = Pango.EllipsizeMode.END;
-		col_pkg_installed.pack_start (cell_pkg_installed, false);
-
-		col_pkg_installed.set_cell_data_func (cell_pkg_installed, (cell_layout, cell, model, iter) => {
-			Package pkg;
-			model.get (iter, 1, out pkg, -1);
-			(cell as Gtk.CellRendererText).text = pkg.version_installed;
-		});*/
-
-		//col_pkg_latest ----------------------
-
-		/*TreeViewColumn col_pkg_latest = new TreeViewColumn();
-		col_pkg_latest.title = _("Latest");
-		col_pkg_latest.resizable = true;
-		col_pkg_latest.min_width = 120;
-		tv_packages.append_column(col_pkg_latest);
-
-		CellRendererText cell_pkg_latest = new CellRendererText ();
-		cell_pkg_latest.ellipsize = Pango.EllipsizeMode.END;
-		col_pkg_latest.pack_start (cell_pkg_latest, false);
-
-		col_pkg_latest.set_cell_data_func (cell_pkg_latest, (cell_layout, cell, model, iter) => {
-			Package pkg;
-			model.get (iter, 1, out pkg, -1);
-			(cell as Gtk.CellRendererText).text = pkg.version_available;
-		});*/
 
 		//col_pkg_desc ----------------------
 
@@ -924,10 +888,10 @@ public class PackageWindow : Window {
 			}
 		}
 		if (deb_list.length > 0){
-			string deb_msg = _("Following packages were installed from DEB files and are not available in the package repositories") + ":\n\n";
+			string deb_msg = _("Following packages are not available in software repositories") + ":\n\n";
 			deb_msg += deb_list + "\n\n";
-			deb_msg += _("If you have the DEB files for these packages, you can drag-and-drop them on this window. The files will be copied to the backup directory and used for re-installing the packages.");
-			gtk_messagebox(_("DEB Files"), deb_msg, this, false);
+			deb_msg += _("If you have the DEB files for these packages, you can drag-and-drop the files on this window. Files will be saved to backup location and used for restore.");
+			gtk_messagebox(_("Unknown Source"), deb_msg, this, false);
 		}
 	}
 
@@ -953,53 +917,27 @@ public class PackageWindow : Window {
 			return;
 		}
 
+		var status_msg = _("Saving...");
+		var dlg = new ProgressWindow.with_parent(this,status_msg,true);
+		dlg.show_all();
+		gtk_do_events();
+			
+		bool ok = App.save_package_list_selected();
+		App.save_package_list_installed(); // status can be ignored
+		var message = "";
+		
+		if (ok){
+			message = Message.BACKUP_OK;
+		}
+		else{
+			message = Message.BACKUP_ERROR;
+		}
+
+		dlg.finish(message);
+		
 		gtk_set_busy(true, this);
-
-		save_package_list_installed();
-		if (save_package_list_selected(true)) {
-			gtk_set_busy(false, this);
-			this.close();
-		}
-
-		gtk_set_busy(false, this);
 	}
-
-	private bool save_package_list_selected(bool show_on_success) {
-		string file_name = Main.PKG_LIST_BAK;
-
-		//save it
-		bool is_success = App.save_package_list_selected();
-
-		if (is_success) {
-			if (show_on_success) {
-				string title = _("Finished");
-				string msg = Message.BACKUP_OK;
-				gtk_messagebox(title, msg, this, false);
-			}
-		}
-		else {
-			string title = _("Error");
-			string msg = _("Failed to write") + " '%s'".printf(file_name);
-			gtk_messagebox(title, msg, this, true);
-		}
-
-		return is_success;
-	}
-
-	private bool save_package_list_installed() {
-		string file_name = Main.PKG_LIST_INSTALLED_BAK;
-
-		bool is_success = App.save_package_list_installed();
-
-		if (!is_success) {
-			string title = _("Error");
-			string msg = _("Failed to write") + " '%s'".printf(file_name);
-			gtk_messagebox(title, msg, this, true);
-		}
-
-		return is_success;
-	}
-
+	
 	// restore
 	
 	private void restore_init() {
@@ -1078,7 +1016,7 @@ public class PackageWindow : Window {
 
 		if (!check_internet_connectivity()) {
 			string title = _("Error");
-			string msg = _("Internet connection is not active. Please check the connection and try again.");
+			string msg = Message.INTERNET_OFFLINE;
 			gtk_messagebox(title, msg, this, false);
 			return;
 		}

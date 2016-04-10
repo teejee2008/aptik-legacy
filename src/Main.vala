@@ -3156,17 +3156,17 @@ public class BackupTask : GLib.Object {
 	public static Gee.ArrayList<BackupTask> create_list(){
 		var list = new Gee.ArrayList<BackupTask>();
 		
-		var task = new BackupTask("ppa",_("Software Sources (PPAs)"));
+		var task = new BackupTask("ppa", Message.TASK_PPA);
 		task.backup_cmd = "aptik --backup-dir '%s' --backup-ppa".printf(App.backup_dir);
 		task.restore_cmd = "aptik --backup-dir '%s' --restore-ppas".printf(App.backup_dir);
 		list.add(task);
 		
-		task = new BackupTask("cache",_("Downloaded Packages (APT Cache)"));
+		task = new BackupTask("cache", Message.TASK_CACHE);
 		task.backup_cmd = "aptik --backup-dir '%s' --backup-cache".printf(App.backup_dir);
 		task.restore_cmd = "aptik --backup-dir '%s' --restore-cache".printf(App.backup_dir);
 		list.add(task);
 		
-		task = new BackupTask("package",_("Software Selections (Installed Packages)"));
+		task = new BackupTask("package", Message.TASK_PACKAGE);
 		task.backup_cmd = "aptik --backup-dir '%s' --backup-packages".printf(App.backup_dir);
 		task.restore_cmd = "aptik --backup-dir '%s' --restore-packages".printf(App.backup_dir);
 		list.add(task);
@@ -3174,27 +3174,27 @@ public class BackupTask : GLib.Object {
 		// exit script on error
 		task.restore_cmd += "\nstatus=$?; if [ $status -ne 0 ]; then echo '\n\n%s\n\n'; exit $status; fi\n".printf(Message.APT_GET_ERROR);
 
-		task = new BackupTask("mount",_("Filesystem Mounts"));
+		task = new BackupTask("mount", Message.TASK_MOUNT);
 		task.backup_cmd = "aptik --backup-dir '%s' --password '%s' --backup-mounts".printf(App.backup_dir, App.arg_password);
 		task.restore_cmd = "aptik --backup-dir '%s' --password '%s' --restore-mounts".printf(App.backup_dir, App.arg_password);
 		list.add(task);
 		
-		task = new BackupTask("theme",_("Themes and Icons"));
+		task = new BackupTask("theme", Message.TASK_THEME);
 		task.backup_cmd = "aptik --backup-dir '%s' --backup-themes".printf(App.backup_dir);
 		task.restore_cmd = "aptik --backup-dir '%s' --restore-themes".printf(App.backup_dir);
 		list.add(task);
 		
-		task = new BackupTask("user",_("Users and groups"));
+		task = new BackupTask("user", Message.TASK_USER);
 		task.backup_cmd = "aptik --backup-dir '%s' --password '%s' --backup-users".printf(App.backup_dir, App.arg_password);
 		task.restore_cmd = "aptik --backup-dir '%s' --password '%s' --restore-users".printf(App.backup_dir, App.arg_password);
 		list.add(task);
 
-		task = new BackupTask("config",_("User Application Settings"));
+		task = new BackupTask("config", Message.TASK_CONFIG);
 		task.backup_cmd = "aptik --backup-dir '%s' --size-limit %lld --backup-configs".printf(App.backup_dir, App.arg_size_limit);
 		task.restore_cmd = "aptik --backup-dir '%s' --restore-configs".printf(App.backup_dir);
 		list.add(task);
 
-		task = new BackupTask("home",_("User Data (Home directory)"));
+		task = new BackupTask("home", Message.TASK_HOME);
 		task.backup_cmd = "aptik --backup-dir '%s' --password '%s' --backup-home".printf(App.backup_dir, App.arg_password);
 		task.restore_cmd = "aptik --backup-dir '%s' --password '%s' --restore-home".printf(App.backup_dir, App.arg_password);
 		list.add(task);
@@ -3224,6 +3224,8 @@ public class BackupTask : GLib.Object {
 
 public class Message : GLib.Object {
 	public static const string APT_GET_ERROR = _("Package installation has failed. Un-select the packages mentioned in the above error message and run the restore again.");
+
+	public static const string INTERNET_OFFLINE = _("Internet connection is not active. Check the connection and try again.");
 	
 	public static const string BACKUP_OK = _("Backup completed");
 	public static const string BACKUP_ERROR = _("Backup completed with errors");
@@ -3263,9 +3265,19 @@ public class Message : GLib.Object {
 	public static const string GROUP_ADD_USER_ERROR = _("Failed to add user to group");
 	
 	public static const string NO_CHANGES_REQUIRED = _("No changes required");
+
 	public static const string PASSWORD_MISSING = _("Password not specified!");
 	public static const string ENTER_PASSWORD_BACKUP = _("Enter password for encrypting backup");
 	public static const string ENTER_PASSWORD_RESTORE = _("Enter password for decrypting backup");
 	public static const string PASSWORD_EMPTY = _("Password cannot be empty!");
 	public static const string PASSWORD_NOT_MATCHING = _("Passwords do not match!");
+
+	public static const string TASK_PPA = _("Software Sources (PPA)");
+	public static const string TASK_CACHE = _("Downloaded Packages");
+	public static const string TASK_PACKAGE = _("Installed Software");
+	public static const string TASK_MOUNT = _("Filesystem Mounts");
+	public static const string TASK_THEME = _("Themes and Icons");
+	public static const string TASK_USER = _("Users and Groups");
+	public static const string TASK_CONFIG = _("User's Application Settings");
+	public static const string TASK_HOME = _("User's Home Directory Data");
 }

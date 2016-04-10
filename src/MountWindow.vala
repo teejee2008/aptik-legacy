@@ -113,7 +113,7 @@ public class MountWindow : Window {
 		fstab_list = new Gee.ArrayList<FsTabEntry>();
 		
 		if (is_restore_view){
-			title = _("Restore Mount Points");
+			title = _("Restore");
 			
 			btn_restore.show();
 			btn_restore.visible = true;
@@ -468,7 +468,7 @@ public class MountWindow : Window {
 		}
 		
 		if (none_selected) {
-			string title = _("No Changes Required");
+			string title = Message.NO_CHANGES_REQUIRED;
 			string msg = _("/etc/fstab and /etc/crypttab are already up-to-date");
 			gtk_messagebox(title, msg, this, false);
 			return;

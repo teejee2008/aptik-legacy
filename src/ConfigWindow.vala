@@ -106,7 +106,7 @@ public class ConfigWindow : Window {
 		cmb_username_refresh();
 
 		if (is_restore_view){
-			title = _("Restore Application Settings");
+			title = _("Restore");
 			
 			btn_restore.show();
 			btn_restore.visible = true;
@@ -417,11 +417,14 @@ public class ConfigWindow : Window {
 		//dlg.pulse_start();
 		dlg.update_message(_("Archiving..."));
 		dlg.update_status_line(true);
+
+		bool ok = true;
 		
 		foreach(AppConfig config in config_list_user){
 			if (!config.is_selected) { continue; }
 			
-			App.backup_app_settings_single(config);
+			bool status = App.backup_app_settings_single(config);
+			ok = ok && status;
 			while (App.is_running) {
 				dlg.update_progressbar();
 				dlg.update_status_line();
@@ -430,8 +433,16 @@ public class ConfigWindow : Window {
 		}
 
 		//finish ----------------------------------
-		message = _("Backups created successfully");
-		dlg.finish(message);
+
+		if (ok){
+			message = Message.BACKUP_OK;
+			dlg.finish(message);
+		}
+		else{
+			message = Message.BACKUP_ERROR;
+			dlg.finish(message);
+		}
+			
 		gtk_do_events();
 	}
 
@@ -494,11 +505,13 @@ public class ConfigWindow : Window {
 		//dlg.pulse_start();
 		dlg.update_message(_("Extracting..."));
 		dlg.update_status_line(true);
-		
+
+		bool ok = true;
 		foreach(AppConfig config in config_list_user){
 			if (!config.is_selected) { continue; }
 			
-			App.restore_app_settings_single(config);
+			bool status = App.restore_app_settings_single(config);
+			ok = ok && status;
 			while (App.is_running) {
 				dlg.update_progressbar();
 				dlg.update_status_line();
@@ -511,8 +524,16 @@ public class ConfigWindow : Window {
 		App.update_ownership(config_list_user);
 
 		//finish ----------------------------------
-		message = _("Application settings restored successfully");
-		dlg.finish(message);
+
+		if (ok){
+			message = Message.RESTORE_OK;
+			dlg.finish(message);
+		}
+		else{
+			message = Message.RESTORE_ERROR;
+			dlg.finish(message);
+		}
+		
 		gtk_do_events();
 	}
 
