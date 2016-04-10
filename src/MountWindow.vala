@@ -501,15 +501,6 @@ public class MountWindow : Window {
 			}
 		}
 
-		// get password ---------------------------
-		
-		if (keyfile_used && (App.arg_password.length == 0)){
-			App.arg_password = PasswordWindow.prompt_user(this, false, _("Password Required"), Message.ENTER_PASSWORD_RESTORE);
-			if (App.arg_password == ""){
-				return;
-			}
-		}
-
 		// restore ------------------------------
 		
 		clear_err_log();

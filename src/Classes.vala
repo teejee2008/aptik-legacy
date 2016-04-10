@@ -754,14 +754,22 @@ public class FsTabEntry : GLib.Object{
 
 	// read file
 	
-	public static Gee.ArrayList<FsTabEntry> read_fstab_file(string tab_file){
+	public static Gee.ArrayList<FsTabEntry> read_fstab_file(string tab_file, string password){
 		var list = new Gee.ArrayList<FsTabEntry>();
 		
 		if (!file_exists(tab_file)){
 			return list;
 		}
+
+		string txt = "";
+		if (tab_file.has_suffix(".tar.gpg")){
+			txt = file_decrypt_untar_read(tab_file, password);
+		}
+		else{
+			txt = file_read(tab_file);
+		}
 		
-		foreach(string line in read_file(tab_file).split("\n")){
+		foreach(string line in txt.split("\n")){
 			if (line.strip().has_prefix("#")){
 				continue;
 			}
@@ -774,14 +782,22 @@ public class FsTabEntry : GLib.Object{
 		return list;
 	}
 
-	public static Gee.ArrayList<FsTabEntry> read_crypttab_file(string tab_file){
+	public static Gee.ArrayList<FsTabEntry> read_crypttab_file(string tab_file, string password){
 		var list = new Gee.ArrayList<FsTabEntry>();
 		
 		if (!file_exists(tab_file)){
 			return list;
 		}
+
+		string txt = "";
+		if (tab_file.has_suffix(".tar.gpg")){
+			txt = file_decrypt_untar_read(tab_file, password);
+		}
+		else{
+			txt = file_read(tab_file);
+		}
 		
-		foreach(string line in read_file(tab_file).split("\n")){
+		foreach(string line in txt.split("\n")){
 			if (line.strip().has_prefix("#")){
 				continue;
 			}

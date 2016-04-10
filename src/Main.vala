@@ -2190,14 +2190,24 @@ public class Main : GLib.Object {
 			return false;
 		}
 
+		// get and check password -------------------
+		
+		prompt_for_password(true);
+		if (arg_password.length == 0){
+			log_error(Message.PASSWORD_MISSING);
+			return false;
+		}
+				
 		// copy /etc/fstab and /etc/crypttab to backup path ---------
 		
 		foreach(string file_name in new string[] { "fstab", "crypttab"}){
 			string src_file = "/etc/%s".printf(file_name);
-			string dst_file = "%s/%s".printf(mounts_dir, file_name);
+			string dst_file = "%s/%s.tar.gpg".printf(mounts_dir, file_name);
 
 			if (file_exists(dst_file)){
+				
 				ok = file_delete(dst_file);
+				
 				if (!ok){
 					log_error(Message.FILE_DELETE_ERROR + ": %s".printf(dst_file));
 					return false;
@@ -2205,9 +2215,9 @@ public class Main : GLib.Object {
 			}
 			
 			if (file_exists(src_file)){
-				
-				ok = file_copy(src_file, dst_file);
-				
+
+				ok = file_tar_encrypt(src_file, dst_file, arg_password);
+
 				if (!ok){
 					log_error(Message.BACKUP_ERROR + ": %s".printf(src_file));
 					return false;
@@ -2220,20 +2230,11 @@ public class Main : GLib.Object {
 
 		// back-up key files mentioned in /etc/crypttab ---------
 		
-		var list = FsTabEntry.read_crypttab_file("/etc/crypttab");
+		var list = FsTabEntry.read_crypttab_file("/etc/crypttab", arg_password);
 		foreach(var fs in list){
 			if (fs.uses_keyfile() && file_exists(fs.password)){
-				
-				// get and check password -------------------
-				
-				prompt_for_password(true);
-				if (arg_password.length == 0){
-					log_error(Message.PASSWORD_MISSING);
-					return false;
-				}
-			
 				string src_file = fs.password;
-				string dst_file = "%s/%s".printf(mounts_dir, fs.keyfile_archive_name);
+				string dst_file = "%s/%s.tar.gpg".printf(mounts_dir, fs.keyfile_archive_name);
 				
 				ok = file_tar_encrypt(src_file, dst_file, arg_password);
 
@@ -2251,7 +2252,7 @@ public class Main : GLib.Object {
 
 		// ** /etc/fstab only **
 		
-		list = FsTabEntry.read_fstab_file("/etc/fstab");
+		list = FsTabEntry.read_fstab_file("/etc/fstab","");
 		foreach(var fs in list){
 			if (fs.mount_point == "/"){
 				continue;
@@ -2418,12 +2419,20 @@ public class Main : GLib.Object {
 	public Gee.ArrayList<FsTabEntry> create_fstab_list_for_restore(){
 		string mounts_dir = backup_dir + "mounts";
 		string sys_file = "/etc/fstab";
-		string backup_file = "%s/fstab".printf(mounts_dir);
+		string backup_file = "%s/fstab.tar.gpg".printf(mounts_dir);
 
 		var list = new Gee.ArrayList<FsTabEntry>();
-		var list_sys = FsTabEntry.read_fstab_file(sys_file);
-		var list_bkup = FsTabEntry.read_fstab_file(backup_file);
 
+		// read system file -----------
+		
+		var list_sys = FsTabEntry.read_fstab_file(sys_file, "");
+
+		// read backup file -------------
+
+		var list_bkup = FsTabEntry.read_fstab_file(backup_file, arg_password);
+
+		// compare ----------------------
+		
 		foreach(var fs_sys in list_sys){
 			list.add(fs_sys);
 			fs_sys.is_selected = true;
@@ -2465,11 +2474,19 @@ public class Main : GLib.Object {
 	public Gee.ArrayList<FsTabEntry> create_crypttab_list_for_restore(){
 		string mounts_dir = backup_dir + "mounts";
 		string sys_file = "/etc/crypttab";
-		string backup_file = "%s/crypttab".printf(mounts_dir);
+		string backup_file = "%s/crypttab.tar.gpg".printf(mounts_dir);
 
 		var list = new Gee.ArrayList<FsTabEntry>();
-		var list_sys = FsTabEntry.read_crypttab_file(sys_file);
-		var list_bkup = FsTabEntry.read_crypttab_file(backup_file);
+
+		// read system file -----------
+		
+		var list_sys = FsTabEntry.read_crypttab_file(sys_file, "");
+
+		// read backup file -------------
+		
+		var list_bkup = FsTabEntry.read_crypttab_file(backup_file, arg_password);
+
+		// compare ----------------------
 		
 		foreach(var fs_sys in list_sys){
 			list.add(fs_sys);

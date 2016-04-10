@@ -556,18 +556,9 @@ public class MainWindow : Window {
 				return;
 			}
 
-			bool keyfile_used = false;
-			var list = FsTabEntry.read_crypttab_file("/etc/crypttab");
-			foreach(var fs in list){
-				if (fs.uses_keyfile() && file_exists(fs.password)){
-					keyfile_used = true;
-					break;
-				}
-			}
-
-			if (keyfile_used && (App.arg_password.length == 0)){
+			if (App.arg_password.length == 0){
 				App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"),Message.ENTER_PASSWORD_BACKUP);
-				if (App.arg_password == ""){
+				if (App.arg_password.length == 0){
 					return;
 				}
 			}
@@ -593,8 +584,15 @@ public class MainWindow : Window {
 			if (!check_backup_folder()) {
 				return;
 			}
-			if (!check_backup_file("mounts/fstab") && !check_backup_file("mounts/crypttab")){
+			if (!check_backup_file("mounts/fstab.tar.gpg") && !check_backup_file("mounts/crypttab.tar.gpg")){
 				return;
+			}
+
+			if (App.arg_password.length == 0){
+				App.arg_password = PasswordWindow.prompt_user(this, false, _("Enter Password"),Message.ENTER_PASSWORD_RESTORE);
+				if (App.arg_password.length == 0){
+					return;
+				}
 			}
 
 			this.hide();
