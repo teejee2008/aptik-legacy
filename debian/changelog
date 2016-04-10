@@ -2,4 +2,10 @@ aptik (16.4) trusty; urgency=medium
 
   * Added option to backup and restore users and groups
 
- -- Tony George <tony.george.kol@gmail.com>  Tue, 05 Apr 2016 10:00:00 +0530
+  * Added option to backup and restore user data in home directory
+  
+  * Added option to backup and restore all items
+
+  * Various issues were fixed
+  
+ -- Tony George <tony.george.kol@gmail.com>  Tue, 10 Apr 2016 10:00:00 +0530
