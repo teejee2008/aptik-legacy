@@ -2885,6 +2885,8 @@ public class Main : GLib.Object {
 			}
 		}
 
+		sh += "echo '%s'\n".printf(Message.BACKUP_OK);
+
 		return sh;
 	}
 
@@ -3150,6 +3152,9 @@ public class BackupTask : GLib.Object {
 		task.backup_cmd = "aptik --backup-dir '%s' --backup-packages".printf(App.backup_dir);
 		task.restore_cmd = "aptik --backup-dir '%s' --restore-packages".printf(App.backup_dir);
 		list.add(task);
+
+		// exit script on error
+		task.restore_cmd += "\nstatus=$?; if [ $status -ne 0 ]; then echo '\n\n%s\n\n'; exit $status; fi\n".printf(Message.APT_GET_ERROR);
 
 		task = new BackupTask("mount",_("Filesystem Mounts"));
 		task.backup_cmd = "aptik --backup-dir '%s' --password '%s' --backup-mounts".printf(App.backup_dir, App.arg_password);

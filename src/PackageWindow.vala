@@ -973,14 +973,13 @@ public class PackageWindow : Window {
 		if (is_success) {
 			if (show_on_success) {
 				string title = _("Finished");
-				string msg = _("Backup created successfully") + ".\n";
-				msg += _("List saved with file name") + " '%s'".printf(file_name);
+				string msg = Message.BACKUP_OK;
 				gtk_messagebox(title, msg, this, false);
 			}
 		}
 		else {
 			string title = _("Error");
-			string msg = _("Failed to write")  + " '%s'".printf(file_name);
+			string msg = _("Failed to write") + " '%s'".printf(file_name);
 			gtk_messagebox(title, msg, this, true);
 		}
 

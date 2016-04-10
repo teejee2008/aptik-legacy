@@ -136,12 +136,12 @@ public class ConfigWindow : Window {
 		vbox_main.pack_start (hbox_filter, false, true, 0);
 
 		//filter
-		Label lbl_filter = new Label(_("Username"));
+		Label lbl_filter = new Label(_("User"));
 		hbox_filter.add (lbl_filter);
 		
 		//cmb_username
 		cmb_username = new ComboBox();
-		cmb_username.set_tooltip_text(_("Username"));
+		cmb_username.set_tooltip_text(_("User"));
 		hbox_filter.add (cmb_username);
 
 		CellRendererText cell_username = new CellRendererText();

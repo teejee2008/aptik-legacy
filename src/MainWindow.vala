@@ -977,7 +977,7 @@ public class MainWindow : Window {
 		// ask always - since we are not checking for error, we cannot reset a bad password
 		
 		//if (App.arg_password.length == 0){
-			App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"),Message.ENTER_PASSWORD_BACKUP);
+			App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"),Message.ENTER_PASSWORD_RESTORE);
 			if (App.arg_password == ""){
 				return;
 			}

@@ -132,7 +132,9 @@ public class UserSelectionDialog : Gtk.Dialog {
 			init_ui_mode();
 		}
 
-		init_ui_exclude();
+		if (backup_mode){
+			init_ui_exclude();
+		}
 		
 		init_ui_actions();
 	}
@@ -448,7 +450,7 @@ public class UserSelectionDialog : Gtk.Dialog {
 				return 1;
 			}
 			else{
-				return strcmp(a.file_name, b.file_name);
+				return strcmp(a.file_name.down(), b.file_name.down());
 			}
 		});
 
