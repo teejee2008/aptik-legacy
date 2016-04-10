@@ -3278,6 +3278,6 @@ public class Message : GLib.Object {
 	public static const string TASK_MOUNT = _("Filesystem Mounts");
 	public static const string TASK_THEME = _("Themes and Icons");
 	public static const string TASK_USER = _("Users and Groups");
-	public static const string TASK_CONFIG = _("User's Application Settings");
-	public static const string TASK_HOME = _("User's Home Directory Data");
+	public static const string TASK_CONFIG = _("Application Settings");
+	public static const string TASK_HOME = _("Home Directory Data");
 }
