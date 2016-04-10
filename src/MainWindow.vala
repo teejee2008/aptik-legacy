@@ -227,7 +227,7 @@ public class MainWindow : Window {
 
 		// label
 		var label = new Label (Message.TASK_PPA);
-		label.set_tooltip_text(_("Backup the list of Launchpad PPAs and re-add missing PPAs"));
+		label.set_tooltip_text(_("Backup Launchpad PPAs"));
 		label.set_use_markup(true);
 		label.halign = Align.START;
 		label.hexpand = true;
@@ -306,7 +306,7 @@ public class MainWindow : Window {
 
 		// label
 		var label = new Label (Message.TASK_PACKAGE);
-		label.set_tooltip_text(_("Backup the list of installed packages and re-install missing packages"));
+		label.set_tooltip_text(_("Backup installed packages"));
 		label.set_use_markup(true);
 		label.halign = Align.START;
 		label.hexpand = true;
@@ -355,7 +355,7 @@ public class MainWindow : Window {
 
 		// label
 		var label = new Label (Message.TASK_USER);
-		label.set_tooltip_text(_("Users and groups"));
+		label.set_tooltip_text(_("Backup users and groups"));
 		label.set_use_markup(true);
 		label.halign = Align.START;
 		label.hexpand = true;
@@ -431,7 +431,7 @@ public class MainWindow : Window {
 
 		// label
 		var label = new Label (Message.TASK_CONFIG);
-		label.set_tooltip_text(_("Backup application configuration directories (starting with '.') in user's home"));
+		label.set_tooltip_text(_("Backup application settings"));
 		label.set_use_markup(true);
 		label.halign = Align.START;
 		label.hexpand = true;
@@ -594,7 +594,7 @@ public class MainWindow : Window {
 
 		// label
 		var label = new Label (Message.TASK_HOME);
-		label.set_tooltip_text(_("Backup visible (non-hidden) files and directories in user's home"));
+		label.set_tooltip_text(_("Backup home directory data\n\nNote: App config directories will not be included in the backup. Use the 'Application Settings' section to backup app config directories."));
 		label.set_use_markup(true);
 		label.halign = Align.START;
 		label.hexpand = true;

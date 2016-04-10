@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2016-04-10 21:04+0530\n"
+"POT-Creation-Date: 2016-04-10 21:48+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -243,6 +243,10 @@ msgstr ""
 msgid "Backup File"
 msgstr ""
 
+#: MainWindow.vala:230
+msgid "Backup Launchpad PPAs"
+msgstr ""
+
 #: UserDataSettingsDialog.vala:267
 msgid "Backup Mode"
 msgstr ""
@@ -252,9 +256,7 @@ msgid "Backup all items"
 msgstr ""
 
 #: MainWindow.vala:434
-msgid ""
-"Backup application configuration directories (starting with '.') in user's "
-"home"
+msgid "Backup application settings"
 msgstr ""
 
 #: Main.vala:3230
@@ -285,6 +287,18 @@ msgstr ""
 msgid "Backup downloaded packages in /var/cache/apt"
 msgstr ""
 
+#: MainWindow.vala:597
+msgid ""
+"Backup home directory data\n"
+"\n"
+"Note: App config directories will not be included in the backup. Use the "
+"'Application Settings' section to backup app config directories."
+msgstr ""
+
+#: MainWindow.vala:309
+msgid "Backup installed packages"
+msgstr ""
+
 #: AptikConsole.vala:99
 msgid "Backup list of PPAs"
 msgstr ""
@@ -297,16 +311,8 @@ msgstr ""
 msgid "Backup saved"
 msgstr ""
 
-#: MainWindow.vala:230
-msgid "Backup the list of Launchpad PPAs and re-add missing PPAs"
-msgstr ""
-
 #: MainWindow.vala:239
 msgid "Backup the list of installed PPAs"
-msgstr ""
-
-#: MainWindow.vala:309
-msgid "Backup the list of installed packages and re-install missing packages"
 msgstr ""
 
 #: AptikConsole.vala:132
@@ -322,12 +328,8 @@ msgstr ""
 msgid "Backup user-created data in user's home directory"
 msgstr ""
 
-#: AptikConsole.vala:119
+#: AptikConsole.vala:119 MainWindow.vala:358
 msgid "Backup users and groups"
-msgstr ""
-
-#: MainWindow.vala:597
-msgid "Backup visible (non-hidden) files and directories in user's home"
 msgstr ""
 
 #: Main.vala:1952
@@ -1085,9 +1087,7 @@ msgid ""
 msgstr ""
 
 #: Main.vala:3226
-msgid ""
-"Package installation has failed. Un-select the packages mentioned in the "
-"above error message and run the restore again."
+msgid "Package installation has failed or was aborted by user"
 msgstr ""
 
 #: PackageManagerWindow.vala:301 PpaWindow.vala:201 PpaWindow.vala:204
@@ -1590,10 +1590,6 @@ msgstr ""
 
 #: UserAccountWindow.vala:499
 msgid "Users and Groups are already up-to-date"
-msgstr ""
-
-#: MainWindow.vala:358
-msgid "Users and groups"
 msgstr ""
 
 #: DonationWindow.vala:88

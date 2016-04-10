@@ -1,4 +1,4 @@
-aptik (16.4) trusty; urgency=medium
+aptik (16.4.1) trusty; urgency=medium
 
   * Added option to backup and restore users and groups
 
@@ -8,4 +8,4 @@ aptik (16.4) trusty; urgency=medium
 
   * Various issues were fixed
   
- -- Tony George <tony.george.kol@gmail.com>  Tue, 10 Apr 2016 10:00:00 +0530
+ -- Tony George <tony.george.kol@gmail.com>  Sun, 10 Apr 2016 14:00:00 +0530
