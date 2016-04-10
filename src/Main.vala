@@ -319,8 +319,9 @@ public class Main : GLib.Object {
 
 	public string backup_dir {
 		owned get{
-			if (_backup_dir == null){
+			if ((_backup_dir == null)||(_backup_dir.length == 0)||(_backup_dir == "/")){
 				_backup_dir = "";
+				return "";
 			}
 			return _backup_dir.has_suffix("/") ? _backup_dir : _backup_dir + "/";
 		}

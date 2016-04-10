@@ -1,5 +1,5 @@
 /*
- * UserSelectionDialog.vala
+ * UserDataSettingsDialog.vala
  *
  * Copyright 2015 Tony George <teejee2008@gmail.com>
  *
@@ -34,20 +34,21 @@ using TeeJee.Multimedia;
 using TeeJee.System;
 using TeeJee.Misc;
 
-public class UserSelectionDialog : Gtk.Dialog {
+public class UserDataSettingsDialog : Gtk.Dialog {
 	private Gtk.Box vbox_main;
 	private Gtk.TreeView tv_users;
 	private Gtk.TreeView tv_exclude;
 	private Gtk.ComboBox cmb_dup_mode;
 	private Gtk.Notebook notebook;
 	private Gtk.Box vbox_gen;
+	private Gtk.Box vbox_users;
 	private Gtk.Box vbox_exclude;
 	
 	public Gee.ArrayList<SystemUser> user_list;
 	public bool backup_mode = true;
 	private uint tmr_init = 0;
 	
-	public UserSelectionDialog.with_parent(Window parent, bool backup_mode) {
+	public UserDataSettingsDialog.with_parent(Window parent, bool backup_mode) {
 		set_transient_for(parent);
 		set_modal(true);
 		set_skip_taskbar_hint(true);
@@ -65,8 +66,8 @@ public class UserSelectionDialog : Gtk.Dialog {
 		
 		//content area
 		vbox_main = new Gtk.Box(Orientation.VERTICAL, 6);
-		vbox_main.margin = 6;
-		vbox_main.set_size_request(300,300);
+		vbox_main.margin = 12;
+		vbox_main.set_size_request(450,450);
 		get_content_area().add(vbox_main);
 
 		// notebook
@@ -76,23 +77,39 @@ public class UserSelectionDialog : Gtk.Dialog {
 		
 		// tab general --------------
 
-		var label = new Label(title);
+		if (backup_mode){
+			
+			var label = new Label(_("General"));
+			label.xalign = (float) 0.0;
+
+			vbox_gen = new Gtk.Box(Orientation.VERTICAL, 6);
+			vbox_gen.margin = 12;
+			
+			notebook.append_page(vbox_gen, label);
+		}
+
+		// tab users --------------
+
+		var label = new Label(_("Users"));
 		label.xalign = (float) 0.0;
 
-		vbox_gen = new Gtk.Box(Orientation.VERTICAL, 6);
-		vbox_gen.margin = 6;
+		vbox_users = new Gtk.Box(Orientation.VERTICAL, 6);
+		vbox_users.margin = 12;
 		
-		notebook.append_page(vbox_gen, label);
+		notebook.append_page(vbox_users, label);
 
 		// tab exclude --------------
+		
+		if (backup_mode){
+			
+			label = new Label(_("Exclude"));
+			label.xalign = (float) 0.0;
 
-		label = new Label(_("Exclude"));
-		label.xalign = (float) 0.0;
+			vbox_exclude = new Gtk.Box(Orientation.VERTICAL, 6);
+			vbox_exclude.margin = 12;
 
-		vbox_exclude = new Gtk.Box(Orientation.VERTICAL, 6);
-		vbox_exclude.margin = 6;
-
-		notebook.append_page(vbox_exclude, label);
+			notebook.append_page(vbox_exclude, label);
+		}
 
 		// ---------
 		
@@ -126,11 +143,11 @@ public class UserSelectionDialog : Gtk.Dialog {
 	}
 
 	private void init_ui(){
-		init_ui_users();
-		
 		if (backup_mode){
-			init_ui_mode();
+			init_ui_general();
 		}
+
+		init_ui_users();
 
 		if (backup_mode){
 			init_ui_exclude();
@@ -143,7 +160,7 @@ public class UserSelectionDialog : Gtk.Dialog {
 		
 		var label = new Label(_("Select users"));
 		label.xalign = (float) 0.0;
-		vbox_gen.add (label);
+		//vbox_users.add (label);
 
 		// add treeview ---------------------------------
 		
@@ -158,7 +175,7 @@ public class UserSelectionDialog : Gtk.Dialog {
 		sw_cols.set_shadow_type (ShadowType.ETCHED_IN);
 		sw_cols.set_size_request(300,200);
 		sw_cols.add (tv);
-		vbox_gen.pack_start (sw_cols, true, true, 0);
+		vbox_users.pack_start (sw_cols, true, true, 0);
 	
 		// column -------------------------------------
 		
@@ -237,6 +254,10 @@ public class UserSelectionDialog : Gtk.Dialog {
 		tv.model = store;
 	}
 
+	private void init_ui_general(){
+		init_ui_mode();
+	}
+	
 	private void init_ui_mode(){
 		// hbox
 		var hbox = new Box (Orientation.HORIZONTAL, 6);

@@ -780,6 +780,7 @@ public class MainWindow : Window {
 	}
 
 	private bool check_backup_folder() {
+		log_msg("backup_path='%s'".printf(App.backup_dir));
 		if ((App.backup_dir != null) && dir_exists (App.backup_dir)) {
 			return true;
 		}
@@ -943,7 +944,7 @@ public class MainWindow : Window {
 
 		// select users ------------------------------
 
-		var dlg = new UserSelectionDialog.with_parent(this, true);
+		var dlg = new UserDataSettingsDialog.with_parent(this, true);
 		int response = dlg.run();
 		if (response == Gtk.ResponseType.ACCEPT){
 
@@ -983,7 +984,7 @@ public class MainWindow : Window {
 
 		// select users ------------------------------
 		
-		var dlg = new UserSelectionDialog.with_parent(this, false);
+		var dlg = new UserDataSettingsDialog.with_parent(this, false);
 		int response = dlg.run();
 		if (response == Gtk.ResponseType.ACCEPT){
 
