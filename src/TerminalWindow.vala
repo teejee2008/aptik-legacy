@@ -264,7 +264,7 @@ public class TerminalWindow : Gtk.Window {
 			#else
 
 			term.fork_command_full(
-				//Vte.PtyFlags.DEFAULT, //pty_flags
+				Vte.PtyFlags.DEFAULT, //pty_flags
 				TEMP_DIR, //working_directory
 				argv, //argv
 				env, //env
