@@ -1032,6 +1032,9 @@ public class MainWindow : Window {
 			sh += "echo ''\n";
 		}
 
+		sh += "echo ''\n";
+		sh += "echo 'Close window to exit...'\n";
+
 		term.execute_script(save_bash_script_temp(sh));
 	}
 	
@@ -1074,13 +1077,16 @@ public class MainWindow : Window {
 			sh += "%s\n".printf(cmd);
 			sh += "echo ''\n";
 		}
+		
+		sh += "echo ''\n";
+		sh += "echo 'Close window to exit...'\n";
 
 		term.execute_script(save_bash_script_temp(sh));
 	}
 
 	private void all_tasks_complete(){
 		term.script_complete.disconnect(all_tasks_complete);
-		term.execute_script(save_bash_script_temp("echo\necho 'Close window to exit...'\n"));
+		term.execute_script(save_bash_script_temp("echo ''\necho 'Close window to exit...'\n"));
 		term.allow_window_close();
 	}
 

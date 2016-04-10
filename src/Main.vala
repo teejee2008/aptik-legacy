@@ -3172,7 +3172,7 @@ public class BackupTask : GLib.Object {
 		list.add(task);
 
 		// exit script on error
-		task.restore_cmd += "\nstatus=$?; if [ $status -ne 0 ]; then echo '\n\n%s\n\n'; exit $status; fi\n".printf(Message.APT_GET_ERROR);
+		task.restore_cmd += "\nstatus=$?; if [ $status -ne 0 ]; then exit $status; fi\n";
 
 		task = new BackupTask("mount", Message.TASK_MOUNT);
 		task.backup_cmd = "aptik --backup-dir '%s' --password '%s' --backup-mounts".printf(App.backup_dir, App.arg_password);
@@ -3223,7 +3223,7 @@ public class BackupTask : GLib.Object {
 }
 
 public class Message : GLib.Object {
-	public static const string APT_GET_ERROR = _("Package installation has failed. Un-select the packages mentioned in the above error message and run the restore again.");
+	public static const string APT_GET_ERROR = _("Package installation has failed or was aborted by user");
 
 	public static const string INTERNET_OFFLINE = _("Internet connection is not active. Check the connection and try again.");
 	
