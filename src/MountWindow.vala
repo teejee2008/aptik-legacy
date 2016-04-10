@@ -180,7 +180,7 @@ public class MountWindow : Window {
 			model.get (iter, 0, out selected, 1, out fs, -1);
 			(cell as Gtk.CellRendererToggle).active = selected;
 			(cell as Gtk.CellRendererToggle).sensitive = (fs.action == FsTabEntry.Action.ADD);
-			//(cell as Gtk.CellRendererToggle).visible = (fs.action == FsTabEntry.Action.ADD);
+			(cell as Gtk.CellRendererToggle).visible = (fs.action == FsTabEntry.Action.ADD);
 		});
 
 		cell_mount_select.toggled.connect((path) => {
