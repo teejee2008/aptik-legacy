@@ -101,8 +101,6 @@ public class MainWindow : Window {
 
 		init_section_backup();
 
-		//init_section_tools();
-
 		init_section_toolbar_bottom();
 
 		init_section_status();
@@ -198,7 +196,7 @@ public class MainWindow : Window {
 
 		//grid_backup_buttons
 		grid_backup_buttons = new Grid();
-		grid_backup_buttons.set_column_spacing (6);
+		grid_backup_buttons.set_column_spacing (12);
 		grid_backup_buttons.set_row_spacing (6);
 		grid_backup_buttons.margin_left = 6;
 		vbox_main.pack_start (grid_backup_buttons, false, true, 0);
@@ -679,8 +677,8 @@ public class MainWindow : Window {
 
 		//btn_donate
 		var button = new Gtk.ToolButton.from_stock ("");
-		button.label = _("Backup All");
-		button.set_tooltip_text (_("Backup All Items"));
+		button.label = _("One-Click\nBackup");
+		button.set_tooltip_text (_("One-Click Backup"));
 		button.icon_widget = get_shared_icon("", "backup.svg", ICON_SIZE);
 		toolbar_bottom.add(button);
 		button.set_size_request(BUTTON_SIZE,-1);
@@ -688,8 +686,8 @@ public class MainWindow : Window {
 		button.clicked.connect(btn_backup_all_clicked);
 		
 		button = new Gtk.ToolButton.from_stock ("");
-		button.label = _("Restore All");
-		button.set_tooltip_text (_("Restore All Items"));
+		button.label = _("One-Click\nRestore");
+		button.set_tooltip_text (_("One-Click Restore"));
 		button.icon_widget = get_shared_icon("", "restore.svg", ICON_SIZE);
 		toolbar_bottom.add(button);
 		button.set_size_request(BUTTON_SIZE,-1);
@@ -697,8 +695,8 @@ public class MainWindow : Window {
 		button.clicked.connect(btn_restore_all_clicked);
 		
 		button = new Gtk.ToolButton.from_stock ("");
-		button.label = _("Settings");
-		button.set_tooltip_text (_("Settings"));
+		button.label = _("One-Click\nSettings");
+		button.set_tooltip_text (_("Settings for One-Click Backup & Restore"));
 		button.icon_widget = get_shared_icon("", "config.svg", ICON_SIZE);
 		toolbar_bottom.add(button);
 		button.set_size_request(BUTTON_SIZE,-1);
@@ -709,7 +707,7 @@ public class MainWindow : Window {
 		var separator = new Gtk.SeparatorToolItem();
 		separator.set_draw (false);
 		separator.set_expand (true);
-		//toolbar_bottom.add(separator);
+		toolbar_bottom.add(separator);
 
 		//btn_donate
 		button = new Gtk.ToolButton.from_stock ("gtk-missing-image");

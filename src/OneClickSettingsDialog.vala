@@ -51,12 +51,14 @@ public class OneClickSettingsDialog : Gtk.Dialog {
 		set_transient_for(parent);
 		set_modal(true);
 
+		title = _("One-Click Settings");
+		
 		// get content area
 		var vbox_main = get_content_area();
 		vbox_main.spacing = 6;
-		vbox_main.margin = 6;
+		vbox_main.margin = 12;
 		//vbox_main.margin_bottom = 12;
-		vbox_main.set_size_request(400,300);
+		vbox_main.set_size_request(400,400);
 
 		var label = new Label(_("Select items to backup and restore"));
 		label.xalign = (float) 0.0;
@@ -132,15 +134,18 @@ public class OneClickSettingsDialog : Gtk.Dialog {
 		//hbox.margin_left = 6;
 		vbox_main.add(hbox);
 
-		label = new Label(_("Size limit for App Settings backup (KB)"));
+		var tt = _("[Application Settings Backup]\n\nSome applications such as Steam and Wine store a large amount of data in their configuration directories (~/.local/share/Steam and ~/.wine). Setting a limit will skip the backup for these applications. Keep the limit as 0 to backup the settings for all apps.");
+		label = new Label(_("App settings backup limit (KB)"));
 		label.xalign = (float) 0.0;
 		label.hexpand = true;
+		label.set_tooltip_text(tt);
 		hbox.add (label);
 
-		//spin_aquality
+		//spin_size_limit
 		var adj = new Gtk.Adjustment(0, 0, 10000000, 1, 1, 0);
 		var spin = new Gtk.SpinButton (adj, 1, 0);
 		spin.xalign = (float) 0.5;
+		spin.set_tooltip_text(tt);
 		hbox.add (spin);
 		spin_size_limit = spin;
 

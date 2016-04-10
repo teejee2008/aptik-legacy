@@ -121,7 +121,7 @@ public class TerminalWindow : Gtk.Window {
 		
 		term.scroll_on_keystroke = true;
 		term.scroll_on_output = true;
-		term.scrollback_lines = 10000;
+		term.scrollback_lines = 100000;
 
 		// colors -----------------------------
 		
