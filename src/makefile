@@ -26,7 +26,7 @@ all:
 	xgettext --language=C --keyword=_ --copyright-holder='Tony George (teejee2008@gmail.com)' --package-name='${app_name}' --package-version='1.6' --msgid-bugs-address='teejee2008@gmail.com' --escape --sort-output -o ../${app_name}.pot *.vala
 
 clean:
-	rm -rf *.o ${app_name}
+	rm -rf *.o ${app_name} ${app_name}-gtk
 
 install:
 	mkdir -p "$(DESTDIR)$(bindir)"
@@ -45,9 +45,6 @@ install:
 	#binary
 	install -m 0755 ${app_name} "$(DESTDIR)$(bindir)"
 	install -m 0755 ${app_name}-gtk "$(DESTDIR)$(bindir)"
-
-	#install -m 0755 ${app_name}-pkg-mgr "$(DESTDIR)$(bindir)"
-
 	install -m 0755 ${app_name}-uninstall "$(DESTDIR)$(bindir)"
 	install -m 0755 ${app_name}-launcher "$(DESTDIR)$(bindir)"
 

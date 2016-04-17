@@ -49,7 +49,7 @@ public class Main : GLib.Object {
 	public static string PKG_LIST_BAK = "packages.list";
 	public static string PKG_LIST_INSTALLED_BAK = "packages-installed.list";
 
-	public string NATIVE_ARCH = "amd64";
+	public string NATIVE_ARCH = "";
 	
 	public string temp_dir = "";
 	public string _backup_dir = "";
