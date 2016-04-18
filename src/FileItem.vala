@@ -62,7 +62,6 @@ public class FileItem : GLib.Object {
 	public string owner = "";
 	public string group = "";
 
-	//public string icon_name = "gtk-file";
 	public GLib.Icon icon;
 
 	public bool is_dummy = false;
