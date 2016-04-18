@@ -142,6 +142,11 @@ public class AptikConsole : GLib.Object {
 		msg += "  --backup-home         " + _("Backup user-created data in user's home directory") + "\n";
 		msg += "  --restore-home        " + _("Restore user-created data in user's home directory") + "\n";
 		msg += "\n";
+		msg += "%s:\n".printf(Message.TASK_CRON);
+		msg += "\n";
+		msg += "  --backup-crontab         " + _("Backup user's scheduled tasks (crontab)") + "\n";
+		msg += "  --restore-crontab        " + _("Restore user's scheduled tasks (crontab)") + "\n";
+		msg += "\n";
 		msg += _("All Items") + ":\n";
 		msg += "\n";
 		msg += "  --backup-all          " + _("Backup all items") + "\n";
@@ -363,6 +368,16 @@ public class AptikConsole : GLib.Object {
 			case "--restore-users":
 				return restore_users_and_groups();
 
+			// crontab -------------------------------------------
+
+			case "--backup-crontab":
+			case "--backup-crontabs":
+				return backup_crontab();
+
+			case "--restore-crontab":
+			case "--restore-crontabs":
+				return restore_crontab();
+				
 			// all ---------------------------------------------
 
 			case "--backup-all":
@@ -779,6 +794,7 @@ public class AptikConsole : GLib.Object {
 		bool ok = true;
 		
 		if (App.user_login.length == 0){
+			// TODO: root's data is not backed up?
 			foreach(string username in list_dir_names("/home")){
 				if (username == "PinguyBuilder"){
 					continue;
@@ -821,6 +837,7 @@ public class AptikConsole : GLib.Object {
 		bool ok = true;
 		
 		if (App.user_login.length == 0){
+		
 			foreach(string username in list_dir_names("/home")){
 				App.select_user(username);
 				
@@ -942,7 +959,7 @@ public class AptikConsole : GLib.Object {
 		return ok;
 	}
 
-	// mounts ---------------------
+	// home ---------------------
 	
 	public bool backup_home(){
 
@@ -998,6 +1015,35 @@ public class AptikConsole : GLib.Object {
 		return ok;
 	}
 
+	// crontabs -------------------
+
+	public bool backup_crontab(){
+		bool ok = App.backup_crontab();
+		
+		if (ok){
+			log_msg(Message.BACKUP_OK);
+		}
+		else{
+			log_msg(Message.BACKUP_ERROR);
+		}
+
+		return ok;
+	}
+
+	public bool restore_crontab(){
+		bool ok = App.restore_crontab();
+		
+		if (ok){
+			log_msg(Message.RESTORE_OK);
+		}
+		else{
+			log_msg(Message.RESTORE_ERROR);
+		}
+
+		return ok;
+	}
+
+	
 	// all items ----------------------------------
 
 	public bool backup_all(){

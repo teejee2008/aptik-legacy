@@ -943,17 +943,17 @@ public class Main : GLib.Object {
 
 	public void ppa_backup_init(bool query_pkg_info = true){
 		if (query_pkg_info){
-			App.read_package_info();
+			read_package_info();
 		}
-		App.ppa_list_master = App.list_ppa();
+		ppa_list_master = list_ppa();
 	}
 
 	public void ppa_restore_init(bool query_pkg_info = true){
 		if (query_pkg_info){
-			App.read_package_info();
+			read_package_info();
 		}
-		App.ppa_list_master = App.list_ppa();
-		App.read_ppa_list();
+		ppa_list_master = list_ppa();
+		read_ppa_list();
 	}
 	
 	public Gee.HashMap<string,Ppa> list_ppa(){
@@ -1704,7 +1704,7 @@ public class Main : GLib.Object {
 				continue;
 			}
 
-			if ((App.arg_size_limit > 0) && (config.bytes > App.arg_size_limit)){
+			if ((arg_size_limit > 0) && (config.bytes > arg_size_limit)){
 				continue;
 			}
 
@@ -1724,7 +1724,7 @@ public class Main : GLib.Object {
 				continue;
 			}
 
-			if ((App.arg_size_limit > 0) && (config.bytes > App.arg_size_limit)){
+			if ((arg_size_limit > 0) && (config.bytes > arg_size_limit)){
 				continue;
 			}
 			
@@ -2220,7 +2220,7 @@ public class Main : GLib.Object {
 				ok = file_tar_encrypt(src_file, dst_file, arg_password);
 
 				if (!ok){
-					log_error(Message.BACKUP_ERROR + ": %s".printf(src_file));
+					log_error(Message.BACKUP_SAVE_ERROR + ": %s".printf(src_file));
 					return false;
 				}
 				else{
@@ -2240,7 +2240,7 @@ public class Main : GLib.Object {
 				ok = file_tar_encrypt(src_file, dst_file, arg_password);
 
 				if (!ok){
-					log_error(Message.BACKUP_ERROR + ": %s".printf(src_file));
+					log_error(Message.BACKUP_SAVE_ERROR + ": %s".printf(src_file));
 					return false;
 				}
 				else{
@@ -2265,7 +2265,7 @@ public class Main : GLib.Object {
 				ok = dir_tar(fs.mount_point, tar_file, false);
 				
 				if (!ok){
-					log_error(Message.BACKUP_ERROR + ": %s".printf(fs.mount_point));
+					log_error(Message.BACKUP_SAVE_ERROR + ": %s".printf(fs.mount_point));
 					return false;
 				}
 				else{
@@ -2554,7 +2554,7 @@ public class Main : GLib.Object {
 				ok = file_tar_encrypt(src_file, dst_file, arg_password);
 
 				if (!ok){
-					log_error(Message.BACKUP_ERROR + ": %s".printf(src_file));
+					log_error(Message.BACKUP_SAVE_ERROR + ": %s".printf(src_file));
 					return false;
 				}
 				else{
@@ -2567,7 +2567,7 @@ public class Main : GLib.Object {
 	}
 
 	public bool restore_users_and_groups_init(string password){
-		string users_dir = App.backup_dir + "users";
+		string users_dir = backup_dir + "users";
 
 		// get and check password -------------------
 		
@@ -2853,7 +2853,7 @@ public class Main : GLib.Object {
 				
 				var cmd = "";
 				
-				cmd += "export PASSPHRASE='%s'\n".printf(App.arg_password);
+				cmd += "export PASSPHRASE='%s'\n".printf(arg_password);
 				
 				cmd += "duplicity%s --verbosity i --exclude-globbing-filelist '%s' '%s' 'file://%s'\n".printf(
 				((dup_mode_full) ? " full" : ""), exclude_list, user.home_path, bak_dir);
@@ -2886,7 +2886,7 @@ public class Main : GLib.Object {
 
 				var cmd = "";
 				
-				cmd += "export PASSPHRASE='%s'\n".printf(App.arg_password);
+				cmd += "export PASSPHRASE='%s'\n".printf(arg_password);
 				
 				cmd += "duplicity --verbosity i --force --exclude-globbing-filelist '%s' 'file://%s' '%s'\n".printf(exclude_list, bak_dir, user.home_path);
 				
@@ -2911,8 +2911,8 @@ public class Main : GLib.Object {
 	public string exclude_list_create(){
 		string txt = "";
 		
-		if (App.home_tree != null){
-			foreach(var home in App.home_tree.children.values){
+		if (home_tree != null){
+			foreach(var home in home_tree.children.values){
 				exclude_list_append(home, ref txt, home.file_path);
 			}
 		}
@@ -2929,6 +2929,71 @@ public class Main : GLib.Object {
 		foreach(var child in item.children.values){
 			exclude_list_append(child, ref txt, base_dir);
 		}
+	}
+
+	/* Cron jobs */
+	
+	public bool backup_crontab(){
+		bool ok = true;
+
+		var bak_dir = "%s%s".printf(backup_dir,"crontab");
+		dir_create(bak_dir);
+
+		var list = list_dir_names("/home");
+		list.add("root");
+			
+		foreach(string user_name in list){
+			if (user_name == "PinguyBuilder"){
+				continue;
+			}
+
+			if (!gui_mode && (user_login.length > 0) && (user_name != user_login)){
+				continue;
+			}
+
+			var bak_file = "%s/%s".printf(bak_dir, user_name);
+				
+			var status = CronTab.export(bak_file, user_name);
+			ok = ok && status;
+			
+			// continue on error, messages are logged by CronTab.export()
+		}
+	
+		return ok;
+	}
+
+	public bool restore_crontab(){
+		bool ok = true;
+
+		var bak_dir = "%s%s".printf(backup_dir,"crontab");
+		dir_create(bak_dir);
+
+		var list = list_dir_names("/home");
+		list.add("root");
+
+		foreach(string user_name in list){
+			if (user_name == "PinguyBuilder"){
+				continue;
+			}
+
+			if (!gui_mode && (user_login.length > 0) && (user_name != user_login)){
+				continue;
+			}
+
+			var bak_file = "%s/%s".printf(bak_dir, user_name);
+
+			if (!file_exists(bak_file)){
+				log_error(Message.FILE_MISSING + ": %s".printf(bak_file));
+				continue;
+			}
+			
+			var status = CronTab.import(bak_file, user_name);
+			ok = ok && status;
+
+			// continue on error, messages are logged by CronTab.import()
+		}
+
+		return ok;
 	}
 
 	/* Misc */
@@ -3199,6 +3264,11 @@ public class BackupTask : GLib.Object {
 		task.restore_cmd = "aptik --backup-dir '%s' --password '%s' --restore-home".printf(App.backup_dir, App.arg_password);
 		list.add(task);
 
+		task = new BackupTask("crontab", Message.TASK_CRON);
+		task.backup_cmd = "aptik --backup-dir '%s'  --backup-crontab".printf(App.backup_dir);
+		task.restore_cmd = "aptik --backup-dir '%s' --restore-crontab".printf(App.backup_dir);
+		list.add(task);
+		
 		string[] arr = App.selected_tasks.strip().split(",");
 
 		if (arr.length == 0){
@@ -3230,6 +3300,7 @@ public class Message : GLib.Object {
 	public static const string BACKUP_OK = _("Backup completed");
 	public static const string BACKUP_ERROR = _("Backup completed with errors");
 	public static const string BACKUP_SAVED = _("Backup saved");
+	public static const string BACKUP_SAVE_ERROR = _("Failed to save backup");
 	
 	public static const string RESTORE_OK = _("Restore completed");
 	public static const string RESTORE_ERROR = _("Restore completed with errors");
@@ -3280,4 +3351,5 @@ public class Message : GLib.Object {
 	public static const string TASK_USER = _("Users and Groups");
 	public static const string TASK_CONFIG = _("Application Settings");
 	public static const string TASK_HOME = _("Home Directory Data");
+	public static const string TASK_CRON = _("Scheduled Tasks");
 }

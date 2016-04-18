@@ -850,7 +850,7 @@ namespace TeeJee.ProcessManagement{
 		//log_debug("TEMP_DIR=" + TEMP_DIR);
 	}
 
-	public int exec_sync (string cmd, out string? std_out, out string? std_err){
+	public int exec_sync (string cmd, out string? std_out = null, out string? std_err = null){
 
 		/* Executes single command synchronously
 		 * Pipes and multiple commands are not supported */

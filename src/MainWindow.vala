@@ -66,6 +66,9 @@ public class MainWindow : Window {
 
 	private Button btn_restore_home;
 	private Button btn_backup_home;
+
+	private Button btn_restore_crontab;
+	private Button btn_backup_crontab;
 	
 	private Button btn_restore_user;
 	private Button btn_backup_user;
@@ -219,6 +222,8 @@ public class MainWindow : Window {
 		init_section_backup_configs(++row);
 
 		init_section_backup_home(++row);
+		
+		init_section_backup_crontab(++row);
 	}
 
 	private void init_section_backup_ppa(int row) {
@@ -617,6 +622,53 @@ public class MainWindow : Window {
 		button.clicked.connect(btn_restore_home_clicked);
 	}
 
+	private void init_section_backup_crontab(int row) {
+		var img = get_shared_icon("", "clock.png", icon_size_list);
+		grid_backup_buttons.attach(img, 0, row, 1, 1);
+
+		// label
+		var label = new Label (Message.TASK_CRON);
+		label.set_tooltip_text(_("Backup scheduled tasks for all users (crontab file)"));
+		label.set_use_markup(true);
+		label.halign = Align.START;
+		label.hexpand = true;
+		grid_backup_buttons.attach(label, 1, row, 1, 1);
+
+		// btn_backup_crontab
+		var button = new Gtk.Button.with_label (_("Backup"));
+		button.set_size_request(button_width, button_height);
+		grid_backup_buttons.attach(button, 2, row, 1, 1);
+		btn_backup_crontab = button;
+		
+		button.clicked.connect(()=>{
+			bool ok = App.backup_crontab();
+			
+			if (ok){
+				gtk_messagebox(_("Finished"), Message.BACKUP_OK, this, false);
+			}
+			else{
+				gtk_messagebox(_("Error"), Message.BACKUP_ERROR, this, false);
+			}
+		});
+
+		// btn_restore_crontab
+		button = new Gtk.Button.with_label (_("Restore"));
+		button.set_size_request(button_width, button_height);
+		grid_backup_buttons.attach(button, 3, row, 1, 1);
+		btn_restore_crontab = button;
+		
+		button.clicked.connect(()=>{
+			bool ok = App.restore_crontab();
+			
+			if (ok){
+				gtk_messagebox(_("Finished"), Message.RESTORE_OK, this, false);
+			}
+			else{
+				gtk_messagebox(_("Error"), Message.RESTORE_ERROR, this, false);
+			}
+		});
+	}
+
 	private void init_section_status() {
 		//lbl_status
 		lbl_status = new Label ("");
@@ -989,7 +1041,7 @@ public class MainWindow : Window {
 			return;
 		}
 	}
-	
+
 	/* One-click */
 
 	private void btn_backup_all_clicked() {
