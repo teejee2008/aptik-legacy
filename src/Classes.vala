@@ -337,8 +337,8 @@ public class DownloadManager : GLib.Object{
 	public bool download_begin() {
 		status = DownloadManager.Status.STARTED;
 
-		create_dir(partial_dir);
-		create_dir(download_dir);
+		dir_create(partial_dir);
+		dir_create(download_dir);
 
 		string src_path = "%s/%s".printf(partial_dir,file_name);
 		string dst_path = "%s/%s".printf(download_dir,file_name);
@@ -536,7 +536,7 @@ public class DownloadManager : GLib.Object{
 		
 		var script_file = temp_dir + "/script.sh";
 		//log_msg("%s: %s".printf(name,script_file));
-		create_dir (temp_dir);
+		dir_create (temp_dir);
 		
 		try {
 			// create new script file
@@ -561,7 +561,7 @@ public class DownloadManager : GLib.Object{
 		var path = temp_dir + "/status";
 		var f = File.new_for_path(path);
 		if (f.query_exists()){
-			var txt = read_file(path);
+			var txt = file_read(path);
 			return int.parse(txt);
 		}
 		return -1;
@@ -816,7 +816,7 @@ public class FsTabEntry : GLib.Object{
 		string txt = "";
 		
 		if (file_exists("/etc/fstab")){
-			txt += read_file("/etc/fstab").strip() + "\n";
+			txt += file_read("/etc/fstab").strip() + "\n";
 		}
 		else{
 			txt += "# <file system> <mount point> <type> <options> <dump> <pass>\n";
@@ -844,7 +844,7 @@ public class FsTabEntry : GLib.Object{
 		string txt = "";
 		
 		if (file_exists("/etc/crypttab")){
-			txt += read_file("/etc/crypttab").strip() + "\n";
+			txt += file_read("/etc/crypttab").strip() + "\n";
 		}
 		else{
 			txt += "# <target name> <source device> <key file> <options>\n";

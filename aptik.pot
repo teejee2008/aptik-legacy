@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2016-04-18 20:40+0530\n"
+"POT-Creation-Date: 2016-04-18 21:09+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -405,7 +405,7 @@ msgid "Copying packages..."
 msgstr ""
 
 #: MainWindow.vala:381 MainWindow.vala:553 MainWindow.vala:975
-#: MainWindow.vala:1015 MainWindow.vala:1075
+#: MainWindow.vala:1015 MainWindow.vala:1056
 msgid "Create Password"
 msgstr ""
 
@@ -532,7 +532,7 @@ msgstr ""
 msgid "Enter Passphrase"
 msgstr ""
 
-#: MainWindow.vala:412 MainWindow.vala:584 MainWindow.vala:1121
+#: MainWindow.vala:412 MainWindow.vala:584 MainWindow.vala:1102
 msgid "Enter Password"
 msgstr ""
 
@@ -589,10 +589,6 @@ msgstr ""
 msgid "Failed to add user to group"
 msgstr ""
 
-#: Main.vala:3303
-msgid "Failed to backup file"
-msgstr ""
-
 #: Main.vala:3145
 msgid "Failed to change file ownership"
 msgstr ""
@@ -641,11 +637,15 @@ msgstr ""
 msgid "Failed to remove cron job"
 msgstr ""
 
+#: Main.vala:3303
+msgid "Failed to save backup"
+msgstr ""
+
 #: Main.vala:3312
 msgid "Failed to save file"
 msgstr ""
 
-#: Utility.vala:2093
+#: Utility.vala:1931
 msgid "Failed to set ownership"
 msgstr ""
 
@@ -686,7 +686,7 @@ msgstr ""
 msgid "File exists"
 msgstr ""
 
-#: Utility.vala:560 Utility.vala:597
+#: Utility.vala:449 Utility.vala:486
 msgid "File is missing"
 msgstr ""
 
@@ -968,7 +968,7 @@ msgstr ""
 msgid "Missing Dependencies"
 msgstr ""
 
-#: Utility.vala:1644
+#: Utility.vala:1454
 msgid "Missing Icon"
 msgstr ""
 
@@ -1329,7 +1329,7 @@ msgid "Saving..."
 msgstr ""
 
 #: Main.vala:3354
-msgid "Scheduled Tasks (crontab)"
+msgid "Scheduled Tasks"
 msgstr ""
 
 #: PackageWindow.vala:173
@@ -1420,7 +1420,7 @@ msgstr ""
 msgid "Send Email"
 msgstr ""
 
-#: Utility.vala:2089
+#: Utility.vala:1927
 #, c-format
 msgid "Set owner: %s, dir: %s"
 msgstr ""
@@ -1507,7 +1507,7 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: Utility.vala:1335
+#: Utility.vala:1145
 msgid "Stopped"
 msgstr ""
 

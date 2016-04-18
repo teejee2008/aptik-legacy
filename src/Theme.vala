@@ -147,7 +147,7 @@ public class Theme : GLib.Object{
 
 	private static void load_index_file(string file_path){
 		if (file_exists(file_path)){
-			string txt = read_file(file_path);
+			string txt = file_read(file_path);
 			foreach(string line in txt.split("\n")){
 				string[] arr = line.split(":");
 				if (arr.length == 2){
@@ -176,7 +176,7 @@ public class Theme : GLib.Object{
 		}
 
 		string index_file = "%s%s/index.list".printf(backup_dir, "icons");
-		write_file(index_file, txt);
+		file_write(index_file, txt);
 		//log_msg("write:icons/index.list:%d".printf(type_index.size));
 		
 		txt = "";
@@ -187,7 +187,7 @@ public class Theme : GLib.Object{
 		}
 
 		index_file = "%s%s/index.list".printf(backup_dir, "themes");
-		write_file(index_file, txt);
+		file_write(index_file, txt);
 		//log_msg("write:themes/index.list:%d".printf(type_index.size));
 	}
 	
@@ -652,7 +652,7 @@ public class Theme : GLib.Object{
 		}
 
 		//create dest dir
-		create_dir(theme_dir_path);
+		dir_create(theme_dir_path);
 
 		string cmd = "tar xzvf '%s' --directory='%s'".printf(archive_path, theme_dir_path);
 		status_line = archive_path;

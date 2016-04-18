@@ -342,7 +342,7 @@ namespace TeeJee.FileSystem{
 			log_debug(cmd);
 			
 			string stdout, stderr;
-			int status = execute_command_script_sync(cmd, out stdout, out stderr);
+			int status = exec_script_sync(cmd, out stdout, out stderr);
 			if (status == 0){
 				return true;
 			}
@@ -369,7 +369,7 @@ namespace TeeJee.FileSystem{
 			log_debug(cmd);
 			
 			string stdout, stderr;
-			int status = execute_command_script_sync(cmd, out stdout, out stderr);
+			int status = exec_script_sync(cmd, out stdout, out stderr);
 			if (status == 0){
 				return true;
 			}
@@ -382,117 +382,6 @@ namespace TeeJee.FileSystem{
 		}
 		
 		return false;
-	}
-
-	//TODO: Deprecated, Remove this
-	public bool create_dir (string filePath){
-
-		/* Creates a directory along with parents */
-
-		try{
-			var dir = File.parse_name (filePath);
-			if (dir.query_exists () == false) {
-				dir.make_directory_with_parents (null);
-			}
-			return true;
-		}
-		catch (Error e) {
-			log_error (e.message);
-			return false;
-		}
-	}
-
-	//TODO: Deprecated, Remove this
-	public bool move_file (string sourcePath, string destPath){
-
-		/* Move file from one location to another */
-
-		try{
-			File fromFile = File.new_for_path (sourcePath);
-			File toFile = File.new_for_path (destPath);
-			fromFile.move (toFile, FileCopyFlags.NONE);
-			return true;
-		}
-		catch (Error e) {
-			log_error (e.message);
-			return false;
-		}
-	}
-
-	//TODO: Deprecated, Remove this
-	public bool copy_file (string sourcePath, string destPath){
-
-		/* Copy file from one location to another */
-
-		try{
-			File fromFile = File.new_for_path (sourcePath);
-			File toFile = File.new_for_path (destPath);
-			fromFile.copy (toFile, FileCopyFlags.NONE);
-			return true;
-		}
-		catch (Error e) {
-			log_error (e.message);
-			return false;
-		}
-	}
-
-	//TODO: Deprecated, Remove this
-	public string? read_file (string file_path){
-
-		/* Reads text from file */
-
-		string txt;
-		size_t size;
-
-		try{
-			GLib.FileUtils.get_contents (file_path, out txt, out size);
-			return txt;
-		}
-		catch (Error e){
-	        log_error (e.message);
-	    }
-
-	    return null;
-	}
-
-	//TODO: Deprecated, Remove this
-	public bool write_file (string file_path, string contents){
-
-		/* Write text to file */
-
-		try{
-			var file = File.new_for_path (file_path);
-			if (file.query_exists ()) { file.delete (); }
-			var file_stream = file.create (FileCreateFlags.REPLACE_DESTINATION);
-			var data_stream = new DataOutputStream (file_stream);
-			data_stream.put_string (contents);
-			data_stream.close();
-			return true;
-		}
-		catch (Error e) {
-			log_error (e.message);
-			return false;
-		}
-	}
-
-	//TODO: Deprecated, Remove this
-	public DateTime? get_file_modification_time (string file_path){
-		try{
-			var file = File.new_for_path (file_path);
-			if (file.query_exists()) {
-				var info = file.query_info("*",FileQueryInfoFlags.NONE);
-				TimeVal modified = info.get_modification_time();
-				return new DateTime.from_timeval_local(modified);
-			}
-			else{
-				log_error("File not found: %s".printf(file_path));
-			}
-		}
-		catch (Error e) {
-        log_error (e.message);
-    }
-
-		return null;
 	}
 
 	// archiving and encryption ----------------
@@ -518,7 +407,7 @@ namespace TeeJee.FileSystem{
 			log_debug(cmd);
 			
 			string stdout, stderr;
-			int status = execute_command_script_sync(cmd, out stdout, out stderr);
+			int status = exec_script_sync(cmd, out stdout, out stderr);
 			if (status == 0){
 				return true;
 			}
@@ -547,7 +436,7 @@ namespace TeeJee.FileSystem{
 			log_debug(cmd);
 			
 			string std_out, std_err;
-			int status = execute_command_script_sync(cmd, out std_out, out std_err);
+			int status = exec_script_sync(cmd, out std_out, out std_err);
 			if (status == 0){
 				return std_out;
 			}
@@ -584,7 +473,7 @@ namespace TeeJee.FileSystem{
 			log_debug(cmd);
 			
 			string stdout, stderr;
-			int status = execute_command_script_sync(cmd, out stdout, out stderr);
+			int status = exec_script_sync(cmd, out stdout, out stderr);
 			if (status == 0){
 				return true;
 			}
@@ -668,7 +557,7 @@ namespace TeeJee.FileSystem{
 		int ret_val;
 
 		cmd = "find \"%s\" | wc -l".printf(path);
-		ret_val = execute_command_script_sync(cmd, out std_out, out std_err);
+		ret_val = exec_script_sync(cmd, out std_out, out std_err);
 		return long.parse(std_out);
 	}
 
@@ -747,7 +636,7 @@ namespace TeeJee.FileSystem{
 
 		/* Change file permissions */
 
-		return execute_command_sync ("chmod " + permission + " \"%s\"".printf(file));
+		return exec_sync ("chmod " + permission + " \"%s\"".printf(file));
 	}
 
 	public string resolve_relative_path (string filePath){
@@ -783,7 +672,7 @@ namespace TeeJee.FileSystem{
 		cmd += deleteExtra ? " --delete" : "";
 		cmd += " \"%s\"".printf(sourceDirectory + "//");
 		cmd += " \"%s\"".printf(destDirectory);
-		return execute_command_sync (cmd);
+		return exec_sync (cmd);
 	}
 }
 
@@ -838,13 +727,13 @@ namespace TeeJee.ProcessManagement{
 		string std_out, std_err;
 
 		TEMP_DIR = Environment.get_tmp_dir() + "/" + AppShortName + "/" + random_string();
-		create_dir(TEMP_DIR);
+		dir_create(TEMP_DIR);
 
-		execute_command_script_sync("echo 'ok'",out std_out,out std_err, true);
+		exec_script_sync("echo 'ok'",out std_out,out std_err, true);
 		if ((std_out == null)||(std_out.strip() != "ok")){
 			TEMP_DIR = Environment.get_home_dir() + "/.temp/" + AppShortName + "/" + random_string();
-			execute_command_sync("rm -rf '%s'".printf(TEMP_DIR));
-			create_dir(TEMP_DIR);
+			exec_sync("rm -rf '%s'".printf(TEMP_DIR));
+			dir_create(TEMP_DIR);
 		}
 
 		//log_debug("TEMP_DIR=" + TEMP_DIR);
@@ -852,8 +741,9 @@ namespace TeeJee.ProcessManagement{
 
 	public int exec_sync (string cmd, out string? std_out = null, out string? std_err = null){
 
-		/* Executes single command synchronously
-		 * Pipes and multiple commands are not supported */
+		/* Executes single command synchronously.
+		 * Pipes and multiple commands are not supported.
+		 * std_out, std_err can be null. Output will be written to terminal if null. */
 
 		try {
 			int status;
@@ -866,22 +756,82 @@ namespace TeeJee.ProcessManagement{
 	    }
 	}
 	
-	public int execute_command_sync (string cmd){
+	public int exec_script_sync (string script, out string? std_out = null, out string? std_err = null, bool supress_errors = false){
 
-		/* Executes single command synchronously and returns exit code
-		 * Pipes and multiple commands are not supported */
+		/* Executes commands synchronously.
+		 * Pipes and multiple commands are fully supported.
+		 * Commands are written to a temporary bash script and executed.
+		 * std_out, std_err can be null. Output will be written to terminal if null.
+		 * */
+
+		string path = save_bash_script_temp(script, supress_errors);
 
 		try {
-			int exitCode;
-			Process.spawn_command_line_sync(cmd, null, null, out exitCode);
-	        return exitCode;
+
+			string[] argv = new string[1];
+			argv[0] = path;
+
+			string[] env = Environ.get();
+			
+			int exit_code;
+
+			Process.spawn_sync (
+			    TEMP_DIR, //working dir
+			    argv, //argv
+			    env, //environment
+			    SpawnFlags.SEARCH_PATH,
+			    null,   // child_setup
+			    out std_out,
+			    out std_err,
+			    out exit_code
+			    );
+
+			return exit_code;
+		}
+		catch (Error e){
+			if (!supress_errors){
+				log_error (e.message);
+			}
+			return -1;
+		}
+	}
+
+	public int exec_script_async (string script){
+
+		/* Executes commands synchronously.
+		 * Pipes and multiple commands are fully supported.
+		 * Commands are written to a temporary bash script and executed.
+		 * Return value indicates if script was started successfully.
+		 *  */
+
+		try {
+
+			string scriptfile = save_bash_script_temp (script);
+
+			string[] argv = new string[1];
+			argv[0] = scriptfile;
+
+			string[] env = Environ.get();
+			
+			Pid child_pid;
+			Process.spawn_async_with_pipes(
+			    TEMP_DIR, //working dir
+			    argv, //argv
+			    env, //environment
+			    SpawnFlags.SEARCH_PATH,
+			    null,
+			    out child_pid);
+
+			return 0;
 		}
 		catch (Error e){
 	        log_error (e.message);
-	        return -1;
+	        return 1;
 	    }
 	}
 
+
+	//TODO: Deprecated, Remove this
 	public string execute_command_sync_get_output (string cmd){
 
 		/* Executes single command synchronously and returns std_out
@@ -899,6 +849,7 @@ namespace TeeJee.ProcessManagement{
 	    }
 	}
 
+	//TODO: Deprecated, Remove this
 	public bool execute_command_script_async (string cmd){
 
 		/* Creates a temporary bash script with given commands and executes it asynchronously
@@ -977,147 +928,6 @@ namespace TeeJee.ProcessManagement{
 		/* Generates temporary file path */
 
 		return TEMP_DIR + "/" + timestamp2() + (new Rand()).next_int().to_string();
-	}
-
-	public int execute_command_script_sync (string script, out string std_out, out string std_err, bool supress_errors = false){
-
-		/* Executes commands synchronously
-		 * Returns exit code, output messages and error messages.
-		 * Commands are written to a temporary bash script and executed. */
-
-		string path = save_bash_script_temp(script,supress_errors);
-
-		try {
-
-			string[] argv = new string[1];
-			argv[0] = path;
-
-			int exit_code;
-
-			Process.spawn_sync (
-			    TEMP_DIR, //working dir
-			    argv, //argv
-			    null, //environment
-			    SpawnFlags.SEARCH_PATH,
-			    null,   // child_setup
-			    out std_out,
-			    out std_err,
-			    out exit_code
-			    );
-
-			return exit_code;
-		}
-		catch (Error e){
-			if (!supress_errors){
-				log_error (e.message);
-			}
-			return -1;
-		}
-	}
-
-	public int execute_command_script_sync2 (string script){
-
-		/* Executes commands synchronously
-		 * Returns exit code, output messages and error messages.
-		 * Commands are written to a temporary bash script and executed. */
-
-		string path = save_bash_script_temp(script);
-
-		try {
-
-			string[] argv = new string[1];
-			argv[0] = path;
-
-			int exit_code;
-
-			Process.spawn_sync (
-			    TEMP_DIR, //working dir
-			    argv, //argv
-			    null, //environment
-			    SpawnFlags.SEARCH_PATH,
-			    null,   // child_setup
-			    null,
-			    null,
-			    out exit_code
-			    );
-
-			return exit_code;
-		}
-		catch (Error e){
-	        log_error (e.message);
-	        return -1;
-	    }
-	}
-
-	public bool execute_command_script_in_terminal_sync (string script){
-
-		/* Executes a command script in a terminal window */
-		//TODO: Remove this
-
-		try {
-
-			string[] argv = new string[3];
-			argv[0] = "x-terminal-emulator";
-			argv[1] = "-e";
-			argv[2] = script;
-
-			Process.spawn_sync (
-			    TEMP_DIR, //working dir
-			    argv, //argv
-			    null, //environment
-			    SpawnFlags.SEARCH_PATH,
-			    null   // child_setup
-			    );
-
-			return true;
-		}
-		catch (Error e){
-	        log_error (e.message);
-	        return false;
-	    }
-	}
-
-	public int execute_bash_script_fullscreen_sync (string script_file){
-
-		/* Executes a bash script synchronously.
-		 * Script is executed in a fullscreen terminal window */
-
-		string path;
-
-		path = get_cmd_path ("xfce4-terminal");
-		if ((path != null)&&(path != "")){
-			return execute_command_sync ("xfce4-terminal --fullscreen -e \"%s\"".printf(script_file));
-		}
-
-		path = get_cmd_path ("gnome-terminal");
-		if ((path != null)&&(path != "")){
-			return execute_command_sync ("gnome-terminal --full-screen -e \"%s\"".printf(script_file));
-		}
-
-		path = get_cmd_path ("xterm");
-		if ((path != null)&&(path != "")){
-			return execute_command_sync ("xterm --fullscreen -e \"%s\"".printf(script_file));
-		}
-
-		//default terminal - unknown, normal window
-		path = get_cmd_path ("x-terminal-emulator");
-		if ((path != null)&&(path != "")){
-			return execute_command_sync ("x-terminal-emulator -e \"%s\"".printf(script_file));
-		}
-
-		return -1;
-	}
-
-	public int execute_bash_script_sync (string script_file){
-
-		/* Executes a bash script synchronously in the default terminal window */
-
-		string path = get_cmd_path ("x-terminal-emulator");
-		if ((path != null)&&(path != "")){
-			return execute_command_sync ("x-terminal-emulator -e \"%s\"".printf(script_file));
-		}
-
-		return -1;
 	}
 
 	public string get_cmd_path (string cmd){
@@ -1309,14 +1119,14 @@ namespace TeeJee.ProcessManagement{
 
 		/* Pause/Freeze a process */
 
-		return execute_command_sync ("kill -STOP %d".printf(procID));
+		return exec_sync ("kill -STOP %d".printf(procID));
 	}
 
 	public int process_resume (Pid procID){
 
 		/* Resume/Un-freeze a process*/
 
-		return execute_command_sync ("kill -CONT %d".printf(procID));
+		return exec_sync ("kill -CONT %d".printf(procID));
 	}
 
 	public void command_kill(string cmd_name, string cmd_to_match, bool exact_match){
@@ -1423,7 +1233,7 @@ namespace TeeJee.ProcessManagement{
 		string std_out;
 		string std_err;
 		int ret_val;
-		ret_val = execute_command_script_sync(cmd, out std_out, out std_err);
+		ret_val = exec_script_sync(cmd, out std_out, out std_err);
 
 		string user_name;
 		if ((std_out == null) || (std_out.length == 0)){
@@ -2100,7 +1910,7 @@ namespace TeeJee.System{
 
 		if (seconds > NOTIFICATION_INTERVAL){
 			string s = "notify-send -t %d -u %s -i %s \"%s\" \"%s\"".printf(durationMillis, urgency, "gtk-dialog-" + dialog_type, title, message);
-			retVal = execute_command_sync (s);
+			retVal = exec_sync (s);
 			dt_last_notification = new DateTime.now_local();
 		}
 
@@ -2189,7 +1999,7 @@ namespace TeeJee.System{
 		
 		//returns 0 when it is called first time
 		public static double get_cpu_usage(){
-			string txt = read_file("/proc/stat");
+			string txt = file_read("/proc/stat");
 			foreach(string line in txt.split("\n")){
 				string[] arr = line.split(" ");
 				if (arr[0] == "cpu"){
@@ -2415,7 +2225,7 @@ namespace TeeJee.System{
 
 		public bool update_passwd_file(){
 			string file_path = "/etc/passwd";
-			string txt = read_file(file_path);
+			string txt = file_read(file_path);
 			
 			var txt_new = "";
 			foreach(string line in txt.split("\n")){
@@ -2459,7 +2269,7 @@ namespace TeeJee.System{
 		
 		public bool update_shadow_file(){
 			string file_path = "/etc/shadow";
-			string txt = read_file(file_path);
+			string txt = file_read(file_path);
 			
 			var txt_new = "";
 			foreach(string line in txt.split("\n")){
@@ -2692,7 +2502,7 @@ namespace TeeJee.System{
 
 		public bool update_group_file(){
 			string file_path = "/etc/group";
-			string txt = read_file(file_path);
+			string txt = file_read(file_path);
 			
 			var txt_new = "";
 			foreach(string line in txt.split("\n")){
@@ -2733,7 +2543,7 @@ namespace TeeJee.System{
 	
 		public bool update_gshadow_file(){
 			string file_path = "/etc/gshadow";
-			string txt = read_file(file_path);
+			string txt = file_read(file_path);
 			
 			var txt_new = "";
 			foreach(string line in txt.split("\n")){
@@ -2830,7 +2640,7 @@ namespace TeeJee.Misc {
 					DISTRIB_DESCRIPTION="Ubuntu 13.04"
 				*/
 
-				foreach(string line in read_file(dist_file).split("\n")){
+				foreach(string line in file_read(dist_file).split("\n")){
 
 					if (line.split("=").length != 2){ continue; }
 
@@ -2879,7 +2689,7 @@ namespace TeeJee.Misc {
 						BUG_REPORT_URL="http://bugs.launchpad.net/ubuntu/"
 					*/
 
-					foreach(string line in read_file(dist_file).split("\n")){
+					foreach(string line in file_read(dist_file).split("\n")){
 
 						if (line.split("=").length != 2){ continue; }
 

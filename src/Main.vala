@@ -262,7 +262,7 @@ public class Main : GLib.Object {
 
 	public string create_log_dir() {
 		string log_dir = backup_dir + "logs/" + timestamp3();
-		create_dir(log_dir);
+		dir_create(log_dir);
 		return log_dir;
 	}
 
@@ -414,7 +414,7 @@ public class Main : GLib.Object {
 		log_debug("call: update_info_for_available_packages");
 
 		string txt = execute_command_sync_get_output("aptitude search --disable-columns -F '%p|%v|%M|%d' '?installed'");
-		write_file(PKG_CACHE_TEMP, txt);
+		file_write(PKG_CACHE_TEMP, txt);
 
 		// TODO: Create an optimized method for writing output to file
 
@@ -555,8 +555,8 @@ public class Main : GLib.Object {
 
 		if (!file_exists(DEF_PKG_LIST_UNPACKED)){
 			string txt = "";
-			execute_command_script_sync("gzip -dc '%s'".printf(DEF_PKG_LIST),out txt,null);
-			write_file(DEF_PKG_LIST_UNPACKED,txt);
+			exec_script_sync("gzip -dc '%s'".printf(DEF_PKG_LIST),out txt,null);
+			file_write(DEF_PKG_LIST_UNPACKED,txt);
 		}
 		
 		try {
@@ -738,7 +738,7 @@ public class Main : GLib.Object {
 			}
 		}
 
-		bool is_success = write_file(list_file, text);
+		bool is_success = file_write(list_file, text);
 
 		return is_success;
 	}
@@ -766,7 +766,7 @@ public class Main : GLib.Object {
 			}
 		}
 
-		bool is_success = write_file(list_file, text);
+		bool is_success = file_write(list_file, text);
 
 		if (is_success) {
 			log_msg(_("File saved") + " '%s'".printf(PKG_LIST_INSTALLED_BAK));
@@ -788,7 +788,7 @@ public class Main : GLib.Object {
 		}
 
 		//read package names
-		foreach(string line in read_file(pkg_list_file).split("\n")) {
+		foreach(string line in file_read(pkg_list_file).split("\n")) {
 			if (line.strip().length == 0) {
 				continue;
 			}
@@ -886,7 +886,7 @@ public class Main : GLib.Object {
 
 	public void copy_deb_file(string src_file){
 		string deb_dir = backup_dir + "debs";
-		create_dir(deb_dir);
+		dir_create(deb_dir);
 		string file_name = src_file[src_file.last_index_of("/")+1:src_file.length];
 		string dest_file = deb_dir + "/" + file_name;
 		file_copy(src_file,dest_file);
@@ -974,7 +974,7 @@ public class Main : GLib.Object {
 		string std_out = "";
 		string std_err = "";
 		string cmd = "rsync -aim --dry-run --include=\"*.list\" --include=\"*/\" --exclude=\"*\" \"%s/\" /tmp".printf("/etc/apt");
-		int exit_code = execute_command_script_sync(cmd, out std_out, out std_err);
+		int exit_code = exec_script_sync(cmd, out std_out, out std_err);
 
 		if (exit_code != 0){
 			return ppa_list; //no files found
@@ -1004,7 +1004,7 @@ public class Main : GLib.Object {
 
 			file_path = "/etc/apt/" + file_path[file_path.index_of(" ") + 1:file_path.length].strip();
 
-			string txt = read_file(file_path);
+			string txt = file_read(file_path);
 			foreach(string list_line in txt.split("\n")){
 				if (rex_ppa.match (list_line, 0, out match)){
 					ppa_name = match.fetch(1).strip();
@@ -1037,7 +1037,7 @@ public class Main : GLib.Object {
 		
 		string txt = execute_command_sync_get_output(cmd);
 
-		write_file(PKG_CACHE_TEMP, txt);
+		file_write(PKG_CACHE_TEMP, txt);
 
 		// TODO: Create an optimized method for writing output to file
 
@@ -1196,7 +1196,7 @@ public class Main : GLib.Object {
 			}
 		}
 
-		bool is_success = write_file(ppa_list_file, text);
+		bool is_success = file_write(ppa_list_file, text);
 
 		return is_success;
 	}
@@ -1215,7 +1215,7 @@ public class Main : GLib.Object {
 		}
 		
 		//read file
-		foreach(string line in read_file(ppa_list_file).split("\n")) {
+		foreach(string line in file_read(ppa_list_file).split("\n")) {
 			if (line.strip() == "") {
 				continue;
 			}
@@ -1487,7 +1487,7 @@ public class Main : GLib.Object {
 
 		temp_dir = TEMP_DIR + "/" + timestamp2();
 		var script_file = temp_dir + "/script.sh";
-		create_dir (temp_dir);
+		dir_create (temp_dir);
 		
 		try {
 			// create new script file
@@ -1511,7 +1511,7 @@ public class Main : GLib.Object {
 		var path = temp_dir + "/status";
 		var f = File.new_for_path(path);
 		if (f.query_exists()){
-			var txt = read_file(path);
+			var txt = file_read(path);
 			return int.parse(txt);
 		}
 		return -1;
@@ -1736,7 +1736,7 @@ public class Main : GLib.Object {
 		string cmd;
 
 		string backup_dir_config = "%sconfigs/%s".printf(backup_dir, user_login);
-		create_dir(backup_dir_config);
+		dir_create(backup_dir_config);
 		
 		try {
 			string name = config.name.replace("~/", "");
@@ -1744,7 +1744,7 @@ public class Main : GLib.Object {
 
 			if (name.contains("/")){
 				string parent_dir = "%s/%s".printf(backup_dir_config, name[0:name.last_index_of("/")]);
-				create_dir(parent_dir);
+				dir_create(parent_dir);
 			}
 			
 			//delete zip file
@@ -1995,7 +1995,7 @@ public class Main : GLib.Object {
 				string zip_file = "%s/%s.tgz".printf(backup_dir_config, name);
 				string cmd = "tar tzvf '%s' | wc -l".printf(zip_file);
 				string stderr, stdout;
-				execute_command_script_sync(cmd, out stdout, out stderr, true);
+				exec_script_sync(cmd, out stdout, out stderr, true);
 				progress_total += long.parse(stdout);
 			}
 		}
@@ -2020,15 +2020,15 @@ public class Main : GLib.Object {
 		string dir = config.name.replace("~", base_dir_target);
 		if (dir_exists(dir)) {
 			cmd = "rm -rf \"%s\"".printf(dir);
-			execute_command_sync(cmd);
+			exec_sync(cmd);
 		}
 
 		//create base_dir_target
-		create_dir(base_dir_target);
+		dir_create(base_dir_target);
 
 		if (name.contains("/")){
 			string parent_dir = "%s/%s".printf(base_dir_target, name[0:name.last_index_of("/")]);
-			create_dir(parent_dir);
+			dir_create(parent_dir);
 			log_debug("create_dir: %s".printf(parent_dir));
 		}
 
@@ -2066,7 +2066,7 @@ public class Main : GLib.Object {
 				string dir = config.name.replace("~", base_dir_target);
 				if (dir_exists(dir)) {
 					cmd = "rm -rf \"%s\"".printf(dir);
-					execute_command_sync(cmd);
+					exec_sync(cmd);
 				}
 			}
 		}
@@ -2845,7 +2845,7 @@ public class Main : GLib.Object {
 			if (user.is_selected){
 				var bak_dir = "%s%s/%s".printf(backup_dir, "home", user.name);
 				var exclude_list = "%s/exclude.list".printf(bak_dir);
-				create_dir(bak_dir);
+				dir_create(bak_dir);
 				if (file_exists(exclude_list)){
 					file_delete(exclude_list);
 				}
@@ -2878,7 +2878,7 @@ public class Main : GLib.Object {
 			if (user.is_selected){
 				var bak_dir = "%s%s/%s".printf(backup_dir, "home", user.name);
 				var exclude_list = "%s/exclude.list".printf(bak_dir);
-				create_dir(bak_dir);
+				dir_create(bak_dir);
 				if (file_exists(exclude_list)){
 					file_delete(exclude_list);
 				}

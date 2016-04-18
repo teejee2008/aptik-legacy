@@ -127,7 +127,7 @@ public class Archive : GLib.Object {
 		temp_dir = TEMP_DIR + "/" + timestamp2() + "%ld".printf(Random.next_int()); //TODO: update for other apps
 		log_file = temp_dir + "/log.txt";
 		script_file = temp_dir + "/convert.sh";
-		create_dir (temp_dir);
+		dir_create (temp_dir);
 
 		string script_text = build_script();
 		save_script(script_text);
@@ -137,7 +137,7 @@ public class Archive : GLib.Object {
 		var path = temp_dir + "/status";
 		var f = File.new_for_path(path);
 		if (f.query_exists()){
-			var txt = read_file(path);
+			var txt = file_read(path);
 			return int.parse(txt);
 		}
 		return -1;
