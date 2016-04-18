@@ -669,7 +669,7 @@ public class AptikConsole : GLib.Object {
 			if (App.pkg_list_deb.length > 0){
 				log_msg(_("Following packages will be installed") + ":\n%s\n".printf(App.pkg_list_deb));
 				foreach(string line in App.gdebi_list.split("\n")){
-					Posix.system("gdebi%s %s".printf((no_prompt) ? " -n" : "", line));
+					Posix.system("gdebi -n %s".printf(line));
 				}
 			}
 		}
