@@ -654,11 +654,11 @@ public class Theme : GLib.Object{
 		//create dest dir
 		dir_create(theme_dir_path);
 
-		string cmd = "tar xzvf '%s' --directory='%s'".printf(archive_path, theme_dir_path);
+		string cmd = "tar xzvf '%s' --directory='%s'".printf(archive_path, file_parent(theme_dir_path));
 		status_line = archive_path;
 		
 		if (gui_mode) {
-			log_msg("Extract: %s, Dest: %s".printf(archive_path, theme_dir_path));
+			log_msg("Extract: %s, Dest: %s".printf(archive_path, file_parent(theme_dir_path)));
 			return run_gzip(cmd);
 		}
 		else {
@@ -840,4 +840,80 @@ public class Theme : GLib.Object{
 		map[ThemeType.XFWM4] = "xfwm4";
 		theme_type_map = map;
 	}
+
+	public static void fix_nested_folders(){
+		fix_nested_folders_in_path("/usr/share/themes");
+		fix_nested_folders_in_path("/usr/share/icons");
+		fix_nested_folders_in_path("/root/.themes");
+		fix_nested_folders_in_path("/root/.icons");
+			
+		var list = list_dir_names("/home");
+		
+		foreach(string user_name in list){
+			if (user_name == "PinguyBuilder"){
+				continue;
+			}
+
+			fix_nested_folders_in_path("/home/%s/.themes".printf(user_name));
+			fix_nested_folders_in_path("/home/%s/.icons".printf(user_name));
+		}
+	}
+	
+	public static void fix_nested_folders_in_path(string share_path){
+		try {
+			
+			log_msg("\n" + _("Checking for nested folders in path") + ": %s".printf(share_path));
+			
+			var dir = File.new_for_path(share_path);
+			if (!dir.query_exists()){
+				return;
+			}
+			
+			var enumerator = dir.enumerate_children("%s".printf(FileAttribute.STANDARD_NAME), 0);
+			FileInfo info;
+
+			while ((info = enumerator.next_file()) != null) {
+				if (info.get_file_type() == FileType.DIRECTORY) {
+					string theme_name = info.get_name();
+
+					var theme_dir = "%s/%s".printf(share_path, theme_name);
+					var dir2 = File.new_for_path(theme_dir);					
+					var enum2 = dir2.enumerate_children("%s".printf(FileAttribute.STANDARD_NAME), 0);
+					FileInfo info2;
+
+					bool nested_dir_found = false;
+					int subdir_count = 0;
+					while ((info2 = enum2.next_file()) != null) {
+						subdir_count++;
+						if (info2.get_file_type() == FileType.DIRECTORY) {
+							if (info2.get_name() == theme_name){
+								nested_dir_found = true;
+							}
+						}
+					}
+
+					if (nested_dir_found && (subdir_count == 1)){
+						// move the nested folder one level up
+						var src = "%s/%s/%s".printf(share_path, theme_name, theme_name);
+						var dst = "%s/%s".printf(share_path, theme_name);
+						var dst_tmp = "%s/%s_temp".printf(share_path, theme_name);
+
+						if (dir_exists(src)){
+							file_move(src, dst_tmp);
+						}
+
+						file_delete(dst);
+						file_move(dst_tmp, dst);
+
+						log_msg("Fixed: %s".printf(src));
+					}
+				}
+			}
+		}
+		catch (Error e) {
+			log_error (e.message);
+			log_error ("Theme: fix_nested_folders_in_path()");
+		}
+	}
+	
 }

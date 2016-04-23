@@ -918,6 +918,8 @@ public class AptikConsole : GLib.Object {
 			}
 		}
 
+		Theme.fix_nested_folders();
+		
 		if (ok){
 			log_msg(Message.RESTORE_OK);
 		}

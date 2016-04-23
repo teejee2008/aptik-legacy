@@ -49,7 +49,7 @@ public class DownloadWindow : Dialog {
 	private Gtk.TreeViewColumn col_status;
 	private uint tmr_init = 0;
 	private uint tmr_progress = 0;
-	private uint tmr_close = 0;
+	//private uint tmr_close = 0;
 	private int def_width = 560;
 	private int def_height = 400;
 
@@ -57,7 +57,7 @@ public class DownloadWindow : Dialog {
 	private int job_count = 0;
 	private int job_count_max = 3;
 	private bool user_aborted = false;
-	private bool allow_close = false;
+	//private bool allow_close = false;
 	
 	// init
 

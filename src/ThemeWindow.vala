@@ -765,6 +765,8 @@ public class ThemeWindow : Window {
 			}
 		}
 
+		Theme.fix_nested_folders();
+
 		// finish ----------------------------------
 		
 		if (!App.cancelled){

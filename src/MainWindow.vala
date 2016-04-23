@@ -425,8 +425,7 @@ public class MainWindow : Window {
 			}
 
 			this.hide();
-			var dlg = new UserAccountWindow.with_parent(this,true);
-			//dlg.show_all();
+			new UserAccountWindow.with_parent(this,true);
 		});
 	}
 
@@ -588,8 +587,7 @@ public class MainWindow : Window {
 			}
 
 			this.hide();
-			var dlg = new MountWindow.with_parent(this,true);
-			//dlg.show_all();
+			new MountWindow.with_parent(this,true);
 		});
 	}
 

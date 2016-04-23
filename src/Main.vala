@@ -702,16 +702,6 @@ public class Main : GLib.Object {
 		}
 	}
 
-	private void print_pkg_info(){
-		log_msg("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"".printf(
-		"id","name","arch","section","version_available","description"));
-		
-		foreach(var pkg in pkg_list_master.values){
-			log_msg("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"".printf(
-			pkg.id,pkg.name,pkg.arch,pkg.section,pkg.version_available,pkg.description));
-		}
-	}
-
 	public bool save_package_list_selected() {
 
 		/* Saves the package names to file.
@@ -2967,7 +2957,7 @@ public class Main : GLib.Object {
 
 		var bak_dir = "%s%s".printf(backup_dir,"crontab");
 		dir_create(bak_dir);
-
+		
 		var list = list_dir_names("/home");
 		list.add("root");
 

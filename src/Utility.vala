@@ -98,7 +98,7 @@ namespace TeeJee.Logging{
 			msg += "[" + timestamp() +  "] ";
 		}
 
-		string prefix = (is_warning) ? _("Warning") : _("Error");
+		string prefix = (is_warning) ? _("W") : _("E");
 
 		msg += prefix + ": " + message;
 
@@ -278,6 +278,10 @@ namespace TeeJee.FileSystem{
 			if (file_src.query_exists()) {
 				var file_dest = File.new_for_path (dest_file);
 				file_src.move(file_dest,FileCopyFlags.OVERWRITE,null,null);
+			}
+			else{
+				log_error (_("File not found") + ": %s".printf(src_file));
+				log_error("file_move()");
 			}
 		}
 		catch(Error e){
@@ -487,62 +491,6 @@ namespace TeeJee.FileSystem{
 		}
 
 		return false;
-	}
-
-	/*public string file_decrypt_untar_readv2 (string src_file, string password){
-		
-		if (file_exists(src_file)) {
-			
-			var src_name = file_basename(src_file);
-			var tar_name = src_name[0 : src_name.index_of(".gpg")];
-			var tar_file = "%s/%s".printf(TEMP_DIR, tar_name);
-			var temp_file = "%s/%s".printf(TEMP_DIR, random_string());
-
-			string cmd = "";
-			cmd += "rm -f '%s'\n".printf(tar_file); // gpg cannot overwrite, so remove tar file if it exists
-			cmd += "gpg --quiet --no-verbose --passphrase '%s' -o '%s' --decrypt '%s'\n".printf(password, tar_file, src_file);
-			cmd += "status=$?; if [ $status -ne 0 ]; then exit $status; fi\n";
-			cmd += "tar xvf '%s' --to-stdout 1> '%s'\n".printf(tar_file, temp_file);
-			cmd += "rm -f '%s'\n".printf(tar_file);
-			cmd += "exit $?\n";
-			
-			log_debug(cmd);
-			
-			string stdout, stderr;
-			int status = execute_command_script_sync(cmd, out stdout, out stderr);
-			if (status == 0){
-				if (file_exists(temp_file)){
-					var txt = read_file(temp_file);
-					file_delete(temp_file);
-					return txt;
-				}
-			}
-			else{
-				log_error(stderr);
-			}
-		}
-		else{
-			log_error(_("File is missing") + ": %s".printf(src_file));
-		}
-
-		return "";
-	}*/
-
-	// hashing -----------
-	
-	private string MD5Sum(string path){
-		Checksum checksum = new Checksum (ChecksumType.MD5);
-		FileStream stream = FileStream.open (path, "rb");
-
-		uint8 fbuf[100];
-		size_t size;
-		while ((size = stream.read (fbuf)) > 0){
-		  checksum.update (fbuf, size);
-		}
-		
-		unowned string digest = checksum.get_string();
-
-		return digest;
 	}
 
 	// misc --------------------
