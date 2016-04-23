@@ -1,9 +1,7 @@
-aptik (16.4.2) trusty; urgency=medium
+aptik (16.4.3) trusty; urgency=medium
 
-  * Use a more reliable method for testing internet connectivity
+  * Fixed: Themes and icons were incorrectly restored to a nested
+  folder like /usr/share/themes/<name>/<name>. Aptik will now
+  automatically check and fix nested folders after extracting files.
 
-  * Added option to backup and restore scheduled tasks
-  
-  * Run gdebi in non-interactive mode for one-click restore
-
- -- Tony George <tony.george.kol@gmail.com>  Mon, 18 Apr 2016 10:00:00 +0530
+ -- Tony George <tony.george.kol@gmail.com>  Sat, 23 Apr 2016 10:00:00 +0530
