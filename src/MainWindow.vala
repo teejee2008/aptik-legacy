@@ -783,6 +783,10 @@ public class MainWindow : Window {
 			"Tony George:teejeetech@gmail.com"
 		};
 
+		dialog.contributors = {
+			"Shem Pasamba (Proxy support for package downloads):shemgp@gmail.com"
+		};
+
 		dialog.third_party = {
 			"Numix project (Main app icon):https://numixproject.org/",
 			"Elementary project (various icons):https://github.com/elementary/icons",
@@ -790,9 +794,10 @@ public class MainWindow : Window {
 		};
 		
 		dialog.translators = {
+			"B. W. Knight (Korean):https://launchpad.net/~kbd0651",
 			"giulux (Italian)",
 			"Jorge Jamhour (Brazilian Portuguese):https://launchpad.net/~jorge-jamhour",
-			"B. W. Knight (Korean):https://launchpad.net/~kbd0651",
+			"Radek Otáhal (Czech):radek.otahal@email.cz",
 			"Rodion R. (Russian):https://launchpad.net/~r0di0n"
 		};
 

@@ -1,53 +1,56 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Tony George (teejee2008@gmail.com)
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Czech translation for apt-toolkit
+# Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
+# This file is distributed under the same license as the apt-toolkit package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: aptik 1.6\n"
+"Project-Id-Version: apt-toolkit\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2016-05-04 22:45+0530\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2016-04-23 16:48+0530\n"
+"PO-Revision-Date: 2016-05-04 04:48+0000\n"
+"Last-Translator: Radek Otáhal <Unknown>\n"
+"Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2016-05-04 17:08+0000\n"
+"X-Generator: Launchpad (build 17995)\n"
+"Language: cs\n"
 
-#: MainWindow.vala:906
+#: MainWindow.vala:901
 #, c-format
 msgid "(%ld packages in backup)"
-msgstr ""
+msgstr "(%ld balíků v záloze)"
 
-#: MainWindow.vala:956
+#: MainWindow.vala:951
 #, c-format
 msgid "(%ld packages in cache)"
-msgstr ""
+msgstr "(%ld balíků v cache)"
 
 #: PackageWindow.vala:511
 msgid "(backup-list)"
-msgstr ""
+msgstr "(seznam zálohování)"
 
 #: PackageManagerWindow.vala:846 PackageWindow.vala:507 PackageWindow.vala:532
 msgid "(selected)"
-msgstr ""
+msgstr "(vybráno)"
 
 #: PackageManagerWindow.vala:848 PackageWindow.vala:509 PackageWindow.vala:534
 msgid "(unselected)"
-msgstr ""
+msgstr "(nevybráno)"
 
 #: MountWindow.vala:472
 msgid "/etc/fstab and /etc/crypttab are already up-to-date"
-msgstr ""
+msgstr "/etc/fstab a /etc/crypttab jsou již aktuální"
 
 #: PackageWindow.vala:187
 msgid ""
 "<b>(backup-list)</b>\n"
 "Packages in the backup list"
 msgstr ""
+"<b>(seznam zálohování)</b>\n"
+"Balíčky v seznamu zálohování"
 
 #: PackageWindow.vala:183
 msgid ""
@@ -56,18 +59,26 @@ msgid ""
 "of extra packages that were installed by you. Displays B, C, D from the "
 "above example."
 msgstr ""
+"<b>Nainstalováno (auto)</b>\n"
+"Balíčky, které byly nainstalovány automaticky pro splnění závislostí dalších "
+"balíčků, které byly nainstalovány uživatelem. Zobrazí se B, C, D od výše "
+"uvedeného příkladu."
 
 #: PackageWindow.vala:184
 msgid ""
 "<b>Installed (deb)</b>\n"
 "Packages that were installed from downloaded DEB files."
 msgstr ""
+"<b>Nainstalováno (deb)</b>\n"
+"Balíčky, které byly nainstalovány pomocí stažených souborů DEB."
 
 #: PackageWindow.vala:181
 msgid ""
 "<b>Installed (dist)</b>\n"
 "Packages that came with your OS."
 msgstr ""
+"<b>Nainstalováno (dist)</b>\n"
+"Balíčky, které přišly s OS."
 
 #: PackageWindow.vala:182
 msgid ""
@@ -76,12 +87,19 @@ msgid ""
 "For example, if you installed package A on your system, and packages B, C, D "
 "were installed along with A (as dependencies), then only A will be listed."
 msgstr ""
+"<b>Nainstalováno (uživatel)</b>\n"
+"Extra balíčky nainstalované uživatelem. Závislosti balíčků se nezobrazí. "
+"Například pokud jste nainstalovali balíček A na vašem systému a balíčků B, "
+"C, D byly instalovány spolu s A (jako závislosti), pak pouze A bude uveden v "
+"seznamu."
 
 #: PackageWindow.vala:180
 msgid ""
 "<b>Installed</b>\n"
 "All installed packages."
 msgstr ""
+"<b>Nainstalované</b>\n"
+"Všechny nainstalované balíčky."
 
 #: PackageWindow.vala:186
 msgid ""
@@ -90,124 +108,132 @@ msgid ""
 "available in software repositories and there are no DEB files in backup "
 "directory."
 msgstr ""
+"<b>Není k dispozici.</b>\n"
+"Balíčky, které nejsou k dispozici pro instalaci. Tyto balíčky nejsou k "
+"dispozici v repozitářích a neexistují pro ně žádné soubory DEB v záložním "
+"adresáři."
 
 #: PackageWindow.vala:185
 msgid ""
 "<b>Not Installed</b>\n"
 "Packages that are not installed but available for installation."
 msgstr ""
+"<b>Není nainstalován</b>\n"
+"Balíčky, které nejsou nainstalovány, ale jsou k dispozici pro instalaci."
 
 #: PackageWindow.vala:179
 msgid ""
 "<b>Package State</b>\n"
 "\n"
 msgstr ""
+"<b>Stav balíčku</b>\n"
+"\n"
 
 #: MainWindow.vala:768
 msgid "About"
-msgstr ""
+msgstr "O aplikaci"
 
-#: Classes.vala:674
+#: Classes.vala:641
 msgid "Add"
-msgstr ""
+msgstr "Přidat"
 
 #: MainWindow.vala:261
 msgid "Add missing PPAs"
-msgstr ""
+msgstr "Přidat chybějící PPA"
 
 #: PpaWindow.vala:528
 #, c-format
 msgid "Adding '%s'..."
-msgstr ""
+msgstr "Přidává se '%s'..."
 
 #: AptikConsole.vala:582
 msgid "Adding PPA"
-msgstr ""
+msgstr "Přidávání PPA"
 
 #: AptikGtk.vala:60
 msgid "Admin Access Required"
-msgstr ""
+msgstr "Požadováno admin oprávnění"
 
 #: PackageWindow.vala:147 ThemeWindow.vala:137
 msgid "Advanced"
-msgstr ""
+msgstr "Pokročilé"
 
 #: PackageManagerWindow.vala:832 PackageManagerWindow.vala:858
 #: PackageWindow.vala:491 PackageWindow.vala:516 PackageWindow.vala:545
 msgid "All"
-msgstr ""
+msgstr "Vše"
 
 #: AptikConsole.vala:150
 msgid "All Items"
-msgstr ""
+msgstr "Všechny položky"
 
 #: ThemeWindow.vala:278
 msgid "All Types"
-msgstr ""
+msgstr "Všechny typy"
 
 #: ThemeWindow.vala:219
 msgid "All Users"
-msgstr ""
+msgstr "Všichni uživatelé"
 
 #: PackageWindow.vala:858
 msgid "All top-level installed packages have been selected by default."
-msgstr ""
+msgstr "Všechny top-level nainstalované balíky byly vybrány jako výchozí."
 
 #: Main.vala:316
 msgid "App config loaded"
-msgstr ""
+msgstr "Konfigurace aplikací načtena"
 
 #: Main.vala:289
 msgid "App config saved"
-msgstr ""
+msgstr "Konfigurace aplikací uložena"
 
 #: OneClickSettingsDialog.vala:138
 msgid "App settings backup limit (KB)"
-msgstr ""
+msgstr "Limit pro zálohování nastavení aplikace (KB)"
 
 #: MainWindow.vala:769
 msgid "Application Info"
-msgstr ""
+msgstr "Informace o aplikaci"
 
 #: Main.vala:3342
 msgid "Application Settings"
-msgstr ""
+msgstr "Nastavení aplikací"
 
 #: AptikConsole.vala:57 AptikGtk.vala:58
 msgid "Aptik needs admin access to backup and restore packages."
-msgstr ""
+msgstr "Aptik potřebuje admin oprávnění pro zálohování a obnovu balíků."
 
 #: Main.vala:1754 Theme.vala:624
 #, c-format
 msgid "Archiving"
-msgstr ""
+msgstr "Archivace"
 
 #: ConfigWindow.vala:418 ThemeWindow.vala:611
 msgid "Archiving..."
-msgstr ""
+msgstr "Archivace..."
 
-#: AboutWindow.vala:348
+#: AboutWindow.vala:330
 #, c-format
 msgid "Artists"
-msgstr ""
+msgstr "Umělci"
 
 #: AptikConsole.vala:93
 msgid "Assume Yes for all prompts"
-msgstr ""
+msgstr "Zvolit Ano pro všechny výzvy"
 
-#: AboutWindow.vala:324
+#: AboutWindow.vala:314
 #, c-format
 msgid "Authors"
-msgstr ""
+msgstr "Autoři"
 
 #: PackageManagerWindow.vala:638 PackageWindow.vala:661 PackageWindow.vala:665
 #: PackageWindow.vala:691
 msgid "Available"
-msgstr ""
+msgstr "Dostupné"
 
-#: AboutWindow.vala:295
+#: AboutWindow.vala:285
 msgid "Back"
-msgstr ""
+msgstr "Zpět"
 
 #: AptikConsole.vala:1064 AptikConsole.vala:1099 ConfigWindow.vala:335
 #: MainWindow.vala:242 MainWindow.vala:292 MainWindow.vala:321
@@ -218,75 +244,75 @@ msgstr ""
 #: ThemeWindow.vala:527 UserDataSettingsDialog.vala:63
 #: UserDataSettingsDialog.vala:487
 msgid "Backup"
-msgstr ""
+msgstr "Zálohovat"
 
 #: MainWindow.vala:194
 msgid "Backup &amp; Restore"
-msgstr ""
+msgstr "Zálohování &amp; obnovení"
 
 #: AptikConsole.vala:137 MainWindow.vala:534
 msgid "Backup /etc/fstab and /etc/crypttab entries"
-msgstr ""
+msgstr "Zálohování položek v /etc/fstab a/etc/crypttab"
 
 #: ConfigWindow.vala:119
 msgid "Backup Application Settings"
-msgstr ""
+msgstr "Zálohování nastavení aplikací"
 
 #: MainWindow.vala:115
 msgid "Backup Directory"
-msgstr ""
+msgstr "Záložní adresář"
 
-#: MainWindow.vala:827
+#: MainWindow.vala:822
 msgid "Backup Directory Not Selected"
-msgstr ""
+msgstr "Záložní adresář nebyl zvolen"
 
 #: ThemeWindow.vala:397
 msgid "Backup File"
-msgstr ""
+msgstr "Záložní soubor"
 
 #: MainWindow.vala:235
 msgid "Backup Launchpad PPAs"
-msgstr ""
+msgstr "Zálohování Launchpad PPA"
 
 #: UserDataSettingsDialog.vala:267
 msgid "Backup Mode"
-msgstr ""
+msgstr "Režim zálohování"
 
 #: AptikConsole.vala:152
 msgid "Backup all items"
-msgstr ""
+msgstr "Zálohovat všechny položky"
 
 #: MainWindow.vala:438
 msgid "Backup application settings"
-msgstr ""
+msgstr "Zálohovat nastavení aplikací"
 
 #: Main.vala:3290
 msgid "Backup completed"
-msgstr ""
+msgstr "Zálohování bylo dokončeno"
 
 #: Main.vala:3291
 msgid "Backup completed with errors"
-msgstr ""
+msgstr "Zálohování bylo dokončeno s chybami"
 
 #: AptikConsole.vala:125
 msgid "Backup config files from /home/<user>"
-msgstr ""
+msgstr "Zálohování konfiguračních souborů z /home/<user>"
 
 #: AptikConsole.vala:89
 msgid "Backup directory (defaults to current directory)"
-msgstr ""
+msgstr "Záložní adresář (výchozí je aktuální adresář)"
 
 #: AptikConsole.vala:182
 msgid "Backup directory not found"
-msgstr ""
+msgstr "Záložní adresář nebyl nalezen."
 
 #: AptikConsole.vala:104
 msgid "Backup downloaded packages from APT cache"
-msgstr ""
+msgstr "Zálohovat stažené balíky z APT cache"
 
 #: MainWindow.vala:285
 msgid "Backup downloaded packages in /var/cache/apt"
-msgstr ""
+msgstr "Zálohovat stažené balíky v /var/cache/apt"
 
 #: MainWindow.vala:600
 msgid ""
@@ -295,168 +321,169 @@ msgid ""
 "Note: App config directories will not be included in the backup. Use the "
 "'Application Settings' section to backup app config directories."
 msgstr ""
+"Zálohování dat domovského adresáře \n"
+"\n"
+"Poznámka: Adresáře s konfigurací aplikací nebudou zahrnuty do zálohy. "
+"Použijte sekci \"Nastavení aplikací\" pro zálohování adresáře s konfigurací "
+"aplikací."
 
 #: MainWindow.vala:314
 msgid "Backup installed packages"
-msgstr ""
+msgstr "Zálohovat nainstalované balíčky"
 
 #: AptikConsole.vala:99
 msgid "Backup list of PPAs"
-msgstr ""
+msgstr "Zálohování PPA"
 
 #: AptikConsole.vala:114
 msgid "Backup list of manual and installed packages"
-msgstr ""
+msgstr "Zálohovat seznam ručně instalovaných balíků"
 
 #: Main.vala:3292
 msgid "Backup saved"
-msgstr ""
+msgstr "Záloha byla uložena"
 
 #: MainWindow.vala:629
 msgid "Backup scheduled tasks for all users (crontab file)"
-msgstr ""
+msgstr "Zálohovat naplánované úlohy pro všechny uživatele (crontab soubor)"
 
 #: MainWindow.vala:244
 msgid "Backup the list of installed PPAs"
-msgstr ""
+msgstr "Zálohovat seznam nainstalovaných PPA"
 
 #: AptikConsole.vala:132
 msgid "Backup themes from /usr/share/themes"
-msgstr ""
+msgstr "Zálohovat motivy z /usr/share/themes"
 
 #: MainWindow.vala:486
 msgid ""
 "Backup themes, icons and cursors in /usr/share/icons and /usr/share/themes"
 msgstr ""
+"Zálohovat motivy, ikony a kurzory v /usr/share/icons a /usr/share/themes"
 
 #: AptikConsole.vala:147
 msgid "Backup user's scheduled tasks (crontab)"
-msgstr ""
+msgstr "Zálohovat uživatelem naplánované úlohy (crontab)"
 
 #: AptikConsole.vala:142
 msgid "Backup user-created data in user's home directory"
-msgstr ""
+msgstr "Zálohovat data vytvořená uživatelem v domovském adresáři uživatele"
 
 #: AptikConsole.vala:119 MainWindow.vala:363
 msgid "Backup users and groups"
-msgstr ""
+msgstr "Zálohovat uživatelé a skupiny"
 
 #: Main.vala:1942
 msgid "Bash Command History"
-msgstr ""
+msgstr "Historie Bash příkazů"
 
 #: Main.vala:1944
 msgid "Bash Init Script"
-msgstr ""
+msgstr "Bash Init skript"
 
 #: Main.vala:1946
 msgid "Bash Logout Script"
-msgstr ""
+msgstr "Bash Logout skript"
 
-#: Main.vala:1553 MainWindow.vala:926
+#: Main.vala:1553 MainWindow.vala:921
 msgid "Cache backup not found in backup directory"
-msgstr ""
+msgstr "Záloha cache nebyla nalezena v záložním adresáři"
 
 #: PackageManagerWindow.vala:488 ProgressWindow.vala:137
 #: TerminalWindow.vala:165
 msgid "Cancel"
-msgstr ""
+msgstr "Zrušit"
 
 #: PackageManagerWindow.vala:182 PackageWindow.vala:206
 msgid "Category"
-msgstr ""
+msgstr "Kategorie"
 
 #: ThemeWindow.vala:654
 msgid "Checking backups..."
-msgstr ""
+msgstr "Kontrola záloh..."
 
 #: Theme.vala:865
 msgid "Checking for nested folders in path"
-msgstr ""
+msgstr "Kontrolují se obsažené adresáře v cestě"
 
 #: PackageManagerWindow.vala:524
 msgid "Checking installed and available packages..."
-msgstr ""
+msgstr "Kontrolují se instalované a dostupné balíky..."
 
 #: Main.vala:1952
 msgid "Chromium Web Browser"
-msgstr ""
+msgstr "Chromium Web Browser"
 
 #: ThemeWindow.vala:299
 msgid "Cinnamon Shell"
-msgstr ""
+msgstr "Cinnamon Shell"
 
-#: AboutWindow.vala:305 ConfigWindow.vala:355 MountWindow.vala:368
+#: AboutWindow.vala:295 ConfigWindow.vala:355 MountWindow.vala:368
 #: PackageWindow.vala:419 PpaWindow.vala:278 TerminalWindow.vala:175
 #: ThemeWindow.vala:539 UserAccountWindow.vala:333
 msgid "Close"
-msgstr ""
+msgstr "Zavřít"
 
 #: Main.vala:223
 msgid "Commands listed below are not available on this system"
-msgstr ""
+msgstr "Příkazy uvedené níže nejsou dostupné na tomto systému"
 
 #: AptikConsole.vala:87
 msgid "Common"
-msgstr ""
+msgstr "Běžný"
 
 #: PasswordWindow.vala:127
 msgid "Confirm Passphrase"
-msgstr ""
+msgstr "Potvrdit heslo"
 
-#: AboutWindow.vala:332
-#, c-format
-msgid "Contributions"
-msgstr ""
-
-#: MainWindow.vala:887 MainWindow.vala:937
+#: MainWindow.vala:882 MainWindow.vala:932
 msgid "Copying packages..."
-msgstr ""
+msgstr "Probíhá kopírování balíčků..."
 
-#: MainWindow.vala:381 MainWindow.vala:552 MainWindow.vala:978
-#: MainWindow.vala:1018 MainWindow.vala:1059
+#: MainWindow.vala:381 MainWindow.vala:552 MainWindow.vala:973
+#: MainWindow.vala:1013 MainWindow.vala:1054
 msgid "Create Password"
-msgstr ""
+msgstr "Vytvořit heslo"
 
-#: AboutWindow.vala:282 AboutWindow.vala:299
+#: AboutWindow.vala:272 AboutWindow.vala:289
 msgid "Credits"
-msgstr ""
+msgstr "Zásluhy"
 
 #: CronTab.vala:72
 msgid "Cron job added"
-msgstr ""
+msgstr "Cron úloha přidána"
 
 #: CronTab.vala:122
 msgid "Cron job removed"
-msgstr ""
+msgstr "Cron úloha odstraněna"
 
 #: ThemeWindow.vala:284
 msgid "Cursors"
-msgstr ""
+msgstr "Kurzory"
 
 #: PackageWindow.vala:322
 msgid "DEB File Backup"
-msgstr ""
+msgstr "Zálohování souborů DEB"
 
 #: PackageWindow.vala:455
 msgid "DEB files were copied to backup location."
-msgstr ""
+msgstr "DEB soubory byly zkopírovány do umístění zálohy."
 
 #: ConfigWindow.vala:348
 msgid "Delete"
-msgstr ""
+msgstr "Smazat"
 
 #: ConfigWindow.vala:581
 msgid "Deleting..."
-msgstr ""
+msgstr "Mazání..."
 
 #: ConfigWindow.vala:282 PackageManagerWindow.vala:435 PackageWindow.vala:341
 msgid "Description"
-msgstr ""
+msgstr "Popis"
 
 #: MountWindow.vala:220 MountWindow.vala:410
 msgid "Device"
-msgstr ""
+msgstr "Zařízení"
 
 #: DonationWindow.vala:54
 msgid ""
@@ -474,305 +501,319 @@ msgid ""
 "Tony George\n"
 "(teejeetech@gmail.com)"
 msgstr ""
+"Shledali jste tento software užitečným?\n"
+"\n"
+"Můžete mi koupit kávu nebo poslat příspěvek prostřednictvím PayPal jako "
+"projev vaší podpory. Nebo mi prostě jen pošlete mail s pozdravem.\n"
+"\n"
+"Tato aplikace je zcela zdarma a zůstane tak i v budoucnu. Váš příspěvek "
+"pomůže udržet tento projekt při životě a také jeho budoucí rozvoj.\n"
+"\n"
+"Napište mi mail pokud naleznete chybu nebo budete mít námět na vylepšení "
+"této  aplikace.\n"
+"\n"
+"S pozdravem,\n"
+"Tony George\n"
+"teejeetech@gmail.com"
 
 #: Utility.vala:358
 msgid "Dir not found"
-msgstr ""
+msgstr "Adresář nebyl nalezen."
 
 #: Main.vala:3313
 msgid "Directory created"
-msgstr ""
+msgstr "Adresář byl vytvořen"
 
 #: Main.vala:3316
 msgid "Directory exists"
-msgstr ""
+msgstr "Adresář existuje"
 
 #: Main.vala:3317
 msgid "Directory missing"
-msgstr ""
+msgstr "Adresář chybí"
 
-#: AboutWindow.vala:364
+#: AboutWindow.vala:346
 #, c-format
 msgid "Documenters"
-msgstr ""
+msgstr "Dukumentátoři"
 
 #: DonationWindow.vala:36 MainWindow.vala:751 MainWindow.vala:752
 msgid "Donate"
-msgstr ""
+msgstr "Darovat"
 
 #: DonationWindow.vala:74
 msgid "Donate with Google Wallet"
-msgstr ""
+msgstr "Darovat přes Google Wallet"
 
 #: DonationWindow.vala:67
 msgid "Donate with PayPal"
-msgstr ""
+msgstr "Darovat přes PayPal"
 
-#: AboutWindow.vala:372
+#: AboutWindow.vala:354
 #, c-format
 msgid "Donations"
-msgstr ""
+msgstr "Darování"
 
 #: DownloadWindow.vala:91
 msgid "Download"
-msgstr ""
+msgstr "Stáhnout"
 
 #: Main.vala:3337
 msgid "Downloaded Packages"
-msgstr ""
+msgstr "Stažené balíky"
 
 #: DownloadWindow.vala:112
 msgid "Downloading packages..."
-msgstr ""
+msgstr "Probíhá stahování balíčků..."
 
 #: MountWindow.vala:314
 msgid "Dump"
-msgstr ""
+msgstr "Výpis"
 
 #: Utility.vala:101
 msgid "E"
-msgstr ""
+msgstr "E"
 
 #: MountWindow.vala:424
 msgid "Encrypted Device"
-msgstr ""
+msgstr "Šifrované zařízení"
 
 #: MountWindow.vala:140
 msgid "Encrypted Devices (/etc/crypttab)"
-msgstr ""
+msgstr "Šifrovaná zařízení (/etc/crypttab)"
 
 #: PasswordWindow.vala:96
 msgid "Enter Passphrase"
-msgstr ""
+msgstr "Vložte heslo"
 
-#: MainWindow.vala:412 MainWindow.vala:583 MainWindow.vala:1105
+#: MainWindow.vala:412 MainWindow.vala:583 MainWindow.vala:1100
 msgid "Enter Password"
-msgstr ""
+msgstr "Zadejte heslo"
 
 #: Main.vala:3011
 #, c-format
 msgid "Enter password again to confirm"
-msgstr ""
+msgstr "Zadejte heslo znovu pro potvrzení"
 
 #: Main.vala:3332
 msgid "Enter password for decrypting backup"
-msgstr ""
+msgstr "Zadejte heslo k dešifrování zálohy"
 
 #: Main.vala:3331
 msgid "Enter password for encrypting backup"
-msgstr ""
+msgstr "Zadejte heslo k šifrování zálohy"
 
 #: AptikConsole.vala:573 AptikConsole.vala:649 MainWindow.vala:564
 #: MainWindow.vala:648 MainWindow.vala:665 PackageWindow.vala:1018
 #: PpaWindow.vala:496 PpaWindow.vala:601 UserAccountWindow.vala:514
 #: Utility.vala:153
 msgid "Error"
-msgstr ""
+msgstr "Chyba"
 
 #: UserDataSettingsDialog.vala:105
 msgid "Exclude"
-msgstr ""
+msgstr "Vyloučit"
 
 #: Main.vala:2033 Theme.vala:665
 #, c-format
 msgid "Extracting"
-msgstr ""
+msgstr "Probíhá extrahování"
 
 #: ConfigWindow.vala:506 ThemeWindow.vala:740
 msgid "Extracting..."
-msgstr ""
+msgstr "Extrahování..."
 
 #: MountWindow.vala:276
 msgid "FS Type"
-msgstr ""
+msgstr "Typ FS"
 
 #: CronTab.vala:68
 msgid "Failed to add cron job"
-msgstr ""
+msgstr "Nepodařilo se přidat Cron úlohu"
 
 #: Main.vala:3323
 msgid "Failed to add group"
-msgstr ""
+msgstr "Nepodařilo se přidat skupinu"
 
 #: Main.vala:3320
 msgid "Failed to add user"
-msgstr ""
+msgstr "Nepodařilo se přidat uživatele"
 
 #: Main.vala:3326
 msgid "Failed to add user to group"
-msgstr ""
+msgstr "Nepodařilo se přidat uživatele do skupiny"
 
 #: Main.vala:3135
 msgid "Failed to change file ownership"
-msgstr ""
+msgstr "Nepodařilo se změnit vlastnictví souborů"
 
 #: Utility.vala:269
 msgid "Failed to copy file"
-msgstr ""
+msgstr "Nepodařilo se zkopírovat soubor"
 
 #: Utility.vala:329
 msgid "Failed to create dir"
-msgstr ""
+msgstr "Nepodařilo se vytvořit adresář"
 
 #: Main.vala:3314
 msgid "Failed to create directory"
-msgstr ""
+msgstr "Nepodařilo se vytvořit adresář"
 
 #: Main.vala:3308
 msgid "Failed to decrypt file"
-msgstr ""
+msgstr "Dešifrování souboru se nezdařilo."
 
 #: Main.vala:3311 Utility.vala:208
 msgid "Failed to delete file"
-msgstr ""
+msgstr "Nepodařilo se odstranit soubory"
 
 #: CronTab.vala:162
 msgid "Failed to export crontab file"
-msgstr ""
+msgstr "Nepodařilo se exportovat crontab soubor"
 
 #: CronTab.vala:145
 msgid "Failed to install crontab file"
-msgstr ""
+msgstr "Nepodařilo se nainstalovat crontab soubor"
 
 #: Utility.vala:289
 msgid "Failed to move file"
-msgstr ""
+msgstr "Nepodařilo se přesunout soubor"
 
 #: CronTab.vala:25
 msgid "Failed to read cron tab"
-msgstr ""
+msgstr "Nepodařilo se přečíst crontab"
 
 #: Main.vala:3305 Utility.vala:226
 msgid "Failed to read file"
-msgstr ""
+msgstr "Nepodařilo se přečíst soubor"
 
 #: CronTab.vala:118
 msgid "Failed to remove cron job"
-msgstr ""
+msgstr "Nepodařilo se odstranit Cron úlohu"
 
 #: Main.vala:3293
 msgid "Failed to save backup"
-msgstr ""
+msgstr "Nepodařilo se uložit zálohu"
 
 #: Main.vala:3302
 msgid "Failed to save file"
-msgstr ""
+msgstr "Nepodařilo se uložit soubor"
 
 #: Utility.vala:1879
 msgid "Failed to set ownership"
-msgstr ""
+msgstr "Nepodařilo se nastavit vlastnictví"
 
 #: Main.vala:566
 #, c-format
 msgid "Failed to unzip: '%s'"
-msgstr ""
+msgstr "Nepodařilo se rozbalit: '%s'"
 
 #: Main.vala:765
 msgid "Failed to write"
-msgstr ""
+msgstr "Nepodařilo se zapsat"
 
 #: Utility.vala:253
 msgid "Failed to write file"
-msgstr ""
+msgstr "Nepodařilo se zapsat soubor"
 
 #: OneClickSettingsDialog.vala:81
 msgid "File"
-msgstr ""
+msgstr "Soubor"
 
 #: PackageWindow.vala:855
 msgid "File Missing"
-msgstr ""
+msgstr "Soubor chybí"
 
-#: MainWindow.vala:839
+#: MainWindow.vala:834
 msgid "File Not Found"
-msgstr ""
+msgstr "Soubor nenalezen"
 
 #: Main.vala:3307
 msgid "File decrypted"
-msgstr ""
+msgstr "Soubor byl dešifrován"
 
 #: Main.vala:3310
 msgid "File deleted"
-msgstr ""
+msgstr "Soubor byl odstraněn"
 
 #: Main.vala:3298
 msgid "File exists"
-msgstr ""
+msgstr "Soubor existuje"
 
 #: Utility.vala:453 Utility.vala:490
 msgid "File is missing"
-msgstr ""
+msgstr "Soubor chybí"
 
 #: CronTab.vala:130 Main.vala:2005 Main.vala:3299 Theme.vala:650
 #: Utility.vala:283 Utility.vala:385
 msgid "File not found"
-msgstr ""
+msgstr "Soubor nebyl nalezen"
 
-#: Main.vala:255 MainWindow.vala:840
+#: Main.vala:255 MainWindow.vala:835
 msgid "File not found in backup directory"
-msgstr ""
+msgstr "Soubor nebyl nalezen v záložním adresáři"
 
 #: Main.vala:471 Main.vala:1088
 #, c-format
 msgid "File not found: %s"
-msgstr ""
+msgstr "Soubor nebyl nalezen: %s"
 
 #: Main.vala:3304
 msgid "File read"
-msgstr ""
+msgstr "Soubor byl přečten"
 
 #: Main.vala:762 Main.vala:3301
 msgid "File saved"
-msgstr ""
+msgstr "Soubor byl uložen"
 
-#: MainWindow.vala:925
+#: MainWindow.vala:920
 msgid "Files Not Found"
-msgstr ""
+msgstr "Soubory nebyly nenalezeny"
 
 #: PackageWindow.vala:456
 msgid "Files copied"
-msgstr ""
+msgstr "Soubory byly zkopírované"
 
 #: Main.vala:3339
 msgid "Filesystem Mounts"
-msgstr ""
+msgstr "Připojené souborové systémy"
 
 #: PackageManagerWindow.vala:160 PackageWindow.vala:159
 msgid "Filter"
-msgstr ""
+msgstr "Filtr"
 
 #: MainWindow.vala:561 MainWindow.vala:645 MainWindow.vala:662
 #: MountWindow.vala:511 UserAccountWindow.vala:510
 msgid "Finished"
-msgstr ""
+msgstr "Dokončeno"
 
 #: PackageWindow.vala:1093
 msgid "Finished installing packages"
-msgstr ""
+msgstr "Instalace balíků dokončena"
 
 #: Main.vala:1932
 msgid "Firefox Web Browser"
-msgstr ""
+msgstr "Firefox Web Browser"
 
-#: MainWindow.vala:858
+#: MainWindow.vala:853
 msgid "Folder Not Found"
-msgstr ""
+msgstr "Adresář nenalezen"
 
-#: MainWindow.vala:859
+#: MainWindow.vala:854
 msgid "Folder not found in backup directory"
-msgstr ""
+msgstr "Složka nebyla nalezena v záložním adresáři"
 
 #: PpaWindow.vala:602
 msgid "Following PPAs could not be added"
-msgstr ""
+msgstr "Následující PPA nemůže být přidán"
 
 #: PackageWindow.vala:1034
 msgid "Following packages are NOT available"
-msgstr ""
+msgstr "Následující balíky nejsou dostupné"
 
 #: AptikConsole.vala:657
 msgid "Following packages are not available"
-msgstr ""
+msgstr "Následující balíky nejsou dostupné"
 
 #: PackageWindow.vala:982
 #, c-format
@@ -780,73 +821,75 @@ msgid ""
 "Following packages are not available (missing PPA):\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "Nejsou k dispozici (chybějící PPA) následující balíčky: %s"
 
 #: PackageWindow.vala:891
 msgid "Following packages are not available in software repositories"
-msgstr ""
+msgstr "Následující balíčky nejsou dostupné v repozitářích"
 
 #: AptikConsole.vala:665 AptikConsole.vala:685
 msgid "Following packages will be installed"
-msgstr ""
+msgstr "Následující balíky budou naistalovány"
 
 #: UserDataSettingsDialog.vala:296
 msgid "Full"
-msgstr ""
+msgstr "Plná"
 
 #: UserDataSettingsDialog.vala:273
 msgid ""
 "Full - Remove previous backup and create new\n"
 "Incremental - Keep existing backup and save changes"
 msgstr ""
+"Plná - odstranit předchozí zálohy a vytvářit novou \n"
+"Přírůstková - použít stávající zálohu a uložit pouze změny"
 
 #: UserAccountWindow.vala:455
 msgid "GID"
-msgstr ""
+msgstr "GID"
 
 #: ThemeWindow.vala:287
 msgid "GTK-2"
-msgstr ""
+msgstr "GTK-2"
 
 #: ThemeWindow.vala:290
 msgid "GTK-3"
-msgstr ""
+msgstr "GTK-3"
 
 #: UserDataSettingsDialog.vala:82
 msgid "General"
-msgstr ""
+msgstr "Obecné"
 
 #: ThemeWindow.vala:293
 msgid "Gnome Shell"
-msgstr ""
+msgstr "Gnome Shell"
 
 #: UserAccountWindow.vala:454
 msgid "Group"
-msgstr ""
+msgstr "Skupina"
 
 #: Main.vala:3322
 msgid "Group added"
-msgstr ""
+msgstr "Skupina přidána"
 
 #: UserAccountWindow.vala:137 UserAccountWindow.vala:444
 msgid "Groups"
-msgstr ""
+msgstr "Skupiny"
 
 #: PasswordWindow.vala:195
 msgid "Hide"
-msgstr ""
+msgstr "Skrýt"
 
 #: Main.vala:3343
 msgid "Home Directory Data"
-msgstr ""
+msgstr "Data domovského adresáře"
 
 #: UserAccountWindow.vala:238
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: ThemeWindow.vala:281
 msgid "Icons"
-msgstr ""
+msgstr "Ikony"
 
 #: PackageWindow.vala:893
 msgid ""
@@ -854,281 +897,288 @@ msgid ""
 "files on this window. Files will be saved to backup location and used for "
 "restore."
 msgstr ""
+"Pokud máte soubory DEB pro tyto balíčky, můžete tyto soubory přetáhnout do "
+"tohoto okna. Soubory budou uloženy do umístění zálohy a použity pro obnovení."
 
 #: ThemeWindow.vala:417
 msgid "Includes"
-msgstr ""
+msgstr "Obsahuje"
 
 #: UserDataSettingsDialog.vala:299
 msgid "Incremental"
-msgstr ""
+msgstr "Přírůstkové"
 
 #: PackageManagerWindow.vala:399 PackageManagerWindow.vala:634
 #: PackageManagerWindow.vala:834 PackageWindow.vala:493 PackageWindow.vala:518
 #: PackageWindow.vala:657 ThemeWindow.vala:461
 msgid "Installed"
-msgstr ""
+msgstr "Nainstalován"
 
 #: PackageManagerWindow.vala:840 PackageWindow.vala:499 PackageWindow.vala:524
 msgid "Installed (auto)"
-msgstr ""
+msgstr "Nainstalované (auto)"
 
 #: PackageWindow.vala:501 PackageWindow.vala:526
 msgid "Installed (deb)"
-msgstr ""
+msgstr "Nainstalované (deb)"
 
 #: PackageManagerWindow.vala:836 PackageWindow.vala:495 PackageWindow.vala:520
 msgid "Installed (dist)"
-msgstr ""
+msgstr "Nainstalované (dist)"
 
 #: PackageManagerWindow.vala:842
 msgid "Installed (updates)"
-msgstr ""
+msgstr "Nainstalované (aktualizace)"
 
 #: PackageManagerWindow.vala:838 PackageWindow.vala:497 PackageWindow.vala:522
 msgid "Installed (user)"
-msgstr ""
+msgstr "Nainstalované (uživatel)"
 
 #: Main.vala:3338
 msgid "Installed Software"
-msgstr ""
+msgstr "Nainstalovaný Software"
 
 #: PackageWindow.vala:1082
 #, c-format
 msgid "Installing packages from DEB files"
-msgstr ""
+msgstr "Instalace balíčků z DEB souborů"
 
 #: PackageWindow.vala:1074
 #, c-format
 msgid "Installing packages from repos"
-msgstr ""
+msgstr "Instalace balíčků z repozitářů"
 
 #: Main.vala:3288
-msgid "Internet connection is not active. Check the connection and try again."
+msgid ""
+"Internet connection is not active. Check the connection and try again."
 msgstr ""
+"Připojení k internetu není aktivní. Zkontrolujte prosím připojení a zkuste "
+"znovu."
 
 #: PackageWindow.vala:857
 msgid ""
 "It is not possible to determine whether a package was installed by you, or "
 "whether it was installed along with the Linux distribution."
 msgstr ""
+"Není možné určit jestli byl balík instalovaný vámi nebo jestli byl "
+"instalovaný jako součást distribuce Linuxu."
 
 #: UserDataSettingsDialog.vala:337
 msgid "Item"
-msgstr ""
+msgstr "Položka"
 
 #: PackageManagerWindow.vala:417
 msgid "Latest"
-msgstr ""
+msgstr "Poslední"
 
 #: UserAccountWindow.vala:291
 msgid "List"
-msgstr ""
+msgstr "Seznam"
 
 #: AptikConsole.vala:98
 msgid "List PPAs"
-msgstr ""
+msgstr "Seznam PPA"
 
 #: AptikConsole.vala:111
 msgid "List auto-installed packages"
-msgstr ""
+msgstr "Seznam automaticky instalovaných balíků"
 
 #: AptikConsole.vala:109
 msgid "List available packages"
-msgstr ""
+msgstr "Seznam dostupných balíků"
 
 #: AptikConsole.vala:124
 msgid "List config dirs in /home/<user>"
-msgstr ""
+msgstr "Seznam adresářů konfigurace v /home /<user>"
 
 #: AptikConsole.vala:113
 msgid "List default packages for linux distribution"
-msgstr ""
+msgstr "Seznam výchozích balíků pro distribuci linuxu"
 
 #: AptikConsole.vala:112
 msgid "List extra packages installed by user"
-msgstr ""
+msgstr "Seznam extra balíků nainstalovaných uživatelem"
 
 #: AptikConsole.vala:110
 msgid "List installed packages"
-msgstr ""
+msgstr "Seznam nainstalovaných balíků"
 
 #: AptikConsole.vala:131
 msgid "List themes in /usr/share/themes"
-msgstr ""
+msgstr "Seznam motivů v /usr/share/themes"
 
 #: Main.vala:1938 Main.vala:1948
 msgid "Local Fonts"
-msgstr ""
+msgstr "Lokální fonty"
 
 #: Main.vala:1940 Main.vala:1950
 msgid "Local Themes"
-msgstr ""
+msgstr "Lokální motivy"
 
 #: MountWindow.vala:202
 msgid "Mapped Name"
-msgstr ""
+msgstr "Mapovaný název"
 
 #: ThemeWindow.vala:302
 msgid "Metacity Window Border"
-msgstr ""
+msgstr "Metacity dekorace oken"
 
-#: MainWindow.vala:809
+#: MainWindow.vala:804
 msgid "Migration utility for Ubuntu-based distributions"
-msgstr ""
+msgstr "Migrační nástroj pro distribuce založené na Ubuntu"
 
 #: Main.vala:140
 msgid "Missing Dependencies"
-msgstr ""
+msgstr "Chybějící závislosti"
 
 #: Utility.vala:1402
 msgid "Missing Icon"
-msgstr ""
+msgstr "Chybějící ikona"
 
 #: PackageWindow.vala:981
 msgid "Missing Packages"
-msgstr ""
+msgstr "Chybějící balíčky"
 
 #: MountWindow.vala:239
 msgid "Mount Point"
-msgstr ""
+msgstr "Přípojný bod"
 
 #: UserAccountWindow.vala:208 UserDataSettingsDialog.vala:230
 msgid "Name"
-msgstr ""
+msgstr "Jméno"
 
-#: Classes.vala:672 Classes.vala:678
+#: Classes.vala:639 Classes.vala:645
 msgid "No Change"
-msgstr ""
+msgstr "Žádná změna"
 
 #: UserAccountWindow.vala:498
 msgid "No Changes Required"
-msgstr ""
+msgstr "Žádné změny nepožadovány"
 
 #: ConfigWindow.vala:402
 msgid "No Directories Selected"
-msgstr ""
+msgstr "Není vybrán žádný adresář"
 
 #: PpaWindow.vala:418
 msgid "No PPA Selected"
-msgstr ""
+msgstr "Není vybrán žádný PPA"
 
 #: PackageWindow.vala:914
 msgid "No Packages Selected"
-msgstr ""
+msgstr "Není vybrán žádný balík"
 
 #: ThemeWindow.vala:588
 msgid "No Themes Selected"
-msgstr ""
+msgstr "Není vybrán žádný motiv"
 
 #: Main.vala:3328
 msgid "No changes required"
-msgstr ""
+msgstr "Žádné změny nepožadovány"
 
 #: UserAccountWindow.vala:279 UserAccountWindow.vala:284
 msgid "Normal"
-msgstr ""
+msgstr "Normální"
 
 #: PackageWindow.vala:669
 msgid "Not Available"
-msgstr ""
+msgstr "Není dostupné"
 
 #: PackageManagerWindow.vala:642
 msgid "Not Available! Check if PPA needs to be added"
-msgstr ""
+msgstr "Není dostupné! Zkontrolujte zda je potřeba přidat PPA"
 
 #: PackageManagerWindow.vala:638 PackageManagerWindow.vala:844
 #: PackageWindow.vala:661 PackageWindow.vala:665 PackageWindow.vala:691
 #: ThemeWindow.vala:465
 msgid "Not Installed"
-msgstr ""
+msgstr "Nenainstalován"
 
 #: PackageWindow.vala:505 PackageWindow.vala:530
 msgid "NotAvailable"
-msgstr ""
+msgstr "Není dostupné"
 
 #: PackageWindow.vala:503 PackageWindow.vala:528
 msgid "NotInstalled"
-msgstr ""
+msgstr "Nenainstalován"
 
 #: ConfigWindow.vala:475 ConfigWindow.vala:552 PackageWindow.vala:1011
 #: PackageWindow.vala:1031 ThemeWindow.vala:717
 msgid "Nothing To Do"
-msgstr ""
+msgstr "Nic k provedení"
 
 #: DonationWindow.vala:95
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: MainWindow.vala:717
 msgid ""
 "One-Click\n"
 "Backup"
-msgstr ""
+msgstr "One-Click zálohování"
 
 #: MainWindow.vala:726
 msgid ""
 "One-Click\n"
 "Restore"
-msgstr ""
+msgstr "One-Click obnovení"
 
 #: MainWindow.vala:735
 msgid ""
 "One-Click\n"
 "Settings"
-msgstr ""
+msgstr "One-Click nastavení"
 
 #: MainWindow.vala:718
 msgid "One-Click Backup"
-msgstr ""
+msgstr "One-Click zálohování"
 
 #: MainWindow.vala:727
 msgid "One-Click Restore"
-msgstr ""
+msgstr "One-Click obnovení"
 
 #: OneClickSettingsDialog.vala:54
 msgid "One-Click Settings"
-msgstr ""
+msgstr "One-Click nastavení"
 
 #: MainWindow.vala:158
 msgid "Open"
-msgstr ""
+msgstr "Otevřít"
 
 #: MainWindow.vala:160
 msgid "Open backup location"
-msgstr ""
+msgstr "Otevřít umístění zálohy"
 
 #: Main.vala:1936
 msgid "Opera Web Browser"
-msgstr ""
+msgstr "Opera Web Browser"
 
 #: AptikConsole.vala:85 AptikGtk.vala:118 MountWindow.vala:295
 msgid "Options"
-msgstr ""
+msgstr "Volby"
 
 #: Main.vala:3131
 #, c-format
 msgid "Ownership changed to '%s' for files in directory '%s'"
-msgstr ""
+msgstr "Vlastnictví změněno na '%s' pro soubory v adresáři '%s'"
 
 #: PackageManagerWindow.vala:283 PpaWindow.vala:182
 msgid "PPA"
-msgstr ""
+msgstr "PPA"
 
 #: PackageManagerWindow.vala:803 PackageManagerWindow.vala:807
 #: PpaWindow.vala:338 PpaWindow.vala:342
 #, c-format
 msgid "PPA is Enabled (%d installed packages)"
-msgstr ""
+msgstr "PPA je povoleno (%d instalovaných balíků)"
 
 #: PackageManagerWindow.vala:812 PpaWindow.vala:347
 msgid "PPA is Not Added"
-msgstr ""
+msgstr "PPA není přidán"
 
 #: DownloadWindow.vala:218 PackageManagerWindow.vala:381
 #: PackageWindow.vala:295
 msgid "Package"
-msgstr ""
+msgstr "Balík"
 
 #: PackageManagerWindow.vala:169
 msgid ""
@@ -1142,113 +1192,123 @@ msgid ""
 "Installed (updates)\tPackages that have updates available\n"
 "Not Installed\t\tPackages which are not installed"
 msgstr ""
+"Stav balíčku\n"
+"\n"
+"Nainstalované\t\t\tVšechny nainstalované balíčky\n"
+"Nainstalované (dist)\t\tBalíčky, které jsou součástí základní distribuce\n"
+"Nainstalované (uživatel)\t\tExtra balíčky, které byly nainstalovány "
+"uživatelem\n"
+"Nainstalované (auto)\t\tBalíčky, které byly nainstalovány automaticky\n"
+"\t\t\t\t\t(jako závislost pro jiné balíčky)\n"
+"Nainstalované (aktualizace)\tBalíčky, které mají dostupné aktualizace\n"
+"Nenainstalované\t\tBalíčky které nejsou nainstalovány"
 
 #: Main.vala:3286
 msgid "Package installation has failed or was aborted by user"
-msgstr ""
+msgstr "Instalace balíčku se nezdařila nebo byla přerušena uživatelem"
 
 #: PackageManagerWindow.vala:301 PpaWindow.vala:201 PpaWindow.vala:204
 msgid "Packages"
-msgstr ""
+msgstr "Balíky"
 
 #: MountWindow.vala:333
 msgid "Pass"
-msgstr ""
+msgstr "Pass"
 
 #: MountWindow.vala:258
 msgid "Password / Keyfile"
-msgstr ""
+msgstr "Heslo / Keyfile"
 
 #: Main.vala:3333
 msgid "Password cannot be empty!"
-msgstr ""
+msgstr "Heslo musí být vyplněno"
 
 #: Main.vala:3330
 msgid "Password not specified!"
-msgstr ""
+msgstr "Není zadáno heslo!"
 
 #: Main.vala:3334
 msgid "Passwords do not match!"
-msgstr ""
+msgstr "Hesla se neshodují."
 
 #: ConfigWindow.vala:243
 msgid "Path"
-msgstr ""
+msgstr "Cesta"
 
 #: Main.vala:224
 msgid "Please install required packages and try running Aptik again"
-msgstr ""
+msgstr "Nainstalujte prosím požadované balíky a spusťte Aptik znovu"
 
 #: AptikGtk.vala:59
 msgid "Please run the application as admin ('gksu aptik-gtk')"
-msgstr ""
+msgstr "Spusťte prosím aplikaci jako admin ('gksu aptik-gtk')"
 
 #: AptikConsole.vala:58
 msgid "Please run the application as admin (using 'sudo' or 'su')"
-msgstr ""
+msgstr "Spusťte prosím aplikaci jako admin (použitím 'sudo' nebo 'su')"
 
-#: MainWindow.vala:828
+#: MainWindow.vala:823
 msgid "Please select the backup directory"
-msgstr ""
+msgstr "Vyberte prosím adresář pro zálohu"
 
 #: ConfigWindow.vala:553
 msgid "Please select the directories to reset"
-msgstr ""
+msgstr "Vyberte prosím adresáře pro reset"
 
 #: ConfigWindow.vala:476
 msgid "Please select the directories to restore"
-msgstr ""
+msgstr "Vyberte prosím adresáře pro obnovení"
 
 #: PackageWindow.vala:859
 msgid "Please un-select the packages that are not required."
-msgstr ""
+msgstr "Odznačte prosím balíky, které nejsou požadovány."
 
 #: ConfigWindow.vala:409 ConfigWindow.vala:498 ConfigWindow.vala:575
-#: MainWindow.vala:881 MainWindow.vala:931 PackageWindow.vala:833
+#: MainWindow.vala:876 MainWindow.vala:926 PackageWindow.vala:833
 #: PackageWindow.vala:944 PpaWindow.vala:365 PpaWindow.vala:445
 #: PpaWindow.vala:502 ThemeWindow.vala:594 ThemeWindow.vala:725
 msgid "Preparing..."
-msgstr ""
+msgstr "Připravuje se..."
 
 #: PackageWindow.vala:1096
 msgid "Press ENTER to exit..."
-msgstr ""
+msgstr "Stisknutím klávesy ENTER ukončete..."
 
 #: AptikGtk.vala:120
 msgid "Print debug information"
-msgstr ""
+msgstr "Tisknout informace o ladění"
 
 #: DownloadWindow.vala:237
 msgid "Progress"
-msgstr ""
+msgstr "Průběh"
 
 #: Main.vala:359
 msgid "Reading deb files from backup..."
-msgstr ""
+msgstr "Čtení deb souborů ze zálohy..."
 
 #: Main.vala:350
 msgid "Reading default package lists..."
-msgstr ""
+msgstr "Čtení výchozího seznamu balíčků..."
 
 #: Main.vala:338
 msgid "Reading package lists..."
-msgstr ""
+msgstr "Čtení seznamu balíčků..."
 
 #: Main.vala:1015
 msgid "Reading package priorities..."
-msgstr ""
+msgstr "Čtení priorit balíčků..."
 
 #: Main.vala:958
 msgid "Reading source lists..."
-msgstr ""
+msgstr "Čtení seznamu zdrojů..."
 
 #: Main.vala:344
 msgid "Reading state information..."
-msgstr ""
+msgstr "Čtení informací o stavu..."
 
 #: MountWindow.vala:135
 msgid "Regular Devices (/etc/fstab)"
-msgstr ""
+msgstr "Běžné zařízení (/etc/fstab)"
 
 #: ConfigWindow.vala:350
 msgid ""
@@ -1257,6 +1317,9 @@ msgid ""
 "automatically with default configuration files on the next run of the "
 "application."
 msgstr ""
+"Inicializace nastavení pro aplikace (např: Chromium Browser) smazáním "
+"adresáře s nastavením (~/.config/chromium). Adresář bude vytvořen "
+"automaticky s výchozími konfiguračními soubory při dalším spuštění aplikace."
 
 #: AptikConsole.vala:1064 AptikConsole.vala:1099 ConfigWindow.vala:109
 #: ConfigWindow.vala:341 MainWindow.vala:259 MainWindow.vala:300
@@ -1268,43 +1331,43 @@ msgstr ""
 #: ThemeWindow.vala:533 UserAccountWindow.vala:113 UserAccountWindow.vala:328
 #: UserDataSettingsDialog.vala:63 UserDataSettingsDialog.vala:487
 msgid "Restore"
-msgstr ""
+msgstr "Obnovit"
 
 #: AptikConsole.vala:138
 msgid "Restore /etc/fstab and /etc/crypttab entries"
-msgstr ""
+msgstr "Obnovení položek/etc/fstab a/etc/crypttab"
 
 #: AptikConsole.vala:100
 msgid "Restore PPAs from file 'ppa.list'"
-msgstr ""
+msgstr "Obnovit PPA ze souboru 'ppa.list'"
 
 #: AptikConsole.vala:153
 msgid "Restore all items"
-msgstr ""
+msgstr "Obnovit všechny položky"
 
 #: Main.vala:3295
 msgid "Restore completed"
-msgstr ""
+msgstr "Obnovení bylo dokončeno."
 
 #: Main.vala:3296
 msgid "Restore completed with errors"
-msgstr ""
+msgstr "Obnovení bylo dokončeno s chybami"
 
 #: AptikConsole.vala:126
 msgid "Restore config files to /home/<user>"
-msgstr ""
+msgstr "Obnovení konfigurační soubory do/home /<user>"
 
 #: AptikConsole.vala:105
 msgid "Restore downloaded packages to APT cache"
-msgstr ""
+msgstr "Obnovit stažené balíky do APT cache"
 
 #: ThemeWindow.vala:163
 msgid "Restore for:"
-msgstr ""
+msgstr "Obnovit:"
 
 #: AptikConsole.vala:115
 msgid "Restore packages from file 'packages.list'"
-msgstr ""
+msgstr "Obnovit balíky ze souboru 'packages.list'"
 
 #: ConfigWindow.vala:343
 msgid ""
@@ -1312,370 +1375,378 @@ msgid ""
 "the settings directory (~/.config/chromium) with files from backup. Use the "
 "'Reset' button to delete the restored files in case of issues."
 msgstr ""
+"Obnovit nastavení pro aplikace (např: Chromium Browser) nahrazením adresáře "
+"s nastavením (~/.config/chromium) soubory ze zálohy. Použijte tlačítko "
+"'Reset' pro smazání obnovených souborů v případě potíží."
 
 #: AptikConsole.vala:133
 msgid "Restore themes to /usr/share/themes"
-msgstr ""
+msgstr "Obnovit motivy do /usr/share/themes"
 
 #: AptikConsole.vala:148
 msgid "Restore user's scheduled tasks (crontab)"
-msgstr ""
+msgstr "Obnovit uživatelem vytvořené úlohy (crontab)"
 
 #: AptikConsole.vala:143
 msgid "Restore user-created data in user's home directory"
-msgstr ""
+msgstr "Obnovit data vytvořená uživatelem v domovském adresáři uživatele"
 
 #: AptikConsole.vala:120
 msgid "Restore users and groups"
-msgstr ""
+msgstr "Obnovit uživatelé a skupiny"
 
 #: Main.vala:2276
 msgid "Restoring /etc/fstab and /etc/crypttab entries"
-msgstr ""
+msgstr "Obnovení položek/etc/fstab a/etc/crypttab"
 
 #: PpaWindow.vala:561
 msgid "Running 'apt-get update'..."
-msgstr ""
+msgstr "Běh 'apt-get update'..."
 
 #: PackageWindow.vala:920 PpaWindow.vala:424
 msgid "Saving..."
-msgstr ""
+msgstr "Ukládání..."
 
 #: Main.vala:3344
 msgid "Scheduled Tasks"
-msgstr ""
+msgstr "Naplánované úlohy"
 
 #: PackageWindow.vala:173
 msgid "Search package name and description"
-msgstr ""
+msgstr "Hledat název a popis balíku"
 
 #: MainWindow.vala:150
 msgid "Select"
-msgstr ""
+msgstr "Vybrat"
 
 #: ConfigWindow.vala:315 PackageManagerWindow.vala:456 PackageWindow.vala:363
 #: PpaWindow.vala:226 ThemeWindow.vala:487
 msgid "Select All"
-msgstr ""
+msgstr "Vybrat vše"
 
 #: ConfigWindow.vala:325 PackageManagerWindow.vala:466 PackageWindow.vala:385
 #: PpaWindow.vala:246 ThemeWindow.vala:507
 msgid "Select None"
-msgstr ""
+msgstr "Nevybrat nic"
 
 #: MainWindow.vala:152
 msgid "Select backup location"
-msgstr ""
+msgstr "Vyberte umístění zálohy"
 
 #: OneClickSettingsDialog.vala:63 OneClickSettingsDialog.vala:70
 #: UserDataSettingsDialog.vala:169 UserDataSettingsDialog.vala:321
 msgid "Select items to backup and restore"
-msgstr ""
+msgstr "Výběr položek pro zálohování a obnovení"
 
 #: UserDataSettingsDialog.vala:313
 msgid "Select items to exclude"
-msgstr ""
+msgstr "Výběr položek, které chcete vyloučit"
 
 #: PpaWindow.vala:419
 msgid "Select the PPAs to backup"
-msgstr ""
+msgstr "Výběr PPA pro zálohování"
 
 #: ConfigWindow.vala:403
 msgid "Select the directories to backup"
-msgstr ""
+msgstr "Výběr adresářů pro zálohování"
 
 #: PackageWindow.vala:915
 msgid "Select the packages to backup"
-msgstr ""
+msgstr "Výběr balíků pro zálohování"
 
 #: ThemeWindow.vala:589
 msgid "Select the themes to backup"
-msgstr ""
+msgstr "Výběr motivů pro zálohování"
 
 #: AptikConsole.vala:90
 msgid "Select username for listing config files"
-msgstr ""
+msgstr "Výběr uživatelského jména pro konfigurační soubory"
 
 #: UserDataSettingsDialog.vala:161
 msgid "Select users"
-msgstr ""
+msgstr "Výběr uživatelů"
 
 #: PpaWindow.vala:490
 msgid "Selected PPAs are already enabled on this system"
-msgstr ""
+msgstr "Vybrané PPA jsou již na tomto systému povolené"
 
 #: ConfigWindow.vala:591
 msgid "Selected directories were deleted successfully"
-msgstr ""
+msgstr "Vybrané adresáře byly úspěšně smazány"
 
 #: ConfigWindow.vala:560
 msgid "Selected directories will be deleted."
-msgstr ""
+msgstr "Vybrané adresáře budou smazány."
 
 #: ConfigWindow.vala:483
 msgid "Selected directories will be replaced with files from backup."
-msgstr ""
+msgstr "Vybrané adresáře budou nahrazeny soubory ze zálohy."
 
 #: AptikConsole.vala:661
 msgid "Selected packages are already installed"
-msgstr ""
+msgstr "Vybrané balíky jsou již nainstalovány"
 
 #: ThemeWindow.vala:718
 msgid "Selected themes are already installed"
-msgstr ""
+msgstr "Vybrané motivy jsou již nainstalovány"
 
 #: Main.vala:204
 #, c-format
 msgid "Selected user: %s, %s"
-msgstr ""
+msgstr "Vybraný uživatel: %s, %s"
 
 #: DonationWindow.vala:81
 msgid "Send Email"
-msgstr ""
+msgstr "Odeslat email"
 
 #: Utility.vala:1875
 #, c-format
 msgid "Set owner: %s, dir: %s"
-msgstr ""
+msgstr "Nastavit vlastníka: %s, dir: %s"
 
 #: MainWindow.vala:736
 msgid "Settings for One-Click Backup & Restore"
-msgstr ""
+msgstr "Nastavení pro One-Click zálohování & obnovení"
 
 #: PasswordWindow.vala:108 PasswordWindow.vala:195
 msgid "Show"
-msgstr ""
+msgstr "Zobrazit"
 
 #: AptikConsole.vala:94 AptikGtk.vala:121
 msgid "Show all options"
-msgstr ""
+msgstr "Zobrazit všechny volby"
 
 #: AptikConsole.vala:92
 msgid "Show package description if available"
-msgstr ""
+msgstr "Zobrazit popis balíku pokud je dostupný"
 
 #: PackageWindow.vala:571
 msgid "Showing all available packages"
-msgstr ""
+msgstr "Zobrazení všech dostupných balíčků"
 
 #: PackageWindow.vala:574
 msgid "Showing all installed packages"
-msgstr ""
+msgstr "Zobrazení všech nainstalovaných balíčků"
 
 #: PackageWindow.vala:580
 msgid "Showing extra packages that were installed by you"
-msgstr ""
+msgstr "Zobrazení dalších balíčků, které byly nainstalovány uživatelem"
 
 #: PackageWindow.vala:598
 msgid "Showing packages from the backup list"
-msgstr ""
+msgstr "Zobrazení balíčků ze seznamu zálohování"
 
 #: PackageWindow.vala:589
-msgid "Showing packages that are not installed but available for installation"
+msgid ""
+"Showing packages that are not installed but available for installation"
 msgstr ""
+"Zobrazení balíčků, které nejsou instalovány, ale jsou k dispozici pro "
+"instalaci"
 
 #: PackageWindow.vala:583
 msgid ""
 "Showing packages that were automatically installed (required by other "
 "packages)"
 msgstr ""
+"Zobrazení balíčků, které byly automaticky nainstalovány (vyžadováno jinými "
+"balíčky)"
 
 #: PackageWindow.vala:586
 msgid "Showing packages that were installed from DEB files"
-msgstr ""
+msgstr "Zobrazení balíčků, které byly nainstalovány ze souborů DEB"
 
 #: PackageWindow.vala:577
 msgid "Showing packages that were installed with the Linux OS"
-msgstr ""
+msgstr "Zobrazení balíčků, které byly nainstalovány s OS Linux"
 
 #: PackageWindow.vala:592
 msgid "Showing selected packages"
-msgstr ""
+msgstr "Zobrazení vybraných balíčků"
 
 #: PackageWindow.vala:595
 msgid "Showing unselected packages"
-msgstr ""
+msgstr "Zobrazení nevybraných balíčků"
 
 #: ConfigWindow.vala:259 DownloadWindow.vala:198
 msgid "Size"
-msgstr ""
+msgstr "Velikost"
 
 #: AptikConsole.vala:127
 msgid "Skip config dirs larger than specified size"
-msgstr ""
+msgstr "Přeskočit konfigurační adresáře větší než zadaná velikost"
 
 #: Main.vala:3336
 msgid "Software Sources (PPA)"
-msgstr ""
+msgstr "Zdroje softwaru (PPA)"
 
 #: AptikConsole.vala:91
 msgid "Specify password for encrypting and decrypting backups"
-msgstr ""
+msgstr "Zadejte heslo k zašifrování a dešifrování zálohy"
 
 #: Main.vala:1954
 msgid "Startup Applications"
-msgstr ""
+msgstr "Aplikace po spuštění"
 
 #: DownloadWindow.vala:179
 msgid "Status"
-msgstr ""
+msgstr "Stav"
 
 #: Utility.vala:1093
 msgid "Stopped"
-msgstr ""
+msgstr "Zastaveno"
 
 #: AptikConsole.vala:83 AptikGtk.vala:116
 msgid "Syntax"
-msgstr ""
+msgstr "Syntaxe"
 
 #: UserAccountWindow.vala:279 UserAccountWindow.vala:284
 msgid "System"
-msgstr ""
+msgstr "Systém"
 
 #: ThemeWindow.vala:400
 msgid "System Path"
-msgstr ""
+msgstr "Systémová cesta"
 
 #: PackageWindow.vala:856
 msgid "The list of default packages is missing on this system"
-msgstr ""
+msgstr "Seznam výchozích balíků pro tento systém chybí"
 
 #: ThemeWindow.vala:374
 msgid "Theme"
-msgstr ""
+msgstr "Motiv"
 
 #: ThemeWindow.vala:245
 msgid "Theme Type"
-msgstr ""
+msgstr "Typ motivu"
 
 #: Main.vala:3340
 msgid "Themes and Icons"
-msgstr ""
+msgstr "Motivy a ikony"
 
 #: PackageWindow.vala:1036
 msgid "There are no packages selected for installation"
-msgstr ""
+msgstr "Nejsou vybrány žádné balíky pro instalaci"
 
 #: PackageWindow.vala:1012
 msgid "There are no packages selected for installation2"
-msgstr ""
+msgstr "Neexistují žádné balíčky vybrané pro instalaci2"
 
-#: AboutWindow.vala:340
+#: AboutWindow.vala:322
 #, c-format
 msgid "Third Party Tools"
-msgstr ""
+msgstr "Nástroje třetích stran"
 
 #: PackageWindow.vala:679
 msgid "This package is part of the Linux distribution"
-msgstr ""
+msgstr "Tento balíček je součástí distribuce Linuxu"
 
 #: PackageWindow.vala:687
 msgid "This package was installed as a dependency for other packages"
-msgstr ""
+msgstr "Tento balíček byl instalován jako závislost pro ostatní balíčky"
 
 #: PackageWindow.vala:683
 msgid "This package was installed by user"
-msgstr ""
+msgstr "Tento balíček byl instalován uživatelem"
 
 #: PackageWindow.vala:675
 msgid "This package was installed from a DEB file"
-msgstr ""
+msgstr "Tento balíček byl instalován z DEB souboru"
 
-#: AboutWindow.vala:356
+#: AboutWindow.vala:338
 #, c-format
 msgid "Translators"
-msgstr ""
+msgstr "Překladatelé"
 
 #: UserAccountWindow.vala:265 UserAccountWindow.vala:443
 #: UserAccountWindow.vala:456
 msgid "Type"
-msgstr ""
+msgstr "Typ"
 
 #: ThemeWindow.vala:250
 msgid "Type of theme to display"
-msgstr ""
+msgstr "Typ motivu k zobrazení"
 
 #: UserAccountWindow.vala:442
 msgid "UID"
-msgstr ""
+msgstr "UID"
 
 #: ThemeWindow.vala:296
 msgid "Unity Shell"
-msgstr ""
+msgstr "Unity Shell"
 
 #: PackageWindow.vala:894
 msgid "Unknown Source"
-msgstr ""
+msgstr "Neznámý zdroj"
 
 #: AptikConsole.vala:422 AptikGtk.vala:103
 msgid "Unknown option"
-msgstr ""
+msgstr "Neznámá volba"
 
-#: Classes.vala:676
+#: Classes.vala:643
 msgid "Update"
-msgstr ""
+msgstr "Aktualizace"
 
 #: AptikConsole.vala:593
 msgid "Updating Package Information..."
-msgstr ""
+msgstr "Aktualizace informací o balíku..."
 
 #: ConfigWindow.vala:523
 msgid "Updating file ownership..."
-msgstr ""
+msgstr "Aktualizace vlastnictví souboru"
 
 #: ConfigWindow.vala:139 ConfigWindow.vala:144 UserAccountWindow.vala:441
 #: UserDataSettingsDialog.vala:213
 msgid "User"
-msgstr ""
+msgstr "Uživatel"
 
 #: Main.vala:3319
 msgid "User added"
-msgstr ""
+msgstr "Uživatel přidán"
 
 #: Main.vala:3325
 msgid "User added to group"
-msgstr ""
+msgstr "Uživatel přidán do skupiny"
 
 #: ThemeWindow.vala:166
 msgid "User:"
-msgstr ""
+msgstr "Uživatel:"
 
 #: ThemeWindow.vala:154 ThemeWindow.vala:159
 msgid "Username"
-msgstr ""
+msgstr "Uživatelské jméno"
 
 #: UserAccountWindow.vala:132 UserAccountWindow.vala:457
 #: UserDataSettingsDialog.vala:93
 msgid "Users"
-msgstr ""
+msgstr "Uživatelé"
 
 #: Main.vala:3341
 msgid "Users and Groups"
-msgstr ""
+msgstr "Uživatelé a skupiny"
 
 #: UserAccountWindow.vala:499
 msgid "Users and Groups are already up-to-date"
-msgstr ""
+msgstr "Uživatelé a skupiny jsou již aktuální"
 
 #: DonationWindow.vala:88
 msgid "Visit Website"
-msgstr ""
+msgstr "Navštívit webovou stránku"
 
 #: Utility.vala:101
 msgid "W"
-msgstr ""
+msgstr "W"
 
 #: ConfigWindow.vala:482 ConfigWindow.vala:559
 msgid "Warning"
-msgstr ""
+msgstr "Varování"
 
 #: ThemeWindow.vala:308
 msgid "XFCE Notification"
-msgstr ""
+msgstr "XFCE notifikace"
 
 #: ThemeWindow.vala:305
 msgid "XFCE Window Border"
-msgstr ""
+msgstr "XFCE dekorace oken"
 
 #: OneClickSettingsDialog.vala:137
 msgid ""
@@ -1686,27 +1757,33 @@ msgid ""
 "a limit will skip the backup for these applications. Keep the limit as 0 to "
 "backup the settings for all apps."
 msgstr ""
+"[Zálohování nastavení aplikace]\n"
+"\n"
+"Některé aplikace, jako je Steam a Wine ukládají velké množství dat do jejich "
+"konfiguračních adresářů (~/.local/share/Steam a ~/.wine). Nastavení limitu "
+"přeskočí zálohování pro tyto aplikace. Udržujte limit 0 pro zálohování "
+"nastavení všech aplikací."
 
 #: PackageManagerWindow.vala:314 PackageManagerWindow.vala:945
 msgid "available"
-msgstr ""
+msgstr "dostupné"
 
 #: CronTab.vala:166
 msgid "crontab file exported"
-msgstr ""
+msgstr "crontab soubor exportován"
 
 #: CronTab.vala:149
 msgid "crontab file installed"
-msgstr ""
+msgstr "crontab soubor nainstalován"
 
 #: PackageManagerWindow.vala:315 PackageManagerWindow.vala:946
 msgid "installed"
-msgstr ""
+msgstr "nainstalované"
 
 #: PackageManagerWindow.vala:944
 msgid "packages listed"
-msgstr ""
+msgstr "balíčky v seznamu"
 
 #: ConfigWindow.vala:175 ThemeWindow.vala:223
 msgid "root"
-msgstr ""
+msgstr "root"

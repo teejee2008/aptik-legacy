@@ -1,13 +1,15 @@
+
+aptik (16.4.4) xenial; urgency=medium
+
+  * Merged changes from lp:~shemgp/apt-toolkit/apt-toolkit
+
+  * Added Czech translation by Radek Otáhal
+
+ -- Tony George <tony.george.kol@gmail.com>  Wed, 04 May 2016 10:00:00 +0530
+
 aptik (16.4.3ubuntu1) xenial; urgency=medium
 
   * Add proxy support taken from 'apt-config dump'
 
  -- Shem Pasamba <shemgp@gmail.com>  Tue, 03 May 2016 20:39:45 +0800
 
-aptik (16.4.3) trusty; urgency=medium
-
-  * Fixed: Themes and icons were incorrectly restored to a nested
-  folder like /usr/share/themes/<name>/<name>. Aptik will now
-  automatically check and fix nested folders after extracting files.
-
- -- Tony George <tony.george.kol@gmail.com>  Sat, 23 Apr 2016 10:00:00 +0530

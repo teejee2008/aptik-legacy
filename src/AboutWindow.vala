@@ -67,6 +67,16 @@ public class AboutWindow : Dialog {
 		}
 	}
 
+	private string[] _contributors;
+	public string[] contributors{
+		get{
+			return _contributors;
+		}
+		set{
+			_contributors = value;
+		}
+	}
+	
 	private string _comments = "";
 	public string comments{
 		get{
@@ -313,6 +323,14 @@ public class AboutWindow : Dialog {
 		if (authors.length > 0){
 			add_line("<b>%s</b>\n".printf(_("Authors")));
 			foreach(string name in authors){
+				add_line("%s\n".printf(name));
+			}
+			add_line("\n");
+		}
+
+		if (contributors.length > 0){
+			add_line("<b>%s</b>\n".printf(_("Contributions")));
+			foreach(string name in contributors){
 				add_line("%s\n".printf(name));
 			}
 			add_line("\n");

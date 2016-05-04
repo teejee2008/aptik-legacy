@@ -37,10 +37,11 @@ install:
 	mkdir -p "$(DESTDIR)$(polkitdir)"
 	mkdir -p "$(DESTDIR)$(sharedir)/${app_name}"
 	mkdir -p "$(DESTDIR)$(sharedir)/pixmaps"
-	mkdir -p "$(DESTDIR)$(localedir)/it_IT/LC_MESSAGES"
-	mkdir -p "$(DESTDIR)$(localedir)/ru_RU/LC_MESSAGES"
-	mkdir -p "$(DESTDIR)$(localedir)/ko_KO/LC_MESSAGES"
-	mkdir -p "$(DESTDIR)$(localedir)/pt_BR/LC_MESSAGES"
+	mkdir -p "$(DESTDIR)$(localedir)/it/LC_MESSAGES"
+	mkdir -p "$(DESTDIR)$(localedir)/ru/LC_MESSAGES"
+	mkdir -p "$(DESTDIR)$(localedir)/ko/LC_MESSAGES"
+	mkdir -p "$(DESTDIR)$(localedir)/pt/LC_MESSAGES"
+	mkdir -p "$(DESTDIR)$(localedir)/cs/LC_MESSAGES"
 
 	#binary
 	install -m 0755 ${app_name} "$(DESTDIR)$(bindir)"
@@ -62,10 +63,11 @@ install:
 	install -m 0755 ./share/pixmaps/${app_name}.svg "$(DESTDIR)$(sharedir)/pixmaps/"
 
 	#translations
-	msgfmt --check --verbose -o "$(DESTDIR)$(localedir)/it_IT/LC_MESSAGES/${app_name}.mo" ../po/${app_name}-it.po
-	msgfmt --check --verbose -o "$(DESTDIR)$(localedir)/pt_BR/LC_MESSAGES/${app_name}.mo" ../po/${app_name}-pt.po
-	msgfmt --check --verbose -o "$(DESTDIR)$(localedir)/ko_KO/LC_MESSAGES/${app_name}.mo" ../po/${app_name}-ko.po
-	msgfmt --check --verbose -o "$(DESTDIR)$(localedir)/ru_RU/LC_MESSAGES/${app_name}.mo" ../po/${app_name}-ru.po
+	msgfmt --check --verbose -o "$(DESTDIR)$(localedir)/it/LC_MESSAGES/${app_name}.mo" ../po/${app_name}-it.po
+	msgfmt --check --verbose -o "$(DESTDIR)$(localedir)/pt/LC_MESSAGES/${app_name}.mo" ../po/${app_name}-pt.po
+	msgfmt --check --verbose -o "$(DESTDIR)$(localedir)/ko/LC_MESSAGES/${app_name}.mo" ../po/${app_name}-ko.po
+	msgfmt --check --verbose -o "$(DESTDIR)$(localedir)/ru/LC_MESSAGES/${app_name}.mo" ../po/${app_name}-ru.po
+	msgfmt --check --verbose -o "$(DESTDIR)$(localedir)/cs/LC_MESSAGES/${app_name}.mo" ../po/${app_name}-cs.po
 
 uninstall:
 
