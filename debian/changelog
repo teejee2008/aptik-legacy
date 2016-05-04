@@ -1,5 +1,5 @@
 
-aptik (16.4.4) xenial; urgency=medium
+aptik (16.5.0) xenial; urgency=medium
 
   * Merged changes from lp:~shemgp/apt-toolkit/apt-toolkit
 
