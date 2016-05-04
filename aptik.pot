@@ -1,6 +1,6 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Tony George (teejee2008@gmail.com)
-# This file is distributed under the same license as the PACKAGE package.
+# This file is distributed under the same license as the aptik package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2016-04-23 16:48+0530\n"
+"POT-Creation-Date: 2016-05-04 22:15+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -107,7 +107,7 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: Classes.vala:641
+#: Classes.vala:674
 msgid "Add"
 msgstr ""
 
@@ -992,7 +992,7 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: Classes.vala:639 Classes.vala:645
+#: Classes.vala:672 Classes.vala:678
 msgid "No Change"
 msgstr ""
 
@@ -1120,8 +1120,7 @@ msgstr ""
 msgid "PPA is Not Added"
 msgstr ""
 
-#: DownloadWindow.vala:218 PackageManagerWindow.vala:381
-#: PackageWindow.vala:295
+#: DownloadWindow.vala:218 PackageManagerWindow.vala:381 PackageWindow.vala:295
 msgid "Package"
 msgstr ""
 
@@ -1606,7 +1605,7 @@ msgstr ""
 msgid "Unknown option"
 msgstr ""
 
-#: Classes.vala:643
+#: Classes.vala:676
 msgid "Update"
 msgstr ""
 

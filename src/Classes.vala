@@ -50,12 +50,12 @@ public class Package : GLib.Object {
 	public string version_installed = "";
 	public string version_available = "";
 	public string depends = "";
-	
+
 	public string deb_file_name = "";
 	public string deb_uri = "";
 	public int64 deb_size = 0;
 	public string deb_md5hash = "";
-	
+
 	public bool is_selected = false;
 	public bool is_available = false;
 	public bool is_installed = false;
@@ -67,7 +67,7 @@ public class Package : GLib.Object {
 	//convenience members
 	public bool is_visible = false;
 	public bool in_backup_list = false;
-	
+
 	public Package(string _name){
 		name = _name;
 	}
@@ -89,7 +89,7 @@ public class Package : GLib.Object {
 		}
 		return str;
 	}
-	
+
 	public static bool check_if_foreign(string architecture){
 		if ((architecture.length > 0) && (architecture != App.NATIVE_ARCH) && (architecture != "all") && (architecture != "any")){
 			return true;
@@ -104,7 +104,7 @@ public class Package : GLib.Object {
 public class Repository : GLib.Object{
 	public string name = "";
 	public string description = "";
-	
+
 	public bool is_selected = false;
 	public bool is_installed = false;
 
@@ -113,7 +113,7 @@ public class Repository : GLib.Object{
 	public string dist = "";
 	public string sections = "";
 	public string comments = "";
-	
+
 	public enum Type{
 		BINARY,
 		SOURCE
@@ -128,7 +128,7 @@ public class Ppa : GLib.Object{
 	public bool is_installed = false;
 
 	public string message = "";
-	
+
 	public Ppa(string _name){
 		name = _name;
 	}
@@ -252,7 +252,7 @@ public class AppConfig : GLib.Object{
 	public bool is_selected = false;
 	public string size = "";
 	public uint64 bytes = 0;
-	
+
 	public AppConfig(string dir_name){
 		name = dir_name;
 	}
@@ -285,7 +285,7 @@ public class DownloadManager : GLib.Object{
 
 	public Gee.ArrayList<string> stdout_lines;
 	public Gee.ArrayList<string> stderr_lines;
-	
+
 	public Pid proc_id;
 	public DataInputStream dis_out;
 	public DataInputStream dis_err;
@@ -293,7 +293,7 @@ public class DownloadManager : GLib.Object{
 	public int64 progress_total = 0;
 	public double progress_percent = 0.0;
 	public string eta = "";
-	
+
 	//public bool is_running = false;
 	public string temp_dir = "";
 	public string command = "";
@@ -303,20 +303,22 @@ public class DownloadManager : GLib.Object{
 	private Regex regex = null;
 	private MatchInfo match;
 
+	private string http_proxy = "";
+
 	Pid child_pid;
 	int input_fd;
 	int output_fd;
 	int error_fd;
-	
+
 	public signal void download_complete ();
-	
+
 	public enum Status{
 		PENDING,
 		STARTED,
 		FINISHED,
 		ERROR
 	}
-	
+
 	public DownloadManager(string _file_name, string _download_dir, string _partial_dir, string _source_uri){
 		file_name = _file_name;
 		download_dir = _download_dir;
@@ -332,6 +334,7 @@ public class DownloadManager : GLib.Object{
 		catch (Error e) {
 			log_error (e.message);
 		}
+		http_proxy = get_apt_http_proxy();
 	}
 
 	public bool download_begin() {
@@ -342,21 +345,21 @@ public class DownloadManager : GLib.Object{
 
 		string src_path = "%s/%s".printf(partial_dir,file_name);
 		string dst_path = "%s/%s".printf(download_dir,file_name);
-		
+
 		if (file_exists(src_path)){
 			file_delete(src_path);
 		}
 		if (file_exists(dst_path)){
 			file_delete(dst_path);
 		}
-		
+
 		string[] argv = new string[1];
 		string cmd = build_command_string();
 		argv[0] = save_script(cmd);
 
 		progress_count = 0;
 		progress_total = size;
-		
+
 		try {
 			//execute script file
 			Process.spawn_async_with_pipes(
@@ -442,7 +445,7 @@ public class DownloadManager : GLib.Object{
 			}
 
 			//log_msg("exit thread");
-			
+
 			progress_count = size;
 			progress_percent = 100;
 
@@ -460,7 +463,7 @@ public class DownloadManager : GLib.Object{
 			Process.close_pid(child_pid); //required on Windows, doesn't do anything on Unix
 
 			// finish ------------------
-			
+
 			verify_and_copy();
 			download_complete(); //signal
 		}
@@ -476,23 +479,49 @@ public class DownloadManager : GLib.Object{
 		if ((out_line == null) || (out_line.length == 0)){
 			return;
 		}
-		
+
 		if (regex.match(out_line, 0, out match)) {
 			progress_count = long.parse(match.fetch(1).strip());
 			progress_percent = double.parse(match.fetch(3).strip());
 			download_rate = long.parse(match.fetch(4).strip());
 			eta = match.fetch(5).strip();
-			
+
 			status_line = "%s / %s, %s/s (%s)".printf(
 					format_file_size(progress_count),
 					format_file_size(size),
 					format_file_size(download_rate),
 					eta);
-					
+
 			//log_msg(status_line);
 		}
 	}
 
+	private string get_apt_http_proxy()
+	{
+		string http_proxy = "";
+		string ls_stdout;
+		string ls_stderr;
+		int ls_status;
+
+		try {
+			Process.spawn_command_line_sync ("apt-config dump",
+							out ls_stdout,
+							out ls_stderr,
+							out ls_status);
+			MatchInfo mi = null;
+			Regex regex = new Regex(".*acquire::http::proxy[^\"]*\"([^\"]*)\".*",
+				RegexCompileFlags.CASELESS | RegexCompileFlags.NEWLINE_ANYCRLF);
+			if (regex.match(ls_stdout, 0, out mi) && mi.get_match_count() > 0)
+			{
+				http_proxy = mi.fetch(1);
+			}
+		} catch (SpawnError e) {
+			stderr.printf ("Error: %s\n", e.message);
+		} catch (RegexError e) {
+			stderr.printf ("Error: %s\n", e.message);
+		}
+		return http_proxy;
+	}
 
 	private string build_command_string(){
 		string cmd = "";
@@ -507,6 +536,10 @@ public class DownloadManager : GLib.Object{
 			cmd += "aria2c";
 			cmd += " -d '%s'".printf(partial_dir);
 			cmd += " -o '%s'".printf(file_name);
+			if (http_proxy != "")
+			{
+				cmd += " --http-proxy=%s".printf(http_proxy);
+			}
 			cmd += " --show-console-readout=false";
 			cmd += " --summary-interval=1";
 			cmd += " --human-readable=false";
@@ -517,10 +550,10 @@ public class DownloadManager : GLib.Object{
 		//log_msg(cmd);
 
 		//cmd = "apt-get update";
-		
+
 		return cmd;
 	}
-	
+
 	private string save_script(string cmd){
 		var script = new StringBuilder();
 		script.append ("#!/bin/bash\n");
@@ -533,11 +566,11 @@ public class DownloadManager : GLib.Object{
 		script.append ("echo ${exitCode} > status\n");
 
 		temp_dir = "%s/%s%ld".printf(TEMP_DIR, timestamp2(), GLib.Random.next_int());
-		
+
 		var script_file = temp_dir + "/script.sh";
 		//log_msg("%s: %s".printf(name,script_file));
 		dir_create (temp_dir);
-		
+
 		try {
 			// create new script file
 			var file = File.new_for_path(script_file);
@@ -546,7 +579,7 @@ public class DownloadManager : GLib.Object{
 			data_stream.put_string(script.str);
 			data_stream.close();
 			data_stream = null;
-			
+
 			//set execute permission
 			chmod(script_file, "u+x");
 		}
@@ -569,7 +602,7 @@ public class DownloadManager : GLib.Object{
 
 	private void verify_and_copy() {
 		int status_code = read_status();
-		
+
 		if (status_code == 0){
 			string src_path = "%s/%s".printf(partial_dir,file_name);
 			string dst_path = "%s/%s".printf(download_dir,file_name);
@@ -577,7 +610,7 @@ public class DownloadManager : GLib.Object{
 
 			status_line = "OK";
 			status = DownloadManager.Status.FINISHED;
-			
+
 		}
 		else{
 			//leave the partial file
@@ -598,7 +631,7 @@ public class DownloadManager : GLib.Object{
 				status_line = "ERROR: Unknown";
 				break;
 			}
-			
+
 			status = DownloadManager.Status.ERROR;
 		}
 	}
@@ -617,10 +650,10 @@ public class FsTabEntry : GLib.Object{
 	public string password = "";
 
 	public bool is_selected = false;
-	
+
 	public Action action = Action.NONE;
 	public DeviceType dev_type = DeviceType.REGULAR;
-	
+
 	public enum Action{
 		ADD,
 		MODIFY,
@@ -631,7 +664,7 @@ public class FsTabEntry : GLib.Object{
 		REGULAR,
 		ENCRYPTED
 	}
-	
+
 	public string action_display {
 		owned get{
 			switch(action){
@@ -667,7 +700,7 @@ public class FsTabEntry : GLib.Object{
 			return "mount-point" + mount_point.down().replace("/","-") + ".tar";
 		}
 	}
-	
+
 	private string fstab_line{
 		owned get{
 			return "%s\t%s\t%s\t%s\t%s\t%s".printf(device,mount_point,fs_type,options,dump,pass);
@@ -683,16 +716,16 @@ public class FsTabEntry : GLib.Object{
 	public bool uses_keyfile(){
 		return (password.length > 0) && (password != "none") && !password.has_prefix("/dev/");
 	}
-	
+
 	// factory methods
-	
+
 	public static FsTabEntry create_from_fstab_line(string tab_line){
 		var s = tab_line.strip();
 
 		while (s.contains("  ")){
 			s = s.replace("  "," ");
 		}
-		
+
 		while (s.contains(" \t")){
 			s = s.replace(" \t"," ");
 		}
@@ -702,7 +735,7 @@ public class FsTabEntry : GLib.Object{
 		}
 
 		s = s.replace(" ","\t");
-		
+
 		FsTabEntry fs = null;
 
 		string[] arr = s.split("\t");
@@ -726,7 +759,7 @@ public class FsTabEntry : GLib.Object{
 		while (s.contains("  ")){
 			s = s.replace("  "," ");
 		}
-		
+
 		while (s.contains(" \t")){
 			s = s.replace(" \t"," ");
 		}
@@ -736,7 +769,7 @@ public class FsTabEntry : GLib.Object{
 		}
 
 		s = s.replace(" ","\t");
-		
+
 		FsTabEntry fs = null;
 
 		string[] arr = s.split("\t");
@@ -753,10 +786,10 @@ public class FsTabEntry : GLib.Object{
 	}
 
 	// read file
-	
+
 	public static Gee.ArrayList<FsTabEntry> read_fstab_file(string tab_file, string password){
 		var list = new Gee.ArrayList<FsTabEntry>();
-		
+
 		if (!file_exists(tab_file)){
 			return list;
 		}
@@ -768,7 +801,7 @@ public class FsTabEntry : GLib.Object{
 		else{
 			txt = file_read(tab_file);
 		}
-		
+
 		foreach(string line in txt.split("\n")){
 			if (line.strip().has_prefix("#")){
 				continue;
@@ -778,13 +811,13 @@ public class FsTabEntry : GLib.Object{
 				list.add(fs);
 			}
 		}
-		
+
 		return list;
 	}
 
 	public static Gee.ArrayList<FsTabEntry> read_crypttab_file(string tab_file, string password){
 		var list = new Gee.ArrayList<FsTabEntry>();
-		
+
 		if (!file_exists(tab_file)){
 			return list;
 		}
@@ -796,7 +829,7 @@ public class FsTabEntry : GLib.Object{
 		else{
 			txt = file_read(tab_file);
 		}
-		
+
 		foreach(string line in txt.split("\n")){
 			if (line.strip().has_prefix("#")){
 				continue;
@@ -806,22 +839,22 @@ public class FsTabEntry : GLib.Object{
 				list.add(fs);
 			}
 		}
-		
+
 		return list;
 	}
 
 	// save file
-	
+
 	public static bool save_fstab_file(Gee.ArrayList<FsTabEntry> list){
 		string txt = "";
-		
+
 		if (file_exists("/etc/fstab")){
 			txt += file_read("/etc/fstab").strip() + "\n";
 		}
 		else{
 			txt += "# <file system> <mount point> <type> <options> <dump> <pass>\n";
 		}
-		
+
 		bool found_root = false;
 		foreach(var fs in list){
 			if (fs.is_selected && (fs.action == Action.ADD)){
@@ -842,14 +875,14 @@ public class FsTabEntry : GLib.Object{
 
 	public static bool save_crypttab_file(Gee.ArrayList<FsTabEntry> list){
 		string txt = "";
-		
+
 		if (file_exists("/etc/crypttab")){
 			txt += file_read("/etc/crypttab").strip() + "\n";
 		}
 		else{
 			txt += "# <target name> <source device> <key file> <options>\n";
 		}
-		
+
 		foreach(var fs in list){
 			if (fs.is_selected && (fs.action == Action.ADD)){
 				txt += "%s\n".printf(fs.get_line());
@@ -859,5 +892,5 @@ public class FsTabEntry : GLib.Object{
 		bool ok = file_write("/etc/crypttab",txt);
 		return ok;
 	}
-	
+
 }
