@@ -1,3 +1,9 @@
+aptik (16.4.3ubuntu1) xenial; urgency=medium
+
+  * Add proxy support taken from 'apt-config dump'
+
+ -- Shem Pasamba <shemgp@gmail.com>  Tue, 03 May 2016 20:39:45 +0800
+
 aptik (16.4.3) trusty; urgency=medium
 
   * Fixed: Themes and icons were incorrectly restored to a nested
