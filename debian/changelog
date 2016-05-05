@@ -1,10 +1,14 @@
-aptik (16.5.0) xenial; urgency=medium
+aptik (16.5.1) xenial; urgency=medium
 
   * Merged changes from lp:~shemgp/apt-toolkit/apt-toolkit
 
   * Added Czech translation by Radek Otáhal
 
- -- Tony George <tony.george.kol@gmail.com>  Wed, 04 May 2016 10:00:00 +0530
+  * Fixed build errors on trusty by reverting to valac-0.26; Newer
+  versions of valac requires GTK+ 3.16 and higher. Trusty is still
+  on GTK+ 3.14. 
+
+ -- Tony George <tony.george.kol@gmail.com>  Thu, 05 May 2016 10:00:00 +0530
 
 aptik (16.4.3ubuntu1) xenial; urgency=medium
 
