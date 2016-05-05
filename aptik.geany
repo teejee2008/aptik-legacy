@@ -17,12 +17,12 @@ long_line_behaviour=1
 long_line_column=80
 
 [files]
-current_page=27
+current_page=21
 FILE_NAME_0=11501;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FUtility.vala;0;4
 FILE_NAME_1=18138;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMain.vala;0;4
 FILE_NAME_2=2559;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FPpaWindow.vala;0;4
-FILE_NAME_3=16427;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMainWindow.vala;0;4
-FILE_NAME_4=1553;Make;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2Fmakefile;0;4
+FILE_NAME_3=22721;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMainWindow.vala;0;4
+FILE_NAME_4=225;Make;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2Fmakefile;0;4
 FILE_NAME_5=31538;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FPackageWindow.vala;0;4
 FILE_NAME_6=18775;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FClasses.vala;0;4
 FILE_NAME_7=2857;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FThemeWindow.vala;0;4
@@ -37,15 +37,17 @@ FILE_NAME_15=2585;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Fapti
 FILE_NAME_16=2893;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FMountWindow.vala;0;4
 FILE_NAME_17=3020;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FOneClickSettingsDialog.vala;0;4
 FILE_NAME_18=16874;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Fselene%2Fsrc%2FEncoderConfigWindow.vala;0;4
-FILE_NAME_19=301;None;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fdebian%2Fchangelog;0;4
+FILE_NAME_19=145;None;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fdebian%2Fchangelog;0;4
 FILE_NAME_20=468;Conf;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fdebian%2Fcontrol;0;4
-FILE_NAME_21=2011;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FFileItem.vala;0;4
+FILE_NAME_21=1883;Vala;0;EUTF-8;1;1;1;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FFileItem.vala;0;4
 FILE_NAME_22=1872;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FUserDataSettingsDialog.vala;0;4
 FILE_NAME_23=1751;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FDownloadWindow.vala;0;4
 FILE_NAME_24=4730;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FTheme.vala;0;4
 FILE_NAME_25=1204;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FAptikGtk.vala;0;4
 FILE_NAME_26=559;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FCronTab.vala;0;4
 FILE_NAME_27=996;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Fukuu%2Fsrc%2FCommon%2FUtility.vala;0;4
+FILE_NAME_28=8669;Vala;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Faptik%2Fsrc%2FAboutWindow.vala;0;4
+FILE_NAME_29=2624;Make;0;EUTF-8;1;1;0;%2Fhome%2Fteejee%2Fprojects%2Flinux%2Fselene%2Fsrc%2Fmakefile;0;4
 
 [VTE]
 last_dir=/home/teejee
