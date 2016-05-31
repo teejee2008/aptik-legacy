@@ -2225,7 +2225,7 @@ public class Main : GLib.Object {
 		foreach(var fs in list){
 			if (fs.uses_keyfile() && file_exists(fs.password)){
 				string src_file = fs.password;
-				string dst_file = "%s/%s.tar.gpg".printf(mounts_dir, fs.keyfile_archive_name);
+				string dst_file = "%s/%s".printf(mounts_dir, fs.keyfile_archive_name);
 				
 				ok = file_tar_encrypt(src_file, dst_file, arg_password);
 

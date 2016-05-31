@@ -1,6 +1,6 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Tony George (teejee2008@gmail.com)
-# This file is distributed under the same license as the PACKAGE package.
+# This file is distributed under the same license as the aptik package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2016-05-04 22:49+0530\n"
+"POT-Creation-Date: 2016-05-31 21:19+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -122,6 +122,10 @@ msgstr ""
 
 #: AptikConsole.vala:582
 msgid "Adding PPA"
+msgstr ""
+
+#: AdminWindow.vala:62
+msgid "Admin"
 msgstr ""
 
 #: AptikGtk.vala:60
@@ -1086,7 +1090,7 @@ msgstr ""
 msgid "One-Click Restore"
 msgstr ""
 
-#: OneClickSettingsDialog.vala:54
+#: AdminWindow.vala:56 OneClickSettingsDialog.vala:54
 msgid "One-Click Settings"
 msgstr ""
 
@@ -1125,8 +1129,7 @@ msgstr ""
 msgid "PPA is Not Added"
 msgstr ""
 
-#: DownloadWindow.vala:218 PackageManagerWindow.vala:381
-#: PackageWindow.vala:295
+#: DownloadWindow.vala:218 PackageManagerWindow.vala:381 PackageWindow.vala:295
 msgid "Package"
 msgstr ""
 
