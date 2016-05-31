@@ -615,7 +615,7 @@ public class Theme : GLib.Object{
 			}
 
 			string cmd = "tar czvf '%s' -C '%s' '%s'".printf(zip_file, base_path, name);
-			status_line = theme_dir_path;
+			//status_line = theme_dir_path;
 
 			if (gui_mode) {
 				run_gzip(cmd);
@@ -655,7 +655,7 @@ public class Theme : GLib.Object{
 		dir_create(theme_dir_path);
 
 		string cmd = "tar xzvf '%s' --directory='%s'".printf(archive_path, file_parent(theme_dir_path));
-		status_line = archive_path;
+		//status_line = archive_path;
 		
 		if (gui_mode) {
 			log_msg("Extract: %s, Dest: %s".printf(archive_path, file_parent(theme_dir_path)));
