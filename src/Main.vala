@@ -1075,7 +1075,7 @@ public class Main : GLib.Object {
 			regex_pkg = new Regex("""^([^ \t]*):$""");
 			regex_installed_version = new Regex("""^[ \t]*[*]*[ \t]*([^ \t]*)[ \t]*[0-9]*""");
 			regex_source = new Regex("""[ \t]*[0-9]+[ \t]*([^ \t]*ubuntu.com[^ \t])[ \t]*([^ \t]*)[ \t]*([^ \t]*)""");
-			regex_launchpad = new Regex("""[ \t]*[0-9]+[ \t]*([https:/]+ppa.launchpad.net/([^ \t]*)/ubuntu/)[ \t]*([^ \t]*)[ \t]*([^ \t]*)""");
+			regex_launchpad = new Regex("""[ \t]*[0-9]+[ \t]*(http[s]*:\/\/ppa.launchpad.net\/([^ \t]*)\/ubuntu[\/]*)[ \t]*([^ \t]*)[ \t]*([^ \t]*)[ \t]*[^ \t]*""");
 		}
 		catch (Error e) {
 			log_error (e.message);
