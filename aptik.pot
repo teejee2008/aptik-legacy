@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2016-05-31 23:02+0530\n"
+"POT-Creation-Date: 2016-07-01 22:56+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -190,7 +190,7 @@ msgstr ""
 msgid "Archiving..."
 msgstr ""
 
-#: AboutWindow.vala:348
+#: AboutWindow.vala:349
 #, c-format
 msgid "Artists"
 msgstr ""
@@ -199,7 +199,7 @@ msgstr ""
 msgid "Assume Yes for all prompts"
 msgstr ""
 
-#: AboutWindow.vala:324
+#: AboutWindow.vala:325
 #, c-format
 msgid "Authors"
 msgstr ""
@@ -209,7 +209,7 @@ msgstr ""
 msgid "Available"
 msgstr ""
 
-#: AboutWindow.vala:295
+#: AboutWindow.vala:296
 msgid "Back"
 msgstr ""
 
@@ -390,7 +390,7 @@ msgstr ""
 msgid "Cinnamon Shell"
 msgstr ""
 
-#: AboutWindow.vala:305 ConfigWindow.vala:355 MountWindow.vala:368
+#: AboutWindow.vala:306 ConfigWindow.vala:355 MountWindow.vala:368
 #: PackageWindow.vala:419 PpaWindow.vala:278 TerminalWindow.vala:175
 #: ThemeWindow.vala:539 UserAccountWindow.vala:333
 msgid "Close"
@@ -408,7 +408,7 @@ msgstr ""
 msgid "Confirm Passphrase"
 msgstr ""
 
-#: AboutWindow.vala:332
+#: AboutWindow.vala:333
 #, c-format
 msgid "Contributions"
 msgstr ""
@@ -422,7 +422,7 @@ msgstr ""
 msgid "Create Password"
 msgstr ""
 
-#: AboutWindow.vala:282 AboutWindow.vala:299
+#: AboutWindow.vala:283 AboutWindow.vala:300
 msgid "Credits"
 msgstr ""
 
@@ -495,7 +495,7 @@ msgstr ""
 msgid "Directory missing"
 msgstr ""
 
-#: AboutWindow.vala:364
+#: AboutWindow.vala:365
 #, c-format
 msgid "Documenters"
 msgstr ""
@@ -512,7 +512,7 @@ msgstr ""
 msgid "Donate with PayPal"
 msgstr ""
 
-#: AboutWindow.vala:372
+#: AboutWindow.vala:373
 #, c-format
 msgid "Donations"
 msgstr ""
@@ -1563,7 +1563,7 @@ msgstr ""
 msgid "There are no packages selected for installation2"
 msgstr ""
 
-#: AboutWindow.vala:340
+#: AboutWindow.vala:341
 #, c-format
 msgid "Third Party Tools"
 msgstr ""
@@ -1584,7 +1584,7 @@ msgstr ""
 msgid "This package was installed from a DEB file"
 msgstr ""
 
-#: AboutWindow.vala:356
+#: AboutWindow.vala:357
 #, c-format
 msgid "Translators"
 msgstr ""
