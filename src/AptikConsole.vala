@@ -59,7 +59,7 @@ public class AptikConsole : GLib.Object {
 			exit(0);
 		}
 
-		init_tmp();
+		init_tmp(AppShortName);
 
 		App = new Main(args, false);
 		

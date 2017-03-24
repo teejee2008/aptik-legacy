@@ -664,7 +664,7 @@ public class ThemeWindow : Window {
 		App.progress_count = 0;
 		foreach(string subdir in new string[] { "icons","themes" }){
 			string base_dir = "%s%s".printf(App.backup_dir.has_suffix("/") ? App.backup_dir : App.backup_dir + "/", subdir);
-			App.progress_total += get_file_count(base_dir);
+			App.progress_total += dir_count(base_dir);
 		}
 
 		try {

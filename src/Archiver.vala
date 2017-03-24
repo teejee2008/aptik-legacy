@@ -239,7 +239,7 @@ public class Archiver : GLib.Object {
 			dos_log = null;
 			
 			if (task.action == ArchiveAction.LIST){
-				task.archive_size = get_file_size_bytes(task.archive_path);
+				task.archive_size = file_get_size(task.archive_path);
 				task.compression_ratio = (task.archive_size * 100.00) / task.base_archive.size;
 			}
 			

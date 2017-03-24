@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2016-07-01 22:56+0530\n"
+"POT-Creation-Date: 2016-07-23 18:30+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -190,7 +190,7 @@ msgstr ""
 msgid "Archiving..."
 msgstr ""
 
-#: AboutWindow.vala:349
+#: AboutWindow.vala:348
 #, c-format
 msgid "Artists"
 msgstr ""
@@ -199,7 +199,7 @@ msgstr ""
 msgid "Assume Yes for all prompts"
 msgstr ""
 
-#: AboutWindow.vala:325
+#: AboutWindow.vala:324
 #, c-format
 msgid "Authors"
 msgstr ""
@@ -209,7 +209,7 @@ msgstr ""
 msgid "Available"
 msgstr ""
 
-#: AboutWindow.vala:296
+#: AboutWindow.vala:295
 msgid "Back"
 msgstr ""
 
@@ -390,7 +390,7 @@ msgstr ""
 msgid "Cinnamon Shell"
 msgstr ""
 
-#: AboutWindow.vala:306 ConfigWindow.vala:355 MountWindow.vala:368
+#: AboutWindow.vala:305 ConfigWindow.vala:355 MountWindow.vala:368
 #: PackageWindow.vala:419 PpaWindow.vala:278 TerminalWindow.vala:175
 #: ThemeWindow.vala:539 UserAccountWindow.vala:333
 msgid "Close"
@@ -408,7 +408,7 @@ msgstr ""
 msgid "Confirm Passphrase"
 msgstr ""
 
-#: AboutWindow.vala:333
+#: AboutWindow.vala:332
 #, c-format
 msgid "Contributions"
 msgstr ""
@@ -422,7 +422,7 @@ msgstr ""
 msgid "Create Password"
 msgstr ""
 
-#: AboutWindow.vala:283 AboutWindow.vala:300
+#: AboutWindow.vala:282 AboutWindow.vala:299
 msgid "Credits"
 msgstr ""
 
@@ -479,7 +479,7 @@ msgid ""
 "(teejeetech@gmail.com)"
 msgstr ""
 
-#: Utility.vala:358
+#: Utility.vala:491
 msgid "Dir not found"
 msgstr ""
 
@@ -495,7 +495,7 @@ msgstr ""
 msgid "Directory missing"
 msgstr ""
 
-#: AboutWindow.vala:365
+#: AboutWindow.vala:364
 #, c-format
 msgid "Documenters"
 msgstr ""
@@ -512,7 +512,7 @@ msgstr ""
 msgid "Donate with PayPal"
 msgstr ""
 
-#: AboutWindow.vala:373
+#: AboutWindow.vala:372
 #, c-format
 msgid "Donations"
 msgstr ""
@@ -610,11 +610,11 @@ msgstr ""
 msgid "Failed to change file ownership"
 msgstr ""
 
-#: Utility.vala:269
+#: Utility.vala:316
 msgid "Failed to copy file"
 msgstr ""
 
-#: Utility.vala:329
+#: Utility.vala:395
 msgid "Failed to create dir"
 msgstr ""
 
@@ -626,7 +626,7 @@ msgstr ""
 msgid "Failed to decrypt file"
 msgstr ""
 
-#: Main.vala:3311 Utility.vala:208
+#: Main.vala:3311 Utility.vala:225 Utility.vala:254
 msgid "Failed to delete file"
 msgstr ""
 
@@ -638,7 +638,7 @@ msgstr ""
 msgid "Failed to install crontab file"
 msgstr ""
 
-#: Utility.vala:289
+#: Utility.vala:335
 msgid "Failed to move file"
 msgstr ""
 
@@ -646,7 +646,7 @@ msgstr ""
 msgid "Failed to read cron tab"
 msgstr ""
 
-#: Main.vala:3305 Utility.vala:226
+#: Main.vala:3305 Utility.vala:273
 msgid "Failed to read file"
 msgstr ""
 
@@ -662,7 +662,7 @@ msgstr ""
 msgid "Failed to save file"
 msgstr ""
 
-#: Utility.vala:1879
+#: Utility.vala:2093
 msgid "Failed to set ownership"
 msgstr ""
 
@@ -675,7 +675,7 @@ msgstr ""
 msgid "Failed to write"
 msgstr ""
 
-#: Utility.vala:253
+#: Utility.vala:300
 msgid "Failed to write file"
 msgstr ""
 
@@ -703,12 +703,12 @@ msgstr ""
 msgid "File exists"
 msgstr ""
 
-#: Utility.vala:453 Utility.vala:490
+#: Utility.vala:644 Utility.vala:693
 msgid "File is missing"
 msgstr ""
 
 #: CronTab.vala:130 Main.vala:2005 Main.vala:3299 Theme.vala:650
-#: Utility.vala:283 Utility.vala:385
+#: Utility.vala:330 Utility.vala:520
 msgid "File not found"
 msgstr ""
 
@@ -985,7 +985,7 @@ msgstr ""
 msgid "Missing Dependencies"
 msgstr ""
 
-#: Utility.vala:1402
+#: Utility.vala:1616
 msgid "Missing Icon"
 msgstr ""
 
@@ -1436,7 +1436,7 @@ msgstr ""
 msgid "Send Email"
 msgstr ""
 
-#: Utility.vala:1875
+#: Utility.vala:2089
 #, c-format
 msgid "Set owner: %s, dir: %s"
 msgstr ""
@@ -1523,7 +1523,7 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: Utility.vala:1093
+#: Utility.vala:1307
 msgid "Stopped"
 msgstr ""
 
@@ -1563,7 +1563,7 @@ msgstr ""
 msgid "There are no packages selected for installation2"
 msgstr ""
 
-#: AboutWindow.vala:341
+#: AboutWindow.vala:340
 #, c-format
 msgid "Third Party Tools"
 msgstr ""
@@ -1584,7 +1584,7 @@ msgstr ""
 msgid "This package was installed from a DEB file"
 msgstr ""
 
-#: AboutWindow.vala:357
+#: AboutWindow.vala:356
 #, c-format
 msgid "Translators"
 msgstr ""

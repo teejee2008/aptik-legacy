@@ -903,7 +903,7 @@ public class MainWindow : Window {
 
 		if (!App.cancelled){
 			message = Message.BACKUP_OK;
-			message += " " + _("(%ld packages in backup)").printf(get_file_count(archives_dir));
+			message += " " + _("(%ld packages in backup)").printf(dir_count(archives_dir));
 			dlg.finish(message);
 		}
 		else{
@@ -953,7 +953,7 @@ public class MainWindow : Window {
 
 		if (!App.cancelled){
 			message = Message.RESTORE_OK;
-			message += " " + _("(%ld packages in cache)").printf(get_file_count("/var/cache/apt/archives") - 2); //excluding 'lock' and 'partial'
+			message += " " + _("(%ld packages in cache)").printf(dir_count("/var/cache/apt/archives") - 2); //excluding 'lock' and 'partial'
 			dlg.finish(message);
 		}
 		else{

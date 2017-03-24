@@ -109,6 +109,8 @@ public class Main : GLib.Object {
 	int input_fd;
 	int output_fd;
 	int error_fd;
+
+	// TODO: encrypt app settings backups
 		
 	public Main(string[] args, bool _gui_mode) {
 
@@ -1718,7 +1720,7 @@ public class Main : GLib.Object {
 				continue;
 			}
 			
-			progress_total += (int) get_file_count(config.path);
+			progress_total += (int) dir_count(config.path);
 		}
 	}
 	

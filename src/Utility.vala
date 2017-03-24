@@ -131,7 +131,7 @@ namespace TeeJee.Logging{
 		if (!LOG_ENABLE) { return; }
 
 		if (LOG_DEBUG){
-			log_msg (message);
+			log_msg ("D: " + message);
 		}
 
 		try {
@@ -172,7 +172,6 @@ namespace TeeJee.FileSystem{
 	/* Convenience functions for handling files and directories */
 
 	using TeeJee.Logging;
-	using TeeJee.FileSystem;
 	using TeeJee.ProcessManagement;
 	using TeeJee.Misc;
 
@@ -186,7 +185,25 @@ namespace TeeJee.FileSystem{
 		return File.new_for_path(file_path).get_basename();
 	}
 
+	public string path_combine(string path1, string path2){
+		return GLib.Path.build_path("/", path1, path2);
+	}
+	
 	// file helpers -----------------------------
+	
+	public bool file_or_dir_exists(string item_path){
+		
+		/* check if item exists on disk*/
+
+		try{
+			var item = File.parse_name(item_path);
+			return item.query_exists();
+		}
+		catch (Error e) {
+			log_error (e.message);
+			return false;
+		}
+	}
 	
 	public bool file_exists (string file_path){
 		/* Check if file exists */
@@ -209,6 +226,36 @@ namespace TeeJee.FileSystem{
 	        return false;
 	    }
 	}
+
+	public bool file_move_to_trash(string file_path){
+
+		/* Check and delete file */
+
+		var file = File.new_for_path (file_path);
+		if (file.query_exists ()) {
+			Posix.system("gvfs-trash '%s'".printf(escape_single_quote(file_path)));
+		}
+		return true;
+	}
+
+	public bool file_shred(string file_path){
+
+		/* Check and delete file */
+
+		try {
+			var file = File.new_for_path (file_path);
+			if (file.query_exists ()) {
+				Posix.system("shred -u '%s'".printf(escape_single_quote(file_path)));
+			}
+			return true;
+		}
+		catch (Error e) {
+	        log_error (e.message);
+	        log_error(_("Failed to delete file") + ": %s".printf(file_path));
+	        return false;
+	    }
+	}
+
 
 	public string? file_read (string file_path){
 
@@ -280,8 +327,7 @@ namespace TeeJee.FileSystem{
 				file_src.move(file_dest,FileCopyFlags.OVERWRITE,null,null);
 			}
 			else{
-				log_error (_("File not found") + ": %s".printf(src_file));
-				log_error("file_move()");
+				log_error(_("File not found") + ": '%s'".printf(src_file));
 			}
 		}
 		catch(Error e){
@@ -290,7 +336,27 @@ namespace TeeJee.FileSystem{
 		}
 	}
 
-	public DateTime file_modified_date(string file_path){
+	
+	// file info -----------------
+
+	public int64 file_get_size(string file_path){
+		try{
+			File file = File.parse_name (file_path);
+			if (FileUtils.test(file_path, GLib.FileTest.EXISTS)){
+				if (FileUtils.test(file_path, GLib.FileTest.IS_REGULAR)
+					&& !FileUtils.test(file_path, GLib.FileTest.IS_SYMLINK)){
+					return file.query_info("standard::size",0).get_size();
+				}
+			}
+		}
+		catch(Error e){
+			log_error (e.message);
+		}
+
+		return -1;
+	}
+
+	public DateTime file_get_modified_date(string file_path){
 		try{
 			FileInfo info;
 			File file = File.parse_name (file_path);
@@ -331,7 +397,70 @@ namespace TeeJee.FileSystem{
 		}
 	}
 
-	public bool dir_tar (string src_dir, string tar_file, bool recursion){
+	public bool dir_delete (string dir_path){
+		
+		/* Recursively deletes directory along with contents */
+		
+		string cmd = "rm -rf '%s'".printf(escape_single_quote(dir_path));
+		int status = exec_sync(cmd);
+		return (status == 0);
+	}
+
+	public bool dir_move_to_trash (string dir_path){
+		return file_move_to_trash(dir_path);
+	}
+	
+	public bool dir_is_empty (string dir_path){
+
+		/* Check if directory is empty */
+
+		try{
+			bool is_empty = true;
+			var dir = File.parse_name (dir_path);
+			if (dir.query_exists()) {
+				FileInfo info;
+				var enu = dir.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
+				while ((info = enu.next_file()) != null) {
+					is_empty = false;
+					break;
+				}
+			}
+			return is_empty;
+		}
+		catch (Error e) {
+			log_error (e.message);
+			return false;
+		}
+	}
+
+
+	public Gee.ArrayList<string> dir_list_names(string path){
+		var list = new Gee.ArrayList<string>();
+		
+		try
+		{
+			File f_home = File.new_for_path (path);
+			FileEnumerator enumerator = f_home.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
+			FileInfo file;
+			while ((file = enumerator.next_file ()) != null) {
+				string name = file.get_name();
+				list.add(name);
+			}
+		}
+		catch (Error e) {
+			log_error (e.message);
+		}
+
+		//sort the list
+		CompareDataFunc<string> entry_compare = (a, b) => {
+			return strcmp(a,b);
+		};
+		list.sort((owned) entry_compare);
+
+		return list;
+	}
+	
+	public bool dir_tar (string src_dir, string tar_file, bool recursion = true){
 		if (dir_exists(src_dir)) {
 			
 			if (file_exists(tar_file)){
@@ -341,7 +470,11 @@ namespace TeeJee.FileSystem{
 			var src_parent = file_parent(src_dir);
 			var src_name = file_basename(src_dir);
 			
-			string cmd = "tar cvf '%s' --overwrite --%srecursion -C '%s' '%s'\n".printf(tar_file, (recursion ? "" : "no-"), src_parent, src_name);
+			string cmd = "tar cvf '%s' --overwrite --%srecursion -C '%s' '%s'\n".printf(
+				escape_single_quote(tar_file),
+				(recursion ? "" : "no-"),
+				escape_single_quote(src_parent),
+				escape_single_quote(src_name));
 
 			log_debug(cmd);
 			
@@ -368,7 +501,9 @@ namespace TeeJee.FileSystem{
 				dir_create(dst_dir);
 			}
 			
-			string cmd = "tar xvf '%s' --overwrite --same-permissions -C '%s'\n".printf(tar_file, dst_dir);
+			string cmd = "tar xvf '%s' --overwrite --same-permissions -C '%s'\n".printf(
+				escape_single_quote(tar_file),
+				escape_single_quote(dst_dir));
 
 			log_debug(cmd);
 			
@@ -388,8 +523,51 @@ namespace TeeJee.FileSystem{
 		return false;
 	}
 
+	public bool chown(string dir_path, string user, string group = user){
+		string cmd = "chown %s:%s -R '%s'".printf(user, group, escape_single_quote(dir_path));
+		int status = exec_sync(cmd, null, null);
+		return (status == 0);
+	}
+	
+	// dir info -------------------
+	
+	// dep: find wc    TODO: rewrite
+	public long dir_count(string path){
+
+		/* Return total count of files and directories */
+
+		string cmd = "";
+		string std_out;
+		string std_err;
+		int ret_val;
+
+		cmd = "find '%s' | wc -l".printf(escape_single_quote(path));
+		ret_val = exec_script_sync(cmd, out std_out, out std_err);
+		return long.parse(std_out);
+	}
+
+	// dep: du
+	public long dir_size(string path){
+
+		/* Returns size of files and directories in KB*/
+
+		string cmd = "du -s -b '%s'".printf(escape_single_quote(path));
+		string std_out, std_err;
+		exec_sync(cmd, out std_out, out std_err);
+		return long.parse(std_out.split("\t")[0]);
+	}
+
+	// dep: du
+	public long dir_size_kb(string path){
+
+		/* Returns size of files and directories in KB*/
+
+		return (long)(dir_size(path) / 1024.0);
+	}
+
 	// archiving and encryption ----------------
 
+	// dep: tar gzip gpg
 	public bool file_tar_encrypt (string src_file, string dst_file, string password){
 		if (file_exists(src_file)) {
 			if (file_exists(dst_file)){
@@ -404,9 +582,17 @@ namespace TeeJee.FileSystem{
 			var tar_name = dst_name[0 : dst_name.index_of(".gpg")];
 			var tar_file = "%s/%s".printf(dst_dir, tar_name);
 			
-			string cmd = "tar cvf '%s' --overwrite -C '%s' '%s'\n".printf(tar_file, src_dir, src_name);
-			cmd += "gpg --passphrase '%s' -o '%s' --symmetric '%s'\n".printf(password, dst_file, tar_file);
-			cmd += "rm -f '%s'\n".printf(tar_file);
+			string cmd = "tar cvf '%s' --overwrite -C '%s' '%s'\n".printf(
+				escape_single_quote(tar_file),
+				escape_single_quote(src_dir),
+				escape_single_quote(src_name));
+				
+			cmd += "gpg --passphrase '%s' -o '%s' --symmetric '%s'\n".printf(
+				password,
+				escape_single_quote(dst_file),
+				escape_single_quote(tar_file));
+				
+			cmd += "rm -f '%s'\n".printf(escape_single_quote(tar_file));
 
 			log_debug(cmd);
 			
@@ -423,6 +609,7 @@ namespace TeeJee.FileSystem{
 		return false;
 	}
 
+	// dep: tar gzip gpg
 	public string file_decrypt_untar_read (string src_file, string password){
 		
 		if (file_exists(src_file)) {
@@ -433,7 +620,11 @@ namespace TeeJee.FileSystem{
 			//var temp_file = "%s/%s".printf(TEMP_DIR, random_string());
 
 			string cmd = "";
-			cmd += "gpg --quiet --no-verbose --passphrase '%s' -o- --decrypt '%s'".printf(password, src_file);
+			
+			cmd += "gpg --quiet --no-verbose --passphrase '%s' -o- --decrypt '%s'".printf(
+				password,
+				escape_single_quote(src_file));
+				
 			cmd += " | tar xf - --to-stdout 2>/dev/null\n";
 			cmd += "exit $?\n";
 			
@@ -456,6 +647,7 @@ namespace TeeJee.FileSystem{
 		return "";
 	}
 
+	// dep: tar gzip gpg
 	public bool decrypt_and_untar (string src_file, string dst_file, string password){
 		if (file_exists(src_file)) {
 			if (file_exists(dst_file)){
@@ -468,11 +660,22 @@ namespace TeeJee.FileSystem{
 			var tar_file = "%s/%s".printf(src_dir, tar_name);
 
 			string cmd = "";
-			cmd += "rm -f '%s'\n".printf(tar_file); // gpg cannot overwrite - remove tar file if it exists
-			cmd += "gpg --passphrase '%s' -o '%s' --decrypt '%s'\n".printf(password, tar_file, src_file);
+			
+			// gpg cannot overwrite - remove tar file if it exists
+			cmd += "rm -f '%s'\n".printf(escape_single_quote(tar_file));
+			
+			cmd += "gpg --passphrase '%s' -o '%s' --decrypt '%s'\n".printf(
+				password,
+				escape_single_quote(tar_file),
+				escape_single_quote(src_file));
+				
 			cmd += "status=$?; if [ $status -ne 0 ]; then exit $status; fi\n";
-			cmd += "tar xvf '%s' --overwrite --same-permissions -C '%s'\n".printf(tar_file, file_parent(dst_file));
-			cmd += "rm -f '%s'\n".printf(tar_file);
+			
+			cmd += "tar xvf '%s' --overwrite --same-permissions -C '%s'\n".printf(
+				escape_single_quote(tar_file),
+				escape_single_quote(file_parent(dst_file)));
+				
+			cmd += "rm -f '%s'\n".printf(escape_single_quote(tar_file));
 
 			log_debug(cmd);
 			
@@ -493,79 +696,34 @@ namespace TeeJee.FileSystem{
 		return false;
 	}
 
+	// hashing -----------
+	
+	private string hash_md5(string path){
+		Checksum checksum = new Checksum (ChecksumType.MD5);
+		FileStream stream = FileStream.open (path, "rb");
+
+		uint8 fbuf[100];
+		size_t size;
+		while ((size = stream.read (fbuf)) > 0){
+		  checksum.update (fbuf, size);
+		}
+		
+		unowned string digest = checksum.get_string();
+
+		return digest;
+	}
+
 	// misc --------------------
 	
-	public long get_file_count(string path){
-
-		/* Return total count of files and directories */
-
-		string cmd = "";
-		string std_out;
-		string std_err;
-		int ret_val;
-
-		cmd = "find \"%s\" | wc -l".printf(path);
-		ret_val = exec_script_sync(cmd, out std_out, out std_err);
-		return long.parse(std_out);
-	}
-
-	public long get_file_size(string path){
-
-		/* Returns size of files and directories in KB*/
-
-		string cmd = "";
-		string output = "";
-
-		cmd = "du -s \"%s\"".printf(path);
-		output = execute_command_sync_get_output(cmd);
-		return long.parse(output.split("\t")[0]);
-	}
-
-	public int64 get_file_size_bytes(string file_path){
-		try{
-			File file = File.parse_name (file_path);
-			if (FileUtils.test(file_path, GLib.FileTest.EXISTS)){
-				if (FileUtils.test(file_path, GLib.FileTest.IS_REGULAR)
-					&& !FileUtils.test(file_path, GLib.FileTest.IS_SYMLINK)){
-					return file.query_info("standard::size",0).get_size();
-				}
-			}
-		}
-		catch(Error e){
-			log_error (e.message);
-		}
-
-		return -1;
-	}
-
-	public uint64 dir_size(string path){
-		/* Returns size of directories */
-
-		string cmd = "";
-		string output = "";
-
-		cmd = "du -s \"%s\"".printf(path);
-		output = execute_command_sync_get_output(cmd);
-		return uint64.parse(output.split("\t")[0].strip()) * 1024;
-	}
-	
-	public string get_file_size_formatted2(string path){
-
-		/* Returns size of files and directories in KB*/
-
-		string cmd = "";
-		string output = "";
-
-		cmd = "du -s -h \"%s\"".printf(path);
-		output = execute_command_sync_get_output(cmd);
-		return output.split("\t")[0].strip();
-	}
-
-	public string format_file_size (uint64 size, bool binary_units = false){
+	public string format_file_size (uint64 size, bool binary_units = false, bool size_kb = false){
 		int64 KB = binary_units ? 1024 : 1000;
 		int64 MB = binary_units ? 1024 * KB : 1000 * KB;
 		int64 GB = binary_units ? 1024 * MB : 1000 * MB;
 
+		if (size_kb){
+			return "%'0.0f %sB".printf(size/(1.0*KB), (binary_units)?"Ki":"K");
+		}
+		
 		if (size > GB){
 			return "%'0.1f %sB".printf(size/(1.0*GB), (binary_units)?"Gi":"G");
 		}
@@ -580,13 +738,20 @@ namespace TeeJee.FileSystem{
 		}
 	}
 	
+	public string escape_single_quote(string file_path){
+		return file_path.replace("'","'\\''");
+	}
+
+
+	// dep: chmod
 	public int chmod (string file, string permission){
 
 		/* Change file permissions */
-
-		return exec_sync ("chmod " + permission + " \"%s\"".printf(file));
+		string cmd = "chmod %s '%s'".printf(permission, escape_single_quote(file));
+		return exec_sync (cmd, null, null);
 	}
 
+	// dep: realpath
 	public string resolve_relative_path (string filePath){
 
 		/* Resolve the full path of given file using 'realpath' command */
@@ -598,7 +763,8 @@ namespace TeeJee.FileSystem{
 
 		try {
 			string output = "";
-			Process.spawn_command_line_sync("realpath \"%s\"".printf(filePath2), out output);
+			string cmd = "realpath '%s'".printf(escape_single_quote(filePath2));
+			Process.spawn_command_line_sync(cmd, out output);
 			output = output.strip ();
 			if (FileUtils.test(output, GLib.FileTest.EXISTS)){
 				return output;
@@ -615,12 +781,12 @@ namespace TeeJee.FileSystem{
 
 		/* Sync files with rsync */
 
-		string cmd = "rsync --recursive --perms --chmod=a=rwx";
+		string cmd = "rsync -avh";
 		cmd += updateExisting ? "" : " --ignore-existing";
 		cmd += deleteExtra ? " --delete" : "";
-		cmd += " \"%s\"".printf(sourceDirectory + "//");
-		cmd += " \"%s\"".printf(destDirectory);
-		return exec_sync (cmd);
+		cmd += " '%s'".printf(escape_single_quote(sourceDirectory) + "//");
+		cmd += " '%s'".printf(escape_single_quote(destDirectory));
+		return exec_sync (cmd, null, null);
 	}
 }
 
@@ -660,6 +826,25 @@ namespace TeeJee.JSON{
 		}
 	}
 
+	public Gee.ArrayList<string> json_get_array(
+		Json.Object jobj,
+		string member,
+		Gee.ArrayList<string> def_value){
+			
+		if (jobj.has_member(member)){
+			var jarray = jobj.get_array_member(member);
+			var list = new Gee.ArrayList<string>();
+			foreach(var node in jarray.get_elements()){
+				list.add(node.get_string());
+			}
+			return list;
+		}
+		else{
+			log_error ("Member not found in JSON object: " + member, false, true);
+			return def_value;
+		}
+	}
+
 }
 
 namespace TeeJee.ProcessManagement{
@@ -671,22 +856,30 @@ namespace TeeJee.ProcessManagement{
 
 	/* Convenience functions for executing commands and managing processes */
 	
-    public static void init_tmp(){
+	// execute process ---------------------------------
+	
+    public static void init_tmp(string subdir_name){
 		string std_out, std_err;
 
-		TEMP_DIR = Environment.get_tmp_dir() + "/" + AppShortName + "/" + random_string();
+		TEMP_DIR = Environment.get_tmp_dir() + "/" + subdir_name + "/" + random_string();
 		dir_create(TEMP_DIR);
 
 		exec_script_sync("echo 'ok'",out std_out,out std_err, true);
 		if ((std_out == null)||(std_out.strip() != "ok")){
-			TEMP_DIR = Environment.get_home_dir() + "/.temp/" + AppShortName + "/" + random_string();
-			exec_sync("rm -rf '%s'".printf(TEMP_DIR));
+			TEMP_DIR = Environment.get_home_dir() + "/.temp/" + subdir_name + "/" + random_string();
+			exec_sync("rm -rf '%s'".printf(TEMP_DIR), null, null);
 			dir_create(TEMP_DIR);
 		}
 
 		//log_debug("TEMP_DIR=" + TEMP_DIR);
 	}
 
+	public string create_temp_subdir(){
+		var temp = "%s/%s".printf(TEMP_DIR, random_string());
+		dir_create(temp);
+		return temp;
+	}
+	
 	public int exec_sync (string cmd, out string? std_out = null, out string? std_err = null){
 
 		/* Executes single command synchronously.
@@ -704,7 +897,10 @@ namespace TeeJee.ProcessManagement{
 	    }
 	}
 	
-	public int exec_script_sync (string script, out string? std_out = null, out string? std_err = null, bool supress_errors = false){
+	public int exec_script_sync (string script,
+		out string? std_out = null, out string? std_err = null,
+		bool supress_errors = false, bool run_as_admin = false,
+		bool cleanup_tmp = true){
 
 		/* Executes commands synchronously.
 		 * Pipes and multiple commands are fully supported.
@@ -712,12 +908,23 @@ namespace TeeJee.ProcessManagement{
 		 * std_out, std_err can be null. Output will be written to terminal if null.
 		 * */
 
-		string path = save_bash_script_temp(script, supress_errors);
+		string sh_file = save_bash_script_temp(script, true, supress_errors);
+		string sh_file_main = "";
+		if (run_as_admin){
+			string script_main = "pkexec '%s'".printf(escape_single_quote(sh_file));
+			string dir = file_parent(sh_file);
+			sh_file_main = GLib.Path.build_filename(dir,"script-admin.sh");
+			file_write(script_main, sh_file_main);
+		}
 
 		try {
-
 			string[] argv = new string[1];
-			argv[0] = path;
+			if (run_as_admin){
+				argv[0] = sh_file_main;
+			}
+			else{
+				argv[0] = sh_file;
+			}
 
 			string[] env = Environ.get();
 			
@@ -734,6 +941,13 @@ namespace TeeJee.ProcessManagement{
 			    out exit_code
 			    );
 
+			if (cleanup_tmp){
+				file_delete(sh_file);
+				if (run_as_admin){
+					file_delete(sh_file_main);
+				}
+			}
+			
 			return exit_code;
 		}
 		catch (Error e){
@@ -778,58 +992,10 @@ namespace TeeJee.ProcessManagement{
 	    }
 	}
 
+	public string? save_bash_script_temp (string commands, string? script_path = null,
+		bool force_locale = true, bool supress_errors = false){
 
-	//TODO: Deprecated, Remove this
-	public string execute_command_sync_get_output (string cmd){
-
-		/* Executes single command synchronously and returns std_out
-		 * Pipes and multiple commands are not supported */
-
-		try {
-			int exitCode;
-			string std_out;
-			Process.spawn_command_line_sync(cmd, out std_out, null, out exitCode);
-	        return std_out;
-		}
-		catch (Error e){
-	        log_error (e.message);
-	        return "";
-	    }
-	}
-
-	//TODO: Deprecated, Remove this
-	public bool execute_command_script_async (string cmd){
-
-		/* Creates a temporary bash script with given commands and executes it asynchronously
-		 * Return value indicates if script was started successfully */
-
-		try {
-
-			string scriptfile = save_bash_script_temp (cmd);
-
-			string[] argv = new string[1];
-			argv[0] = scriptfile;
-
-			string[] env = Environ.get();
-			
-			Pid child_pid;
-			Process.spawn_async_with_pipes(
-			    TEMP_DIR, //working dir
-			    argv, //argv
-			    env, //environment
-			    SpawnFlags.SEARCH_PATH,
-			    null,
-			    out child_pid);
-
-			return true;
-		}
-		catch (Error e){
-	        log_error (e.message);
-	        return false;
-	    }
-	}
-
-	public string? save_bash_script_temp (string commands, bool force_locale = true, bool supress_errors = false){
+		string sh_path = script_path;
 
 		/* Creates a temporary bash script with given commands
 		 * Returns the script file path */
@@ -846,21 +1012,25 @@ namespace TeeJee.ProcessManagement{
 		script.append ("echo ${exitCode} > ${exitCode}\n");
 		script.append ("echo ${exitCode} > status\n");
 		
-		string script_path = get_temp_file_path() + ".sh";
+		if ((sh_path == null) || (sh_path.length == 0)){
+			sh_path = get_temp_file_path() + ".sh";
+		}
 
 		try{
 			//write script file
-			var file = File.new_for_path (script_path);
-			if (file.query_exists ()) { file.delete (); }
+			var file = File.new_for_path (sh_path);
+			if (file.query_exists ()) {
+				file.delete ();
+			}
 			var file_stream = file.create (FileCreateFlags.REPLACE_DESTINATION);
 			var data_stream = new DataOutputStream (file_stream);
 			data_stream.put_string (script.str);
 			data_stream.close();
 
 			// set execute permission
-			chmod (script_path, "u+x");
+			chmod (sh_path, "u+x");
 
-			return script_path;
+			return sh_path;
 		}
 		catch (Error e) {
 			if (!supress_errors){
@@ -875,9 +1045,12 @@ namespace TeeJee.ProcessManagement{
 
 		/* Generates temporary file path */
 
-		return TEMP_DIR + "/" + timestamp2() + (new Rand()).next_int().to_string();
+		return TEMP_DIR + "/" + timestamp_numeric() + (new Rand()).next_int().to_string();
 	}
 
+	// find process -------------------------------
+	
+	// dep: which
 	public string get_cmd_path (string cmd){
 
 		/* Returns the full path to a command */
@@ -894,28 +1067,30 @@ namespace TeeJee.ProcessManagement{
 	    }
 	}
 
+	// dep: pidof, TODO: Rewrite using /proc
 	public int get_pid_by_name (string name){
 
 		/* Get the process ID for a process with given name */
 
-		try{
-			string output = "";
-			Process.spawn_command_line_sync("pidof \"%s\"".printf(name), out output);
-			if (output != null){
-				string[] arr = output.split ("\n");
+		string std_out, std_err;
+		exec_sync("pidof \"%s\"".printf(name), out std_out, out std_err);
+		
+		if (std_out != null){
+			string[] arr = std_out.split ("\n");
 				if (arr.length > 0){
 					return int.parse (arr[0]);
 				}
 			}
-		}
-		catch (Error e) {
-			log_error (e.message);
-		}
 
 		return -1;
 	}
 
 	public int get_pid_by_command(string cmdline){
+
+		/* Searches for process using the command line used to start the process.
+		 * Returns the process id if found.
+		 * */
+		 
 		try {
 			FileEnumerator enumerator;
 			FileInfo info;
@@ -942,7 +1117,8 @@ namespace TeeJee.ProcessManagement{
 					} //stream closed
 				}
 				catch(Error e){
-				  //log_error (e.message);
+					// do not log
+					// some processes cannot be accessed by non-admin user
 				}
 			}
 		}
@@ -954,6 +1130,9 @@ namespace TeeJee.ProcessManagement{
 	}
 
 	public void get_proc_io_stats(int pid, out int64 read_bytes, out int64 write_bytes){
+
+		/* Returns the number of bytes read and written by a process to disk */
+		
 		string io_stat_file_path = "/proc/%d/io".printf(pid);
 		var file = File.new_for_path(io_stat_file_path);
 
@@ -979,6 +1158,7 @@ namespace TeeJee.ProcessManagement{
 		}
 	}
 
+	// dep: ps TODO: Rewrite using /proc
 	public bool process_is_running(long pid){
 
 		/* Checks if given process is running */
@@ -1000,101 +1180,7 @@ namespace TeeJee.ProcessManagement{
 		return (ret_val == 0);
 	}
 
-	public int[] get_process_children (Pid parentPid){
-
-		/* Returns the list of child processes spawned by given process */
-
-		string output;
-
-		try {
-			Process.spawn_command_line_sync("ps --ppid %d".printf(parentPid), out output);
-		}
-		catch(Error e){
-	        log_error (e.message);
-	    }
-
-		int pid;
-		int[] procList = {};
-		string[] arr;
-
-		foreach (string line in output.split ("\n")){
-			arr = line.strip().split (" ");
-			if (arr.length < 1) { continue; }
-
-			pid = 0;
-			pid = int.parse (arr[0]);
-
-			if (pid != 0){
-				procList += pid;
-			}
-		}
-		return procList;
-	}
-
-	public void process_quit(Pid process_pid, bool killChildren = true){
-
-		/* Kills specified process and its children (optional) */
-
-		int[] child_pids = get_process_children (process_pid);
-		Posix.kill (process_pid, Posix.SIGTERM);
-
-		if (killChildren){
-			Pid childPid;
-			foreach (long pid in child_pids){
-				childPid = (Pid) pid;
-				Posix.kill (childPid, Posix.SIGTERM);
-			}
-		}
-	}
-	
-	public void process_kill(Pid process_pid, bool killChildren = true){
-
-		/* Kills specified process and its children (optional) */
-
-		int[] child_pids = get_process_children (process_pid);
-		Posix.kill (process_pid, Posix.SIGKILL);
-
-		if (killChildren){
-			Pid childPid;
-			foreach (long pid in child_pids){
-				childPid = (Pid) pid;
-				Posix.kill (childPid, Posix.SIGKILL);
-			}
-		}
-	}
-
-	public int process_pause (Pid procID){
-
-		/* Pause/Freeze a process */
-
-		return exec_sync ("kill -STOP %d".printf(procID));
-	}
-
-	public int process_resume (Pid procID){
-
-		/* Resume/Un-freeze a process*/
-
-		return exec_sync ("kill -CONT %d".printf(procID));
-	}
-
-	public void command_kill(string cmd_name, string cmd_to_match, bool exact_match){
-
-		/* Kills a specific command */
-
-		string txt = execute_command_sync_get_output ("ps w -C '%s'".printf(cmd_name));
-		//use 'ps ew -C conky' for all users
-
-		string pid = "";
-		foreach(string line in txt.split("\n")){
-			if ((exact_match && line.has_suffix(" " + cmd_to_match))
-			|| (!exact_match && (line.index_of(cmd_to_match) != -1))){
-				pid = line.strip().split(" ")[0];
-				Posix.kill ((Pid) int.parse(pid), 15);
-				log_debug(_("Stopped") + ": [PID=" + pid + "] ");
-			}
-		}
-	}
-
+	// dep: pgrep TODO: Rewrite using /proc
 	public bool process_is_running_by_name(string proc_name){
 
 		/* Checks if given process is running */
@@ -1115,6 +1201,109 @@ namespace TeeJee.ProcessManagement{
 
 		return (ret_val == 0);
 	}
+	
+	// dep: ps TODO: Rewrite using /proc
+	public int[] get_process_children (Pid parent_pid){
+
+		/* Returns the list of child processes spawned by given process */
+
+		string std_out, std_err;
+		exec_sync("ps --ppid %d".printf(parent_pid), out std_out, out std_err);
+
+		int pid;
+		int[] procList = {};
+		string[] arr;
+
+		foreach (string line in std_out.split ("\n")){
+			arr = line.strip().split (" ");
+			if (arr.length < 1) { continue; }
+
+			pid = 0;
+			pid = int.parse (arr[0]);
+
+			if (pid != 0){
+				procList += pid;
+			}
+		}
+		return procList;
+	}
+
+	// manage process ---------------------------------
+	
+	public void process_quit(Pid process_pid, bool killChildren = true){
+
+		/* Kills specified process and its children (optional).
+		 * Sends signal SIGTERM to the process to allow it to quit gracefully.
+		 * */
+
+		int[] child_pids = get_process_children (process_pid);
+		Posix.kill (process_pid, Posix.SIGTERM);
+
+		if (killChildren){
+			Pid childPid;
+			foreach (long pid in child_pids){
+				childPid = (Pid) pid;
+				Posix.kill (childPid, Posix.SIGTERM);
+			}
+		}
+	}
+	
+	public void process_kill(Pid process_pid, bool killChildren = true){
+
+		/* Kills specified process and its children (optional).
+		 * Sends signal SIGKILL to the process to kill it forcefully.
+		 * It is recommended to use the function process_quit() instead.
+		 * */
+
+		int[] child_pids = get_process_children (process_pid);
+		Posix.kill (process_pid, Posix.SIGKILL);
+
+		if (killChildren){
+			Pid childPid;
+			foreach (long pid in child_pids){
+				childPid = (Pid) pid;
+				Posix.kill (childPid, Posix.SIGKILL);
+			}
+		}
+	}
+
+	// dep: kill
+	public int process_pause (Pid procID){
+
+		/* Pause/Freeze a process */
+
+		return exec_sync ("kill -STOP %d".printf(procID), null, null);
+	}
+
+	// dep: kill
+	public int process_resume (Pid procID){
+
+		/* Resume/Un-freeze a process*/
+
+		return exec_sync ("kill -CONT %d".printf(procID), null, null);
+	}
+
+	// dep: ps TODO: Rewrite using /proc
+	public void process_quit_by_name(string cmd_name, string cmd_to_match, bool exact_match){
+
+		/* Kills a specific command */
+
+		string std_out, std_err;
+		exec_sync ("ps w -C '%s'".printf(cmd_name), out std_out, out std_err);
+		//use 'ps ew -C conky' for all users
+
+		string pid = "";
+		foreach(string line in std_out.split("\n")){
+			if ((exact_match && line.has_suffix(" " + cmd_to_match))
+			|| (!exact_match && (line.index_of(cmd_to_match) != -1))){
+				pid = line.strip().split(" ")[0];
+				Posix.kill ((Pid) int.parse(pid), 15);
+				log_debug(_("Stopped") + ": [PID=" + pid + "] ");
+			}
+		}
+	}
+
+	// process priority ---------------------------------------
 	
 	public void process_set_priority (Pid procID, int prio){
 
@@ -1145,6 +1334,14 @@ namespace TeeJee.ProcessManagement{
 		process_set_priority (procID, 5);
 	}
 
+}
+
+namespace TeeJee.System{
+
+	using TeeJee.ProcessManagement;
+	using TeeJee.Logging;
+
+	// user ---------------------------------------------------
 
 	public bool user_is_admin (){
 
@@ -1171,6 +1368,7 @@ namespace TeeJee.ProcessManagement{
 		}
 	}
 
+	// dep: whoami
 	public string get_user_login(){
 		/*
 		Returns Login ID of current user.
@@ -1194,6 +1392,7 @@ namespace TeeJee.ProcessManagement{
 		return user_name;
 	}
 
+	// dep: id
 	public int get_user_id(string user_login){
 		/*
 		Returns UID of specified user.
@@ -1201,14 +1400,16 @@ namespace TeeJee.ProcessManagement{
 
 		int uid = -1;
 		string cmd = "id %s -u".printf(user_login);
-		string txt = execute_command_sync_get_output(cmd);
-		if ((txt != null) && (txt.length > 0)){
-			uid = int.parse(txt);
+		string std_out, std_err;
+		exec_sync(cmd, out std_out, out std_err);
+		if ((std_out != null) && (std_out.length > 0)){
+			uid = int.parse(std_out);
 		}
 
 		return uid;
 	}
 
+	// application -----------------------------------------------
 
 	public string get_app_path (){
 
@@ -1236,297 +1437,9 @@ namespace TeeJee.ProcessManagement{
 	    }
 	}
 
-}
+	// system ------------------------------------
 
-namespace TeeJee.GtkHelper{
-
-	using Gtk;
-
-	public void gtk_do_events (){
-
-		/* Do pending events */
-
-		while(Gtk.events_pending ())
-			Gtk.main_iteration ();
-	}
-
-	public void gtk_set_busy (bool busy, Gtk.Window win) {
-
-		/* Show or hide busy cursor on window */
-
-		Gdk.Cursor? cursor = null;
-
-		if (busy){
-			cursor = new Gdk.Cursor(Gdk.CursorType.WATCH);
-		}
-		else{
-			cursor = new Gdk.Cursor(Gdk.CursorType.ARROW);
-		}
-
-		var window = win.get_window ();
-
-		if (window != null) {
-			window.set_cursor (cursor);
-		}
-
-		gtk_do_events ();
-	}
-
-	public void gtk_messagebox(string title, string message, Gtk.Window? parent_win, bool is_error = false){
-
-		/* Shows a simple message box */
-
-		var type = Gtk.MessageType.INFO;
-		if (is_error){
-			type = Gtk.MessageType.ERROR;
-		}
-		else{
-			type = Gtk.MessageType.INFO;
-		}
-
-		/*var dlg = new Gtk.MessageDialog.with_markup(null, Gtk.DialogFlags.MODAL, type, Gtk.ButtonsType.OK, message);
-		dlg.title = title;
-		dlg.set_default_size (200, -1);
-		if (parent_win != null){
-			dlg.set_transient_for(parent_win);
-			dlg.set_modal(true);
-		}
-		dlg.run();
-		dlg.destroy();*/
-
-		var dlg = new CustomMessageDialog(title,message,type,parent_win);
-		dlg.run();
-	}
-
-	public bool gtk_combobox_set_value (ComboBox combo, int index, string val){
-
-		/* Conveniance function to set combobox value */
-
-		TreeIter iter;
-		string comboVal;
-		TreeModel model = (TreeModel) combo.model;
-
-		bool iterExists = model.get_iter_first (out iter);
-		while (iterExists){
-			model.get(iter, 1, out comboVal);
-			if (comboVal == val){
-				combo.set_active_iter(iter);
-				return true;
-			}
-			iterExists = model.iter_next (ref iter);
-		}
-
-		return false;
-	}
-
-	public string gtk_combobox_get_value (ComboBox combo, int index, string default_value){
-
-		/* Conveniance function to get combobox value */
-
-		if ((combo.model == null) || (combo.active < 0)) { return default_value; }
-
-		TreeIter iter;
-		string val = "";
-		combo.get_active_iter (out iter);
-		TreeModel model = (TreeModel) combo.model;
-		model.get(iter, index, out val);
-
-		return val;
-	}
-	
-	public int gtk_combobox_get_value_enum (ComboBox combo, int index, int default_value){
-
-		/* Conveniance function to get combobox value */
-
-		if ((combo.model == null) || (combo.active < 0)) { return default_value; }
-
-		TreeIter iter;
-		int val;
-		combo.get_active_iter (out iter);
-		TreeModel model = (TreeModel) combo.model;
-		model.get(iter, index, out val);
-
-		return val;
-	}
-
-	public class CellRendererProgress2 : Gtk.CellRendererProgress{
-		public override void render (Cairo.Context cr, Gtk.Widget widget, Gdk.Rectangle background_area, Gdk.Rectangle cell_area, Gtk.CellRendererState flags) {
-			if (text == "--")
-				return;
-
-			int diff = (int) ((cell_area.height - height)/2);
-
-			// Apply the new height into the bar, and center vertically:
-			Gdk.Rectangle new_area = Gdk.Rectangle() ;
-			new_area.x = cell_area.x;
-			new_area.y = cell_area.y + diff;
-			new_area.width = width - 5;
-			new_area.height = height;
-
-			base.render(cr, widget, background_area, new_area, flags);
-		}
-	}
-
-	public Gdk.Pixbuf? get_app_icon(int icon_size, string format = ".png"){
-		var img_icon = get_shared_icon(AppShortName, AppShortName + format,icon_size,"pixmaps");
-		if (img_icon != null){
-			return img_icon.pixbuf;
-		}
-		else{
-			return null;
-		}
-	}
-
-	public Gtk.Image? get_shared_icon(string icon_name, string fallback_icon_file_name, int icon_size, string icon_directory = AppShortName + "/images"){
-		Gdk.Pixbuf pix_icon = null;
-		Gtk.Image img_icon = null;
-
-		try {
-			Gtk.IconTheme icon_theme = Gtk.IconTheme.get_default();
-			pix_icon = icon_theme.load_icon (icon_name, icon_size, 0);
-		} catch (Error e) {
-			//log_error (e.message);
-		}
-
-		string fallback_icon_file_path = "/usr/share/%s/%s".printf(icon_directory, fallback_icon_file_name);
-
-		if (pix_icon == null){
-			try {
-				pix_icon = new Gdk.Pixbuf.from_file_at_size (fallback_icon_file_path, icon_size, icon_size);
-			} catch (Error e) {
-				log_error (e.message);
-			}
-		}
-
-		if (pix_icon == null){
-			log_error (_("Missing Icon") + ": '%s', '%s'".printf(icon_name, fallback_icon_file_path));
-		}
-		else{
-			img_icon = new Gtk.Image.from_pixbuf(pix_icon);
-		}
-
-		return img_icon;
-	}
-
-	public int gtk_treeview_model_count(TreeModel model){
-		int count = 0;
-		TreeIter iter;
-		if (model.get_iter_first(out iter)){
-			count++;
-			while(model.iter_next(ref iter)){
-				count++;
-			}
-		}
-		return count;
-	}
-}
-
-namespace TeeJee.Multimedia{
-
-	using TeeJee.Logging;
-
-	/* Functions for working with audio/video files */
-
-	public long get_file_duration(string filePath){
-
-		/* Returns the duration of an audio/video file using MediaInfo */
-
-		string output = "0";
-
-		try {
-			Process.spawn_command_line_sync("mediainfo \"--Inform=General;%Duration%\" \"" + filePath + "\"", out output);
-		}
-		catch(Error e){
-	        log_error (e.message);
-	    }
-
-		return long.parse(output);
-	}
-
-	public string get_file_crop_params (string filePath){
-
-		/* Returns cropping parameters for a video file using avconv */
-
-		string output = "";
-		string error = "";
-
-		try {
-			Process.spawn_command_line_sync("avconv -i \"%s\" -vf cropdetect=30 -ss 5 -t 5 -f matroska -an -y /dev/null".printf(filePath), out output, out error);
-		}
-		catch(Error e){
-	        log_error (e.message);
-	    }
-
-	    int w=0,h=0,x=10000,y=10000;
-		int num=0;
-		string key,val;
-	    string[] arr;
-
-	    foreach (string line in error.split ("\n")){
-			if (line == null) { continue; }
-			if (line.index_of ("crop=") == -1) { continue; }
-
-			foreach (string part in line.split (" ")){
-				if (part == null || part.length == 0) { continue; }
-
-				arr = part.split (":");
-				if (arr.length != 2) { continue; }
-
-				key = arr[0].strip ();
-				val = arr[1].strip ();
-
-				switch (key){
-					case "x":
-						num = int.parse (arr[1]);
-						if (num < x) { x = num; }
-						break;
-					case "y":
-						num = int.parse (arr[1]);
-						if (num < y) { y = num; }
-						break;
-					case "w":
-						num = int.parse (arr[1]);
-						if (num > w) { w = num; }
-						break;
-					case "h":
-						num = int.parse (arr[1]);
-						if (num > h) { h = num; }
-						break;
-				}
-			}
-		}
-
-		if (x == 10000 || y == 10000)
-			return "%i:%i:%i:%i".printf(0,0,0,0);
-		else
-			return "%i:%i:%i:%i".printf(w,h,x,y);
-	}
-
-	public string get_mediainfo (string filePath){
-
-		/* Returns the multimedia properties of an audio/video file using MediaInfo */
-
-		string output = "";
-
-		try {
-			Process.spawn_command_line_sync("mediainfo \"%s\"".printf(filePath), out output);
-		}
-		catch(Error e){
-	        log_error (e.message);
-	    }
-
-		return output;
-	}
-
-
-
-}
-
-namespace TeeJee.System{
-
-	using TeeJee.ProcessManagement;
-	using TeeJee.Logging;
-
+	// dep: cat TODO: rewrite
 	public double get_system_uptime_seconds(){
 
 		/* Returns the system up-time in seconds */
@@ -1677,10 +1590,11 @@ namespace TeeJee.System{
 	}
 
 	public bool xdg_open (string file){
-		string path;
-		path = get_cmd_path ("xdg-open");
+		string path = get_cmd_path ("xdg-open");
 		if ((path != null)&&(path != "")){
-			return execute_command_script_async ("xdg-open \"" + file + "\"");
+			string cmd = "xdg-open '%s'".printf(escape_single_quote(file));
+			int status = exec_script_async(cmd);
+			return (status == 0);
 		}
 		return false;
 	}
@@ -1697,65 +1611,62 @@ namespace TeeJee.System{
 		*/
 
 		string path;
+		int status;
 
 		if (xdg_open_try_first){
 			//try using xdg-open
 			path = get_cmd_path ("xdg-open");
 			if ((path != null)&&(path != "")){
-				return execute_command_script_async ("xdg-open \"" + dir_path + "\"");
+				string cmd = "xdg-open '%s'".printf(escape_single_quote(dir_path));
+				status = exec_script_async (cmd);
+				return (status == 0);
 			}
 		}
 
-		path = get_cmd_path ("nemo");
-		if ((path != null)&&(path != "")){
-			return execute_command_script_async ("nemo \"" + dir_path + "\"");
-		}
+		foreach(string app_name in
+			new string[]{ "nemo", "nautilus", "thunar", "pantheon-files", "marlin"}){
 
-		path = get_cmd_path ("nautilus");
+			path = get_cmd_path (app_name);
 		if ((path != null)&&(path != "")){
-			return execute_command_script_async ("nautilus \"" + dir_path + "\"");
+				string cmd = "%s '%s'".printf(app_name, escape_single_quote(dir_path));
+				status = exec_script_async (cmd);
+				return (status == 0);
 		}
-
-		path = get_cmd_path ("thunar");
-		if ((path != null)&&(path != "")){
-			return execute_command_script_async ("thunar \"" + dir_path + "\"");
-		}
-
-		path = get_cmd_path ("pantheon-files");
-		if ((path != null)&&(path != "")){
-			return execute_command_script_async ("pantheon-files \"" + dir_path + "\"");
-		}
-
-		path = get_cmd_path ("marlin");
-		if ((path != null)&&(path != "")){
-			return execute_command_script_async ("marlin \"" + dir_path + "\"");
 		}
 
 		if (xdg_open_try_first == false){
 			//try using xdg-open
 			path = get_cmd_path ("xdg-open");
 			if ((path != null)&&(path != "")){
-				return execute_command_script_async ("xdg-open \"" + dir_path + "\"");
+				string cmd = "xdg-open '%s'".printf(escape_single_quote(dir_path));
+				status = exec_script_async (cmd);
+				return (status == 0);
 			}
 		}
 
 		return false;
 	}
 
-	public bool exo_open_textfile (string txt){
+	public bool exo_open_textfile (string txt_file){
 
 		/* Tries to open the given text file in a text editor */
 
 		string path;
+		int status;
+		string cmd;
 
 		path = get_cmd_path ("exo-open");
 		if ((path != null)&&(path != "")){
-			return execute_command_script_async ("exo-open \"" + txt + "\"");
+			cmd = "exo-open '%s'".printf(escape_single_quote(txt_file));
+			status = exec_script_async (cmd);
+			return (status == 0);
 		}
 
 		path = get_cmd_path ("gedit");
 		if ((path != null)&&(path != "")){
-			return execute_command_script_async ("gedit --new-document \"" + txt + "\"");
+			cmd = "gedit --new-document '%s'".printf(escape_single_quote(txt_file));
+			status = exec_script_async (cmd);
+			return (status == 0);
 		}
 
 		return false;
@@ -1766,24 +1677,31 @@ namespace TeeJee.System{
 		/* Tries to open the given text file in a text editor */
 
 		string path;
+		int status;
+		string cmd;
 
 		path = get_cmd_path ("exo-open");
 		if ((path != null)&&(path != "")){
-			return execute_command_script_async ("exo-open \"" + url + "\"");
+			status = exec_script_async ("exo-open \"" + url + "\"");
+			return (status == 0);
 		}
 
 		path = get_cmd_path ("firefox");
 		if ((path != null)&&(path != "")){
-			return execute_command_script_async ("firefox \"" + url + "\"");
+			status = exec_script_async ("firefox \"" + url + "\"");
+			return (status == 0);
 		}
 
 		path = get_cmd_path ("chromium-browser");
 		if ((path != null)&&(path != "")){
-			return execute_command_script_async ("chromium-browser \"" + url + "\"");
+			status = exec_script_async ("chromium-browser \"" + url + "\"");
+			return (status == 0);
 		}
 
 		return false;
 	}
+
+	// timers --------------------------------------------------
 
 	public GLib.Timer timer_start(){
 		var timer = new GLib.Timer();
@@ -1791,11 +1709,14 @@ namespace TeeJee.System{
 		return timer;
 	}
 
-	public ulong timer_elapsed(GLib.Timer timer){
+	public ulong timer_elapsed(GLib.Timer timer, bool stop = true){
 		ulong microseconds;
 		double seconds;
 		seconds = timer.elapsed (out microseconds);
-		return microseconds;
+		if (stop){
+			timer.stop();
+		}
+		return (ulong)((seconds * 1000 ) + (microseconds / 1000));
 	}
 
 	public void sleep(int milliseconds){
@@ -1822,17 +1743,187 @@ namespace TeeJee.System{
 		log_msg("%s %lu\n".printf(seconds.to_string(), microseconds));
 	}
 
-	public string[] array_concat(string[] a, string[] b){
-		string[] c = {};
-		foreach(string str in a){ c += str; }
-		foreach(string str in b){ c += str; }
-		return c;
+	public class LinuxDistro : GLib.Object{
+
+		/* Class for storing information about Linux distribution */
+
+		public string dist_id = "";
+		public string description = "";
+		public string release = "";
+		public string codename = "";
+
+		public LinuxDistro(){
+			dist_id = "";
+			description = "";
+			release = "";
+			codename = "";
 	}
 	
-	private DateTime dt_last_notification = null;
-	private const int NOTIFICATION_INTERVAL = 3;
+		public string full_name(){
+			if (dist_id == ""){
+				return "";
+			}
+			else{
+				string val = "";
+				val += dist_id;
+				val += (release.length > 0) ? " " + release : "";
+				val += (codename.length > 0) ? " (" + codename + ")" : "";
+				return val;
+			}
+		}
 
-	public int notify_send (string title, string message, int durationMillis, string urgency, string dialog_type = "info"){
+		public static LinuxDistro get_dist_info(string root_path){
+
+			/* Returns information about the Linux distribution
+			 * installed at the given root path */
+
+			LinuxDistro info = new LinuxDistro();
+
+			string dist_file = root_path + "/etc/lsb-release";
+			var f = File.new_for_path(dist_file);
+			if (f.query_exists()){
+
+				/*
+					DISTRIB_ID=Ubuntu
+					DISTRIB_RELEASE=13.04
+					DISTRIB_CODENAME=raring
+					DISTRIB_DESCRIPTION="Ubuntu 13.04"
+				*/
+
+				foreach(string line in file_read(dist_file).split("\n")){
+
+					if (line.split("=").length != 2){ continue; }
+
+					string key = line.split("=")[0].strip();
+					string val = line.split("=")[1].strip();
+
+					if (val.has_prefix("\"")){
+						val = val[1:val.length];
+					}
+
+					if (val.has_suffix("\"")){
+						val = val[0:val.length-1];
+					}
+
+					switch (key){
+						case "DISTRIB_ID":
+							info.dist_id = val;
+							break;
+						case "DISTRIB_RELEASE":
+							info.release = val;
+							break;
+						case "DISTRIB_CODENAME":
+							info.codename = val;
+							break;
+						case "DISTRIB_DESCRIPTION":
+							info.description = val;
+							break;
+					}
+				}
+			}
+			else{
+
+				dist_file = root_path + "/etc/os-release";
+				f = File.new_for_path(dist_file);
+				if (f.query_exists()){
+
+					/*
+						NAME="Ubuntu"
+						VERSION="13.04, Raring Ringtail"
+						ID=ubuntu
+						ID_LIKE=debian
+						PRETTY_NAME="Ubuntu 13.04"
+						VERSION_ID="13.04"
+						HOME_URL="http://www.ubuntu.com/"
+						SUPPORT_URL="http://help.ubuntu.com/"
+						BUG_REPORT_URL="http://bugs.launchpad.net/ubuntu/"
+					*/
+
+					foreach(string line in file_read(dist_file).split("\n")){
+
+						if (line.split("=").length != 2){ continue; }
+
+						string key = line.split("=")[0].strip();
+						string val = line.split("=")[1].strip();
+
+						switch (key){
+							case "ID":
+								info.dist_id = val;
+								break;
+							case "VERSION_ID":
+								info.release = val;
+								break;
+							//case "DISTRIB_CODENAME":
+								//info.codename = val;
+								//break;
+							case "PRETTY_NAME":
+								info.description = val;
+								break;
+						}
+					}
+				}
+			}
+
+			return info;
+		}
+
+		public static string get_running_desktop_name(){
+
+			/* Return the names of the current Desktop environment */
+
+			int pid = -1;
+
+			pid = get_pid_by_name("cinnamon");
+			if (pid > 0){
+				return "Cinnamon";
+			}
+
+			pid = get_pid_by_name("xfdesktop");
+			if (pid > 0){
+				return "Xfce";
+			}
+
+			pid = get_pid_by_name("lxsession");
+			if (pid > 0){
+				return "LXDE";
+			}
+
+			pid = get_pid_by_name("gnome-shell");
+			if (pid > 0){
+				return "Gnome";
+			}
+
+			pid = get_pid_by_name("wingpanel");
+			if (pid > 0){
+				return "Elementary";
+			}
+
+			pid = get_pid_by_name("unity-panel-service");
+			if (pid > 0){
+				return "Unity";
+			}
+
+			pid = get_pid_by_name("plasma-desktop");
+			if (pid > 0){
+				return "KDE";
+			}
+
+			return "Unknown";
+		}
+
+	}
+
+
+	// dep: notify-send
+	public class OSDNotify : GLib.Object {
+		private static DateTime dt_last_notification = null;
+		public static const int NOTIFICATION_INTERVAL = 3;
+		
+		public static int notify_send (
+			string title, string message, int durationMillis,
+			string urgency = "low", // low, normal, critical
+			string dialog_type = "info" //error, info, warning
+			){ 
 
 		/* Displays notification bubble on the desktop */
 
@@ -1858,31 +1949,21 @@ namespace TeeJee.System{
 
 		if (seconds > NOTIFICATION_INTERVAL){
 			string s = "notify-send -t %d -u %s -i %s \"%s\" \"%s\"".printf(durationMillis, urgency, "gtk-dialog-" + dialog_type, title, message);
-			retVal = exec_sync (s);
+				retVal = exec_sync (s, null, null);
 			dt_last_notification = new DateTime.now_local();
 		}
 
 		return retVal;
 	}
 
-	public bool set_directory_ownership(string dir_name, string login_name){
-		try {
-			string cmd = "chown %s:%s -R '%s'".printf(login_name, login_name, dir_name);
-			int exit_code;
-			Process.spawn_command_line_sync(cmd, null, null, out exit_code);
-
-			if (exit_code == 0){
-				log_debug(_("Set owner: %s, dir: %s").printf(login_name, dir_name));
+		public static bool is_supported(){
+			string path = get_cmd_path ("notify-send");
+			if ((path != null) && (path.length > 0)){
 				return true;
 			}
 			else{
-				log_error(_("Failed to set ownership") + ": %s, '%s'".printf(login_name, dir_name));
 				return false;
 			}
-		}
-		catch (Error e){
-			log_error (e.message);
-			return false;
 		}
 	}
 

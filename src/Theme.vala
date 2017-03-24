@@ -440,7 +440,7 @@ public class Theme : GLib.Object{
 	}
 	
 	private int64 get_file_count_installed(){
-		progress_total = (int64) get_file_count(theme_dir_path);
+		progress_total = (int64) dir_count(theme_dir_path);
 		progress_count = 0;
 		return progress_total;
 	}
