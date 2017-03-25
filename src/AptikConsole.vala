@@ -31,10 +31,9 @@ using TeeJee.Logging;
 using TeeJee.FileSystem;
 using TeeJee.JSON;
 using TeeJee.ProcessManagement;
-using TeeJee.GtkHelper;
-using TeeJee.Multimedia;
 using TeeJee.System;
 using TeeJee.Misc;
+using TeeJee.GtkHelper;
 
 public Main App;
 public const string AppName = "Aptik Migration Utility";
@@ -59,7 +58,7 @@ public class AptikConsole : GLib.Object {
 			exit(0);
 		}
 
-		init_tmp(AppShortName);
+		init_tmp();
 
 		App = new Main(args, false);
 		

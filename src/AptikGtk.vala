@@ -30,10 +30,9 @@ using TeeJee.Logging;
 using TeeJee.FileSystem;
 using TeeJee.JSON;
 using TeeJee.ProcessManagement;
-using TeeJee.GtkHelper;
-using TeeJee.Multimedia;
 using TeeJee.System;
 using TeeJee.Misc;
+using TeeJee.GtkHelper;
 
 public Main App;
 public const string AppName = "Aptik Migration Utility";
@@ -52,7 +51,7 @@ public class AptikGtk : GLib.Object {
 
 		Gtk.init(ref args);
 
-		init_tmp(AppShortName);
+		init_tmp();
 
 		if (!user_is_admin()) {
 			string msg = _("Aptik needs admin access to backup and restore packages.") + "\n";

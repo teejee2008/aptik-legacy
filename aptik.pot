@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2016-07-23 18:30+0530\n"
+"POT-Creation-Date: 2017-03-25 18:09+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,29 +27,29 @@ msgstr ""
 msgid "(%ld packages in cache)"
 msgstr ""
 
-#: PackageWindow.vala:511
+#: PackageWindow.vala:510
 msgid "(backup-list)"
 msgstr ""
 
-#: PackageManagerWindow.vala:846 PackageWindow.vala:507 PackageWindow.vala:532
+#: PackageManagerWindow.vala:846 PackageWindow.vala:506 PackageWindow.vala:531
 msgid "(selected)"
 msgstr ""
 
-#: PackageManagerWindow.vala:848 PackageWindow.vala:509 PackageWindow.vala:534
+#: PackageManagerWindow.vala:848 PackageWindow.vala:508 PackageWindow.vala:533
 msgid "(unselected)"
 msgstr ""
 
-#: MountWindow.vala:472
+#: MountWindow.vala:471
 msgid "/etc/fstab and /etc/crypttab are already up-to-date"
 msgstr ""
 
-#: PackageWindow.vala:187
+#: PackageWindow.vala:186
 msgid ""
 "<b>(backup-list)</b>\n"
 "Packages in the backup list"
 msgstr ""
 
-#: PackageWindow.vala:183
+#: PackageWindow.vala:182
 msgid ""
 "<b>Installed (auto)</b>\n"
 "Packages that were installed automatically for satisfying the dependencies "
@@ -57,19 +57,19 @@ msgid ""
 "above example."
 msgstr ""
 
-#: PackageWindow.vala:184
+#: PackageWindow.vala:183
 msgid ""
 "<b>Installed (deb)</b>\n"
 "Packages that were installed from downloaded DEB files."
 msgstr ""
 
-#: PackageWindow.vala:181
+#: PackageWindow.vala:180
 msgid ""
 "<b>Installed (dist)</b>\n"
 "Packages that came with your OS."
 msgstr ""
 
-#: PackageWindow.vala:182
+#: PackageWindow.vala:181
 msgid ""
 "<b>Installed (user)</b>\n"
 "Extra packages installed by you. Dependency packages will not be displayed. "
@@ -77,13 +77,13 @@ msgid ""
 "were installed along with A (as dependencies), then only A will be listed."
 msgstr ""
 
-#: PackageWindow.vala:180
+#: PackageWindow.vala:179
 msgid ""
 "<b>Installed</b>\n"
 "All installed packages."
 msgstr ""
 
-#: PackageWindow.vala:186
+#: PackageWindow.vala:185
 msgid ""
 "<b>Not Available</b>\n"
 "Packages that are not available for installation. These packages are not "
@@ -91,13 +91,13 @@ msgid ""
 "directory."
 msgstr ""
 
-#: PackageWindow.vala:185
+#: PackageWindow.vala:184
 msgid ""
 "<b>Not Installed</b>\n"
 "Packages that are not installed but available for installation."
 msgstr ""
 
-#: PackageWindow.vala:179
+#: PackageWindow.vala:178
 msgid ""
 "<b>Package State</b>\n"
 "\n"
@@ -107,7 +107,7 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: Classes.vala:674
+#: Classes.vala:673
 msgid "Add"
 msgstr ""
 
@@ -115,57 +115,57 @@ msgstr ""
 msgid "Add missing PPAs"
 msgstr ""
 
-#: PpaWindow.vala:528
+#: PpaWindow.vala:527
 #, c-format
 msgid "Adding '%s'..."
 msgstr ""
 
-#: AptikConsole.vala:582
+#: AptikConsole.vala:581
 msgid "Adding PPA"
 msgstr ""
 
-#: AdminWindow.vala:62
+#: AdminWindow.vala:61
 msgid "Admin"
 msgstr ""
 
-#: AptikGtk.vala:60
+#: AptikGtk.vala:59
 msgid "Admin Access Required"
 msgstr ""
 
-#: PackageWindow.vala:147 ThemeWindow.vala:137
+#: PackageWindow.vala:146 ThemeWindow.vala:136
 msgid "Advanced"
 msgstr ""
 
 #: PackageManagerWindow.vala:832 PackageManagerWindow.vala:858
-#: PackageWindow.vala:491 PackageWindow.vala:516 PackageWindow.vala:545
+#: PackageWindow.vala:490 PackageWindow.vala:515 PackageWindow.vala:544
 msgid "All"
 msgstr ""
 
-#: AptikConsole.vala:150
+#: AptikConsole.vala:149
 msgid "All Items"
 msgstr ""
 
-#: ThemeWindow.vala:278
+#: ThemeWindow.vala:277
 msgid "All Types"
 msgstr ""
 
-#: ThemeWindow.vala:219
+#: ThemeWindow.vala:218
 msgid "All Users"
 msgstr ""
 
-#: PackageWindow.vala:858
+#: PackageWindow.vala:857
 msgid "All top-level installed packages have been selected by default."
 msgstr ""
 
-#: Main.vala:316
+#: Main.vala:317
 msgid "App config loaded"
 msgstr ""
 
-#: Main.vala:289
+#: Main.vala:290
 msgid "App config saved"
 msgstr ""
 
-#: OneClickSettingsDialog.vala:138
+#: OneClickSettingsDialog.vala:137
 msgid "App settings backup limit (KB)"
 msgstr ""
 
@@ -173,20 +173,20 @@ msgstr ""
 msgid "Application Info"
 msgstr ""
 
-#: Main.vala:3342
+#: Main.vala:3343
 msgid "Application Settings"
 msgstr ""
 
-#: AptikConsole.vala:57 AptikGtk.vala:58
+#: AptikConsole.vala:56 AptikGtk.vala:57
 msgid "Aptik needs admin access to backup and restore packages."
 msgstr ""
 
-#: Main.vala:1754 Theme.vala:624
+#: Main.vala:1755 Theme.vala:623
 #, c-format
 msgid "Archiving"
 msgstr ""
 
-#: ConfigWindow.vala:418 ThemeWindow.vala:611
+#: ConfigWindow.vala:417 ThemeWindow.vala:610
 msgid "Archiving..."
 msgstr ""
 
@@ -195,7 +195,7 @@ msgstr ""
 msgid "Artists"
 msgstr ""
 
-#: AptikConsole.vala:93
+#: AptikConsole.vala:92
 msgid "Assume Yes for all prompts"
 msgstr ""
 
@@ -204,8 +204,8 @@ msgstr ""
 msgid "Authors"
 msgstr ""
 
-#: PackageManagerWindow.vala:638 PackageWindow.vala:661 PackageWindow.vala:665
-#: PackageWindow.vala:691
+#: PackageManagerWindow.vala:638 PackageWindow.vala:660 PackageWindow.vala:664
+#: PackageWindow.vala:690
 msgid "Available"
 msgstr ""
 
@@ -213,14 +213,14 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
-#: AptikConsole.vala:1064 AptikConsole.vala:1099 ConfigWindow.vala:335
+#: AptikConsole.vala:1063 AptikConsole.vala:1098 ConfigWindow.vala:334
 #: MainWindow.vala:242 MainWindow.vala:292 MainWindow.vala:321
 #: MainWindow.vala:370 MainWindow.vala:445 MainWindow.vala:493
 #: MainWindow.vala:541 MainWindow.vala:607 MainWindow.vala:636
-#: PackageManagerWindow.vala:476 PackageWindow.vala:132 PackageWindow.vala:407
-#: PpaWindow.vala:112 PpaWindow.vala:266 ThemeWindow.vala:124
-#: ThemeWindow.vala:527 UserDataSettingsDialog.vala:63
-#: UserDataSettingsDialog.vala:487
+#: PackageManagerWindow.vala:476 PackageWindow.vala:131 PackageWindow.vala:406
+#: PpaWindow.vala:111 PpaWindow.vala:265 ThemeWindow.vala:123
+#: ThemeWindow.vala:526 UserDataSettingsDialog.vala:62
+#: UserDataSettingsDialog.vala:486
 msgid "Backup"
 msgstr ""
 
@@ -228,11 +228,11 @@ msgstr ""
 msgid "Backup &amp; Restore"
 msgstr ""
 
-#: AptikConsole.vala:137 MainWindow.vala:534
+#: AptikConsole.vala:136 MainWindow.vala:534
 msgid "Backup /etc/fstab and /etc/crypttab entries"
 msgstr ""
 
-#: ConfigWindow.vala:119
+#: ConfigWindow.vala:118
 msgid "Backup Application Settings"
 msgstr ""
 
@@ -244,7 +244,7 @@ msgstr ""
 msgid "Backup Directory Not Selected"
 msgstr ""
 
-#: ThemeWindow.vala:397
+#: ThemeWindow.vala:396
 msgid "Backup File"
 msgstr ""
 
@@ -252,11 +252,11 @@ msgstr ""
 msgid "Backup Launchpad PPAs"
 msgstr ""
 
-#: UserDataSettingsDialog.vala:267
+#: UserDataSettingsDialog.vala:266
 msgid "Backup Mode"
 msgstr ""
 
-#: AptikConsole.vala:152
+#: AptikConsole.vala:151
 msgid "Backup all items"
 msgstr ""
 
@@ -264,27 +264,27 @@ msgstr ""
 msgid "Backup application settings"
 msgstr ""
 
-#: Main.vala:3290
+#: Main.vala:3291
 msgid "Backup completed"
 msgstr ""
 
-#: Main.vala:3291
+#: Main.vala:3292
 msgid "Backup completed with errors"
 msgstr ""
 
-#: AptikConsole.vala:125
+#: AptikConsole.vala:124
 msgid "Backup config files from /home/<user>"
 msgstr ""
 
-#: AptikConsole.vala:89
+#: AptikConsole.vala:88
 msgid "Backup directory (defaults to current directory)"
 msgstr ""
 
-#: AptikConsole.vala:182
+#: AptikConsole.vala:181
 msgid "Backup directory not found"
 msgstr ""
 
-#: AptikConsole.vala:104
+#: AptikConsole.vala:103
 msgid "Backup downloaded packages from APT cache"
 msgstr ""
 
@@ -304,15 +304,15 @@ msgstr ""
 msgid "Backup installed packages"
 msgstr ""
 
-#: AptikConsole.vala:99
+#: AptikConsole.vala:98
 msgid "Backup list of PPAs"
 msgstr ""
 
-#: AptikConsole.vala:114
+#: AptikConsole.vala:113
 msgid "Backup list of manual and installed packages"
 msgstr ""
 
-#: Main.vala:3292
+#: Main.vala:3293
 msgid "Backup saved"
 msgstr ""
 
@@ -324,7 +324,7 @@ msgstr ""
 msgid "Backup the list of installed PPAs"
 msgstr ""
 
-#: AptikConsole.vala:132
+#: AptikConsole.vala:131
 msgid "Backup themes from /usr/share/themes"
 msgstr ""
 
@@ -333,48 +333,48 @@ msgid ""
 "Backup themes, icons and cursors in /usr/share/icons and /usr/share/themes"
 msgstr ""
 
-#: AptikConsole.vala:147
+#: AptikConsole.vala:146
 msgid "Backup user's scheduled tasks (crontab)"
 msgstr ""
 
-#: AptikConsole.vala:142
+#: AptikConsole.vala:141
 msgid "Backup user-created data in user's home directory"
 msgstr ""
 
-#: AptikConsole.vala:119 MainWindow.vala:363
+#: AptikConsole.vala:118 MainWindow.vala:363
 msgid "Backup users and groups"
 msgstr ""
 
-#: Main.vala:1942
+#: Main.vala:1943
 msgid "Bash Command History"
 msgstr ""
 
-#: Main.vala:1944
+#: Main.vala:1945
 msgid "Bash Init Script"
 msgstr ""
 
-#: Main.vala:1946
+#: Main.vala:1947
 msgid "Bash Logout Script"
 msgstr ""
 
-#: Main.vala:1553 MainWindow.vala:926
+#: Main.vala:1554 MainWindow.vala:926
 msgid "Cache backup not found in backup directory"
 msgstr ""
 
-#: PackageManagerWindow.vala:488 ProgressWindow.vala:137
-#: TerminalWindow.vala:165
+#: PackageManagerWindow.vala:488 ProgressWindow.vala:136
+#: TerminalWindow.vala:164
 msgid "Cancel"
 msgstr ""
 
-#: PackageManagerWindow.vala:182 PackageWindow.vala:206
+#: PackageManagerWindow.vala:182 PackageWindow.vala:205
 msgid "Category"
 msgstr ""
 
-#: ThemeWindow.vala:654
+#: ThemeWindow.vala:653
 msgid "Checking backups..."
 msgstr ""
 
-#: Theme.vala:865
+#: Theme.vala:864
 msgid "Checking for nested folders in path"
 msgstr ""
 
@@ -382,29 +382,29 @@ msgstr ""
 msgid "Checking installed and available packages..."
 msgstr ""
 
-#: Main.vala:1952
+#: Main.vala:1953
 msgid "Chromium Web Browser"
 msgstr ""
 
-#: ThemeWindow.vala:299
+#: ThemeWindow.vala:298
 msgid "Cinnamon Shell"
 msgstr ""
 
-#: AboutWindow.vala:305 ConfigWindow.vala:355 MountWindow.vala:368
-#: PackageWindow.vala:419 PpaWindow.vala:278 TerminalWindow.vala:175
-#: ThemeWindow.vala:539 UserAccountWindow.vala:333
+#: AboutWindow.vala:305 ConfigWindow.vala:354 MountWindow.vala:367
+#: PackageWindow.vala:418 PpaWindow.vala:277 TerminalWindow.vala:174
+#: ThemeWindow.vala:538 UserAccountWindow.vala:332
 msgid "Close"
 msgstr ""
 
-#: Main.vala:223
+#: Main.vala:224
 msgid "Commands listed below are not available on this system"
 msgstr ""
 
-#: AptikConsole.vala:87
+#: AptikConsole.vala:86
 msgid "Common"
 msgstr ""
 
-#: PasswordWindow.vala:127
+#: PasswordWindow.vala:126
 msgid "Confirm Passphrase"
 msgstr ""
 
@@ -426,39 +426,39 @@ msgstr ""
 msgid "Credits"
 msgstr ""
 
-#: CronTab.vala:72
+#: CronTab.vala:94
 msgid "Cron job added"
 msgstr ""
 
-#: CronTab.vala:122
+#: CronTab.vala:144
 msgid "Cron job removed"
 msgstr ""
 
-#: ThemeWindow.vala:284
+#: ThemeWindow.vala:283
 msgid "Cursors"
 msgstr ""
 
-#: PackageWindow.vala:322
+#: PackageWindow.vala:321
 msgid "DEB File Backup"
 msgstr ""
 
-#: PackageWindow.vala:455
+#: PackageWindow.vala:454
 msgid "DEB files were copied to backup location."
 msgstr ""
 
-#: ConfigWindow.vala:348
+#: ConfigWindow.vala:347
 msgid "Delete"
 msgstr ""
 
-#: ConfigWindow.vala:581
+#: ConfigWindow.vala:580
 msgid "Deleting..."
 msgstr ""
 
-#: ConfigWindow.vala:282 PackageManagerWindow.vala:435 PackageWindow.vala:341
+#: ConfigWindow.vala:281 PackageManagerWindow.vala:435 PackageWindow.vala:340
 msgid "Description"
 msgstr ""
 
-#: MountWindow.vala:220 MountWindow.vala:410
+#: MountWindow.vala:219 MountWindow.vala:409
 msgid "Device"
 msgstr ""
 
@@ -479,19 +479,19 @@ msgid ""
 "(teejeetech@gmail.com)"
 msgstr ""
 
-#: Utility.vala:491
+#: Utility.vala:390
 msgid "Dir not found"
 msgstr ""
 
-#: Main.vala:3313
+#: Main.vala:3314
 msgid "Directory created"
 msgstr ""
 
-#: Main.vala:3316
+#: Main.vala:3317
 msgid "Directory exists"
 msgstr ""
 
-#: Main.vala:3317
+#: Main.vala:3318
 msgid "Directory missing"
 msgstr ""
 
@@ -521,7 +521,7 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
-#: Main.vala:3337
+#: Main.vala:3338
 msgid "Downloaded Packages"
 msgstr ""
 
@@ -529,7 +529,7 @@ msgstr ""
 msgid "Downloading packages..."
 msgstr ""
 
-#: MountWindow.vala:314
+#: MountWindow.vala:313
 msgid "Dump"
 msgstr ""
 
@@ -537,15 +537,15 @@ msgstr ""
 msgid "E"
 msgstr ""
 
-#: MountWindow.vala:424
+#: MountWindow.vala:423
 msgid "Encrypted Device"
 msgstr ""
 
-#: MountWindow.vala:140
+#: MountWindow.vala:139
 msgid "Encrypted Devices (/etc/crypttab)"
 msgstr ""
 
-#: PasswordWindow.vala:96
+#: PasswordWindow.vala:95
 msgid "Enter Passphrase"
 msgstr ""
 
@@ -553,137 +553,137 @@ msgstr ""
 msgid "Enter Password"
 msgstr ""
 
-#: Main.vala:3011
+#: Main.vala:3012
 #, c-format
 msgid "Enter password again to confirm"
 msgstr ""
 
-#: Main.vala:3332
+#: Main.vala:3333
 msgid "Enter password for decrypting backup"
 msgstr ""
 
-#: Main.vala:3331
+#: Main.vala:3332
 msgid "Enter password for encrypting backup"
 msgstr ""
 
-#: AptikConsole.vala:573 AptikConsole.vala:649 MainWindow.vala:564
-#: MainWindow.vala:648 MainWindow.vala:665 PackageWindow.vala:1018
-#: PpaWindow.vala:496 PpaWindow.vala:601 UserAccountWindow.vala:514
+#: AptikConsole.vala:572 AptikConsole.vala:648 MainWindow.vala:564
+#: MainWindow.vala:648 MainWindow.vala:665 PackageWindow.vala:1017
+#: PpaWindow.vala:495 PpaWindow.vala:600 UserAccountWindow.vala:513
 #: Utility.vala:153
 msgid "Error"
 msgstr ""
 
-#: UserDataSettingsDialog.vala:105
+#: UserDataSettingsDialog.vala:104
 msgid "Exclude"
 msgstr ""
 
-#: Main.vala:2033 Theme.vala:665
+#: Main.vala:2034 Theme.vala:664
 #, c-format
 msgid "Extracting"
 msgstr ""
 
-#: ConfigWindow.vala:506 ThemeWindow.vala:740
+#: ConfigWindow.vala:505 ThemeWindow.vala:739
 msgid "Extracting..."
 msgstr ""
 
-#: MountWindow.vala:276
+#: MountWindow.vala:275
 msgid "FS Type"
 msgstr ""
 
-#: CronTab.vala:68
+#: CronTab.vala:90
 msgid "Failed to add cron job"
 msgstr ""
 
-#: Main.vala:3323
+#: Main.vala:3324
 msgid "Failed to add group"
 msgstr ""
 
-#: Main.vala:3320
+#: Main.vala:3321
 msgid "Failed to add user"
 msgstr ""
 
-#: Main.vala:3326
+#: Main.vala:3327
 msgid "Failed to add user to group"
 msgstr ""
 
-#: Main.vala:3135
+#: Main.vala:3136
 msgid "Failed to change file ownership"
 msgstr ""
 
-#: Utility.vala:316
+#: Utility.vala:269
 msgid "Failed to copy file"
 msgstr ""
 
-#: Utility.vala:395
+#: Utility.vala:361
 msgid "Failed to create dir"
 msgstr ""
 
-#: Main.vala:3314
+#: Main.vala:3315
 msgid "Failed to create directory"
 msgstr ""
 
-#: Main.vala:3308
+#: Main.vala:3309
 msgid "Failed to decrypt file"
 msgstr ""
 
-#: Main.vala:3311 Utility.vala:225 Utility.vala:254
+#: Main.vala:3312 Utility.vala:208
 msgid "Failed to delete file"
 msgstr ""
 
-#: CronTab.vala:162
+#: CronTab.vala:184
 msgid "Failed to export crontab file"
 msgstr ""
 
-#: CronTab.vala:145
+#: CronTab.vala:167
 msgid "Failed to install crontab file"
 msgstr ""
 
-#: Utility.vala:335
+#: Utility.vala:289
 msgid "Failed to move file"
 msgstr ""
 
-#: CronTab.vala:25
+#: CronTab.vala:47
 msgid "Failed to read cron tab"
 msgstr ""
 
-#: Main.vala:3305 Utility.vala:273
+#: Main.vala:3306 Utility.vala:226
 msgid "Failed to read file"
 msgstr ""
 
-#: CronTab.vala:118
+#: CronTab.vala:140
 msgid "Failed to remove cron job"
 msgstr ""
 
-#: Main.vala:3293
+#: Main.vala:3294
 msgid "Failed to save backup"
 msgstr ""
 
-#: Main.vala:3302
+#: Main.vala:3303
 msgid "Failed to save file"
 msgstr ""
 
-#: Utility.vala:2093
+#: Utility.vala:1915
 msgid "Failed to set ownership"
 msgstr ""
 
-#: Main.vala:566
+#: Main.vala:567
 #, c-format
 msgid "Failed to unzip: '%s'"
 msgstr ""
 
-#: Main.vala:765
+#: Main.vala:766
 msgid "Failed to write"
 msgstr ""
 
-#: Utility.vala:300
+#: Utility.vala:253
 msgid "Failed to write file"
 msgstr ""
 
-#: OneClickSettingsDialog.vala:81
+#: OneClickSettingsDialog.vala:80
 msgid "File"
 msgstr ""
 
-#: PackageWindow.vala:855
+#: PackageWindow.vala:854
 msgid "File Missing"
 msgstr ""
 
@@ -691,41 +691,41 @@ msgstr ""
 msgid "File Not Found"
 msgstr ""
 
-#: Main.vala:3307
+#: Main.vala:3308
 msgid "File decrypted"
 msgstr ""
 
-#: Main.vala:3310
+#: Main.vala:3311
 msgid "File deleted"
 msgstr ""
 
-#: Main.vala:3298
+#: Main.vala:3299
 msgid "File exists"
 msgstr ""
 
-#: Utility.vala:644 Utility.vala:693
+#: Utility.vala:485 Utility.vala:522
 msgid "File is missing"
 msgstr ""
 
-#: CronTab.vala:130 Main.vala:2005 Main.vala:3299 Theme.vala:650
-#: Utility.vala:330 Utility.vala:520
+#: CronTab.vala:152 Main.vala:2006 Main.vala:3300 Theme.vala:649
+#: Utility.vala:283 Utility.vala:417
 msgid "File not found"
 msgstr ""
 
-#: Main.vala:255 MainWindow.vala:840
+#: Main.vala:256 MainWindow.vala:840
 msgid "File not found in backup directory"
 msgstr ""
 
-#: Main.vala:471 Main.vala:1088
+#: Main.vala:472 Main.vala:1089
 #, c-format
 msgid "File not found: %s"
 msgstr ""
 
-#: Main.vala:3304
+#: Main.vala:3305
 msgid "File read"
 msgstr ""
 
-#: Main.vala:762 Main.vala:3301
+#: Main.vala:763 Main.vala:3302
 msgid "File saved"
 msgstr ""
 
@@ -733,28 +733,28 @@ msgstr ""
 msgid "Files Not Found"
 msgstr ""
 
-#: PackageWindow.vala:456
+#: PackageWindow.vala:455
 msgid "Files copied"
 msgstr ""
 
-#: Main.vala:3339
+#: Main.vala:3340
 msgid "Filesystem Mounts"
 msgstr ""
 
-#: PackageManagerWindow.vala:160 PackageWindow.vala:159
+#: PackageManagerWindow.vala:160 PackageWindow.vala:158
 msgid "Filter"
 msgstr ""
 
 #: MainWindow.vala:561 MainWindow.vala:645 MainWindow.vala:662
-#: MountWindow.vala:511 UserAccountWindow.vala:510
+#: MountWindow.vala:510 UserAccountWindow.vala:509
 msgid "Finished"
 msgstr ""
 
-#: PackageWindow.vala:1093
+#: PackageWindow.vala:1092
 msgid "Finished installing packages"
 msgstr ""
 
-#: Main.vala:1932
+#: Main.vala:1933
 msgid "Firefox Web Browser"
 msgstr ""
 
@@ -766,19 +766,19 @@ msgstr ""
 msgid "Folder not found in backup directory"
 msgstr ""
 
-#: PpaWindow.vala:602
+#: PpaWindow.vala:601
 msgid "Following PPAs could not be added"
 msgstr ""
 
-#: PackageWindow.vala:1034
+#: PackageWindow.vala:1033
 msgid "Following packages are NOT available"
 msgstr ""
 
-#: AptikConsole.vala:657
+#: AptikConsole.vala:656
 msgid "Following packages are not available"
 msgstr ""
 
-#: PackageWindow.vala:982
+#: PackageWindow.vala:981
 #, c-format
 msgid ""
 "Following packages are not available (missing PPA):\n"
@@ -786,102 +786,102 @@ msgid ""
 "%s"
 msgstr ""
 
-#: PackageWindow.vala:891
+#: PackageWindow.vala:890
 msgid "Following packages are not available in software repositories"
 msgstr ""
 
-#: AptikConsole.vala:665 AptikConsole.vala:685
+#: AptikConsole.vala:664 AptikConsole.vala:684
 msgid "Following packages will be installed"
 msgstr ""
 
-#: UserDataSettingsDialog.vala:296
+#: UserDataSettingsDialog.vala:295
 msgid "Full"
 msgstr ""
 
-#: UserDataSettingsDialog.vala:273
+#: UserDataSettingsDialog.vala:272
 msgid ""
 "Full - Remove previous backup and create new\n"
 "Incremental - Keep existing backup and save changes"
 msgstr ""
 
-#: UserAccountWindow.vala:455
+#: UserAccountWindow.vala:454
 msgid "GID"
 msgstr ""
 
-#: ThemeWindow.vala:287
+#: ThemeWindow.vala:286
 msgid "GTK-2"
 msgstr ""
 
-#: ThemeWindow.vala:290
+#: ThemeWindow.vala:289
 msgid "GTK-3"
 msgstr ""
 
-#: UserDataSettingsDialog.vala:82
+#: UserDataSettingsDialog.vala:81
 msgid "General"
 msgstr ""
 
-#: ThemeWindow.vala:293
+#: ThemeWindow.vala:292
 msgid "Gnome Shell"
 msgstr ""
 
-#: UserAccountWindow.vala:454
+#: UserAccountWindow.vala:453
 msgid "Group"
 msgstr ""
 
-#: Main.vala:3322
+#: Main.vala:3323
 msgid "Group added"
 msgstr ""
 
-#: UserAccountWindow.vala:137 UserAccountWindow.vala:444
+#: UserAccountWindow.vala:136 UserAccountWindow.vala:443
 msgid "Groups"
 msgstr ""
 
-#: PasswordWindow.vala:195
+#: PasswordWindow.vala:194
 msgid "Hide"
 msgstr ""
 
-#: Main.vala:3343
+#: Main.vala:3344
 msgid "Home Directory Data"
 msgstr ""
 
-#: UserAccountWindow.vala:238
+#: UserAccountWindow.vala:237
 msgid "ID"
 msgstr ""
 
-#: ThemeWindow.vala:281
+#: ThemeWindow.vala:280
 msgid "Icons"
 msgstr ""
 
-#: PackageWindow.vala:893
+#: PackageWindow.vala:892
 msgid ""
 "If you have the DEB files for these packages, you can drag-and-drop the "
 "files on this window. Files will be saved to backup location and used for "
 "restore."
 msgstr ""
 
-#: ThemeWindow.vala:417
+#: ThemeWindow.vala:416
 msgid "Includes"
 msgstr ""
 
-#: UserDataSettingsDialog.vala:299
+#: UserDataSettingsDialog.vala:298
 msgid "Incremental"
 msgstr ""
 
 #: PackageManagerWindow.vala:399 PackageManagerWindow.vala:634
-#: PackageManagerWindow.vala:834 PackageWindow.vala:493 PackageWindow.vala:518
-#: PackageWindow.vala:657 ThemeWindow.vala:461
+#: PackageManagerWindow.vala:834 PackageWindow.vala:492 PackageWindow.vala:517
+#: PackageWindow.vala:656 ThemeWindow.vala:460
 msgid "Installed"
 msgstr ""
 
-#: PackageManagerWindow.vala:840 PackageWindow.vala:499 PackageWindow.vala:524
+#: PackageManagerWindow.vala:840 PackageWindow.vala:498 PackageWindow.vala:523
 msgid "Installed (auto)"
 msgstr ""
 
-#: PackageWindow.vala:501 PackageWindow.vala:526
+#: PackageWindow.vala:500 PackageWindow.vala:525
 msgid "Installed (deb)"
 msgstr ""
 
-#: PackageManagerWindow.vala:836 PackageWindow.vala:495 PackageWindow.vala:520
+#: PackageManagerWindow.vala:836 PackageWindow.vala:494 PackageWindow.vala:519
 msgid "Installed (dist)"
 msgstr ""
 
@@ -889,35 +889,35 @@ msgstr ""
 msgid "Installed (updates)"
 msgstr ""
 
-#: PackageManagerWindow.vala:838 PackageWindow.vala:497 PackageWindow.vala:522
+#: PackageManagerWindow.vala:838 PackageWindow.vala:496 PackageWindow.vala:521
 msgid "Installed (user)"
 msgstr ""
 
-#: Main.vala:3338
+#: Main.vala:3339
 msgid "Installed Software"
 msgstr ""
 
-#: PackageWindow.vala:1082
+#: PackageWindow.vala:1081
 #, c-format
 msgid "Installing packages from DEB files"
 msgstr ""
 
-#: PackageWindow.vala:1074
+#: PackageWindow.vala:1073
 #, c-format
 msgid "Installing packages from repos"
 msgstr ""
 
-#: Main.vala:3288
+#: Main.vala:3289
 msgid "Internet connection is not active. Check the connection and try again."
 msgstr ""
 
-#: PackageWindow.vala:857
+#: PackageWindow.vala:856
 msgid ""
 "It is not possible to determine whether a package was installed by you, or "
 "whether it was installed along with the Linux distribution."
 msgstr ""
 
-#: UserDataSettingsDialog.vala:337
+#: UserDataSettingsDialog.vala:336
 msgid "Item"
 msgstr ""
 
@@ -925,55 +925,55 @@ msgstr ""
 msgid "Latest"
 msgstr ""
 
-#: UserAccountWindow.vala:291
+#: UserAccountWindow.vala:290
 msgid "List"
 msgstr ""
 
-#: AptikConsole.vala:98
+#: AptikConsole.vala:97
 msgid "List PPAs"
 msgstr ""
 
-#: AptikConsole.vala:111
+#: AptikConsole.vala:110
 msgid "List auto-installed packages"
 msgstr ""
 
-#: AptikConsole.vala:109
+#: AptikConsole.vala:108
 msgid "List available packages"
 msgstr ""
 
-#: AptikConsole.vala:124
+#: AptikConsole.vala:123
 msgid "List config dirs in /home/<user>"
 msgstr ""
 
-#: AptikConsole.vala:113
+#: AptikConsole.vala:112
 msgid "List default packages for linux distribution"
 msgstr ""
 
-#: AptikConsole.vala:112
+#: AptikConsole.vala:111
 msgid "List extra packages installed by user"
 msgstr ""
 
-#: AptikConsole.vala:110
+#: AptikConsole.vala:109
 msgid "List installed packages"
 msgstr ""
 
-#: AptikConsole.vala:131
+#: AptikConsole.vala:130
 msgid "List themes in /usr/share/themes"
 msgstr ""
 
-#: Main.vala:1938 Main.vala:1948
+#: Main.vala:1939 Main.vala:1949
 msgid "Local Fonts"
 msgstr ""
 
-#: Main.vala:1940 Main.vala:1950
+#: Main.vala:1941 Main.vala:1951
 msgid "Local Themes"
 msgstr ""
 
-#: MountWindow.vala:202
+#: MountWindow.vala:201
 msgid "Mapped Name"
 msgstr ""
 
-#: ThemeWindow.vala:302
+#: ThemeWindow.vala:301
 msgid "Metacity Window Border"
 msgstr ""
 
@@ -981,59 +981,59 @@ msgstr ""
 msgid "Migration utility for Ubuntu-based distributions"
 msgstr ""
 
-#: Main.vala:140
+#: Main.vala:141
 msgid "Missing Dependencies"
 msgstr ""
 
-#: Utility.vala:1616
+#: Utility.vala:1438
 msgid "Missing Icon"
 msgstr ""
 
-#: PackageWindow.vala:981
+#: PackageWindow.vala:980
 msgid "Missing Packages"
 msgstr ""
 
-#: MountWindow.vala:239
+#: MountWindow.vala:238
 msgid "Mount Point"
 msgstr ""
 
-#: UserAccountWindow.vala:208 UserDataSettingsDialog.vala:230
+#: UserAccountWindow.vala:207 UserDataSettingsDialog.vala:229
 msgid "Name"
 msgstr ""
 
-#: Classes.vala:672 Classes.vala:678
+#: Classes.vala:671 Classes.vala:677
 msgid "No Change"
 msgstr ""
 
-#: UserAccountWindow.vala:498
+#: UserAccountWindow.vala:497
 msgid "No Changes Required"
 msgstr ""
 
-#: ConfigWindow.vala:402
+#: ConfigWindow.vala:401
 msgid "No Directories Selected"
 msgstr ""
 
-#: PpaWindow.vala:418
+#: PpaWindow.vala:417
 msgid "No PPA Selected"
 msgstr ""
 
-#: PackageWindow.vala:914
+#: PackageWindow.vala:913
 msgid "No Packages Selected"
 msgstr ""
 
-#: ThemeWindow.vala:588
+#: ThemeWindow.vala:587
 msgid "No Themes Selected"
 msgstr ""
 
-#: Main.vala:3328
+#: Main.vala:3329
 msgid "No changes required"
 msgstr ""
 
-#: UserAccountWindow.vala:279 UserAccountWindow.vala:284
+#: UserAccountWindow.vala:278 UserAccountWindow.vala:283
 msgid "Normal"
 msgstr ""
 
-#: PackageWindow.vala:669
+#: PackageWindow.vala:668
 msgid "Not Available"
 msgstr ""
 
@@ -1042,21 +1042,21 @@ msgid "Not Available! Check if PPA needs to be added"
 msgstr ""
 
 #: PackageManagerWindow.vala:638 PackageManagerWindow.vala:844
-#: PackageWindow.vala:661 PackageWindow.vala:665 PackageWindow.vala:691
-#: ThemeWindow.vala:465
+#: PackageWindow.vala:660 PackageWindow.vala:664 PackageWindow.vala:690
+#: ThemeWindow.vala:464
 msgid "Not Installed"
 msgstr ""
 
-#: PackageWindow.vala:505 PackageWindow.vala:530
+#: PackageWindow.vala:504 PackageWindow.vala:529
 msgid "NotAvailable"
 msgstr ""
 
-#: PackageWindow.vala:503 PackageWindow.vala:528
+#: PackageWindow.vala:502 PackageWindow.vala:527
 msgid "NotInstalled"
 msgstr ""
 
-#: ConfigWindow.vala:475 ConfigWindow.vala:552 PackageWindow.vala:1011
-#: PackageWindow.vala:1031 ThemeWindow.vala:717
+#: ConfigWindow.vala:474 ConfigWindow.vala:551 PackageWindow.vala:1010
+#: PackageWindow.vala:1030 ThemeWindow.vala:716
 msgid "Nothing To Do"
 msgstr ""
 
@@ -1090,7 +1090,7 @@ msgstr ""
 msgid "One-Click Restore"
 msgstr ""
 
-#: AdminWindow.vala:56 OneClickSettingsDialog.vala:54
+#: AdminWindow.vala:55 OneClickSettingsDialog.vala:53
 msgid "One-Click Settings"
 msgstr ""
 
@@ -1102,34 +1102,34 @@ msgstr ""
 msgid "Open backup location"
 msgstr ""
 
-#: Main.vala:1936
+#: Main.vala:1937
 msgid "Opera Web Browser"
 msgstr ""
 
-#: AptikConsole.vala:85 AptikGtk.vala:118 MountWindow.vala:295
+#: AptikConsole.vala:84 AptikGtk.vala:117 MountWindow.vala:294
 msgid "Options"
 msgstr ""
 
-#: Main.vala:3131
+#: Main.vala:3132
 #, c-format
 msgid "Ownership changed to '%s' for files in directory '%s'"
 msgstr ""
 
-#: PackageManagerWindow.vala:283 PpaWindow.vala:182
+#: PackageManagerWindow.vala:283 PpaWindow.vala:181
 msgid "PPA"
 msgstr ""
 
 #: PackageManagerWindow.vala:803 PackageManagerWindow.vala:807
-#: PpaWindow.vala:338 PpaWindow.vala:342
+#: PpaWindow.vala:337 PpaWindow.vala:341
 #, c-format
 msgid "PPA is Enabled (%d installed packages)"
 msgstr ""
 
-#: PackageManagerWindow.vala:812 PpaWindow.vala:347
+#: PackageManagerWindow.vala:812 PpaWindow.vala:346
 msgid "PPA is Not Added"
 msgstr ""
 
-#: DownloadWindow.vala:218 PackageManagerWindow.vala:381 PackageWindow.vala:295
+#: DownloadWindow.vala:218 PackageManagerWindow.vala:381 PackageWindow.vala:294
 msgid "Package"
 msgstr ""
 
@@ -1146,47 +1146,47 @@ msgid ""
 "Not Installed\t\tPackages which are not installed"
 msgstr ""
 
-#: Main.vala:3286
+#: Main.vala:3287
 msgid "Package installation has failed or was aborted by user"
 msgstr ""
 
-#: PackageManagerWindow.vala:301 PpaWindow.vala:201 PpaWindow.vala:204
+#: PackageManagerWindow.vala:301 PpaWindow.vala:200 PpaWindow.vala:203
 msgid "Packages"
 msgstr ""
 
-#: MountWindow.vala:333
+#: MountWindow.vala:332
 msgid "Pass"
 msgstr ""
 
-#: MountWindow.vala:258
+#: MountWindow.vala:257
 msgid "Password / Keyfile"
 msgstr ""
 
-#: Main.vala:3333
+#: Main.vala:3334
 msgid "Password cannot be empty!"
 msgstr ""
 
-#: Main.vala:3330
+#: Main.vala:3331
 msgid "Password not specified!"
 msgstr ""
 
-#: Main.vala:3334
+#: Main.vala:3335
 msgid "Passwords do not match!"
 msgstr ""
 
-#: ConfigWindow.vala:243
+#: ConfigWindow.vala:242
 msgid "Path"
 msgstr ""
 
-#: Main.vala:224
+#: Main.vala:225
 msgid "Please install required packages and try running Aptik again"
 msgstr ""
 
-#: AptikGtk.vala:59
+#: AptikGtk.vala:58
 msgid "Please run the application as admin ('gksu aptik-gtk')"
 msgstr ""
 
-#: AptikConsole.vala:58
+#: AptikConsole.vala:57
 msgid "Please run the application as admin (using 'sudo' or 'su')"
 msgstr ""
 
@@ -1194,30 +1194,30 @@ msgstr ""
 msgid "Please select the backup directory"
 msgstr ""
 
-#: ConfigWindow.vala:553
+#: ConfigWindow.vala:552
 msgid "Please select the directories to reset"
 msgstr ""
 
-#: ConfigWindow.vala:476
+#: ConfigWindow.vala:475
 msgid "Please select the directories to restore"
 msgstr ""
 
-#: PackageWindow.vala:859
+#: PackageWindow.vala:858
 msgid "Please un-select the packages that are not required."
 msgstr ""
 
-#: ConfigWindow.vala:409 ConfigWindow.vala:498 ConfigWindow.vala:575
-#: MainWindow.vala:881 MainWindow.vala:931 PackageWindow.vala:833
-#: PackageWindow.vala:944 PpaWindow.vala:365 PpaWindow.vala:445
-#: PpaWindow.vala:502 ThemeWindow.vala:594 ThemeWindow.vala:725
+#: ConfigWindow.vala:408 ConfigWindow.vala:497 ConfigWindow.vala:574
+#: MainWindow.vala:881 MainWindow.vala:931 PackageWindow.vala:832
+#: PackageWindow.vala:943 PpaWindow.vala:364 PpaWindow.vala:444
+#: PpaWindow.vala:501 ThemeWindow.vala:593 ThemeWindow.vala:724
 msgid "Preparing..."
 msgstr ""
 
-#: PackageWindow.vala:1096
+#: PackageWindow.vala:1095
 msgid "Press ENTER to exit..."
 msgstr ""
 
-#: AptikGtk.vala:120
+#: AptikGtk.vala:119
 msgid "Print debug information"
 msgstr ""
 
@@ -1225,35 +1225,35 @@ msgstr ""
 msgid "Progress"
 msgstr ""
 
-#: Main.vala:359
+#: Main.vala:360
 msgid "Reading deb files from backup..."
 msgstr ""
 
-#: Main.vala:350
+#: Main.vala:351
 msgid "Reading default package lists..."
 msgstr ""
 
-#: Main.vala:338
+#: Main.vala:339
 msgid "Reading package lists..."
 msgstr ""
 
-#: Main.vala:1015
+#: Main.vala:1016
 msgid "Reading package priorities..."
 msgstr ""
 
-#: Main.vala:958
+#: Main.vala:959
 msgid "Reading source lists..."
 msgstr ""
 
-#: Main.vala:344
+#: Main.vala:345
 msgid "Reading state information..."
 msgstr ""
 
-#: MountWindow.vala:135
+#: MountWindow.vala:134
 msgid "Regular Devices (/etc/fstab)"
 msgstr ""
 
-#: ConfigWindow.vala:350
+#: ConfigWindow.vala:349
 msgid ""
 "Reset the settings for an application (Eg: Chromium Browser) by deleting the "
 "settings directory (~/.config/chromium). The directory will be created "
@@ -1261,94 +1261,94 @@ msgid ""
 "application."
 msgstr ""
 
-#: AptikConsole.vala:1064 AptikConsole.vala:1099 ConfigWindow.vala:109
-#: ConfigWindow.vala:341 MainWindow.vala:259 MainWindow.vala:300
+#: AptikConsole.vala:1063 AptikConsole.vala:1098 ConfigWindow.vala:108
+#: ConfigWindow.vala:340 MainWindow.vala:259 MainWindow.vala:300
 #: MainWindow.vala:338 MainWindow.vala:398 MainWindow.vala:461
 #: MainWindow.vala:509 MainWindow.vala:569 MainWindow.vala:615
-#: MainWindow.vala:653 MountWindow.vala:116 MountWindow.vala:363
-#: PackageManagerWindow.vala:482 PackageWindow.vala:124 PackageWindow.vala:413
-#: PpaWindow.vala:104 PpaWindow.vala:272 ThemeWindow.vala:115
-#: ThemeWindow.vala:533 UserAccountWindow.vala:113 UserAccountWindow.vala:328
-#: UserDataSettingsDialog.vala:63 UserDataSettingsDialog.vala:487
+#: MainWindow.vala:653 MountWindow.vala:115 MountWindow.vala:362
+#: PackageManagerWindow.vala:482 PackageWindow.vala:123 PackageWindow.vala:412
+#: PpaWindow.vala:103 PpaWindow.vala:271 ThemeWindow.vala:114
+#: ThemeWindow.vala:532 UserAccountWindow.vala:112 UserAccountWindow.vala:327
+#: UserDataSettingsDialog.vala:62 UserDataSettingsDialog.vala:486
 msgid "Restore"
 msgstr ""
 
-#: AptikConsole.vala:138
+#: AptikConsole.vala:137
 msgid "Restore /etc/fstab and /etc/crypttab entries"
 msgstr ""
 
-#: AptikConsole.vala:100
+#: AptikConsole.vala:99
 msgid "Restore PPAs from file 'ppa.list'"
 msgstr ""
 
-#: AptikConsole.vala:153
+#: AptikConsole.vala:152
 msgid "Restore all items"
 msgstr ""
 
-#: Main.vala:3295
+#: Main.vala:3296
 msgid "Restore completed"
 msgstr ""
 
-#: Main.vala:3296
+#: Main.vala:3297
 msgid "Restore completed with errors"
 msgstr ""
 
-#: AptikConsole.vala:126
+#: AptikConsole.vala:125
 msgid "Restore config files to /home/<user>"
 msgstr ""
 
-#: AptikConsole.vala:105
+#: AptikConsole.vala:104
 msgid "Restore downloaded packages to APT cache"
 msgstr ""
 
-#: ThemeWindow.vala:163
+#: ThemeWindow.vala:162
 msgid "Restore for:"
 msgstr ""
 
-#: AptikConsole.vala:115
+#: AptikConsole.vala:114
 msgid "Restore packages from file 'packages.list'"
 msgstr ""
 
-#: ConfigWindow.vala:343
+#: ConfigWindow.vala:342
 msgid ""
 "Restore the settings for an application (Eg: Chromium Browser) by replacing "
 "the settings directory (~/.config/chromium) with files from backup. Use the "
 "'Reset' button to delete the restored files in case of issues."
 msgstr ""
 
-#: AptikConsole.vala:133
+#: AptikConsole.vala:132
 msgid "Restore themes to /usr/share/themes"
 msgstr ""
 
-#: AptikConsole.vala:148
+#: AptikConsole.vala:147
 msgid "Restore user's scheduled tasks (crontab)"
 msgstr ""
 
-#: AptikConsole.vala:143
+#: AptikConsole.vala:142
 msgid "Restore user-created data in user's home directory"
 msgstr ""
 
-#: AptikConsole.vala:120
+#: AptikConsole.vala:119
 msgid "Restore users and groups"
 msgstr ""
 
-#: Main.vala:2276
+#: Main.vala:2277
 msgid "Restoring /etc/fstab and /etc/crypttab entries"
 msgstr ""
 
-#: PpaWindow.vala:561
+#: PpaWindow.vala:560
 msgid "Running 'apt-get update'..."
 msgstr ""
 
-#: PackageWindow.vala:920 PpaWindow.vala:424
+#: PackageWindow.vala:919 PpaWindow.vala:423
 msgid "Saving..."
 msgstr ""
 
-#: Main.vala:3344
+#: Main.vala:3345
 msgid "Scheduled Tasks"
 msgstr ""
 
-#: PackageWindow.vala:173
+#: PackageWindow.vala:172
 msgid "Search package name and description"
 msgstr ""
 
@@ -1356,13 +1356,13 @@ msgstr ""
 msgid "Select"
 msgstr ""
 
-#: ConfigWindow.vala:315 PackageManagerWindow.vala:456 PackageWindow.vala:363
-#: PpaWindow.vala:226 ThemeWindow.vala:487
+#: ConfigWindow.vala:314 PackageManagerWindow.vala:456 PackageWindow.vala:362
+#: PpaWindow.vala:225 ThemeWindow.vala:486
 msgid "Select All"
 msgstr ""
 
-#: ConfigWindow.vala:325 PackageManagerWindow.vala:466 PackageWindow.vala:385
-#: PpaWindow.vala:246 ThemeWindow.vala:507
+#: ConfigWindow.vala:324 PackageManagerWindow.vala:466 PackageWindow.vala:384
+#: PpaWindow.vala:245 ThemeWindow.vala:506
 msgid "Select None"
 msgstr ""
 
@@ -1370,64 +1370,64 @@ msgstr ""
 msgid "Select backup location"
 msgstr ""
 
-#: OneClickSettingsDialog.vala:63 OneClickSettingsDialog.vala:70
-#: UserDataSettingsDialog.vala:169 UserDataSettingsDialog.vala:321
+#: OneClickSettingsDialog.vala:62 OneClickSettingsDialog.vala:69
+#: UserDataSettingsDialog.vala:168 UserDataSettingsDialog.vala:320
 msgid "Select items to backup and restore"
 msgstr ""
 
-#: UserDataSettingsDialog.vala:313
+#: UserDataSettingsDialog.vala:312
 msgid "Select items to exclude"
 msgstr ""
 
-#: PpaWindow.vala:419
+#: PpaWindow.vala:418
 msgid "Select the PPAs to backup"
 msgstr ""
 
-#: ConfigWindow.vala:403
+#: ConfigWindow.vala:402
 msgid "Select the directories to backup"
 msgstr ""
 
-#: PackageWindow.vala:915
+#: PackageWindow.vala:914
 msgid "Select the packages to backup"
 msgstr ""
 
-#: ThemeWindow.vala:589
+#: ThemeWindow.vala:588
 msgid "Select the themes to backup"
 msgstr ""
 
-#: AptikConsole.vala:90
+#: AptikConsole.vala:89
 msgid "Select username for listing config files"
 msgstr ""
 
-#: UserDataSettingsDialog.vala:161
+#: UserDataSettingsDialog.vala:160
 msgid "Select users"
 msgstr ""
 
-#: PpaWindow.vala:490
+#: PpaWindow.vala:489
 msgid "Selected PPAs are already enabled on this system"
 msgstr ""
 
-#: ConfigWindow.vala:591
+#: ConfigWindow.vala:590
 msgid "Selected directories were deleted successfully"
 msgstr ""
 
-#: ConfigWindow.vala:560
+#: ConfigWindow.vala:559
 msgid "Selected directories will be deleted."
 msgstr ""
 
-#: ConfigWindow.vala:483
+#: ConfigWindow.vala:482
 msgid "Selected directories will be replaced with files from backup."
 msgstr ""
 
-#: AptikConsole.vala:661
+#: AptikConsole.vala:660
 msgid "Selected packages are already installed"
 msgstr ""
 
-#: ThemeWindow.vala:718
+#: ThemeWindow.vala:717
 msgid "Selected themes are already installed"
 msgstr ""
 
-#: Main.vala:204
+#: Main.vala:205
 #, c-format
 msgid "Selected user: %s, %s"
 msgstr ""
@@ -1436,7 +1436,7 @@ msgstr ""
 msgid "Send Email"
 msgstr ""
 
-#: Utility.vala:2089
+#: Utility.vala:1911
 #, c-format
 msgid "Set owner: %s, dir: %s"
 msgstr ""
@@ -1445,77 +1445,77 @@ msgstr ""
 msgid "Settings for One-Click Backup & Restore"
 msgstr ""
 
-#: PasswordWindow.vala:108 PasswordWindow.vala:195
+#: PasswordWindow.vala:107 PasswordWindow.vala:194
 msgid "Show"
 msgstr ""
 
-#: AptikConsole.vala:94 AptikGtk.vala:121
+#: AptikConsole.vala:93 AptikGtk.vala:120
 msgid "Show all options"
 msgstr ""
 
-#: AptikConsole.vala:92
+#: AptikConsole.vala:91
 msgid "Show package description if available"
 msgstr ""
 
-#: PackageWindow.vala:571
+#: PackageWindow.vala:570
 msgid "Showing all available packages"
 msgstr ""
 
-#: PackageWindow.vala:574
+#: PackageWindow.vala:573
 msgid "Showing all installed packages"
 msgstr ""
 
-#: PackageWindow.vala:580
+#: PackageWindow.vala:579
 msgid "Showing extra packages that were installed by you"
 msgstr ""
 
-#: PackageWindow.vala:598
+#: PackageWindow.vala:597
 msgid "Showing packages from the backup list"
 msgstr ""
 
-#: PackageWindow.vala:589
+#: PackageWindow.vala:588
 msgid "Showing packages that are not installed but available for installation"
 msgstr ""
 
-#: PackageWindow.vala:583
+#: PackageWindow.vala:582
 msgid ""
 "Showing packages that were automatically installed (required by other "
 "packages)"
 msgstr ""
 
-#: PackageWindow.vala:586
+#: PackageWindow.vala:585
 msgid "Showing packages that were installed from DEB files"
 msgstr ""
 
-#: PackageWindow.vala:577
+#: PackageWindow.vala:576
 msgid "Showing packages that were installed with the Linux OS"
 msgstr ""
 
-#: PackageWindow.vala:592
+#: PackageWindow.vala:591
 msgid "Showing selected packages"
 msgstr ""
 
-#: PackageWindow.vala:595
+#: PackageWindow.vala:594
 msgid "Showing unselected packages"
 msgstr ""
 
-#: ConfigWindow.vala:259 DownloadWindow.vala:198
+#: ConfigWindow.vala:258 DownloadWindow.vala:198
 msgid "Size"
 msgstr ""
 
-#: AptikConsole.vala:127
+#: AptikConsole.vala:126
 msgid "Skip config dirs larger than specified size"
 msgstr ""
 
-#: Main.vala:3336
+#: Main.vala:3337
 msgid "Software Sources (PPA)"
 msgstr ""
 
-#: AptikConsole.vala:91
+#: AptikConsole.vala:90
 msgid "Specify password for encrypting and decrypting backups"
 msgstr ""
 
-#: Main.vala:1954
+#: Main.vala:1955
 msgid "Startup Applications"
 msgstr ""
 
@@ -1523,43 +1523,43 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: Utility.vala:1307
+#: Utility.vala:1129
 msgid "Stopped"
 msgstr ""
 
-#: AptikConsole.vala:83 AptikGtk.vala:116
+#: AptikConsole.vala:82 AptikGtk.vala:115
 msgid "Syntax"
 msgstr ""
 
-#: UserAccountWindow.vala:279 UserAccountWindow.vala:284
+#: UserAccountWindow.vala:278 UserAccountWindow.vala:283
 msgid "System"
 msgstr ""
 
-#: ThemeWindow.vala:400
+#: ThemeWindow.vala:399
 msgid "System Path"
 msgstr ""
 
-#: PackageWindow.vala:856
+#: PackageWindow.vala:855
 msgid "The list of default packages is missing on this system"
 msgstr ""
 
-#: ThemeWindow.vala:374
+#: ThemeWindow.vala:373
 msgid "Theme"
 msgstr ""
 
-#: ThemeWindow.vala:245
+#: ThemeWindow.vala:244
 msgid "Theme Type"
 msgstr ""
 
-#: Main.vala:3340
+#: Main.vala:3341
 msgid "Themes and Icons"
 msgstr ""
 
-#: PackageWindow.vala:1036
+#: PackageWindow.vala:1035
 msgid "There are no packages selected for installation"
 msgstr ""
 
-#: PackageWindow.vala:1012
+#: PackageWindow.vala:1011
 msgid "There are no packages selected for installation2"
 msgstr ""
 
@@ -1568,19 +1568,19 @@ msgstr ""
 msgid "Third Party Tools"
 msgstr ""
 
-#: PackageWindow.vala:679
+#: PackageWindow.vala:678
 msgid "This package is part of the Linux distribution"
 msgstr ""
 
-#: PackageWindow.vala:687
+#: PackageWindow.vala:686
 msgid "This package was installed as a dependency for other packages"
 msgstr ""
 
-#: PackageWindow.vala:683
+#: PackageWindow.vala:682
 msgid "This package was installed by user"
 msgstr ""
 
-#: PackageWindow.vala:675
+#: PackageWindow.vala:674
 msgid "This package was installed from a DEB file"
 msgstr ""
 
@@ -1589,74 +1589,74 @@ msgstr ""
 msgid "Translators"
 msgstr ""
 
-#: UserAccountWindow.vala:265 UserAccountWindow.vala:443
-#: UserAccountWindow.vala:456
+#: UserAccountWindow.vala:264 UserAccountWindow.vala:442
+#: UserAccountWindow.vala:455
 msgid "Type"
 msgstr ""
 
-#: ThemeWindow.vala:250
+#: ThemeWindow.vala:249
 msgid "Type of theme to display"
 msgstr ""
 
-#: UserAccountWindow.vala:442
+#: UserAccountWindow.vala:441
 msgid "UID"
 msgstr ""
 
-#: ThemeWindow.vala:296
+#: ThemeWindow.vala:295
 msgid "Unity Shell"
 msgstr ""
 
-#: PackageWindow.vala:894
+#: PackageWindow.vala:893
 msgid "Unknown Source"
 msgstr ""
 
-#: AptikConsole.vala:422 AptikGtk.vala:103
+#: AptikConsole.vala:421 AptikGtk.vala:102
 msgid "Unknown option"
 msgstr ""
 
-#: Classes.vala:676
+#: Classes.vala:675
 msgid "Update"
 msgstr ""
 
-#: AptikConsole.vala:593
+#: AptikConsole.vala:592
 msgid "Updating Package Information..."
 msgstr ""
 
-#: ConfigWindow.vala:523
+#: ConfigWindow.vala:522
 msgid "Updating file ownership..."
 msgstr ""
 
-#: ConfigWindow.vala:139 ConfigWindow.vala:144 UserAccountWindow.vala:441
-#: UserDataSettingsDialog.vala:213
+#: ConfigWindow.vala:138 ConfigWindow.vala:143 UserAccountWindow.vala:440
+#: UserDataSettingsDialog.vala:212
 msgid "User"
 msgstr ""
 
-#: Main.vala:3319
+#: Main.vala:3320
 msgid "User added"
 msgstr ""
 
-#: Main.vala:3325
+#: Main.vala:3326
 msgid "User added to group"
 msgstr ""
 
-#: ThemeWindow.vala:166
+#: ThemeWindow.vala:165
 msgid "User:"
 msgstr ""
 
-#: ThemeWindow.vala:154 ThemeWindow.vala:159
+#: ThemeWindow.vala:153 ThemeWindow.vala:158
 msgid "Username"
 msgstr ""
 
-#: UserAccountWindow.vala:132 UserAccountWindow.vala:457
-#: UserDataSettingsDialog.vala:93
+#: UserAccountWindow.vala:131 UserAccountWindow.vala:456
+#: UserDataSettingsDialog.vala:92
 msgid "Users"
 msgstr ""
 
-#: Main.vala:3341
+#: Main.vala:3342
 msgid "Users and Groups"
 msgstr ""
 
-#: UserAccountWindow.vala:499
+#: UserAccountWindow.vala:498
 msgid "Users and Groups are already up-to-date"
 msgstr ""
 
@@ -1668,19 +1668,19 @@ msgstr ""
 msgid "W"
 msgstr ""
 
-#: ConfigWindow.vala:482 ConfigWindow.vala:559
+#: ConfigWindow.vala:481 ConfigWindow.vala:558
 msgid "Warning"
 msgstr ""
 
-#: ThemeWindow.vala:308
+#: ThemeWindow.vala:307
 msgid "XFCE Notification"
 msgstr ""
 
-#: ThemeWindow.vala:305
+#: ThemeWindow.vala:304
 msgid "XFCE Window Border"
 msgstr ""
 
-#: OneClickSettingsDialog.vala:137
+#: OneClickSettingsDialog.vala:136
 msgid ""
 "[Application Settings Backup]\n"
 "\n"
@@ -1694,11 +1694,11 @@ msgstr ""
 msgid "available"
 msgstr ""
 
-#: CronTab.vala:166
+#: CronTab.vala:188
 msgid "crontab file exported"
 msgstr ""
 
-#: CronTab.vala:149
+#: CronTab.vala:171
 msgid "crontab file installed"
 msgstr ""
 
@@ -1710,6 +1710,6 @@ msgstr ""
 msgid "packages listed"
 msgstr ""
 
-#: ConfigWindow.vala:175 ThemeWindow.vala:223
+#: ConfigWindow.vala:174 ThemeWindow.vala:222
 msgid "root"
 msgstr ""

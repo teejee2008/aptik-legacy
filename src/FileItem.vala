@@ -30,10 +30,9 @@ using TeeJee.Logging;
 using TeeJee.FileSystem;
 using TeeJee.JSON;
 using TeeJee.ProcessManagement;
-using TeeJee.GtkHelper;
-using TeeJee.Multimedia;
 using TeeJee.System;
 using TeeJee.Misc;
+using TeeJee.GtkHelper;
 
 public class FileItem : GLib.Object {
 	public string file_name = "";

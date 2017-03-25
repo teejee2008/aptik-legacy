@@ -27,9 +27,9 @@ using TeeJee.Logging;
 using TeeJee.FileSystem;
 using TeeJee.JSON;
 using TeeJee.ProcessManagement;
-using TeeJee.GtkHelper;
 using TeeJee.System;
 using TeeJee.Misc;
+using TeeJee.GtkHelper;
 
 public class DonationWindow : Dialog {
 	public DonationWindow() {
