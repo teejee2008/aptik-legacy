@@ -45,9 +45,9 @@ VERSION=$(grep -R Version: ${arch}/*.changes | awk '{print "v"$2}')
 
 dpkg-deb -x ${arch}/${app_name}*.deb ${arch}/extracted
 
-cp -p --no-preserve=ownership -t ${arch}/extracted ./install.sh
-cp -p --no-preserve=ownership -t ${arch}/extracted/usr/share/${app_name}/libs ${libs}/${arch}/libgee.so.2
-cp -p --no-preserve=ownership -t ${arch}/extracted/usr/share/${app_name}/libs ${libs}/${arch}/libjson-glib-1.0.so.0
+#cp -p --no-preserve=ownership -t ${arch}/extracted ./install.sh
+#cp -p --no-preserve=ownership -t ${arch}/extracted/usr/share/${app_name}/libs ${libs}/${arch}/libgee.so.2
+#cp -p --no-preserve=ownership -t ${arch}/extracted/usr/share/${app_name}/libs ${libs}/${arch}/libjson-glib-1.0.so.0
 chmod --recursive 0755 ${arch}/extracted/usr/share/${app_name}
 
 makeself ${arch}/extracted ./${app_name}-${VERSION}-${arch}.run "${app_fullname} (${arch})" ./install.sh 
@@ -70,7 +70,7 @@ echo "**************************************************************************
 echo "Creating AppImage..."
 echo "******************************************************************************"
 echo ""
-./create-appimage app-amd64.yml
+./create-appimage --pkg-cache=/home/teejee/projects/linux/trusty-amd64 app.yml
 
 #check for errors
 if [ $? -ne 0 ]; then
