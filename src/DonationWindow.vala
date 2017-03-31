@@ -69,12 +69,14 @@ public class DonationWindow : Dialog {
 		//vbox_actions.margin_top = 20;
 		vbox_main.pack_start(vbox_actions, false, false, 0);
 
+		string username = get_username();
+		
 		//btn_donate_paypal
 		var button = new Button.with_label(_("Donate - PayPal"));
 		button.set_tooltip_text("Donate to: teejeetech@gmail.com");
 		vbox_actions.add(button);
 		button.clicked.connect(() => {
-			xdg_open("https://www.paypal.com/cgi-bin/webscr?business=teejeetech@gmail.com&cmd=_xclick&currency_code=USD&amount=10&item_name=Aptik%20Donation");
+			xdg_open("https://www.paypal.com/cgi-bin/webscr?business=teejeetech@gmail.com&cmd=_xclick&currency_code=USD&amount=10&item_name=Aptik%20Donation", username);
 		});
 
 		//btn_donate_wallet
@@ -82,7 +84,7 @@ public class DonationWindow : Dialog {
 		button.set_tooltip_text("Donate to: teejeetech@gmail.com");
 		vbox_actions.add(button);
 		button.clicked.connect(() => {
-			xdg_open("https://support.google.com/mail/answer/3141103?hl=en");
+			xdg_open("https://support.google.com/mail/answer/3141103?hl=en", username);
 		});
 
 		//tracker
@@ -90,7 +92,7 @@ public class DonationWindow : Dialog {
 		button.set_tooltip_text("https://github.com/teejee2008/aptik/issues");
 		vbox_actions.add(button);
 		button.clicked.connect(() => {
-			xdg_open("https://github.com/teejee2008/aptik/issues");
+			xdg_open("https://github.com/teejee2008/aptik/issues", username);
 		});
 
 		//btn_visit
@@ -98,7 +100,7 @@ public class DonationWindow : Dialog {
 		button.set_tooltip_text("http://www.teejeetech.in");
 		vbox_actions.add(button);
 		button.clicked.connect(() => {
-			xdg_open("http://www.teejeetech.in");
+			xdg_open("http://www.teejeetech.in", username);
 		});
 	}
 }

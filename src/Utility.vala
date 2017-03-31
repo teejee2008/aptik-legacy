@@ -1207,45 +1207,97 @@ namespace TeeJee.ProcessManagement{
 		}
 	}
 
-	public string get_user_login(){
-		/*
-		Returns Login ID of current user.
-		If running as 'sudo' it will return Login ID of the actual user.
-		*/
+	public int get_user_id(){
 
-		string cmd = "echo ${SUDO_USER:-$(whoami)}";
-		string std_out;
-		string std_err;
-		int ret_val;
-		ret_val = exec_script_sync(cmd, out std_out, out std_err);
+		// returns actual user id of current user (even for applications executed with sudo and pkexec)
+		
+		int user_id = -1;
 
-		string user_name;
-		if ((std_out == null) || (std_out.length == 0)){
-			user_name = "root";
-		}
-		else{
-			user_name = std_out.strip();
+		string pkexec_uid = GLib.Environment.get_variable("PKEXEC_UID");
+
+		if (pkexec_uid != null){
+			return int.parse(pkexec_uid);
 		}
 
-		return user_name;
+		string sudo_user = GLib.Environment.get_variable("SUDO_USER");
+
+		if (sudo_user != null){
+			return get_user_id_from_username(sudo_user);
+		}
+
+		return get_user_id_effective(); // normal user
 	}
 
-	public int get_user_id(string user_login){
-		/*
-		Returns UID of specified user.
-		*/
+	public string get_username(){
+
+		// returns actual username of current user (even for applications executed with sudo and pkexec)
+		
+		return get_username_from_uid(get_user_id());
+	}
+
+	public int get_user_id_effective(){
+		
+		// returns effective user id (0 for applications executed with sudo and pkexec)
 
 		int uid = -1;
-		string cmd = "id %s -u".printf(user_login);
-		string txt = execute_command_sync_get_output(cmd);
-		if ((txt != null) && (txt.length > 0)){
-			uid = int.parse(txt);
+		string cmd = "id -u";
+		string std_out, std_err;
+		exec_sync(cmd, out std_out, out std_err);
+		if ((std_out != null) && (std_out.length > 0)){
+			uid = int.parse(std_out);
 		}
 
 		return uid;
 	}
 
+	public int get_user_id_from_username(string username){
+		
+		int user_id = -1;
 
+		foreach(var line in file_read("/etc/passwd").split("\n")){
+			var arr = line.split(":");
+			if (arr.length < 3) { continue; }
+			if (arr[0] == username){
+				user_id = int.parse(arr[2]);
+				break;
+			}
+		}
+
+		return user_id;
+	}
+
+	public string get_username_from_uid(int user_id){
+		
+		string username = "";
+
+		foreach(var line in file_read("/etc/passwd").split("\n")){
+			var arr = line.split(":");
+			if (arr.length < 3) { continue; }
+			if (int.parse(arr[2]) == user_id){
+				username = arr[0];
+				break;
+			}
+		}
+
+		return username;
+	}
+
+	public string get_user_home(string username = get_username()){
+		
+		string userhome = "";
+
+		foreach(var line in file_read("/etc/passwd").split("\n")){
+			var arr = line.split(":");
+			if (arr.length < 6) { continue; }
+			if (arr[0] == username){
+				userhome = arr[5];
+				break;
+			}
+		}
+
+		return userhome;
+	}
+	
 	public string get_app_path (){
 
 		/* Get path of current process */
@@ -1713,11 +1765,15 @@ namespace TeeJee.System{
 		}
 	}
 
-	public bool xdg_open (string file){
-		string path;
-		path = get_cmd_path ("xdg-open");
-		if ((path != null)&&(path != "")){
-			return execute_command_script_async ("xdg-open \"" + file + "\"");
+	public bool xdg_open (string file, string user = ""){
+		string path = get_cmd_path ("xdg-open");
+		if ((path != null) && (path != "")){
+			string cmd = "xdg-open '%s'".printf(escape_single_quote(file));
+			if (user.length > 0){
+				cmd = "pkexec --user %s env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY ".printf(user) + cmd;
+			}
+			int status = exec_script_async(cmd);
+			return (status == 0);
 		}
 		return false;
 	}

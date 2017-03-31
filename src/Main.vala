@@ -61,6 +61,7 @@ public class Main : GLib.Object {
 	public string user_login = "";
 	public string user_home = "";
 	public int user_uid = -1;
+	public int user_uid_effective = -1;
 	public bool all_users = false;
 
 	public string err_line;
@@ -168,7 +169,7 @@ public class Main : GLib.Object {
 
 		//get user info
 		if (gui_mode){
-			select_user(get_user_login());
+			select_user(get_username());
 		}
 		
 		NATIVE_ARCH = execute_command_sync_get_output("dpkg --print-architecture").strip();
@@ -198,11 +199,11 @@ public class Main : GLib.Object {
 		else{
 			user_login = username;
 			user_home = "/home/" + username;
-			user_uid = get_user_id(username);
+			user_uid = get_user_id_from_username(username);
 		}
 
 		log_msg(string.nfill(70,'-'));
-		log_msg(_("Selected user: %s, %s").printf(user_login,user_home));
+		log_msg(_("Selected user: %s, %s").printf(user_login, user_home));
 		log_msg(string.nfill(70,'-'));
 		log_msg("");
 	}
