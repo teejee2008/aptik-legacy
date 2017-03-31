@@ -46,6 +46,8 @@ public class MainWindow : Window {
 	private Button btn_browse_backup_dir;
 	private Button btn_open_backup_dir;
 
+	private Gtk.Entry txt_password;
+
 	private Button btn_restore_packages;
 	private Button btn_backup_packages;
 
@@ -95,13 +97,15 @@ public class MainWindow : Window {
 
 		//vboxMain
 		vbox_main = new Box (Orientation.VERTICAL, 6);
-		vbox_main.margin = 12;
+		vbox_main.margin = 6;
 		vbox_main.set_size_request (def_width, def_height);
 		add (vbox_main);
 
 		//actions ---------------------------------------------
 
 		init_section_backup_location();
+
+		init_section_password();
 
 		init_section_backup();
 
@@ -111,8 +115,9 @@ public class MainWindow : Window {
 	}
 
 	private void init_section_backup_location() {
+		
 		// header
-		var label = new Label ("<b>" + _("Backup Directory") + "</b>");
+		var label = new Label ("<b>" + _("Location &amp; Password") + "</b>");
 		label.set_use_markup(true);
 		label.halign = Align.START;
 		//label.margin_top = 12;
@@ -127,6 +132,7 @@ public class MainWindow : Window {
 		txt_backup_path = new Gtk.Entry();
 		txt_backup_path.hexpand = true;
 		//txt_backup_path.secondary_icon_stock = "gtk-open";
+		txt_backup_path.placeholder_text = _("Select backup directory");
 		txt_backup_path.margin_left = 6;
 		hbox_backup_dir.pack_start (txt_backup_path, true, true, 0);
 
@@ -165,6 +171,41 @@ public class MainWindow : Window {
 				exo_open_folder(App.backup_dir, false);
 			}
 		});
+
+		btn_browse_backup_dir.grab_focus();
+	}
+
+	private void init_section_password() {
+
+		//vbox_backup_dir
+		Box hbox_backup_dir = new Box (Gtk.Orientation.HORIZONTAL, 6);
+		vbox_main.pack_start (hbox_backup_dir, false, true, 0);
+
+		//txt_backup_path
+		txt_password = new Gtk.Entry();
+		txt_password.hexpand = true;
+		//txt_password.secondary_icon_stock = "gtk-open";
+		txt_password.placeholder_text = _("Enter encryption password");
+		txt_password.margin_left = 6;
+		txt_password.visibility = false;
+		hbox_backup_dir.pack_start (txt_password, true, true, 0);
+
+		//button
+		var button = new Gtk.Button.with_label (" " + _("Show") + " ");
+		button.set_size_request(button_width, button_height);
+		hbox_backup_dir.pack_start (button, false, true, 0);
+
+		button.clicked.connect(() => {
+			txt_password.visibility = !txt_password.visibility;
+			if (txt_password.visibility){
+				button.label = _("Hide");
+				button.set_tooltip_text(_("Hide passphrase"));
+			}
+			else{
+				button.label = _("Show");
+				button.set_tooltip_text(_("Show passphrase"));
+			}
+		});
 	}
 
 	private void backup_location_browse(){
@@ -190,11 +231,15 @@ public class MainWindow : Window {
 	}
 	
 	private void init_section_backup() {
+
+		var sep = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
+		sep.margin_top = 12;
+		vbox_main.add(sep);
+		
 		// lbl_header_backup
 		var label = new Label ("<b>" + _("Backup &amp; Restore") + "</b>");
 		label.set_use_markup(true);
 		label.halign = Align.START;
-		label.margin_top = 12;
 		label.margin_bottom = 6;
 		vbox_main.pack_start (label, false, true, 0);
 
@@ -355,6 +400,7 @@ public class MainWindow : Window {
 	}
 
 	private void init_section_backup_users(int row) {
+		
 		var img = get_shared_icon("config-users", "system-users.svg", icon_size_list);
 		grid_backup_buttons.attach(img, 0, row, 1, 1);
 
@@ -372,27 +418,7 @@ public class MainWindow : Window {
 		grid_backup_buttons.attach(button, 2, row, 1, 1);
 		btn_backup_user = button;
 		
-		button.clicked.connect(()=>{
-			if (!check_backup_folder()) {
-				return;
-			}
-
-			if (App.arg_password.length == 0){
-				App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"), Message.ENTER_PASSWORD_BACKUP);
-				if (App.arg_password.length == 0){
-					return;
-				}
-			}
-			
-			bool ok = App.backup_users_and_groups(App.arg_password);
-
-			if (ok){
-				gtk_messagebox("", Message.BACKUP_OK, this, false);
-			}
-			else{
-				gtk_messagebox("", Message.BACKUP_ERROR, this, true);
-			}
-		});
+		button.clicked.connect(btn_backup_users_clicked);
 
 		//btn_restore_user
 		button = new Gtk.Button.with_label (_("Restore"));
@@ -400,33 +426,7 @@ public class MainWindow : Window {
 		grid_backup_buttons.attach(button, 3, row, 1, 1);
 		btn_restore_user = button;
 		
-		button.clicked.connect(()=>{
-			if (!check_backup_folder()) {
-				return;
-			}
-			if (!check_backup_file("users/passwd.tar.gpg") || !check_backup_file("users/shadow.tar.gpg") || !check_backup_file("users/group.tar.gpg")){
-				return;
-			}
-
-			if (App.arg_password.length == 0){
-				App.arg_password = PasswordWindow.prompt_user(this, false, _("Enter Password"), Message.ENTER_PASSWORD_RESTORE);
-				if (App.arg_password.length == 0){
-					return;
-				}
-			}
-
-			clear_err_log();
-			bool ok = App.restore_users_and_groups_init(App.arg_password);
-			show_err_log(this);
-			
-			if (!ok){
-				App.arg_password = ""; // forget password (may be incorrect)
-				return;
-			}
-
-			this.hide();
-			new UserAccountWindow.with_parent(this,true);
-		});
+		button.clicked.connect(btn_restore_users_clicked);
 	}
 
 	private void init_section_backup_configs(int row) {
@@ -543,27 +543,7 @@ public class MainWindow : Window {
 		grid_backup_buttons.attach(button, 2, row, 1, 1);
 		btn_backup_mount = button;
 		
-		button.clicked.connect(()=>{
-			if (!check_backup_folder()) {
-				return;
-			}
-
-			if (App.arg_password.length == 0){
-				App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"),Message.ENTER_PASSWORD_BACKUP);
-				if (App.arg_password.length == 0){
-					return;
-				}
-			}
-
-			bool ok = App.backup_mounts();
-			
-			if (ok){
-				gtk_messagebox(_("Finished"), Message.BACKUP_OK, this, false);
-			}
-			else{
-				gtk_messagebox(_("Error"), Message.BACKUP_ERROR, this, false);
-			}
-		});
+		button.clicked.connect(btn_backup_mounts_clicked);
 
 		// btn_restore_mount
 		button = new Gtk.Button.with_label (_("Restore"));
@@ -571,24 +551,7 @@ public class MainWindow : Window {
 		grid_backup_buttons.attach(button, 3, row, 1, 1);
 		btn_restore_mount = button;
 		
-		button.clicked.connect(()=>{
-			if (!check_backup_folder()) {
-				return;
-			}
-			if (!check_backup_file("mounts/fstab.tar.gpg") && !check_backup_file("mounts/crypttab.tar.gpg")){
-				return;
-			}
-
-			if (App.arg_password.length == 0){
-				App.arg_password = PasswordWindow.prompt_user(this, false, _("Enter Password"),Message.ENTER_PASSWORD_RESTORE);
-				if (App.arg_password.length == 0){
-					return;
-				}
-			}
-
-			this.hide();
-			new MountWindow.with_parent(this,true);
-		});
+		button.clicked.connect(btn_restore_mounts_clicked);
 	}
 
 	private void init_section_backup_home(int row) {
@@ -692,10 +655,14 @@ public class MainWindow : Window {
 	}
 
 	private void init_section_toolbar_bottom() {
+
+		var sep = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
+		sep.margin_top = 24;
+		vbox_main.add(sep);
+		
 		//toolbar_bottom
 		toolbar_bottom = new Gtk.Toolbar();
 		toolbar_bottom.toolbar_style = ToolbarStyle.BOTH;
-		toolbar_bottom.margin_top = 24;
 		vbox_main.add(toolbar_bottom);
 
 		int BUTTON_SIZE = 80;
@@ -830,6 +797,22 @@ public class MainWindow : Window {
 			return false;
 		}
 	}
+
+	private bool check_password() {
+
+		App.arg_password = txt_password.text;
+		
+		if (App.arg_password.length > 0){
+			return true;
+		}
+		else {
+			string title = _("Password field is empty!");
+			string msg = _("Enter the passphrase for encryption");
+			gtk_messagebox(title, msg, this, false);
+			return false;
+		}
+	}
+
 
 	private bool check_backup_file(string file_name) {
 		if (check_backup_folder()) {
@@ -966,20 +949,14 @@ public class MainWindow : Window {
 	/* Home */
 
 	private void btn_backup_home_clicked(){
+		
 		if (!check_backup_folder()) {
 			return;
 		}
 
-		// get password --------------------
-
-		// ask always - since we are not checking for error, we cannot reset a bad password
-		
-		//if (App.arg_password.length == 0){
-			App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"),Message.ENTER_PASSWORD_BACKUP);
-			if (App.arg_password == ""){
-				return;
-			}
-		//}
+		if (!check_password()){
+			return;
+		}
 
 		// select users ------------------------------
 
@@ -1006,20 +983,14 @@ public class MainWindow : Window {
 	}
 
 	private void btn_restore_home_clicked(){
+
 		if (!check_backup_folder()) {
 			return;
 		}
 
-		// get password --------------------
-
-		// ask always - since we are not checking for error, we cannot reset a bad password
-		
-		//if (App.arg_password.length == 0){
-			App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"),Message.ENTER_PASSWORD_RESTORE);
-			if (App.arg_password == ""){
-				return;
-			}
-		//}
+		if (!check_password()){
+			return;
+		}
 
 		// select users ------------------------------
 		
@@ -1045,19 +1016,141 @@ public class MainWindow : Window {
 		}
 	}
 
-	/* One-click */
+	/* Users */
 
-	private void btn_backup_all_clicked() {
+	private void btn_backup_users_clicked(){
+		
 		if (!check_backup_folder()) {
 			return;
 		}
 
-		if (App.selected_tasks.contains("user")
+		if (!check_password()){
+			return;
+		}
+
+		if (App.arg_password.length == 0){
+			App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"), Message.ENTER_PASSWORD_BACKUP);
+			if (App.arg_password.length == 0){
+				return;
+			}
+		}
+		
+		bool ok = App.backup_users_and_groups(App.arg_password);
+
+		if (ok){
+			gtk_messagebox("", Message.BACKUP_OK, this, false);
+		}
+		else{
+			gtk_messagebox("", Message.BACKUP_ERROR, this, true);
+		}
+	
+	}
+
+	private void btn_restore_users_clicked(){
+		
+		if (!check_backup_folder()) {
+			return;
+		}
+	
+		if (!check_password()){
+			return;
+		}
+		
+		if (!check_backup_file("users/passwd.tar.gpg")
+		|| !check_backup_file("users/shadow.tar.gpg")
+		|| !check_backup_file("users/group.tar.gpg")){
+			
+			return;
+		}
+
+		if (App.arg_password.length == 0){
+			App.arg_password = PasswordWindow.prompt_user(this, false, _("Enter Password"), Message.ENTER_PASSWORD_RESTORE);
+			if (App.arg_password.length == 0){
+				return;
+			}
+		}
+
+		clear_err_log();
+		bool ok = App.restore_users_and_groups_init(App.arg_password);
+		show_err_log(this);
+		
+		if (!ok){
+			App.arg_password = ""; // forget password (may be incorrect)
+			return;
+		}
+
+		this.hide();
+		new UserAccountWindow.with_parent(this,true);
+	}
+
+	/* Mounts */
+
+	private void btn_backup_mounts_clicked(){
+		
+		if (!check_backup_folder()) {
+			return;
+		}
+
+		if (!check_password()){
+			return;
+		}
+
+		if (App.arg_password.length == 0){
+			App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"),Message.ENTER_PASSWORD_BACKUP);
+			if (App.arg_password.length == 0){
+				return;
+			}
+		}
+
+		bool ok = App.backup_mounts();
+		
+		if (ok){
+			gtk_messagebox(_("Finished"), Message.BACKUP_OK, this, false);
+		}
+		else{
+			gtk_messagebox(_("Error"), Message.BACKUP_ERROR, this, false);
+		}
+	}
+
+	private void btn_restore_mounts_clicked(){
+		
+		if (!check_backup_folder()) {
+			return;
+		}
+
+		if (!check_password()){
+			return;
+		}
+	
+		if (!check_backup_file("mounts/fstab.tar.gpg") && !check_backup_file("mounts/crypttab.tar.gpg")){
+			return;
+		}
+
+		if (App.arg_password.length == 0){
+			App.arg_password = PasswordWindow.prompt_user(this, false, _("Enter Password"),Message.ENTER_PASSWORD_RESTORE);
+			if (App.arg_password.length == 0){
+				return;
+			}
+		}
+
+		this.hide();
+		new MountWindow.with_parent(this,true);
+	}
+	
+	/* One-click */
+
+	private void btn_backup_all_clicked() {
+		
+		if (!check_backup_folder()) {
+			return;
+		}
+
+		if ((App.selected_tasks.length == 0)
+			||App.selected_tasks.contains("user")
 			||App.selected_tasks.contains("mount")
 			||App.selected_tasks.contains("home")){
 				
-			App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"), Message.ENTER_PASSWORD_BACKUP);
-			if (App.arg_password.length == 0){
+			if (!check_password()){
 				return;
 			}
 		}
@@ -1094,16 +1187,17 @@ public class MainWindow : Window {
 	}
 	
 	private void btn_restore_all_clicked() {
+		
 		if (!check_backup_folder()) {
 			return;
 		}
 
-		if (App.selected_tasks.contains("user")
+		if ((App.selected_tasks.length == 0)
+			||App.selected_tasks.contains("user")
 			||App.selected_tasks.contains("mount")
 			||App.selected_tasks.contains("home")){
 				
-			App.arg_password = PasswordWindow.prompt_user(this, false, _("Enter Password"), Message.ENTER_PASSWORD_RESTORE);
-			if (App.arg_password.length == 0){
+			if (!check_password()){
 				return;
 			}
 		}

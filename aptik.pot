@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2017-03-25 18:09+0530\n"
+"POT-Creation-Date: 2017-03-31 10:49+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,12 +17,12 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: MainWindow.vala:906
+#: MainWindow.vala:889
 #, c-format
 msgid "(%ld packages in backup)"
 msgstr ""
 
-#: MainWindow.vala:956
+#: MainWindow.vala:939
 #, c-format
 msgid "(%ld packages in cache)"
 msgstr ""
@@ -103,7 +103,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: MainWindow.vala:768
+#: MainWindow.vala:735
 msgid "About"
 msgstr ""
 
@@ -111,7 +111,7 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
-#: MainWindow.vala:261
+#: MainWindow.vala:306
 msgid "Add missing PPAs"
 msgstr ""
 
@@ -169,7 +169,7 @@ msgstr ""
 msgid "App settings backup limit (KB)"
 msgstr ""
 
-#: MainWindow.vala:769
+#: MainWindow.vala:736
 msgid "Application Info"
 msgstr ""
 
@@ -214,9 +214,9 @@ msgid "Back"
 msgstr ""
 
 #: AptikConsole.vala:1063 AptikConsole.vala:1098 ConfigWindow.vala:334
-#: MainWindow.vala:242 MainWindow.vala:292 MainWindow.vala:321
-#: MainWindow.vala:370 MainWindow.vala:445 MainWindow.vala:493
-#: MainWindow.vala:541 MainWindow.vala:607 MainWindow.vala:636
+#: MainWindow.vala:287 MainWindow.vala:337 MainWindow.vala:366
+#: MainWindow.vala:416 MainWindow.vala:445 MainWindow.vala:493
+#: MainWindow.vala:541 MainWindow.vala:570 MainWindow.vala:599
 #: PackageManagerWindow.vala:476 PackageWindow.vala:131 PackageWindow.vala:406
 #: PpaWindow.vala:111 PpaWindow.vala:265 ThemeWindow.vala:123
 #: ThemeWindow.vala:526 UserDataSettingsDialog.vala:62
@@ -224,7 +224,7 @@ msgstr ""
 msgid "Backup"
 msgstr ""
 
-#: MainWindow.vala:194
+#: MainWindow.vala:240
 msgid "Backup &amp; Restore"
 msgstr ""
 
@@ -236,11 +236,7 @@ msgstr ""
 msgid "Backup Application Settings"
 msgstr ""
 
-#: MainWindow.vala:115
-msgid "Backup Directory"
-msgstr ""
-
-#: MainWindow.vala:827
+#: MainWindow.vala:794
 msgid "Backup Directory Not Selected"
 msgstr ""
 
@@ -248,7 +244,7 @@ msgstr ""
 msgid "Backup File"
 msgstr ""
 
-#: MainWindow.vala:235
+#: MainWindow.vala:280
 msgid "Backup Launchpad PPAs"
 msgstr ""
 
@@ -288,11 +284,11 @@ msgstr ""
 msgid "Backup downloaded packages from APT cache"
 msgstr ""
 
-#: MainWindow.vala:285
+#: MainWindow.vala:330
 msgid "Backup downloaded packages in /var/cache/apt"
 msgstr ""
 
-#: MainWindow.vala:600
+#: MainWindow.vala:563
 msgid ""
 "Backup home directory data\n"
 "\n"
@@ -300,7 +296,7 @@ msgid ""
 "'Application Settings' section to backup app config directories."
 msgstr ""
 
-#: MainWindow.vala:314
+#: MainWindow.vala:359
 msgid "Backup installed packages"
 msgstr ""
 
@@ -316,11 +312,11 @@ msgstr ""
 msgid "Backup saved"
 msgstr ""
 
-#: MainWindow.vala:629
+#: MainWindow.vala:592
 msgid "Backup scheduled tasks for all users (crontab file)"
 msgstr ""
 
-#: MainWindow.vala:244
+#: MainWindow.vala:289
 msgid "Backup the list of installed PPAs"
 msgstr ""
 
@@ -341,7 +337,7 @@ msgstr ""
 msgid "Backup user-created data in user's home directory"
 msgstr ""
 
-#: AptikConsole.vala:118 MainWindow.vala:363
+#: AptikConsole.vala:118 MainWindow.vala:409
 msgid "Backup users and groups"
 msgstr ""
 
@@ -357,7 +353,7 @@ msgstr ""
 msgid "Bash Logout Script"
 msgstr ""
 
-#: Main.vala:1554 MainWindow.vala:926
+#: Main.vala:1554 MainWindow.vala:909
 msgid "Cache backup not found in backup directory"
 msgstr ""
 
@@ -413,12 +409,11 @@ msgstr ""
 msgid "Contributions"
 msgstr ""
 
-#: MainWindow.vala:887 MainWindow.vala:937
+#: MainWindow.vala:870 MainWindow.vala:920
 msgid "Copying packages..."
 msgstr ""
 
-#: MainWindow.vala:381 MainWindow.vala:552 MainWindow.vala:978
-#: MainWindow.vala:1018 MainWindow.vala:1059
+#: MainWindow.vala:1032 MainWindow.vala:1099
 msgid "Create Password"
 msgstr ""
 
@@ -500,7 +495,7 @@ msgstr ""
 msgid "Documenters"
 msgstr ""
 
-#: DonationWindow.vala:36 MainWindow.vala:751 MainWindow.vala:752
+#: DonationWindow.vala:36 MainWindow.vala:718 MainWindow.vala:719
 msgid "Donate"
 msgstr ""
 
@@ -549,8 +544,12 @@ msgstr ""
 msgid "Enter Passphrase"
 msgstr ""
 
-#: MainWindow.vala:412 MainWindow.vala:583 MainWindow.vala:1105
+#: MainWindow.vala:1067 MainWindow.vala:1130
 msgid "Enter Password"
+msgstr ""
+
+#: MainWindow.vala:188
+msgid "Enter encryption password"
 msgstr ""
 
 #: Main.vala:3012
@@ -566,8 +565,12 @@ msgstr ""
 msgid "Enter password for encrypting backup"
 msgstr ""
 
-#: AptikConsole.vala:572 AptikConsole.vala:648 MainWindow.vala:564
-#: MainWindow.vala:648 MainWindow.vala:665 PackageWindow.vala:1017
+#: MainWindow.vala:810
+msgid "Enter the passphrase for encryption"
+msgstr ""
+
+#: AptikConsole.vala:572 AptikConsole.vala:648 MainWindow.vala:611
+#: MainWindow.vala:628 MainWindow.vala:1111 PackageWindow.vala:1017
 #: PpaWindow.vala:495 PpaWindow.vala:600 UserAccountWindow.vala:513
 #: Utility.vala:153
 msgid "Error"
@@ -687,7 +690,7 @@ msgstr ""
 msgid "File Missing"
 msgstr ""
 
-#: MainWindow.vala:839
+#: MainWindow.vala:822
 msgid "File Not Found"
 msgstr ""
 
@@ -712,7 +715,7 @@ msgstr ""
 msgid "File not found"
 msgstr ""
 
-#: Main.vala:256 MainWindow.vala:840
+#: Main.vala:256 MainWindow.vala:823
 msgid "File not found in backup directory"
 msgstr ""
 
@@ -729,7 +732,7 @@ msgstr ""
 msgid "File saved"
 msgstr ""
 
-#: MainWindow.vala:925
+#: MainWindow.vala:908
 msgid "Files Not Found"
 msgstr ""
 
@@ -745,7 +748,7 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
-#: MainWindow.vala:561 MainWindow.vala:645 MainWindow.vala:662
+#: MainWindow.vala:608 MainWindow.vala:625 MainWindow.vala:1108
 #: MountWindow.vala:510 UserAccountWindow.vala:509
 msgid "Finished"
 msgstr ""
@@ -758,11 +761,11 @@ msgstr ""
 msgid "Firefox Web Browser"
 msgstr ""
 
-#: MainWindow.vala:858
+#: MainWindow.vala:841
 msgid "Folder Not Found"
 msgstr ""
 
-#: MainWindow.vala:859
+#: MainWindow.vala:842
 msgid "Folder not found in backup directory"
 msgstr ""
 
@@ -836,8 +839,12 @@ msgstr ""
 msgid "Groups"
 msgstr ""
 
-#: PasswordWindow.vala:194
+#: MainWindow.vala:201 PasswordWindow.vala:194
 msgid "Hide"
+msgstr ""
+
+#: MainWindow.vala:202
+msgid "Hide passphrase"
 msgstr ""
 
 #: Main.vala:3344
@@ -969,6 +976,10 @@ msgstr ""
 msgid "Local Themes"
 msgstr ""
 
+#: MainWindow.vala:120
+msgid "Location &amp; Password"
+msgstr ""
+
 #: MountWindow.vala:201
 msgid "Mapped Name"
 msgstr ""
@@ -977,7 +988,7 @@ msgstr ""
 msgid "Metacity Window Border"
 msgstr ""
 
-#: MainWindow.vala:809
+#: MainWindow.vala:776
 msgid "Migration utility for Ubuntu-based distributions"
 msgstr ""
 
@@ -1064,29 +1075,29 @@ msgstr ""
 msgid "OK"
 msgstr ""
 
-#: MainWindow.vala:717
+#: MainWindow.vala:684
 msgid ""
 "One-Click\n"
 "Backup"
 msgstr ""
 
-#: MainWindow.vala:726
+#: MainWindow.vala:693
 msgid ""
 "One-Click\n"
 "Restore"
 msgstr ""
 
-#: MainWindow.vala:735
+#: MainWindow.vala:702
 msgid ""
 "One-Click\n"
 "Settings"
 msgstr ""
 
-#: MainWindow.vala:718
+#: MainWindow.vala:685
 msgid "One-Click Backup"
 msgstr ""
 
-#: MainWindow.vala:727
+#: MainWindow.vala:694
 msgid "One-Click Restore"
 msgstr ""
 
@@ -1094,11 +1105,11 @@ msgstr ""
 msgid "One-Click Settings"
 msgstr ""
 
-#: MainWindow.vala:158
+#: MainWindow.vala:164
 msgid "Open"
 msgstr ""
 
-#: MainWindow.vala:160
+#: MainWindow.vala:166
 msgid "Open backup location"
 msgstr ""
 
@@ -1166,6 +1177,10 @@ msgstr ""
 msgid "Password cannot be empty!"
 msgstr ""
 
+#: MainWindow.vala:809
+msgid "Password field is empty!"
+msgstr ""
+
 #: Main.vala:3331
 msgid "Password not specified!"
 msgstr ""
@@ -1190,7 +1205,7 @@ msgstr ""
 msgid "Please run the application as admin (using 'sudo' or 'su')"
 msgstr ""
 
-#: MainWindow.vala:828
+#: MainWindow.vala:795
 msgid "Please select the backup directory"
 msgstr ""
 
@@ -1207,7 +1222,7 @@ msgid "Please un-select the packages that are not required."
 msgstr ""
 
 #: ConfigWindow.vala:408 ConfigWindow.vala:497 ConfigWindow.vala:574
-#: MainWindow.vala:881 MainWindow.vala:931 PackageWindow.vala:832
+#: MainWindow.vala:864 MainWindow.vala:914 PackageWindow.vala:832
 #: PackageWindow.vala:943 PpaWindow.vala:364 PpaWindow.vala:444
 #: PpaWindow.vala:501 ThemeWindow.vala:593 ThemeWindow.vala:724
 msgid "Preparing..."
@@ -1262,10 +1277,10 @@ msgid ""
 msgstr ""
 
 #: AptikConsole.vala:1063 AptikConsole.vala:1098 ConfigWindow.vala:108
-#: ConfigWindow.vala:340 MainWindow.vala:259 MainWindow.vala:300
-#: MainWindow.vala:338 MainWindow.vala:398 MainWindow.vala:461
-#: MainWindow.vala:509 MainWindow.vala:569 MainWindow.vala:615
-#: MainWindow.vala:653 MountWindow.vala:115 MountWindow.vala:362
+#: ConfigWindow.vala:340 MainWindow.vala:304 MainWindow.vala:345
+#: MainWindow.vala:383 MainWindow.vala:424 MainWindow.vala:461
+#: MainWindow.vala:509 MainWindow.vala:549 MainWindow.vala:578
+#: MainWindow.vala:616 MountWindow.vala:115 MountWindow.vala:362
 #: PackageManagerWindow.vala:482 PackageWindow.vala:123 PackageWindow.vala:412
 #: PpaWindow.vala:103 PpaWindow.vala:271 ThemeWindow.vala:114
 #: ThemeWindow.vala:532 UserAccountWindow.vala:112 UserAccountWindow.vala:327
@@ -1352,7 +1367,7 @@ msgstr ""
 msgid "Search package name and description"
 msgstr ""
 
-#: MainWindow.vala:150
+#: MainWindow.vala:156
 msgid "Select"
 msgstr ""
 
@@ -1366,7 +1381,11 @@ msgstr ""
 msgid "Select None"
 msgstr ""
 
-#: MainWindow.vala:152
+#: MainWindow.vala:135
+msgid "Select backup directory"
+msgstr ""
+
+#: MainWindow.vala:158
 msgid "Select backup location"
 msgstr ""
 
@@ -1441,11 +1460,12 @@ msgstr ""
 msgid "Set owner: %s, dir: %s"
 msgstr ""
 
-#: MainWindow.vala:736
+#: MainWindow.vala:703
 msgid "Settings for One-Click Backup & Restore"
 msgstr ""
 
-#: PasswordWindow.vala:107 PasswordWindow.vala:194
+#: MainWindow.vala:194 MainWindow.vala:205 PasswordWindow.vala:107
+#: PasswordWindow.vala:194
 msgid "Show"
 msgstr ""
 
@@ -1455,6 +1475,10 @@ msgstr ""
 
 #: AptikConsole.vala:91
 msgid "Show package description if available"
+msgstr ""
+
+#: MainWindow.vala:206
+msgid "Show passphrase"
 msgstr ""
 
 #: PackageWindow.vala:570
