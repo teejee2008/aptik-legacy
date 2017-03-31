@@ -55,12 +55,18 @@ public class PackageWindow : Window {
 	private Button btn_select_all;
 	private Button btn_select_none;
 
-	private int def_width = 550;
+	private int def_width = 700;
 	private int def_height = 450;
 	private uint tmr_init = 0;
 	private uint tmr_refilter = 0;
 	private bool is_running = false;
 	private bool is_restore_view = false;
+
+	private bool is_backup_view{
+		get{
+			return !is_restore_view;
+		}
+	}
 
 	private TerminalWindow term;
 	
@@ -524,10 +530,6 @@ public class PackageWindow : Window {
 			store.append(out iter);
 			store.set (iter, 0, _("Installed (deb)"), 1, pix_pink);
 			store.append(out iter);
-			store.set (iter, 0, _("NotInstalled"), 1, pix_gray);
-			store.append(out iter);
-			store.set (iter, 0, _("NotAvailable"), 1, null);
-			store.append(out iter);
 			store.set (iter, 0, _("(selected)"), 1, null);
 			store.append(out iter);
 			store.set (iter, 0, _("(unselected)"), 1, null);
@@ -617,6 +619,8 @@ public class PackageWindow : Window {
 		var pkg_list = new ArrayList<Package>();
 		if (App.pkg_list_master != null) {
 			foreach(Package pkg in App.pkg_list_master.values) {
+				if (is_backup_view && pkg.is_installed){ continue; }
+				if (is_restore_view && !pkg.in_backup_list && !pkg.is_installed){ continue; }
 				pkg_list.add(pkg);
 			}
 		}

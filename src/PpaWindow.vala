@@ -46,12 +46,18 @@ public class PpaWindow : Window {
 	private TreeViewColumn col_ppa_status;
 	private ScrolledWindow sw_ppa;
 
-	private int def_width = 550;
+	private int def_width = 700;
 	private int def_height = 450;
 	private uint tmr_init = 0;
 	private bool is_running = false;
 	private bool is_restore_view = false;
 
+	private bool is_backup_view{
+		get{
+			return !is_restore_view;
+		}
+	}
+	
 	private bool query_pkg_info = true;
 	
 	// init
