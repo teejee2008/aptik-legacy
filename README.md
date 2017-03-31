@@ -26,33 +26,33 @@ Aptik is a tool that will make your life easier. While it won't eliminate all th
 5) **Backup & Restore Application Settings** - Application configuraton folders will be zipped and saved to the backup location. Restoring the directories on the new system will restore the settings for applications like Firefox, Chromium, etc. This is better than taking a backup of your entire Home directory as you can restore the settings for specific applications while keeping the new configuration for other applications.
 
 ## Screenshots
-  
+
 [![](http://1.bp.blogspot.com/-tivz6R9TJuY/VpszW6xL6TI/AAAAAAAADHc/aX_QFkAas8w/s1600/1_Main_Window.png)](http://1.bp.blogspot.com/-tivz6R9TJuY/VpszW6xL6TI/AAAAAAAADHc/aX_QFkAas8w/s1600/1_Main_Window.png)   
-Main Window
+_Main Window_
 
 [![](http://3.bp.blogspot.com/-4fuVE9CqR-Y/VpszW7vUU-I/AAAAAAAADHg/fzczwSuEyKc/s1600/2_Restore_PPA.png)](http://3.bp.blogspot.com/-4fuVE9CqR-Y/VpszW7vUU-I/AAAAAAAADHg/fzczwSuEyKc/s1600/2_Restore_PPA.png)  
-Restore Software Sources (PPAs)
+_Restore Software Sources (PPAs)_
 
 [![](http://1.bp.blogspot.com/-54ayzJrg39A/VpszXQnxMPI/AAAAAAAADHk/ay8F9qDmeAQ/s1600/4_Restore_PPA_Running_apt-get_update.png)](http://1.bp.blogspot.com/-54ayzJrg39A/VpszXQnxMPI/AAAAAAAADHk/ay8F9qDmeAQ/s1600/4_Restore_PPA_Running_apt-get_update.png)  
 Restore PPA Progress  
 
 [![](http://1.bp.blogspot.com/-XT60nyoMEK8/VpszXhPWhrI/AAAAAAAADHs/DYEr8RSFQzA/s1600/5_Restore_Downloaded_Packages.png)](http://1.bp.blogspot.com/-XT60nyoMEK8/VpszXhPWhrI/AAAAAAAADHs/DYEr8RSFQzA/s1600/5_Restore_Downloaded_Packages.png)  
-Restore Downloaded Packages in APT Cache  
+_Restore Downloaded Packages in APT Cache_ 
 
 [![](http://3.bp.blogspot.com/-T2L1yM_4_PY/VpszYOWSLTI/AAAAAAAADH0/I6L-Uy18dqc/s1600/6_Restore_Packages.png)](http://3.bp.blogspot.com/-T2L1yM_4_PY/VpszYOWSLTI/AAAAAAAADH0/I6L-Uy18dqc/s1600/6_Restore_Packages.png)  
-Restore Packages  
+_Restore Packages_  
 
 [![](http://2.bp.blogspot.com/-zH8eACoTTtE/VpszYQqXTTI/AAAAAAAADH8/hYHDkbwQdJ0/s1600/7_Restore_Packages_Download.png)](http://2.bp.blogspot.com/-zH8eACoTTtE/VpszYQqXTTI/AAAAAAAADH8/hYHDkbwQdJ0/s1600/7_Restore_Packages_Download.png)   
-Restore Packages - Download Manager powered by aria2  
+_Restore Packages - Download Manager powered by aria2_  
 
 [![](http://2.bp.blogspot.com/-af3Hc8fBrMA/VpszYsOnFOI/AAAAAAAADII/4uhINQ0MNss/s1600/8_Restore_Packages_Installation.png)](http://2.bp.blogspot.com/-af3Hc8fBrMA/VpszYsOnFOI/AAAAAAAADII/4uhINQ0MNss/s1600/8_Restore_Packages_Installation.png)   
-Restore Packages - Last step  
+_Restore Packages - Last step_  
 
 [![](http://4.bp.blogspot.com/-JjXhYFzlxQE/Vps9Q5dpD5I/AAAAAAAADIo/OoeScon0vg8/s1600/9_Backup%2BApplication%2BSettings.png)](http://4.bp.blogspot.com/-JjXhYFzlxQE/Vps9Q5dpD5I/AAAAAAAADIo/OoeScon0vg8/s1600/9_Backup%2BApplication%2BSettings.png)   
-Backup Application Settings  
+_Backup Application Settings_  
 
 [![](http://3.bp.blogspot.com/-47QHV54XxkM/Vps9Qr2CDbI/AAAAAAAADIk/bCWYFKArtb0/s1600/10_Backup%2BThemes.png)](http://3.bp.blogspot.com/-47QHV54XxkM/Vps9Qr2CDbI/AAAAAAAADIk/bCWYFKArtb0/s1600/10_Backup%2BThemes.png)   
-Backup Themes  
+_Backup Themes_  
 
 [![](http://2.bp.blogspot.com/-9Pf25PbiS9k/Vps9QjfEImI/AAAAAAAADIg/HAr9ZgOIoSo/s1600/11_About.png)](http://2.bp.blogspot.com/-9Pf25PbiS9k/Vps9QjfEImI/AAAAAAAADIg/HAr9ZgOIoSo/s1600/11_About.png) 
 
@@ -85,7 +85,7 @@ An installer is available from following links:
 Run the following commands in a terminal window:  
 
     sudo apt-get autoremove aptik
-    
+
 ## Donations
 
 

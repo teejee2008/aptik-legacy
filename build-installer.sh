@@ -2,7 +2,7 @@
 
 app_name='aptik'
 app_fullname='Aptik'
-tgz="../../pbuilder/"
+tgz="../../pbuilder/build/trusty/"
 dsc="../../builds/${app_name}*.dsc"
 libs="../../libs"
 

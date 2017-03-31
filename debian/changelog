@@ -1,4 +1,4 @@
-aptik (16.5.2) xenial; urgency=medium
+aptik (16.5.2) trusty; urgency=medium
 
   * Fixed: Restore mounts: keyfiles were not restored correctly
 
