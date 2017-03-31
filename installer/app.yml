@@ -1,0 +1,13 @@
+app: Aptik
+
+ingredients:
+  package: aptik libvte-2.90
+  dist: trusty
+  sources: 
+    - deb http://us.archive.ubuntu.com/ubuntu/ trusty main universe
+    - deb http://us.archive.ubuntu.com/ubuntu/ trusty main multiverse
+  script:
+    - cp -rfv ../amd64/*.deb ./
+    - mkdir -p Aptik.AppDir
+    - cp -rfv ../amd64/extracted/usr/share/pixmaps/*.svg Aptik.AppDir/aptik.svg
+
