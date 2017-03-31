@@ -117,7 +117,7 @@ public class MainWindow : Window {
 	private void init_section_backup_location() {
 		
 		// header
-		var label = new Label ("<b>" + _("Location &amp; Password") + "</b>");
+		var label = new Label ("<b>" + _("Backup Location &amp; Password") + "</b>");
 		label.set_use_markup(true);
 		label.halign = Align.START;
 		//label.margin_top = 12;
@@ -657,8 +657,16 @@ public class MainWindow : Window {
 	private void init_section_toolbar_bottom() {
 
 		var sep = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
-		sep.margin_top = 24;
+		sep.margin_top = 12;
 		vbox_main.add(sep);
+
+		// header
+		var label = new Label ("<b>" + _("One-Click Backup &amp; Restore") + "</b>");
+		label.set_use_markup(true);
+		label.halign = Align.START;
+		//label.margin_top = 12;
+		//label.margin_bottom = 6;
+		vbox_main.pack_start (label, false, true, 0);
 		
 		//toolbar_bottom
 		toolbar_bottom = new Gtk.Toolbar();

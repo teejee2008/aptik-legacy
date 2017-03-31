@@ -54,8 +54,8 @@ public class OneClickSettingsDialog : Gtk.Dialog {
 		
 		// get content area
 		var vbox_main = get_content_area();
-		vbox_main.spacing = 6;
-		vbox_main.margin = 12;
+		vbox_main.spacing = 12;
+		vbox_main.margin = 6;
 		//vbox_main.margin_bottom = 12;
 		vbox_main.set_size_request(400,400);
 
