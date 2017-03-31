@@ -602,6 +602,11 @@ public class MainWindow : Window {
 		btn_backup_crontab = button;
 		
 		button.clicked.connect(()=>{
+
+			if (!check_backup_folder()) {
+				return;
+			}
+		
 			bool ok = App.backup_crontab();
 			
 			if (ok){
@@ -619,6 +624,11 @@ public class MainWindow : Window {
 		btn_restore_crontab = button;
 		
 		button.clicked.connect(()=>{
+
+			if (!check_backup_folder()) {
+				return;
+			}
+		
 			bool ok = App.restore_crontab();
 			
 			if (ok){
