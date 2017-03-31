@@ -11,7 +11,16 @@ app_name=aptik
 app_fullname=Aptik
 
 vte_version=$(shell { ((ldconfig -p | grep libvte-2.91*.so) >/dev/null && echo 'vte-2.91') || echo 'vte-2.90'; } )
-define_symbols=$(shell { ((ldconfig -p | grep libvte-2.91*.so) >/dev/null && echo '-D VTE_291') || echo ''; } )
+vte_symbols=$(shell { ((ldconfig -p | grep libvte-2.91*.so) >/dev/null && echo '-D VTE_291') || echo ''; } )
+gtk3_version=$(shell { (pkg-config --modversion gtk+-3.0 | cut -d. -f2); } )
+
+ifeq ($(shell { test ${gtk3_version} -gt 17 ; echo $$? ; } ), 0)
+gtk3_symbols=$(shell { echo '-D GTK3_18'; } )
+else
+gtk3_symbols=$(shell { echo ''; } )
+endif
+
+define_symbols=$(shell { echo "${vte_symbols} ${gtk3_symbols}"; } )
 
 all:
 	#build binaries

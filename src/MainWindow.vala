@@ -792,7 +792,7 @@ public class MainWindow : Window {
 
 		dialog.program_name = AppName;
 		dialog.comments = _("Migration utility for Ubuntu-based distributions");
-		dialog.copyright = "Copyright © 2016 Tony George (%s)".printf(AppAuthorEmail);
+		dialog.copyright = "Copyright © 2012-2017 %s (%s)".printf(AppAuthor, AppAuthorEmail);
 		dialog.version = AppVersion;
 		dialog.logo = get_app_icon(128);
 

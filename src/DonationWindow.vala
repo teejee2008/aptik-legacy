@@ -32,7 +32,9 @@ using TeeJee.Misc;
 using TeeJee.GtkHelper;
 
 public class DonationWindow : Dialog {
+	
 	public DonationWindow() {
+		
 		set_title("");
 		window_position = WindowPosition.CENTER_ON_PARENT;
 		set_destroy_with_parent (true);
@@ -69,6 +71,7 @@ public class DonationWindow : Dialog {
 
 		//btn_donate_paypal
 		var button = new Button.with_label(_("Donate - PayPal"));
+		button.set_tooltip_text("Donate to: teejeetech@gmail.com");
 		vbox_actions.add(button);
 		button.clicked.connect(() => {
 			xdg_open("https://www.paypal.com/cgi-bin/webscr?business=teejeetech@gmail.com&cmd=_xclick&currency_code=USD&amount=10&item_name=Aptik%20Donation");
@@ -84,6 +87,7 @@ public class DonationWindow : Dialog {
 
 		//tracker
 		button = new Button.with_label(_("Issue Tracker"));
+		button.set_tooltip_text("https://github.com/teejee2008/aptik/issues");
 		vbox_actions.add(button);
 		button.clicked.connect(() => {
 			xdg_open("https://github.com/teejee2008/aptik/issues");
@@ -91,6 +95,7 @@ public class DonationWindow : Dialog {
 
 		//btn_visit
 		button = new Button.with_label(_("Website"));
+		button.set_tooltip_text("http://www.teejeetech.in");
 		vbox_actions.add(button);
 		button.clicked.connect(() => {
 			xdg_open("http://www.teejeetech.in");

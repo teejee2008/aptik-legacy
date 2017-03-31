@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2017-03-31 12:51+0530\n"
+"POT-Creation-Date: 2017-03-31 13:11+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -478,11 +478,11 @@ msgstr ""
 msgid "Donate"
 msgstr ""
 
-#: DonationWindow.vala:78
+#: DonationWindow.vala:81
 msgid "Donate - Google Wallet"
 msgstr ""
 
-#: DonationWindow.vala:71
+#: DonationWindow.vala:73
 msgid "Donate - PayPal"
 msgstr ""
 
@@ -821,7 +821,7 @@ msgstr ""
 msgid "Home Directory Data"
 msgstr ""
 
-#: DonationWindow.vala:55
+#: DonationWindow.vala:57
 msgid ""
 "I made this application for my own use. I'm distributing it in the hope that "
 "it will be useful to someone. This is not a commercial product, there's no "
@@ -920,7 +920,7 @@ msgstr ""
 msgid "Internet connection is not active. Check the connection and try again."
 msgstr ""
 
-#: DonationWindow.vala:86
+#: DonationWindow.vala:89
 msgid "Issue Tracker"
 msgstr ""
 
@@ -1689,7 +1689,7 @@ msgstr ""
 msgid "Warning"
 msgstr ""
 
-#: DonationWindow.vala:93
+#: DonationWindow.vala:97
 msgid "Website"
 msgstr ""
 
