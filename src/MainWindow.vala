@@ -1,7 +1,7 @@
 /*
  * MainWindow.vala
  *
- * Copyright 2015 Tony George <teejee2008@gmail.com>
+ * Copyright 2012-2017 Tony George <teejeetech@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1046,13 +1046,6 @@ public class MainWindow : Window {
 			return;
 		}
 
-		if (App.arg_password.length == 0){
-			App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"), Message.ENTER_PASSWORD_BACKUP);
-			if (App.arg_password.length == 0){
-				return;
-			}
-		}
-		
 		bool ok = App.backup_users_and_groups(App.arg_password);
 
 		if (ok){
@@ -1081,13 +1074,6 @@ public class MainWindow : Window {
 			return;
 		}
 
-		if (App.arg_password.length == 0){
-			App.arg_password = PasswordWindow.prompt_user(this, false, _("Enter Password"), Message.ENTER_PASSWORD_RESTORE);
-			if (App.arg_password.length == 0){
-				return;
-			}
-		}
-
 		clear_err_log();
 		bool ok = App.restore_users_and_groups_init(App.arg_password);
 		show_err_log(this);
@@ -1113,13 +1099,6 @@ public class MainWindow : Window {
 			return;
 		}
 
-		if (App.arg_password.length == 0){
-			App.arg_password = PasswordWindow.prompt_user(this, true, _("Create Password"),Message.ENTER_PASSWORD_BACKUP);
-			if (App.arg_password.length == 0){
-				return;
-			}
-		}
-
 		bool ok = App.backup_mounts();
 		
 		if (ok){
@@ -1142,13 +1121,6 @@ public class MainWindow : Window {
 	
 		if (!check_backup_file("mounts/fstab.tar.gpg") && !check_backup_file("mounts/crypttab.tar.gpg")){
 			return;
-		}
-
-		if (App.arg_password.length == 0){
-			App.arg_password = PasswordWindow.prompt_user(this, false, _("Enter Password"),Message.ENTER_PASSWORD_RESTORE);
-			if (App.arg_password.length == 0){
-				return;
-			}
 		}
 
 		this.hide();

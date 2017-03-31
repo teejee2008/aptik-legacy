@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2017-03-31 12:44+0530\n"
+"POT-Creation-Date: 2017-03-31 12:51+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -404,10 +404,6 @@ msgstr ""
 msgid "Common"
 msgstr ""
 
-#: PasswordWindow.vala:126
-msgid "Confirm Passphrase"
-msgstr ""
-
 #: AboutWindow.vala:332
 #, c-format
 msgid "Contributions"
@@ -415,10 +411,6 @@ msgstr ""
 
 #: MainWindow.vala:888 MainWindow.vala:938
 msgid "Copying packages..."
-msgstr ""
-
-#: MainWindow.vala:1050 MainWindow.vala:1117
-msgid "Create Password"
 msgstr ""
 
 #: AboutWindow.vala:282 AboutWindow.vala:299
@@ -527,14 +519,6 @@ msgstr ""
 msgid "Encrypted Devices (/etc/crypttab)"
 msgstr ""
 
-#: PasswordWindow.vala:95
-msgid "Enter Passphrase"
-msgstr ""
-
-#: MainWindow.vala:1085 MainWindow.vala:1148
-msgid "Enter Password"
-msgstr ""
-
 #: MainWindow.vala:188
 msgid "Enter encryption password"
 msgstr ""
@@ -557,7 +541,7 @@ msgid "Enter the passphrase for encryption"
 msgstr ""
 
 #: AptikConsole.vala:572 AptikConsole.vala:648 MainWindow.vala:616
-#: MainWindow.vala:638 MainWindow.vala:1129 PackageWindow.vala:1017
+#: MainWindow.vala:638 MainWindow.vala:1108 PackageWindow.vala:1017
 #: PpaWindow.vala:495 UserAccountWindow.vala:513 Utility.vala:153
 msgid "Error"
 msgstr ""
@@ -738,7 +722,7 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
-#: MainWindow.vala:613 MainWindow.vala:635 MainWindow.vala:1126
+#: MainWindow.vala:613 MainWindow.vala:635 MainWindow.vala:1105
 #: MountWindow.vala:510 UserAccountWindow.vala:509
 msgid "Finished"
 msgstr ""
@@ -825,7 +809,7 @@ msgstr ""
 msgid "Groups"
 msgstr ""
 
-#: MainWindow.vala:201 PasswordWindow.vala:194
+#: MainWindow.vala:201
 msgid "Hide"
 msgstr ""
 
@@ -1478,8 +1462,7 @@ msgstr ""
 msgid "Settings for One-Click Backup & Restore"
 msgstr ""
 
-#: MainWindow.vala:194 MainWindow.vala:205 PasswordWindow.vala:107
-#: PasswordWindow.vala:194
+#: MainWindow.vala:194 MainWindow.vala:205
 msgid "Show"
 msgstr ""
 

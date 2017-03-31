@@ -63,25 +63,4 @@ cp -p --no-preserve=ownership ./${arch}/${app_name}*.deb ./${app_name}-${VERSION
 
 done
 
-# --------------------------------------------------------------------
-
-echo ""
-echo "******************************************************************************"
-echo "Creating AppImage..."
-echo "******************************************************************************"
-echo ""
-./create-appimage --pkg-cache=/home/teejee/projects/linux/trusty-amd64 app.yml
-
-#check for errors
-if [ $? -ne 0 ]; then
-	cd "$backup"
-	echo "Failed"
-	exit 1
-fi
-
-cp -p --no-preserve=ownership ./out/*.AppImage ./${app_name}-${VERSION}-${arch}.AppImage
-
-# --------------------------------------------------------------------
-
-
 cd "$backup"
