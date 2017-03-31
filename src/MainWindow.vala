@@ -810,7 +810,7 @@ public class MainWindow : Window {
 		}
 		else {
 			string title = _("Backup Directory Not Selected");
-			string msg = _("Please select the backup directory");
+			string msg = _("Select the backup directory");
 			gtk_messagebox(title, msg, this, false);
 			return false;
 		}
@@ -824,7 +824,7 @@ public class MainWindow : Window {
 			return true;
 		}
 		else {
-			string title = _("Password field is empty!");
+			string title = _("Password Field is Empty");
 			string msg = _("Enter the passphrase for encryption");
 			gtk_messagebox(title, msg, this, false);
 			return false;

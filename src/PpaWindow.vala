@@ -597,8 +597,8 @@ public class PpaWindow : Window {
 		}
 		
 		if (error_msg.length > 0){
-			string title = _("Error");
-			string msg = _("Following PPAs could not be added") + ":\n\n%s\n".printf(error_msg);
+			string title = _("Failed to add PPAs");
+			string msg = "%s\n".printf(error_msg);
 			gtk_messagebox(title, msg, this, false);
 		}
 

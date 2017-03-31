@@ -1330,8 +1330,9 @@ namespace TeeJee.GtkHelper{
 		dlg.run();
 		dlg.destroy();*/
 
-		var dlg = new CustomMessageDialog(title,message,type,parent_win);
+		var dlg = new CustomMessageDialog(title,message,type,parent_win, Gtk.ButtonsType.OK);
 		dlg.run();
+		dlg.destroy();
 	}
 
 	public bool gtk_combobox_set_value (ComboBox combo, int index, string val){

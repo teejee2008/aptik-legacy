@@ -33,69 +33,67 @@ using TeeJee.GtkHelper;
 
 public class DonationWindow : Dialog {
 	public DonationWindow() {
-		set_title(_("Donate"));
+		set_title("");
 		window_position = WindowPosition.CENTER_ON_PARENT;
 		set_destroy_with_parent (true);
 		set_modal (true);
 		set_deletable(true);
 		set_skip_taskbar_hint(false);
-		set_default_size (400, 20);
+		set_default_size (500, 20);
 		icon = get_app_icon(16);
 
 		//vbox_main
 		Box vbox_main = get_content_area();
 		vbox_main.margin = 6;
+		vbox_main.spacing = 6;
 		vbox_main.homogeneous = false;
 
 		get_action_area().visible = false;
 
-		//lbl_message
-		Label lbl_message = new Gtk.Label("");
-		string msg = _("Did you find this software useful?\n\nYou can buy me a coffee or make a donation via PayPal to show your support. Or just drop me an email and say Hi. This application is completely free and will continue to remain that way. Your contributions will help in keeping this project alive and improving it further.\n\nFeel free to send me an email if you find any issues in this application or if you need any changes. Suggestions and feedback are always welcome.\n\nThanks,\nTony George\n(teejeetech@gmail.com)");
-		lbl_message.label = msg;
-		lbl_message.wrap = true;
-		vbox_main.pack_start(lbl_message, true, true, 0);
+		// label
+		var label = new Gtk.Label("");
+		string msg = _("I made this application for my own use. I'm distributing it in the hope that it will be useful to someone. This is not a commercial product, there's no company behind it and there are no support teams to answer your questions. I work on this application during my free time based on my own requirements and interest.\n\nIf you need help with an issue, or if you have a feature request, please open a ticket on the GitHub issue tracker. If the requested feature is useful to me and I have the time, I will implement it. If it is not useful to me or if it requires a lot of time and effort, then it will remain in the tracker till someone takes interest in the feature and implements it. That's the whole idea behind open-source software. Open-source does not mean \"free\" stuff that you don't need to pay for. It's software that belongs to everyone. If someone needs a feature that is missing, they can take the source code, add the feature and contribute the change back to the project so that everyone can benefit from their work.\n\nHaving said that, please feel free to leave feature requests, suggestions and bug reports in the issue tracker. Good ideas are always useful and many of them require little time to implement. Check if an issue was already reported before opening a new item in the tracker, and help out other users if you know the solution to an issue.\n\nYou can leave a donation via PayPal if you wish to say thanks. My PayPal ID is linked below.\n\nThanks,\nTony George");
+		label.label = msg;
+		label.wrap = true;
+		label.xalign = 0.0f;
+		label.yalign = 0.0f;
+		label.margin_bottom = 6;
+		vbox_main.pack_start(label, true, true, 0);
 
 		//vbox_actions
-		Box vbox_actions = new Box (Orientation.VERTICAL, 6);
-		vbox_actions.margin_left = 50;
-		vbox_actions.margin_right = 50;
-		vbox_actions.margin_top = 20;
+		var vbox_actions = new Box (Orientation.HORIZONTAL, 6);
+		//vbox_actions.margin_left = 50;
+		//vbox_actions.margin_right = 50;
+		//vbox_actions.margin_top = 20;
 		vbox_main.pack_start(vbox_actions, false, false, 0);
 
 		//btn_donate_paypal
-		Button btn_donate_paypal = new Button.with_label("   " + _("Donate with PayPal") + "   ");
-		vbox_actions.add(btn_donate_paypal);
-		btn_donate_paypal.clicked.connect(() => {
-			xdg_open("https://www.paypal.com/cgi-bin/webscr?business=teejeetech@gmail.com&cmd=_xclick&currency_code=USD&amount=10&item_name=Selene%20Donation");
+		var button = new Button.with_label(_("Donate - PayPal"));
+		vbox_actions.add(button);
+		button.clicked.connect(() => {
+			xdg_open("https://www.paypal.com/cgi-bin/webscr?business=teejeetech@gmail.com&cmd=_xclick&currency_code=USD&amount=10&item_name=Aptik%20Donation");
 		});
 
 		//btn_donate_wallet
-		Button btn_donate_wallet = new Button.with_label("   " + _("Donate with Google Wallet") + "   ");
-		vbox_actions.add(btn_donate_wallet);
-		btn_donate_wallet.clicked.connect(() => {
+		button = new Button.with_label(_("Donate - Google Wallet"));
+		button.set_tooltip_text("Donate to: teejeetech@gmail.com");
+		vbox_actions.add(button);
+		button.clicked.connect(() => {
 			xdg_open("https://support.google.com/mail/answer/3141103?hl=en");
 		});
 
-		//btn_send_email
-		Button btn_send_email = new Button.with_label("   " + _("Send Email") + "   ");
-		vbox_actions.add(btn_send_email);
-		btn_send_email.clicked.connect(() => {
-			xdg_open("mailto:teejeetech@gmail.com");
+		//tracker
+		button = new Button.with_label(_("Issue Tracker"));
+		vbox_actions.add(button);
+		button.clicked.connect(() => {
+			xdg_open("https://github.com/teejee2008/aptik/issues");
 		});
 
 		//btn_visit
-		Button btn_visit = new Button.with_label("   " + _("Visit Website") + "   ");
-		vbox_actions.add(btn_visit);
-		btn_visit.clicked.connect(() => {
+		button = new Button.with_label(_("Website"));
+		vbox_actions.add(button);
+		button.clicked.connect(() => {
 			xdg_open("http://www.teejeetech.in");
-		});
-
-		//btn_exit
-		Button btn_exit = new Button.with_label("   " + _("OK") + "   ");
-		vbox_actions.add(btn_exit);
-		btn_exit.clicked.connect(() => {
-			this.destroy();
 		});
 	}
 }

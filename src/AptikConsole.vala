@@ -38,7 +38,7 @@ using TeeJee.GtkHelper;
 public Main App;
 public const string AppName = "Aptik Migration Utility";
 public const string AppShortName = "aptik";
-public const string AppVersion = "16.5.2";
+public const string AppVersion = "17.3";
 public const string AppAuthor = "Tony George";
 public const string AppAuthorEmail = "teejeetech@gmail.com";
 

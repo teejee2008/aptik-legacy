@@ -452,7 +452,7 @@ public class PackageWindow : Window {
 
 		if (count > 0){
 			string msg = _("DEB files were copied to backup location.");
-			gtk_messagebox(_("Files copied"),msg,this,false);
+			gtk_messagebox(_("Files Copied"),msg,this,false);
 		}
 
         Gtk.drag_finish (drag_context, true, false, time);
