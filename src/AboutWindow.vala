@@ -1,7 +1,7 @@
 /*
  * AboutWindow.vala
  * 
- * Copyright 2016 Tony George <teejeetech@gmail.com>
+ * Copyright 2012-2017 Tony George <teejeetech@gmail.com>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,13 +196,17 @@ public class AboutWindow : Dialog {
 			_website_label = value;
 		}
 	}
+
+	private string username = "";
 	
 	public AboutWindow() {
         window_position = WindowPosition.CENTER_ON_PARENT;
 		set_destroy_with_parent (true);
 		set_modal (true);
         skip_taskbar_hint = false;
-        set_default_size (450, 400);	
+        set_default_size (450, 400);
+
+        username = get_username();	
 
 	    vbox_main = get_content_area();
 		vbox_main.margin = 6;
@@ -248,7 +252,7 @@ public class AboutWindow : Dialog {
 
 		lbtn_website.activate_link.connect(()=>{
 			try{
-				return Gtk.show_uri(null, lbtn_website.uri, Gdk.CURRENT_TIME); 
+				return xdg_open(lbtn_website.uri, username); 
 			}
 			catch(Error e){
 				return false;
@@ -321,7 +325,7 @@ public class AboutWindow : Dialog {
 		lbl_copyright.label = "<span>%s</span>".printf(copyright);
 		
 		if (authors.length > 0){
-			add_line("<b>%s</b>\n".printf(_("Authors")));
+			add_header("<b>%s</b>\n".printf(_("Authors")));
 			foreach(string name in authors){
 				add_line("%s\n".printf(name));
 			}
@@ -329,7 +333,7 @@ public class AboutWindow : Dialog {
 		}
 
 		if (contributors.length > 0){
-			add_line("<b>%s</b>\n".printf(_("Contributions")));
+			add_header("<b>%s</b>\n".printf(_("Contributions")));
 			foreach(string name in contributors){
 				add_line("%s\n".printf(name));
 			}
@@ -337,15 +341,15 @@ public class AboutWindow : Dialog {
 		}
 		
 		if (third_party.length > 0){
-			add_line("<b>%s</b>\n".printf(_("Third Party Tools")));
+			add_header("<b>%s</b>\n".printf(_("Third Party Tools")));
 			foreach(string name in third_party){
 				add_line("%s\n".printf(name));
 			}
 			add_line("\n");
 		}
-		
+
 		if (artists.length > 0){
-			add_line("<b>%s</b>\n".printf(_("Artists")));
+			add_header("<b>%s</b>\n".printf(_("Artists")));
 			foreach(string name in artists){
 				add_line("%s\n".printf(name));
 			}
@@ -353,7 +357,7 @@ public class AboutWindow : Dialog {
 		}
 
 		if (translators.length > 0){
-			add_line("<b>%s</b>\n".printf(_("Translators")));
+			add_header("<b>%s</b>\n".printf(_("Translators")));
 			foreach(string name in translators){
 				add_line("%s\n".printf(name));
 			}
@@ -361,7 +365,7 @@ public class AboutWindow : Dialog {
 		}
 
 		if (documenters.length > 0){
-			add_line("<b>%s</b>\n".printf(_("Documenters")));
+			add_header("<b>%s</b>\n".printf(_("Documenters")));
 			foreach(string name in documenters){
 				add_line("%s\n".printf(name));
 			}
@@ -369,7 +373,7 @@ public class AboutWindow : Dialog {
 		}
 
 		if (donations.length > 0){
-			add_line("<b>%s</b>\n".printf(_("Donations")));
+			add_header("<b>%s</b>\n".printf(_("Donations")));
 			foreach(string name in donations){
 				add_line("%s\n".printf(name));
 			}
@@ -380,17 +384,18 @@ public class AboutWindow : Dialog {
 			btn_credits.visible = false;
 		}
 	}
-	
-	public void add_line(string text){
+
+	public void add_line(string text, bool escape_html_chars = true){
+		
 		if (text.split(":").length >= 2){
-			var link = new LinkButton(text.split(":")[0]);
+			var link = new LinkButton(escape_html(text.split(":")[0]));
 			vbox_lines.add(link);
-			
+
 			string val = text[text.index_of(":") + 1:text.length];
 			if (val.contains("@")){
 				link.uri = "mailto:" + val;
 			}
-			else if(val.has_prefix("http://")){
+			else if(val.has_prefix("http://") || val.has_prefix("https://")){
 				link.uri = val;
 			}
 			else{
@@ -399,7 +404,7 @@ public class AboutWindow : Dialog {
 
 			link.activate_link.connect(()=>{
 				try{
-					return Gtk.show_uri(null, link.uri, Gdk.CURRENT_TIME); 
+					return xdg_open(link.uri, username); 
 				}
 				catch(Error e){
 					return false;
@@ -407,12 +412,21 @@ public class AboutWindow : Dialog {
 			});
 		}
 		else{
-			var lbl = new Label(text);
+			var txt = text;
+			if (escape_html_chars){
+				txt = escape_html(text);
+			}
+
+			var lbl = new Label(txt);
 			lbl.set_use_markup(true);
 			lbl.valign = Align.START;
 			lbl.wrap = true;
 			lbl.wrap_mode = Pango.WrapMode.WORD;
 			vbox_lines.add(lbl);
 		}
+	}
+
+	public void add_header(string text){
+		add_line(text, false);
 	}
 }

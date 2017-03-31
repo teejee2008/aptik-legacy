@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2017-03-31 21:04+0530\n"
+"POT-Creation-Date: 2017-03-31 21:42+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,12 +17,12 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: MainWindow.vala:907
+#: MainWindow.vala:908
 #, c-format
 msgid "(%ld packages in backup)"
 msgstr ""
 
-#: MainWindow.vala:957
+#: MainWindow.vala:958
 #, c-format
 msgid "(%ld packages in cache)"
 msgstr ""
@@ -103,7 +103,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: MainWindow.vala:753
+#: MainWindow.vala:754
 msgid "About"
 msgstr ""
 
@@ -111,7 +111,7 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
-#: MainWindow.vala:306
+#: MainWindow.vala:307
 msgid "Add missing PPAs"
 msgstr ""
 
@@ -169,7 +169,7 @@ msgstr ""
 msgid "App settings backup limit (KB)"
 msgstr ""
 
-#: MainWindow.vala:754
+#: MainWindow.vala:755
 msgid "Application Info"
 msgstr ""
 
@@ -190,7 +190,7 @@ msgstr ""
 msgid "Archiving..."
 msgstr ""
 
-#: AboutWindow.vala:348
+#: AboutWindow.vala:352
 #, c-format
 msgid "Artists"
 msgstr ""
@@ -199,7 +199,7 @@ msgstr ""
 msgid "Assume Yes for all prompts"
 msgstr ""
 
-#: AboutWindow.vala:324
+#: AboutWindow.vala:328
 #, c-format
 msgid "Authors"
 msgstr ""
@@ -209,14 +209,14 @@ msgstr ""
 msgid "Available"
 msgstr ""
 
-#: AboutWindow.vala:295
+#: AboutWindow.vala:299
 msgid "Back"
 msgstr ""
 
 #: AptikConsole.vala:1063 AptikConsole.vala:1098 ConfigWindow.vala:334
-#: MainWindow.vala:287 MainWindow.vala:337 MainWindow.vala:366
-#: MainWindow.vala:416 MainWindow.vala:445 MainWindow.vala:493
-#: MainWindow.vala:541 MainWindow.vala:570 MainWindow.vala:599
+#: MainWindow.vala:288 MainWindow.vala:338 MainWindow.vala:367
+#: MainWindow.vala:417 MainWindow.vala:446 MainWindow.vala:494
+#: MainWindow.vala:542 MainWindow.vala:571 MainWindow.vala:600
 #: PackageManagerWindow.vala:476 PackageWindow.vala:137 PackageWindow.vala:412
 #: PpaWindow.vala:117 PpaWindow.vala:271 ThemeWindow.vala:123
 #: ThemeWindow.vala:526 UserDataSettingsDialog.vala:62
@@ -224,11 +224,11 @@ msgstr ""
 msgid "Backup"
 msgstr ""
 
-#: MainWindow.vala:240
+#: MainWindow.vala:241
 msgid "Backup &amp; Restore"
 msgstr ""
 
-#: AptikConsole.vala:136 MainWindow.vala:534
+#: AptikConsole.vala:136 MainWindow.vala:535
 msgid "Backup /etc/fstab and /etc/crypttab entries"
 msgstr ""
 
@@ -236,7 +236,7 @@ msgstr ""
 msgid "Backup Application Settings"
 msgstr ""
 
-#: MainWindow.vala:812
+#: MainWindow.vala:813
 msgid "Backup Directory Not Selected"
 msgstr ""
 
@@ -244,11 +244,11 @@ msgstr ""
 msgid "Backup File"
 msgstr ""
 
-#: MainWindow.vala:280
+#: MainWindow.vala:281
 msgid "Backup Launchpad PPAs"
 msgstr ""
 
-#: MainWindow.vala:120
+#: MainWindow.vala:121
 msgid "Backup Location &amp; Password"
 msgstr ""
 
@@ -260,7 +260,7 @@ msgstr ""
 msgid "Backup all items"
 msgstr ""
 
-#: MainWindow.vala:438
+#: MainWindow.vala:439
 msgid "Backup application settings"
 msgstr ""
 
@@ -288,11 +288,11 @@ msgstr ""
 msgid "Backup downloaded packages from APT cache"
 msgstr ""
 
-#: MainWindow.vala:330
+#: MainWindow.vala:331
 msgid "Backup downloaded packages in /var/cache/apt"
 msgstr ""
 
-#: MainWindow.vala:563
+#: MainWindow.vala:564
 msgid ""
 "Backup home directory data\n"
 "\n"
@@ -300,7 +300,7 @@ msgid ""
 "'Application Settings' section to backup app config directories."
 msgstr ""
 
-#: MainWindow.vala:359
+#: MainWindow.vala:360
 msgid "Backup installed packages"
 msgstr ""
 
@@ -316,11 +316,11 @@ msgstr ""
 msgid "Backup saved"
 msgstr ""
 
-#: MainWindow.vala:592
+#: MainWindow.vala:593
 msgid "Backup scheduled tasks for all users (crontab file)"
 msgstr ""
 
-#: MainWindow.vala:289
+#: MainWindow.vala:290
 msgid "Backup the list of installed PPAs"
 msgstr ""
 
@@ -328,7 +328,7 @@ msgstr ""
 msgid "Backup themes from /usr/share/themes"
 msgstr ""
 
-#: MainWindow.vala:486
+#: MainWindow.vala:487
 msgid ""
 "Backup themes, icons and cursors in /usr/share/icons and /usr/share/themes"
 msgstr ""
@@ -341,7 +341,7 @@ msgstr ""
 msgid "Backup user-created data in user's home directory"
 msgstr ""
 
-#: AptikConsole.vala:118 MainWindow.vala:409
+#: AptikConsole.vala:118 MainWindow.vala:410
 msgid "Backup users and groups"
 msgstr ""
 
@@ -357,7 +357,7 @@ msgstr ""
 msgid "Bash Logout Script"
 msgstr ""
 
-#: Main.vala:1555 MainWindow.vala:927
+#: Main.vala:1555 MainWindow.vala:928
 msgid "Cache backup not found in backup directory"
 msgstr ""
 
@@ -390,7 +390,7 @@ msgstr ""
 msgid "Cinnamon Shell"
 msgstr ""
 
-#: AboutWindow.vala:305 ConfigWindow.vala:354 MountWindow.vala:367
+#: AboutWindow.vala:309 ConfigWindow.vala:354 MountWindow.vala:367
 #: PackageWindow.vala:424 PpaWindow.vala:283 TerminalWindow.vala:174
 #: ThemeWindow.vala:538 UserAccountWindow.vala:332
 msgid "Close"
@@ -404,16 +404,16 @@ msgstr ""
 msgid "Common"
 msgstr ""
 
-#: AboutWindow.vala:332
+#: AboutWindow.vala:336
 #, c-format
 msgid "Contributions"
 msgstr ""
 
-#: MainWindow.vala:888 MainWindow.vala:938
+#: MainWindow.vala:889 MainWindow.vala:939
 msgid "Copying packages..."
 msgstr ""
 
-#: AboutWindow.vala:282 AboutWindow.vala:299
+#: AboutWindow.vala:286 AboutWindow.vala:303
 msgid "Credits"
 msgstr ""
 
@@ -469,12 +469,12 @@ msgstr ""
 msgid "Directory missing"
 msgstr ""
 
-#: AboutWindow.vala:364
+#: AboutWindow.vala:368
 #, c-format
 msgid "Documenters"
 msgstr ""
 
-#: MainWindow.vala:736 MainWindow.vala:737
+#: MainWindow.vala:737 MainWindow.vala:738
 msgid "Donate"
 msgstr ""
 
@@ -486,7 +486,7 @@ msgstr ""
 msgid "Donate - PayPal"
 msgstr ""
 
-#: AboutWindow.vala:372
+#: AboutWindow.vala:376
 #, c-format
 msgid "Donations"
 msgstr ""
@@ -519,7 +519,7 @@ msgstr ""
 msgid "Encrypted Devices (/etc/crypttab)"
 msgstr ""
 
-#: MainWindow.vala:188
+#: MainWindow.vala:189
 msgid "Enter encryption password"
 msgstr ""
 
@@ -536,12 +536,12 @@ msgstr ""
 msgid "Enter password for encrypting backup"
 msgstr ""
 
-#: MainWindow.vala:828
+#: MainWindow.vala:829
 msgid "Enter the passphrase for encryption"
 msgstr ""
 
-#: AptikConsole.vala:572 AptikConsole.vala:648 MainWindow.vala:616
-#: MainWindow.vala:638 MainWindow.vala:1108 PackageWindow.vala:1021
+#: AptikConsole.vala:572 AptikConsole.vala:648 MainWindow.vala:617
+#: MainWindow.vala:639 MainWindow.vala:1109 PackageWindow.vala:1021
 #: PpaWindow.vala:501 UserAccountWindow.vala:513 Utility.vala:153
 msgid "Error"
 msgstr ""
@@ -664,7 +664,7 @@ msgstr ""
 msgid "File Missing"
 msgstr ""
 
-#: MainWindow.vala:840
+#: MainWindow.vala:841
 msgid "File Not Found"
 msgstr ""
 
@@ -689,7 +689,7 @@ msgstr ""
 msgid "File not found"
 msgstr ""
 
-#: Main.vala:257 MainWindow.vala:841
+#: Main.vala:257 MainWindow.vala:842
 msgid "File not found in backup directory"
 msgstr ""
 
@@ -710,7 +710,7 @@ msgstr ""
 msgid "Files Copied"
 msgstr ""
 
-#: MainWindow.vala:926
+#: MainWindow.vala:927
 msgid "Files Not Found"
 msgstr ""
 
@@ -722,7 +722,7 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
-#: MainWindow.vala:613 MainWindow.vala:635 MainWindow.vala:1105
+#: MainWindow.vala:614 MainWindow.vala:636 MainWindow.vala:1106
 #: MountWindow.vala:510 UserAccountWindow.vala:509
 msgid "Finished"
 msgstr ""
@@ -735,11 +735,11 @@ msgstr ""
 msgid "Firefox Web Browser"
 msgstr ""
 
-#: MainWindow.vala:859
+#: MainWindow.vala:860
 msgid "Folder Not Found"
 msgstr ""
 
-#: MainWindow.vala:860
+#: MainWindow.vala:861
 msgid "Folder not found in backup directory"
 msgstr ""
 
@@ -809,48 +809,16 @@ msgstr ""
 msgid "Groups"
 msgstr ""
 
-#: MainWindow.vala:201
+#: MainWindow.vala:202
 msgid "Hide"
 msgstr ""
 
-#: MainWindow.vala:202
+#: MainWindow.vala:203
 msgid "Hide passphrase"
 msgstr ""
 
 #: Main.vala:3345
 msgid "Home Directory Data"
-msgstr ""
-
-#: DonationWindow.vala:57
-msgid ""
-"I made this application for my own use. I'm distributing it in the hope that "
-"it will be useful to someone. This is not a commercial product, there's no "
-"company behind it and there are no support teams to answer your questions. I "
-"work on this application during my free time based on my own requirements "
-"and interest.\n"
-"\n"
-"If you need help with an issue, or if you have a feature request, please "
-"open a ticket on the GitHub issue tracker. If the requested feature is "
-"useful to me and I have the time, I will implement it. If it is not useful "
-"to me or if it requires a lot of time and effort, then it will remain in the "
-"tracker till someone takes interest in the feature and implements it. That's "
-"the whole idea behind open-source software. Open-source does not mean \"free"
-"\" stuff that you don't need to pay for. It's software that belongs to "
-"everyone. If someone needs a feature that is missing, they can take the "
-"source code, add the feature and contribute the change back to the project "
-"so that everyone can benefit from their work.\n"
-"\n"
-"Having said that, please feel free to leave feature requests, suggestions "
-"and bug reports in the issue tracker. Good ideas are always useful and many "
-"of them require little time to implement. Check if an issue was already "
-"reported before opening a new item in the tracker, and help out other users "
-"if you know the solution to an issue.\n"
-"\n"
-"You can leave a donation via PayPal if you wish to say thanks. My PayPal ID "
-"is linked below.\n"
-"\n"
-"Thanks,\n"
-"Tony George"
 msgstr ""
 
 #: UserAccountWindow.vala:237
@@ -990,7 +958,7 @@ msgstr ""
 msgid "Metacity Window Border"
 msgstr ""
 
-#: MainWindow.vala:794
+#: MainWindow.vala:795
 msgid "Migration utility for Ubuntu-based distributions"
 msgstr ""
 
@@ -1073,33 +1041,33 @@ msgstr ""
 msgid "Nothing To Do"
 msgstr ""
 
-#: MainWindow.vala:702
+#: MainWindow.vala:703
 msgid ""
 "One-Click\n"
 "Backup"
 msgstr ""
 
-#: MainWindow.vala:711
+#: MainWindow.vala:712
 msgid ""
 "One-Click\n"
 "Restore"
 msgstr ""
 
-#: MainWindow.vala:720
+#: MainWindow.vala:721
 msgid ""
 "One-Click\n"
 "Settings"
 msgstr ""
 
-#: MainWindow.vala:703
+#: MainWindow.vala:704
 msgid "One-Click Backup"
 msgstr ""
 
-#: MainWindow.vala:674
+#: MainWindow.vala:675
 msgid "One-Click Backup &amp; Restore"
 msgstr ""
 
-#: MainWindow.vala:712
+#: MainWindow.vala:713
 msgid "One-Click Restore"
 msgstr ""
 
@@ -1107,11 +1075,11 @@ msgstr ""
 msgid "One-Click Settings"
 msgstr ""
 
-#: MainWindow.vala:164
+#: MainWindow.vala:165
 msgid "Open"
 msgstr ""
 
-#: MainWindow.vala:166
+#: MainWindow.vala:167
 msgid "Open backup location"
 msgstr ""
 
@@ -1175,7 +1143,7 @@ msgstr ""
 msgid "Password / Keyfile"
 msgstr ""
 
-#: MainWindow.vala:827
+#: MainWindow.vala:828
 msgid "Password Field is Empty"
 msgstr ""
 
@@ -1220,7 +1188,7 @@ msgid "Please un-select the packages that are not required."
 msgstr ""
 
 #: ConfigWindow.vala:408 ConfigWindow.vala:497 ConfigWindow.vala:574
-#: MainWindow.vala:882 MainWindow.vala:932 PackageWindow.vala:836
+#: MainWindow.vala:883 MainWindow.vala:933 PackageWindow.vala:836
 #: PackageWindow.vala:947 PpaWindow.vala:370 PpaWindow.vala:450
 #: PpaWindow.vala:507 ThemeWindow.vala:593 ThemeWindow.vala:724
 msgid "Preparing..."
@@ -1275,10 +1243,10 @@ msgid ""
 msgstr ""
 
 #: AptikConsole.vala:1063 AptikConsole.vala:1098 ConfigWindow.vala:108
-#: ConfigWindow.vala:340 MainWindow.vala:304 MainWindow.vala:345
-#: MainWindow.vala:383 MainWindow.vala:424 MainWindow.vala:461
-#: MainWindow.vala:509 MainWindow.vala:549 MainWindow.vala:578
-#: MainWindow.vala:621 MountWindow.vala:115 MountWindow.vala:362
+#: ConfigWindow.vala:340 MainWindow.vala:305 MainWindow.vala:346
+#: MainWindow.vala:384 MainWindow.vala:425 MainWindow.vala:462
+#: MainWindow.vala:510 MainWindow.vala:550 MainWindow.vala:579
+#: MainWindow.vala:622 MountWindow.vala:115 MountWindow.vala:362
 #: PackageManagerWindow.vala:482 PackageWindow.vala:129 PackageWindow.vala:418
 #: PpaWindow.vala:109 PpaWindow.vala:277 ThemeWindow.vala:114
 #: ThemeWindow.vala:532 UserAccountWindow.vala:112 UserAccountWindow.vala:327
@@ -1365,7 +1333,7 @@ msgstr ""
 msgid "Search package name and description"
 msgstr ""
 
-#: MainWindow.vala:156
+#: MainWindow.vala:157
 msgid "Select"
 msgstr ""
 
@@ -1379,11 +1347,11 @@ msgstr ""
 msgid "Select None"
 msgstr ""
 
-#: MainWindow.vala:135
+#: MainWindow.vala:136
 msgid "Select backup directory"
 msgstr ""
 
-#: MainWindow.vala:158
+#: MainWindow.vala:159
 msgid "Select backup location"
 msgstr ""
 
@@ -1400,7 +1368,7 @@ msgstr ""
 msgid "Select the PPAs to backup"
 msgstr ""
 
-#: MainWindow.vala:813
+#: MainWindow.vala:814
 msgid "Select the backup directory"
 msgstr ""
 
@@ -1458,11 +1426,11 @@ msgstr ""
 msgid "Set owner: %s, dir: %s"
 msgstr ""
 
-#: MainWindow.vala:721
+#: MainWindow.vala:722
 msgid "Settings for One-Click Backup & Restore"
 msgstr ""
 
-#: MainWindow.vala:194 MainWindow.vala:205
+#: MainWindow.vala:195 MainWindow.vala:206
 msgid "Show"
 msgstr ""
 
@@ -1474,7 +1442,7 @@ msgstr ""
 msgid "Show package description if available"
 msgstr ""
 
-#: MainWindow.vala:206
+#: MainWindow.vala:207
 msgid "Show passphrase"
 msgstr ""
 
@@ -1584,9 +1552,41 @@ msgstr ""
 msgid "There are no packages selected for installation2"
 msgstr ""
 
-#: AboutWindow.vala:340
+#: AboutWindow.vala:344
 #, c-format
 msgid "Third Party Tools"
+msgstr ""
+
+#: DonationWindow.vala:57
+msgid ""
+"This application was created for my own use. I'm distributing it in the hope "
+"that it will be useful to someone. This is not a commercial product, there's "
+"no company behind it and there are no support teams to answer your "
+"questions. I work on this application during my free time based on my own "
+"requirements and interest.\n"
+"\n"
+"If you need help with an issue, or if you have a feature request, please "
+"open a ticket in the GitHub issue tracker. If the requested feature is "
+"useful to me and I have the time, I will implement it. If it's not useful to "
+"me or if it requires more time than I have available, then it will remain in "
+"the tracker till someone takes interest and implements it. That's the whole "
+"idea behind open-source software. Open-source does not mean \"free\" stuff "
+"that you don't need to pay for. It's software that belongs to everyone. If "
+"someone needs a feature that is missing, they can take the source code, add "
+"the feature, and contribute the change back to the project so that everyone "
+"can benefit from their work.\n"
+"\n"
+"Having said that, feel free to leave as many feature requests, suggestions "
+"and bug reports in the issue tracker as you can. Good ideas are always "
+"useful and many of them require little time to implement. Check if an issue "
+"was already reported before opening a new item in the tracker, and help out "
+"other users if you know the solution to an issue.\n"
+"\n"
+"You can leave a donation via PayPal if you wish to say thanks. My PayPal ID "
+"is linked below.\n"
+"\n"
+"Thanks,\n"
+"Tony George"
 msgstr ""
 
 #: PackageWindow.vala:682
@@ -1605,7 +1605,7 @@ msgstr ""
 msgid "This package was installed from a DEB file"
 msgstr ""
 
-#: AboutWindow.vala:356
+#: AboutWindow.vala:360
 #, c-format
 msgid "Translators"
 msgstr ""

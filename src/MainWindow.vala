@@ -98,6 +98,7 @@ public class MainWindow : Window {
 		//vboxMain
 		vbox_main = new Box (Orientation.VERTICAL, 6);
 		vbox_main.margin = 6;
+		vbox_main.margin_right = 12;
 		vbox_main.set_size_request (def_width, def_height);
 		add (vbox_main);
 
