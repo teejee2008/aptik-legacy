@@ -619,7 +619,7 @@ public class PackageWindow : Window {
 		var pkg_list = new ArrayList<Package>();
 		if (App.pkg_list_master != null) {
 			foreach(Package pkg in App.pkg_list_master.values) {
-				if (is_backup_view && pkg.is_installed){ continue; }
+				if (is_backup_view && !pkg.is_installed){ continue; }
 				if (is_restore_view && !pkg.in_backup_list && !pkg.is_installed){ continue; }
 				pkg_list.add(pkg);
 			}

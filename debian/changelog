@@ -1,3 +1,20 @@
+aptik (17.4) trusty; urgency=medium
+
+  * Fixed: Crash while downloading packages
+
+  * AppSettings: Display combined list of items for backup and restore
+
+  * AppSettings: Option to backup and restore for all users from GUI
+
+  * AppSettings: Remember selected items
+
+  * Packages: Hide items which are not installed and not in backup list
+
+  * Fixed: Open links in About window as normal user
+  
+ -- Tony George <tony.george.kol@gmail.com>  Sat, 01 Apr 2017 10:00:00 +0530
+
+
 aptik (17.3.1) trusty; urgency=medium
 
   * Fixed: Open links as normal user in Donation window
