@@ -177,10 +177,6 @@ public class ConfigWindow : Window {
 		store.append(out iter);
 		store.set (iter, 0, "All Users", 1, "", -1);
 		
-		index++;
-		store.append(out iter);
-		store.set (iter, 0, _("root"), 1, "root", -1);
-
 		SystemUser.query_users();
 		
 		foreach (var user in SystemUser.all_users_sorted) {

@@ -244,7 +244,8 @@ public class UserDataSettingsDialog : Gtk.Dialog {
 
 		TreeIter iter;
 		var store = new Gtk.ListStore (2, typeof(bool), typeof(SystemUser));
-		foreach (var user in App.user_list_home) {
+		foreach (var user in SystemUser.all_users_sorted) {
+			if (user.is_system) { continue; }
 			store.append (out iter);
 			store.set (iter, 0, user.is_selected);
 			store.set (iter, 1, user);

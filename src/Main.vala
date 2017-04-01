@@ -84,8 +84,6 @@ public class Main : GLib.Object {
 	public Gee.HashMap<string,SystemUser> user_list_bak;
 	public Gee.HashMap<string,SystemGroup> group_list_bak;
 
-	public Gee.ArrayList<SystemUser> user_list_home;
-
 	public Gee.ArrayList<BackupTask> task_list;
 	public string selected_tasks = "";
 	public bool backup_mode = false;
@@ -167,16 +165,11 @@ public class Main : GLib.Object {
 		}
 
 		SystemUser.query_users();
+		select_user(get_username());
 
-		if (gui_mode){
-			select_user(get_username());
-		}
-		
 		NATIVE_ARCH = execute_command_sync_get_output("dpkg --print-architecture").strip();
 
 		Theme.init();
-
-		init_user_list_home();
 	}
 
 	public void select_user(string _username){
@@ -1693,7 +1686,7 @@ public class Main : GLib.Object {
 			
 			if (all_users){
 				foreach(var user in SystemUser.all_users_sorted){
-					if (user.is_system && (user.name != "root")){ continue; }
+					if (user.is_system){ continue; }
 					users.add(user);
 				}
 			}
@@ -2753,43 +2746,11 @@ public class Main : GLib.Object {
 
 	/* Home */
 
-	public void init_user_list_home(){
-		
-		// query users ----------------
-		
-		SystemUser.query_users();
-
-		// build list -----------------
-		
-		var list = new Gee.ArrayList<SystemUser>();
-		foreach(var user in SystemUser.all_users.values){
-			if (user.is_system){
-				continue;
-			}
-
-			if ((user.home_path.length == 0) || !dir_exists(user.home_path)){
-				continue;
-			}
-
-			user.is_selected = true;
-			
-			list.add(user);
-		}
-		
-		//sort ------
-		
-		CompareDataFunc<SystemUser> func = (a, b) => {
-			return strcmp(a.name, b.name);
-		};
-		list.sort((owned)func);
-		
-		user_list_home = list;
-	}
-
 	public void init_home_tree(){
 		home_tree = new FileItem.dummy_root();
 
-		foreach (var user in user_list_home) {
+		foreach (var user in SystemUser.all_users_sorted) {
+			if (user.is_system){ continue; }
 			home_tree.add_child_from_disk(user.home_path,1);
 		}
 	}
@@ -2797,31 +2758,32 @@ public class Main : GLib.Object {
 	public string backup_home_get_script(){
 		string sh = "";
 		
-		foreach(var user in user_list_home){
-			if (user.is_selected){
-				var bak_dir = "%s%s/%s".printf(backup_dir, "home", user.name);
-				var exclude_list = "%s/exclude.list".printf(bak_dir);
-				dir_create(bak_dir);
-				if (file_exists(exclude_list)){
-					file_delete(exclude_list);
-				}
-				file_write(exclude_list, exclude_list_create());
-				
-				var cmd = "";
-				
-				cmd += "export PASSPHRASE='%s'\n".printf(arg_password);
-				
-				cmd += "duplicity%s --verbosity i --exclude-globbing-filelist '%s' '%s' 'file://%s'\n".printf(
-				((dup_mode_full) ? " full" : ""), exclude_list, user.home_path, bak_dir);
-				
-				cmd += "unset PASSPHRASE\n";
-
-				sh += "echo '%s'\n".printf(string.nfill(70,'-'));
-				sh += "echo '%s'\n".printf(user.name);
-				sh += "echo '%s'\n".printf(string.nfill(70,'-'));
-				sh += "%s\n".printf(cmd);
-				sh += "echo ''\n";
+		foreach(var user in SystemUser.all_users_sorted){
+			if (user.is_system){ continue; }
+			if (!user.is_selected){ continue; }
+			
+			var bak_dir = "%s%s/%s".printf(backup_dir, "home", user.name);
+			var exclude_list = "%s/exclude.list".printf(bak_dir);
+			dir_create(bak_dir);
+			if (file_exists(exclude_list)){
+				file_delete(exclude_list);
 			}
+			file_write(exclude_list, exclude_list_create());
+			
+			var cmd = "";
+			
+			cmd += "export PASSPHRASE='%s'\n".printf(arg_password);
+			
+			cmd += "duplicity%s --verbosity i --exclude-globbing-filelist '%s' '%s' 'file://%s'\n".printf(
+			((dup_mode_full) ? " full" : ""), exclude_list, user.home_path, bak_dir);
+			
+			cmd += "unset PASSPHRASE\n";
+
+			sh += "echo '%s'\n".printf(string.nfill(70,'-'));
+			sh += "echo '%s'\n".printf(user.name);
+			sh += "echo '%s'\n".printf(string.nfill(70,'-'));
+			sh += "%s\n".printf(cmd);
+			sh += "echo ''\n";
 		}
 
 		return sh;
@@ -2830,33 +2792,34 @@ public class Main : GLib.Object {
 	public string restore_home_get_script(){
 		string sh = "";
 		
-		foreach(var user in user_list_home){
-			if (user.is_selected){
-				var bak_dir = "%s%s/%s".printf(backup_dir, "home", user.name);
-				var exclude_list = "%s/exclude.list".printf(bak_dir);
-				dir_create(bak_dir);
-				if (file_exists(exclude_list)){
-					file_delete(exclude_list);
-				}
-				file_write(exclude_list, exclude_list_create());
-
-				var cmd = "";
-				
-				cmd += "export PASSPHRASE='%s'\n".printf(arg_password);
-				
-				cmd += "duplicity --verbosity i --force --exclude-globbing-filelist '%s' 'file://%s' '%s'\n".printf(exclude_list, bak_dir, user.home_path);
-				
-				cmd += "unset PASSPHRASE\n";
-
-				log_debug(cmd);
-				
-				sh += "";
-				sh += "echo '%s'\n".printf(string.nfill(70,'-'));
-				sh += "echo '%s'\n".printf(user.name);
-				sh += "echo '%s'\n".printf(string.nfill(70,'-'));
-				sh += "%s\n".printf(cmd);
-				sh += "echo ''\n";
+		foreach(var user in SystemUser.all_users_sorted){
+			if (user.is_system){ continue; }
+			if (!user.is_selected){ continue; }
+			
+			var bak_dir = "%s%s/%s".printf(backup_dir, "home", user.name);
+			var exclude_list = "%s/exclude.list".printf(bak_dir);
+			dir_create(bak_dir);
+			if (file_exists(exclude_list)){
+				file_delete(exclude_list);
 			}
+			file_write(exclude_list, exclude_list_create());
+
+			var cmd = "";
+			
+			cmd += "export PASSPHRASE='%s'\n".printf(arg_password);
+			
+			cmd += "duplicity --verbosity i --force --exclude-globbing-filelist '%s' 'file://%s' '%s'\n".printf(exclude_list, bak_dir, user.home_path);
+			
+			cmd += "unset PASSPHRASE\n";
+
+			log_debug(cmd);
+			
+			sh += "";
+			sh += "echo '%s'\n".printf(string.nfill(70,'-'));
+			sh += "echo '%s'\n".printf(user.name);
+			sh += "echo '%s'\n".printf(string.nfill(70,'-'));
+			sh += "%s\n".printf(cmd);
+			sh += "echo ''\n";
 		}
 
 		sh += "echo '%s'\n".printf(Message.BACKUP_OK);

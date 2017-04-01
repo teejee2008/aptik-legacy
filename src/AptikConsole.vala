@@ -166,6 +166,10 @@ public class AptikConsole : GLib.Object {
 			return false;
 		}
 
+		if (App.current_user.name.length == 0){
+			App.select_user("");
+		}
+		
 		//parse options
 		for (int k = 1; k < args.length; k++) // Oth arg is app path
 		{
@@ -211,9 +215,7 @@ public class AptikConsole : GLib.Object {
 			}
 		}
 
-		if (App.current_user.name.length == 0){
-			App.select_user("");
-		}
+		
 
 		//parse commands
 		for (int k = 1; k < args.length; k++) // Oth arg is app path
@@ -792,7 +794,7 @@ public class AptikConsole : GLib.Object {
 	public bool backup_config(){
 		bool ok = true;
 		
-		var list = App.list_app_config_directories_from_home(false);
+		var list = App.list_app_config_directories_from_home(true);
 		var status = App.backup_app_settings_all(list);
 		ok = ok && status;
 
@@ -809,7 +811,7 @@ public class AptikConsole : GLib.Object {
 	public bool restore_config(){
 		bool ok = true;
 		
-		var list = App.list_app_config_directories_from_backup(false);
+		var list = App.list_app_config_directories_from_backup(true);
 		var status = App.restore_app_settings_all(list);
 		ok = ok && status;
 
