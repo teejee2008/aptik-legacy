@@ -58,9 +58,8 @@ public class Main : GLib.Object {
 	public bool default_list_missing = false;
 
 	public bool gui_mode = false;
-	public string user_login = "";
-	public string user_home = "";
-	public int user_uid = -1;
+
+	public SystemUser current_user;
 	public int user_uid_effective = -1;
 	public bool all_users = false;
 
@@ -167,7 +166,8 @@ public class Main : GLib.Object {
 			log_error (e.message);
 		}
 
-		//get user info
+		SystemUser.query_users();
+
 		if (gui_mode){
 			select_user(get_username());
 		}
@@ -179,27 +179,23 @@ public class Main : GLib.Object {
 		init_user_list_home();
 	}
 
-	public void select_user(string username){
+	public void select_user(string _username){
+
+		string username = _username;
 		
 		if ((username ==  null)||(username == "(all)")||(username == "")){
 			all_users = true;
-			user_login = "";
-			user_home = "/root";
-			user_uid = 0;
+			username = "root";
 		}
 		else{
 			all_users = false;
+		}
 
-			if (username == "root"){
-				user_login = "root";
-				user_home = "/root";
-				user_uid = 0;
-			}
-			else{
-				user_login = username;
-				user_home = "/home/" + username;
-				user_uid = get_user_id_from_username(username);
-			}
+		if (SystemUser.all_users.has_key(username)){
+			current_user = SystemUser.all_users[username];
+		}
+		else{
+			current_user = SystemUser.all_users["root"];
 		}
 
 		log_msg(string.nfill(70,'-'));
@@ -207,7 +203,7 @@ public class Main : GLib.Object {
 			log_msg(_("Selected user: (All Users)"));
 		}
 		else{
-			log_msg(_("Selected user: %s, %s").printf(user_login, user_home));
+			log_msg(_("Selected user: %s, %s").printf(current_user.name, current_user.home_path));
 		}
 		log_msg(string.nfill(70,'-'));
 		log_msg("");
@@ -1735,7 +1731,7 @@ public class Main : GLib.Object {
 	public bool backup_app_settings_single(AppExcludeEntry config) {
 		string cmd;
 
-		string backup_dir_config = path_combine(backup_dir, "app-settings/%s".printf(user_login));
+		string backup_dir_config = path_combine(backup_dir, "app-settings/%s".printf(current_user.name));
 		dir_create(backup_dir_config);
 		
 		try {
@@ -1763,7 +1759,7 @@ public class Main : GLib.Object {
 			file_write(list_file, list_txt);
 			
 			//zip selected folder
-			cmd = "tar czvf '%s' -C '%s' %s".printf(zip_file, escape_single_quote(user_home), files);
+			cmd = "tar czvf '%s' -C '%s' %s".printf(zip_file, escape_single_quote(current_user.home_path), files);
 			status_line = "";
 
 			log_msg(cmd);
@@ -1800,7 +1796,7 @@ public class Main : GLib.Object {
 
 		AppExcludeEntry.clear();
 
-		if (all_users){
+		/*if (all_users){
 
 			SystemUser.query_users();
 			
@@ -1812,16 +1808,16 @@ public class Main : GLib.Object {
 
 			AppExcludeEntry.add_app_exclude_entries_from_path("/root");
 		}
-		else{
-			AppExcludeEntry.add_app_exclude_entries_from_path(user_home);
-		}
+		else{*/
+			AppExcludeEntry.add_app_exclude_entries_from_path(current_user.home_path);
+		//}
 
 		return AppExcludeEntry.get_apps_list(null);
 	}
 
 	public Gee.ArrayList<AppExcludeEntry> list_app_config_directories_from_backup() {
 
-		string backup_dir_config = path_combine(backup_dir, "app-settings/%s".printf(user_login));
+		string backup_dir_config = path_combine(backup_dir, "app-settings/%s".printf(current_user.name));
 		
 		var list = list_app_config_directories_from_backup_path(backup_dir_config);
 
@@ -1916,7 +1912,7 @@ public class Main : GLib.Object {
 			if (!config.enabled) { continue; }
 				
 			string name = config.name;
-			string backup_dir_config = path_combine(backup_dir, "app-settings/%s".printf(user_login));
+			string backup_dir_config = path_combine(backup_dir, "app-settings/%s".printf(current_user.name));
 			string zip_file = "%s/%s.tgz".printf(backup_dir_config, name);
 			string cmd = "tar tzvf '%s' | wc -l".printf(zip_file);
 			string stderr, stdout;
@@ -1929,7 +1925,7 @@ public class Main : GLib.Object {
 	public bool restore_app_settings_single(AppExcludeEntry config) {
 		string cmd;
 
-		string backup_dir_config = path_combine(backup_dir, "app-settings/%s".printf(user_login));
+		string backup_dir_config = path_combine(backup_dir, "app-settings/%s".printf(current_user.name));
 		string name = config.name.replace("~/", "");
 		string zip_file = "%s/%s.tgz".printf(backup_dir_config, name);
 		
@@ -1941,7 +1937,7 @@ public class Main : GLib.Object {
 
 		// delete existing app_dir
 		foreach(string item in config.items){
-			string app_dir = path_combine(user_home, item[2:item.length]); // skip ~/
+			string app_dir = path_combine(current_user.home_path, item[2:item.length]); // skip ~/
 			if (dir_exists(app_dir)) {
 				cmd = "rm -rf '%s'".printf(escape_single_quote(app_dir));
 				exec_sync(cmd);
@@ -1950,7 +1946,7 @@ public class Main : GLib.Object {
 		}
 
 		//unzip selected items to home directory
-		cmd = "tar xzvf '%s' -C '%s'".printf(zip_file, user_home);
+		cmd = "tar xzvf '%s' -C '%s'".printf(zip_file, current_user.home_path);
 		status_line = "";
 
 		log_msg(cmd);
@@ -1984,7 +1980,7 @@ public class Main : GLib.Object {
 			foreach(var item in config.items){
 				
 				//log_debug("item=%s".printf(item));
-				string app_dir = path_combine(user_home, item[2:item.length]); // skip ~/
+				string app_dir = path_combine(current_user.home_path, item[2:item.length]); // skip ~/
 				
 				if (dir_exists(app_dir)) {
 					string cmd = "rm -rf '%s'".printf(escape_single_quote(app_dir));
@@ -2005,8 +2001,8 @@ public class Main : GLib.Object {
 			
 			foreach(var item in config.items){
 				
-				string app_dir = path_combine(user_home, item[2:item.length]); // skip ~/
-				set_directory_ownership(app_dir, user_login);
+				string app_dir = path_combine(current_user.home_path, item[2:item.length]); // skip ~/
+				set_directory_ownership(app_dir, current_user.name);
 			}
 		}
 	}
@@ -2875,7 +2871,7 @@ public class Main : GLib.Object {
 				continue;
 			}
 
-			if (!gui_mode && (user_login.length > 0) && (user_name != user_login)){
+			if (!gui_mode && (current_user.name.length > 0) && (user_name != current_user.name)){
 				continue;
 			}
 
@@ -2904,7 +2900,7 @@ public class Main : GLib.Object {
 				continue;
 			}
 
-			if (!gui_mode && (user_login.length > 0) && (user_name != user_login)){
+			if (!gui_mode && (current_user.name.length > 0) && (user_name != current_user.name)){
 				continue;
 			}
 
@@ -3064,9 +3060,9 @@ public class Main : GLib.Object {
 	}
 
 	public bool take_ownership() {
-		bool is_success = set_directory_ownership(user_home, user_login);
+		bool is_success = set_directory_ownership(current_user.home_path, current_user.name);
 		if (is_success) {
-			log_msg(_("Ownership changed to '%s' for files in directory '%s'").printf(user_login, user_home));
+			log_msg(_("Ownership changed to '%s' for files in directory '%s'").printf(current_user.name, current_user.home_path));
 			return true;
 		}
 		else {

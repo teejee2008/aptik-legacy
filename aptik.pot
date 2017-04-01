@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2017-04-01 11:37+0530\n"
+"POT-Creation-Date: 2017-04-01 12:02+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -157,11 +157,11 @@ msgstr ""
 msgid "All top-level installed packages have been selected by default."
 msgstr ""
 
-#: Main.vala:323
+#: Main.vala:319
 msgid "App config loaded"
 msgstr ""
 
-#: Main.vala:296
+#: Main.vala:292
 msgid "App config saved"
 msgstr ""
 
@@ -173,7 +173,7 @@ msgstr ""
 msgid "Application Info"
 msgstr ""
 
-#: Main.vala:3283
+#: Main.vala:3276
 msgid "Application Settings"
 msgstr ""
 
@@ -181,7 +181,7 @@ msgstr ""
 msgid "Aptik needs admin access to backup and restore packages."
 msgstr ""
 
-#: Main.vala:1775 Theme.vala:623
+#: Main.vala:1771 Theme.vala:623
 #, c-format
 msgid "Archiving"
 msgstr ""
@@ -213,7 +213,7 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
-#: AptikConsole.vala:1063 AptikConsole.vala:1098 ConfigWindow.vala:349
+#: AptikConsole.vala:1066 AptikConsole.vala:1101 ConfigWindow.vala:349
 #: MainWindow.vala:288 MainWindow.vala:338 MainWindow.vala:367
 #: MainWindow.vala:417 MainWindow.vala:446 MainWindow.vala:494
 #: MainWindow.vala:542 MainWindow.vala:571 MainWindow.vala:600
@@ -264,11 +264,11 @@ msgstr ""
 msgid "Backup application settings"
 msgstr ""
 
-#: Main.vala:3231
+#: Main.vala:3224
 msgid "Backup completed"
 msgstr ""
 
-#: Main.vala:3232
+#: Main.vala:3225
 msgid "Backup completed with errors"
 msgstr ""
 
@@ -312,7 +312,7 @@ msgstr ""
 msgid "Backup list of manual and installed packages"
 msgstr ""
 
-#: Main.vala:3233
+#: Main.vala:3226
 msgid "Backup saved"
 msgstr ""
 
@@ -357,7 +357,7 @@ msgstr ""
 msgid "Bash Logout Script"
 msgstr ""
 
-#: Main.vala:1560 MainWindow.vala:928
+#: Main.vala:1556 MainWindow.vala:928
 msgid "Cache backup not found in backup directory"
 msgstr ""
 
@@ -396,7 +396,7 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: Main.vala:230
+#: Main.vala:226
 msgid "Commands listed below are not available on this system"
 msgstr ""
 
@@ -457,15 +457,15 @@ msgstr ""
 msgid "Dir not found"
 msgstr ""
 
-#: Main.vala:3254
+#: Main.vala:3247
 msgid "Directory created"
 msgstr ""
 
-#: Main.vala:3257
+#: Main.vala:3250
 msgid "Directory exists"
 msgstr ""
 
-#: Main.vala:3258
+#: Main.vala:3251
 msgid "Directory missing"
 msgstr ""
 
@@ -495,7 +495,7 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
-#: Main.vala:3278
+#: Main.vala:3271
 msgid "Downloaded Packages"
 msgstr ""
 
@@ -523,16 +523,16 @@ msgstr ""
 msgid "Enter encryption password"
 msgstr ""
 
-#: Main.vala:2952
+#: Main.vala:2945
 #, c-format
 msgid "Enter password again to confirm"
 msgstr ""
 
-#: Main.vala:3273
+#: Main.vala:3266
 msgid "Enter password for decrypting backup"
 msgstr ""
 
-#: Main.vala:3272
+#: Main.vala:3265
 msgid "Enter password for encrypting backup"
 msgstr ""
 
@@ -550,7 +550,7 @@ msgstr ""
 msgid "Exclude"
 msgstr ""
 
-#: Main.vala:1965 Theme.vala:664
+#: Main.vala:1958 Theme.vala:664
 #, c-format
 msgid "Extracting"
 msgstr ""
@@ -571,19 +571,19 @@ msgstr ""
 msgid "Failed to add cron job"
 msgstr ""
 
-#: Main.vala:3264
+#: Main.vala:3257
 msgid "Failed to add group"
 msgstr ""
 
-#: Main.vala:3261
+#: Main.vala:3254
 msgid "Failed to add user"
 msgstr ""
 
-#: Main.vala:3267
+#: Main.vala:3260
 msgid "Failed to add user to group"
 msgstr ""
 
-#: Main.vala:3076
+#: Main.vala:3069
 msgid "Failed to change file ownership"
 msgstr ""
 
@@ -595,15 +595,15 @@ msgstr ""
 msgid "Failed to create dir"
 msgstr ""
 
-#: Main.vala:3255
+#: Main.vala:3248
 msgid "Failed to create directory"
 msgstr ""
 
-#: Main.vala:3249
+#: Main.vala:3242
 msgid "Failed to decrypt file"
 msgstr ""
 
-#: Main.vala:3252 Utility.vala:212
+#: Main.vala:3245 Utility.vala:212
 msgid "Failed to delete file"
 msgstr ""
 
@@ -623,7 +623,7 @@ msgstr ""
 msgid "Failed to read cron tab"
 msgstr ""
 
-#: Main.vala:3246 Utility.vala:230
+#: Main.vala:3239 Utility.vala:230
 msgid "Failed to read file"
 msgstr ""
 
@@ -631,11 +631,11 @@ msgstr ""
 msgid "Failed to remove cron job"
 msgstr ""
 
-#: Main.vala:3234
+#: Main.vala:3227
 msgid "Failed to save backup"
 msgstr ""
 
-#: Main.vala:3243
+#: Main.vala:3236
 msgid "Failed to save file"
 msgstr ""
 
@@ -643,12 +643,12 @@ msgstr ""
 msgid "Failed to set ownership"
 msgstr ""
 
-#: Main.vala:573
+#: Main.vala:569
 #, c-format
 msgid "Failed to unzip: '%s'"
 msgstr ""
 
-#: Main.vala:772
+#: Main.vala:768
 msgid "Failed to write"
 msgstr ""
 
@@ -668,15 +668,15 @@ msgstr ""
 msgid "File Not Found"
 msgstr ""
 
-#: Main.vala:3248
+#: Main.vala:3241
 msgid "File decrypted"
 msgstr ""
 
-#: Main.vala:3251
+#: Main.vala:3244
 msgid "File deleted"
 msgstr ""
 
-#: Main.vala:3239
+#: Main.vala:3232
 msgid "File exists"
 msgstr ""
 
@@ -684,25 +684,25 @@ msgstr ""
 msgid "File is missing"
 msgstr ""
 
-#: CronTab.vala:152 Main.vala:1941 Main.vala:3240 Theme.vala:649
+#: CronTab.vala:152 Main.vala:1934 Main.vala:3233 Theme.vala:649
 #: Utility.vala:287 Utility.vala:421
 msgid "File not found"
 msgstr ""
 
-#: Main.vala:262 MainWindow.vala:842
+#: Main.vala:258 MainWindow.vala:842
 msgid "File not found in backup directory"
 msgstr ""
 
-#: Main.vala:478 Main.vala:1095
+#: Main.vala:474 Main.vala:1091
 #, c-format
 msgid "File not found: %s"
 msgstr ""
 
-#: Main.vala:3245
+#: Main.vala:3238
 msgid "File read"
 msgstr ""
 
-#: Main.vala:769 Main.vala:3242
+#: Main.vala:765 Main.vala:3235
 msgid "File saved"
 msgstr ""
 
@@ -714,7 +714,7 @@ msgstr ""
 msgid "Files Not Found"
 msgstr ""
 
-#: Main.vala:3280
+#: Main.vala:3273
 msgid "Filesystem Mounts"
 msgstr ""
 
@@ -801,7 +801,7 @@ msgstr ""
 msgid "Group"
 msgstr ""
 
-#: Main.vala:3263
+#: Main.vala:3256
 msgid "Group added"
 msgstr ""
 
@@ -817,7 +817,7 @@ msgstr ""
 msgid "Hide passphrase"
 msgstr ""
 
-#: Main.vala:3284
+#: Main.vala:3277
 msgid "Home Directory Data"
 msgstr ""
 
@@ -870,7 +870,7 @@ msgstr ""
 msgid "Installed (user)"
 msgstr ""
 
-#: Main.vala:3279
+#: Main.vala:3272
 msgid "Installed Software"
 msgstr ""
 
@@ -884,7 +884,7 @@ msgstr ""
 msgid "Installing packages from repos"
 msgstr ""
 
-#: Main.vala:3229
+#: Main.vala:3222
 msgid "Internet connection is not active. Check the connection and try again."
 msgstr ""
 
@@ -962,7 +962,7 @@ msgstr ""
 msgid "Migration utility for Ubuntu-based distributions"
 msgstr ""
 
-#: Main.vala:142
+#: Main.vala:141
 msgid "Missing Dependencies"
 msgstr ""
 
@@ -1006,7 +1006,7 @@ msgstr ""
 msgid "No Themes Selected"
 msgstr ""
 
-#: Main.vala:3269
+#: Main.vala:3262
 msgid "No changes required"
 msgstr ""
 
@@ -1091,7 +1091,7 @@ msgstr ""
 msgid "Options"
 msgstr ""
 
-#: Main.vala:3072
+#: Main.vala:3065
 #, c-format
 msgid "Ownership changed to '%s' for files in directory '%s'"
 msgstr ""
@@ -1127,7 +1127,7 @@ msgid ""
 "Not Installed\t\tPackages which are not installed"
 msgstr ""
 
-#: Main.vala:3227
+#: Main.vala:3220
 msgid "Package installation has failed or was aborted by user"
 msgstr ""
 
@@ -1147,15 +1147,15 @@ msgstr ""
 msgid "Password Field is Empty"
 msgstr ""
 
-#: Main.vala:3274
+#: Main.vala:3267
 msgid "Password cannot be empty!"
 msgstr ""
 
-#: Main.vala:3271
+#: Main.vala:3264
 msgid "Password not specified!"
 msgstr ""
 
-#: Main.vala:3275
+#: Main.vala:3268
 msgid "Passwords do not match!"
 msgstr ""
 
@@ -1163,7 +1163,7 @@ msgstr ""
 msgid "Path"
 msgstr ""
 
-#: Main.vala:231
+#: Main.vala:227
 msgid "Please install required packages and try running Aptik again"
 msgstr ""
 
@@ -1206,27 +1206,27 @@ msgstr ""
 msgid "Progress"
 msgstr ""
 
-#: Main.vala:366
+#: Main.vala:362
 msgid "Reading deb files from backup..."
 msgstr ""
 
-#: Main.vala:357
+#: Main.vala:353
 msgid "Reading default package lists..."
 msgstr ""
 
-#: Main.vala:345
+#: Main.vala:341
 msgid "Reading package lists..."
 msgstr ""
 
-#: Main.vala:1022
+#: Main.vala:1018
 msgid "Reading package priorities..."
 msgstr ""
 
-#: Main.vala:965
+#: Main.vala:961
 msgid "Reading source lists..."
 msgstr ""
 
-#: Main.vala:351
+#: Main.vala:347
 msgid "Reading state information..."
 msgstr ""
 
@@ -1242,7 +1242,7 @@ msgid ""
 "application."
 msgstr ""
 
-#: AptikConsole.vala:1063 AptikConsole.vala:1098 ConfigWindow.vala:109
+#: AptikConsole.vala:1066 AptikConsole.vala:1101 ConfigWindow.vala:109
 #: ConfigWindow.vala:355 MainWindow.vala:305 MainWindow.vala:346
 #: MainWindow.vala:384 MainWindow.vala:425 MainWindow.vala:462
 #: MainWindow.vala:510 MainWindow.vala:550 MainWindow.vala:579
@@ -1266,11 +1266,11 @@ msgstr ""
 msgid "Restore all items"
 msgstr ""
 
-#: Main.vala:3236
+#: Main.vala:3229
 msgid "Restore completed"
 msgstr ""
 
-#: Main.vala:3237
+#: Main.vala:3230
 msgid "Restore completed with errors"
 msgstr ""
 
@@ -1313,7 +1313,7 @@ msgstr ""
 msgid "Restore users and groups"
 msgstr ""
 
-#: Main.vala:2217
+#: Main.vala:2210
 msgid "Restoring /etc/fstab and /etc/crypttab entries"
 msgstr ""
 
@@ -1325,7 +1325,7 @@ msgstr ""
 msgid "Saving..."
 msgstr ""
 
-#: Main.vala:3285
+#: Main.vala:3278
 msgid "Scheduled Tasks"
 msgstr ""
 
@@ -1416,12 +1416,12 @@ msgstr ""
 msgid "Selected themes are already installed"
 msgstr ""
 
-#: Main.vala:210
+#: Main.vala:206
 #, c-format
 msgid "Selected user: %s, %s"
 msgstr ""
 
-#: Main.vala:207
+#: Main.vala:203
 msgid "Selected user: (All Users)"
 msgstr ""
 
@@ -1500,7 +1500,7 @@ msgstr ""
 msgid "Skip config dirs larger than specified size"
 msgstr ""
 
-#: Main.vala:3277
+#: Main.vala:3270
 msgid "Software Sources (PPA)"
 msgstr ""
 
@@ -1544,7 +1544,7 @@ msgstr ""
 msgid "Theme Type"
 msgstr ""
 
-#: Main.vala:3281
+#: Main.vala:3274
 msgid "Themes and Icons"
 msgstr ""
 
@@ -1656,11 +1656,11 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-#: Main.vala:3260
+#: Main.vala:3253
 msgid "User added"
 msgstr ""
 
-#: Main.vala:3266
+#: Main.vala:3259
 msgid "User added to group"
 msgstr ""
 
@@ -1677,7 +1677,7 @@ msgstr ""
 msgid "Users"
 msgstr ""
 
-#: Main.vala:3282
+#: Main.vala:3275
 msgid "Users and Groups"
 msgstr ""
 

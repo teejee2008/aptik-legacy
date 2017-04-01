@@ -170,9 +170,9 @@ public class ConfigWindow : Window {
 		int selected = 0;
 		int index = -1;
 
-		index++;
-		store.append(out iter);
-		store.set (iter, 0, "All Users", 1, "", -1);
+		//index++;
+		//store.append(out iter);
+		//store.set (iter, 0, "All Users", 1, "", -1);
 			
 		index++;
 		store.append(out iter);
@@ -190,7 +190,7 @@ public class ConfigWindow : Window {
 			store.append(out iter);
 			store.set (iter, 0, user.name, 1, user.name, -1);
 
-			if (App.user_login == user.name){
+			if (App.current_user.name == user.name){
 				selected = index;
 			}
 		}

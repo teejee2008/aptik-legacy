@@ -178,7 +178,7 @@ public class ThemeWindow : Window {
 			
 			if (is_restore_view){
 				foreach(Theme theme in theme_list_user){
-					theme.check_installed(App.user_login);
+					theme.check_installed(App.current_user.name);
 					theme.is_selected = !theme.is_installed;
 				}
 				tv_theme_refresh();
@@ -230,7 +230,7 @@ public class ThemeWindow : Window {
 			store.append(out iter);
 			store.set (iter, 0, username, 1, username, -1);
 
-			if (App.user_login == username){
+			if (App.current_user.name == username){
 				selected = index;
 			}
 		}
@@ -563,7 +563,7 @@ public class ThemeWindow : Window {
 
 		Theme.load_index(App.backup_dir);
 		
-		string username = App.all_users ? "" : App.user_login;
+		string username = App.all_users ? "" : App.current_user.name;
 		theme_list_user = Theme.list_themes_installed(username);
 		
 		tv_theme_refresh();
@@ -695,7 +695,7 @@ public class ThemeWindow : Window {
 		theme_list_user = Theme.list_themes_archived(App.backup_dir);
 		
 		foreach(Theme theme in theme_list_user){
-			theme.check_installed(App.user_login);
+			theme.check_installed(App.current_user.name);
 		}
 		
 		is_running = false;
@@ -747,7 +747,7 @@ public class ThemeWindow : Window {
 				break;
 			}
 			if (theme.is_selected && !theme.is_installed) {
-				theme.unzip(App.user_login, true);
+				theme.unzip(App.current_user.name, true);
 				while (theme.is_running) {
 					App.status_line = theme.status_line;
 					App.progress_count = count_temp + theme.progress_count;
@@ -758,7 +758,7 @@ public class ThemeWindow : Window {
 				count_temp += theme.progress_total;
 				
 				theme.update_permissions();
-				theme.update_ownership(App.user_login);
+				theme.update_ownership(App.current_user.name);
 				
 				theme.is_selected = false; 
 			}
@@ -770,7 +770,7 @@ public class ThemeWindow : Window {
 		
 		if (!App.cancelled){
 			foreach(Theme theme in theme_list_user){
-				theme.check_installed(App.user_login);
+				theme.check_installed(App.current_user.name);
 			}
 			
 			tv_theme_refresh();

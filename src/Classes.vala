@@ -258,7 +258,7 @@ public class AppConfig : GLib.Object{
 
 	public string path{
 		owned get{
-			string str = name.replace("~",App.user_home);
+			string str = name.replace("~",App.current_user.home_path);
 			return str.strip();
 		}
 	}

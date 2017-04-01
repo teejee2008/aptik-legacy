@@ -211,7 +211,7 @@ public class AptikConsole : GLib.Object {
 			}
 		}
 
-		if (App.user_login.length == 0){
+		if (App.current_user.name.length == 0){
 			App.select_user("");
 		}
 
@@ -332,7 +332,7 @@ public class AptikConsole : GLib.Object {
 
 			case "--list-theme":
 			case "--list-themes":
-				print_theme_list(Theme.list_themes_installed(App.user_login, true));
+				print_theme_list(Theme.list_themes_installed(App.current_user.name, true));
 				break;
 
 			case "--backup-theme":
@@ -792,7 +792,7 @@ public class AptikConsole : GLib.Object {
 	public bool backup_config(){
 		bool ok = true;
 		
-		if (App.user_login.length == 0){
+		if (App.current_user.name.length == 0){
 			// TODO: root's data is not backed up?
 			foreach(string username in list_dir_names("/home")){
 				if (username == "PinguyBuilder"){
@@ -835,7 +835,7 @@ public class AptikConsole : GLib.Object {
 	public bool restore_config(){
 		bool ok = true;
 		
-		if (App.user_login.length == 0){
+		if (App.current_user.name.length == 0){
 		
 			foreach(string username in list_dir_names("/home")){
 				App.select_user(username);
@@ -900,20 +900,23 @@ public class AptikConsole : GLib.Object {
 		
 		var list = Theme.list_themes_archived(App.backup_dir);
 
-		foreach(Theme theme in list){
-			theme.check_installed(App.user_login);
+		foreach(var theme in list){
+			theme.check_installed(App.current_user.name);
 			theme.is_selected = !theme.is_installed;
 		}
 		
-		foreach(Theme theme in list) {
+		foreach(var theme in list) {
+			
 			if (theme.is_selected && !theme.is_installed) {
-				theme.unzip(App.user_login,false);
+				
+				theme.unzip(App.current_user.name, false);
+				
 				while (theme.is_running) {
 					sleep(500);
 				}
 
 				theme.update_permissions();
-				theme.update_ownership(App.user_login);
+				theme.update_ownership(App.current_user.name);
 			}
 		}
 
