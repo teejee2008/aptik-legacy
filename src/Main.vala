@@ -84,6 +84,8 @@ public class Main : GLib.Object {
 	public Gee.HashMap<string,SystemUser> user_list_bak;
 	public Gee.HashMap<string,SystemGroup> group_list_bak;
 
+	public Gee.ArrayList<SystemUser> user_list_home;
+	
 	public Gee.ArrayList<BackupTask> task_list;
 	public string selected_tasks = "";
 	public bool backup_mode = false;
@@ -170,6 +172,8 @@ public class Main : GLib.Object {
 		NATIVE_ARCH = execute_command_sync_get_output("dpkg --print-architecture").strip();
 
 		Theme.init();
+
+		init_user_list_home();
 	}
 
 	public void select_user(string _username){
@@ -2746,20 +2750,48 @@ public class Main : GLib.Object {
 
 	/* Home */
 
-	public void init_home_tree(){
-		home_tree = new FileItem.dummy_root();
+	public void init_user_list_home(){
 
-		foreach (var user in SystemUser.all_users_sorted) {
+		SystemUser.query_users();
+
+		var list = new Gee.ArrayList<SystemUser>();
+		foreach(var user in SystemUser.all_users.values){
 			if (user.is_system){ continue; }
+
+			if ((user.home_path.length == 0) || !dir_exists(user.home_path)){
+				continue;
+			}
+
+			user.is_selected = true;
+			
+			list.add(user);
+		}
+		
+		//sort ------
+		
+		CompareDataFunc<SystemUser> func = (a, b) => {
+			return strcmp(a.name, b.name);
+		};
+		list.sort((owned)func);
+		
+		user_list_home = list;
+	}
+
+	public void init_home_tree(){
+		
+		home_tree = new FileItem.dummy_root();
+		
+		foreach (var user in user_list_home) {
 			home_tree.add_child_from_disk(user.home_path,1);
 		}
 	}
 	
 	public string backup_home_get_script(){
+		
 		string sh = "";
 		
-		foreach(var user in SystemUser.all_users_sorted){
-			if (user.is_system){ continue; }
+		foreach(var user in user_list_home){
+			
 			if (!user.is_selected){ continue; }
 			
 			var bak_dir = "%s%s/%s".printf(backup_dir, "home", user.name);
@@ -2768,7 +2800,7 @@ public class Main : GLib.Object {
 			if (file_exists(exclude_list)){
 				file_delete(exclude_list);
 			}
-			file_write(exclude_list, exclude_list_create());
+			file_write(exclude_list, exclude_list_create(user));
 			
 			var cmd = "";
 			
@@ -2790,10 +2822,11 @@ public class Main : GLib.Object {
 	}
 
 	public string restore_home_get_script(){
+		
 		string sh = "";
 		
-		foreach(var user in SystemUser.all_users_sorted){
-			if (user.is_system){ continue; }
+		foreach(var user in user_list_home){
+
 			if (!user.is_selected){ continue; }
 			
 			var bak_dir = "%s%s/%s".printf(backup_dir, "home", user.name);
@@ -2802,7 +2835,7 @@ public class Main : GLib.Object {
 			if (file_exists(exclude_list)){
 				file_delete(exclude_list);
 			}
-			file_write(exclude_list, exclude_list_create());
+			file_write(exclude_list, exclude_list_create(user));
 
 			var cmd = "";
 			
@@ -2827,12 +2860,15 @@ public class Main : GLib.Object {
 		return sh;
 	}
 
-	public string exclude_list_create(){
+	public string exclude_list_create(SystemUser user){
+		
 		string txt = "";
 		
 		if (home_tree != null){
 			foreach(var home in home_tree.children.values){
-				exclude_list_append(home, ref txt, home.file_path);
+				if (home.file_path.has_prefix(user.home_path)){
+					exclude_list_append(home, ref txt, home.file_path);
+				}
 			}
 		}
 
@@ -3082,7 +3118,6 @@ public class Main : GLib.Object {
 		}
 	}
 }
-
 
 public class BackupTask : GLib.Object {
 	public string name = "";

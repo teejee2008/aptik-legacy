@@ -64,10 +64,10 @@ public class UserDataSettingsDialog : Gtk.Dialog {
 		this.backup_mode = backup_mode;
 		
 		//content area
-		vbox_main = new Gtk.Box(Orientation.VERTICAL, 6);
-		vbox_main.margin = 12;
+		vbox_main = get_content_area();
+		vbox_main.spacing = 12;
+		vbox_main.margin = 6;
 		vbox_main.set_size_request(450,450);
-		get_content_area().add(vbox_main);
 
 		// notebook
 		notebook = new Gtk.Notebook();
@@ -244,8 +244,9 @@ public class UserDataSettingsDialog : Gtk.Dialog {
 
 		TreeIter iter;
 		var store = new Gtk.ListStore (2, typeof(bool), typeof(SystemUser));
-		foreach (var user in SystemUser.all_users_sorted) {
-			if (user.is_system) { continue; }
+		foreach (var user in App.user_list_home) {
+			user.is_selected = true;
+			
 			store.append (out iter);
 			store.set (iter, 0, user.is_selected);
 			store.set (iter, 1, user);
