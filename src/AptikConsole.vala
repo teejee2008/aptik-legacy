@@ -306,7 +306,7 @@ public class AptikConsole : GLib.Object {
 
 			case "--list-config":
 			case "--list-configs":
-				print_config_list(App.list_app_config_directories_from_home());
+				print_config_list(App.list_app_config_directories_from_home(false));
 				break;
 
 			case "--backup-appsettings":
@@ -445,7 +445,7 @@ public class AptikConsole : GLib.Object {
 		//log_msg("list_icons: %s".printf(timer_elapsed_string(timer)));
 
 		timer.start();
-		App.list_app_config_directories_from_home();
+		App.list_app_config_directories_from_home(false);
 		log_msg("list_apps: %s".printf(timer_elapsed_string(timer)));
 	}
 
@@ -792,35 +792,9 @@ public class AptikConsole : GLib.Object {
 	public bool backup_config(){
 		bool ok = true;
 		
-		if (App.current_user.name.length == 0){
-			// TODO: root's data is not backed up?
-			foreach(string username in list_dir_names("/home")){
-				if (username == "PinguyBuilder"){
-					continue;
-				}
-			
-				App.select_user(username);
-
-				var list = App.list_app_config_directories_from_home();
-				foreach(var conf in list){
-					conf.enabled = true;
-				}
-
-				var status = App.backup_app_settings_all(list);
-				ok = ok && status;
-				
-				log_msg("");
-			}
-		}
-		else{
-			var list = App.list_app_config_directories_from_home();
-			foreach(var conf in list){
-				conf.enabled = true;
-			}
-
-			var status = App.backup_app_settings_all(list);
-			ok = ok && status;
-		}
+		var list = App.list_app_config_directories_from_home(false);
+		var status = App.backup_app_settings_all(list);
+		ok = ok && status;
 
 		if (ok){
 			log_msg(Message.BACKUP_OK);
@@ -835,31 +809,9 @@ public class AptikConsole : GLib.Object {
 	public bool restore_config(){
 		bool ok = true;
 		
-		if (App.current_user.name.length == 0){
-		
-			foreach(string username in list_dir_names("/home")){
-				App.select_user(username);
-				
-				var list = App.list_app_config_directories_from_backup();
-				foreach(var conf in list){
-					conf.enabled = true;
-				}
-
-				var status = App.restore_app_settings_all(list);
-				ok = ok && status;
-			
-				log_msg("");
-			}
-		}
-		else{
-			var list = App.list_app_config_directories_from_backup();
-			foreach(var conf in list){
-				conf.enabled = true;
-			}
-
-			var status = App.restore_app_settings_all(list);
-			ok = ok && status;
-		}
+		var list = App.list_app_config_directories_from_backup(false);
+		var status = App.restore_app_settings_all(list);
+		ok = ok && status;
 
 		if (ok){
 			log_msg(Message.RESTORE_OK);
@@ -876,7 +828,7 @@ public class AptikConsole : GLib.Object {
 	public bool backup_themes(){
 		bool ok = true;
 
-		foreach(Theme theme in Theme.list_themes_installed()) {
+		foreach(var theme in Theme.list_themes_installed()) {
 			if (theme.is_selected) {
 				theme.zip(App.backup_dir,false);
 				while (theme.is_running) {

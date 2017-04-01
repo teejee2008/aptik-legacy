@@ -685,7 +685,7 @@ public class MainWindow : Window {
 		vbox_main.add(toolbar_bottom);
 
 		int BUTTON_SIZE = 80;
-		int ICON_SIZE = 48;
+		int ICON_SIZE = 32;
 		
 		//remove toolbar background
 		var css_provider = new Gtk.CssProvider();

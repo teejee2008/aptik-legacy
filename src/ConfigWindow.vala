@@ -43,13 +43,16 @@ public class ConfigWindow : Window {
 	private Button btn_cancel;
 	private Button btn_select_all;
 	private Button btn_select_none;
+	
 	private TreeView treeview;
-	private Gtk.ComboBox cmb_username;
+	private Gtk.TreeViewColumn col_config_size;
 	private Gtk.Box hbox_filter;
+	
+	private Gtk.ComboBox cmb_username;
 	
 	private Gee.ArrayList<AppExcludeEntry> config_list_user;
 	
-	private int def_width = 550;
+	private int def_width = 700;
 	private int def_height = 450;
 	private uint tmr_init = 0;
 	//private bool is_running = false;
@@ -103,8 +106,6 @@ public class ConfigWindow : Window {
 			tmr_init = 0;
 		}
 
-		cmb_username_refresh();
-
 		if (is_restore_view){
 			title = _("Restore");
 			
@@ -113,7 +114,7 @@ public class ConfigWindow : Window {
 			btn_reset.show();
 			btn_reset.visible = true;
 			
-			restore_init();
+			//restore_init();
 		}
 		else{
 			title = _("Backup Application Settings");
@@ -121,8 +122,10 @@ public class ConfigWindow : Window {
 			btn_backup.show();
 			btn_backup.visible = true;
 
-			backup_init();
+			//backup_init();
 		}
+
+		cmb_username_refresh();
 
 		return false;
 	}
@@ -170,10 +173,10 @@ public class ConfigWindow : Window {
 		int selected = 0;
 		int index = -1;
 
-		//index++;
-		//store.append(out iter);
-		//store.set (iter, 0, "All Users", 1, "", -1);
-			
+		index++;
+		store.append(out iter);
+		store.set (iter, 0, "All Users", 1, "", -1);
+		
 		index++;
 		store.append(out iter);
 		store.set (iter, 0, _("root"), 1, "root", -1);
@@ -196,7 +199,7 @@ public class ConfigWindow : Window {
 		}
 		
 		cmb_username.set_model (store);
-		cmb_username.active = selected;
+		cmb_username.active = 0;
 	}
 
 
@@ -243,6 +246,15 @@ public class ConfigWindow : Window {
 			model.get (iter, 1, out config);
 			model.set (iter, 0, !selected);
 			config.enabled = !selected;
+
+			string username = gtk_combobox_get_value(cmb_username,1,"root");
+			
+			if (config.enabled){
+				AppSelection.select(username, config.name);
+			}
+			else{
+				AppSelection.unselect(username, config.name);
+			}
 		});
 
 		//col_config_name ----------------------
@@ -250,7 +262,7 @@ public class ConfigWindow : Window {
 		TreeViewColumn col_config_name = new TreeViewColumn();
 		col_config_name.title = _("Path");
 		col_config_name.resizable = true;
-		col_config_name.min_width = 180;
+		col_config_name.min_width = 220;
 		treeview.append_column(col_config_name);
 
 		CellRendererText cell_config_name = new CellRendererText ();
@@ -263,7 +275,7 @@ public class ConfigWindow : Window {
 			(cell as Gtk.CellRendererText).text = config.name;
 		});
 
-		TreeViewColumn col_config_size = new TreeViewColumn();
+		col_config_size = new TreeViewColumn();
 		col_config_size.title = _("Size");
 		col_config_size.resizable = true;
 		treeview.append_column(col_config_size);
@@ -308,8 +320,7 @@ public class ConfigWindow : Window {
 		log_debug("ConfigWindow: treeview_refresh()");
 		
 		var model = new Gtk.ListStore(3, typeof(bool), typeof(AppExcludeEntry), typeof(string));
-		treeview.model = model;
-
+		
 		foreach(var entry in config_list_user) {
 			TreeIter iter;
 			model.append(out iter);
@@ -317,6 +328,10 @@ public class ConfigWindow : Window {
 			model.set (iter, 1, entry);
 			model.set (iter, 2, entry.tooltip_text());
 		}
+
+		//col_config_size.visible = !App.all_users;
+
+		treeview.model = model;
 	}
 
 
@@ -329,8 +344,10 @@ public class ConfigWindow : Window {
 		btn_select_all = new Gtk.Button.with_label (" " + _("Select All") + " ");
 		hbox_config_actions.pack_start (btn_select_all, true, true, 0);
 		btn_select_all.clicked.connect(() => {
+			string username = gtk_combobox_get_value(cmb_username,1,"root");
 			foreach(var config in config_list_user) {
 				config.enabled = true;
+				AppSelection.select(username, config.name);
 			}
 			treeview_refresh();
 		});
@@ -339,8 +356,10 @@ public class ConfigWindow : Window {
 		btn_select_none = new Gtk.Button.with_label (" " + _("Select None") + " ");
 		hbox_config_actions.pack_start (btn_select_none, true, true, 0);
 		btn_select_none.clicked.connect(() => {
+			string username = gtk_combobox_get_value(cmb_username,1,"root");
 			foreach(var config in config_list_user) {
 				config.enabled = false;
+				AppSelection.unselect(username, config.name);
 			}
 			treeview_refresh();
 		});
@@ -369,6 +388,7 @@ public class ConfigWindow : Window {
 		btn_cancel = new Gtk.Button.with_label (" " + _("Close") + " ");
 		hbox_config_actions.pack_start (btn_cancel, true, true, 0);
 		btn_cancel.clicked.connect(() => {
+			App.app_config_save_selections();
 			this.close();
 		});
 	
@@ -394,12 +414,8 @@ public class ConfigWindow : Window {
 
 		log_debug("ConfigWindow: restore_app_settings_init()");
 
-		config_list_user = App.list_app_config_directories_from_home();
-		
-		foreach(var config in config_list_user) {
-			config.enabled = true;
-		}
-			
+		config_list_user = App.list_app_config_directories_from_home(true);
+
 		treeview_refresh();
 
 		log_debug("ConfigWindow: restore_app_settings_init(): ok");
@@ -423,6 +439,8 @@ public class ConfigWindow : Window {
 			return;
 		}
 
+		App.app_config_save_selections();
+
 		//begin
 		string message = _("Preparing...");
 
@@ -437,16 +455,20 @@ public class ConfigWindow : Window {
 		dlg.update_status_line(true);
 
 		bool ok = true;
-		
-		foreach(var config in config_list_user){
-			if (!config.enabled) { continue; }
-			
-			bool status = App.backup_app_settings_single(config);
-			ok = ok && status;
-			while (App.is_running) {
-				dlg.update_progressbar();
-				dlg.update_status_line();
-				dlg.sleep(50);
+
+		foreach (var user in App.selected_users) {
+
+			foreach(var config in config_list_user){
+				if (!config.enabled) { continue; }
+				
+				bool status = App.backup_app_settings_single(config, user);
+				ok = ok && status;
+				
+				while (App.is_running) {
+					dlg.update_progressbar();
+					dlg.update_status_line();
+					dlg.sleep(50);
+				}
 			}
 		}
 
@@ -471,12 +493,8 @@ public class ConfigWindow : Window {
 
 		log_debug("ConfigWindow: restore_init()");
 		
-		config_list_user = App.list_app_config_directories_from_backup();
+		config_list_user = App.list_app_config_directories_from_backup(true);
 
-		foreach(var config in config_list_user) {
-			config.enabled = true;
-		}
-		
 		treeview_refresh();
 
 		log_debug("ConfigWindow: restore_init(): ok");
@@ -521,7 +539,7 @@ public class ConfigWindow : Window {
 		var dlg = new ProgressWindow.with_parent(this, message);
 		dlg.show_all();
 		gtk_do_events();
-
+		
 		App.restore_app_settings_init(config_list_user);
 
 		//dlg.pulse_start();
@@ -529,21 +547,26 @@ public class ConfigWindow : Window {
 		dlg.update_status_line(true);
 
 		bool ok = true;
-		foreach(var config in config_list_user){
-			if (!config.enabled) { continue; }
-			
-			bool status = App.restore_app_settings_single(config);
-			ok = ok && status;
-			while (App.is_running) {
-				dlg.update_progressbar();
-				dlg.update_status_line();
-				dlg.sleep(50);
-			}
-		}
+		
+		foreach (var user in App.selected_users) {
 
-		//update ownership
-		dlg.update_message(_("Updating file ownership..."));
-		App.update_ownership(config_list_user);
+			foreach(var config in config_list_user){
+				if (!config.enabled) { continue; }
+				
+				bool status = App.restore_app_settings_single(config, user);
+				ok = ok && status;
+				
+				while (App.is_running) {
+					dlg.update_progressbar();
+					dlg.update_status_line();
+					dlg.sleep(50);
+				}
+			}
+
+			//update ownership
+			dlg.update_message(_("Updating file ownership..."));
+			App.update_ownership(config_list_user);
+		}
 
 		//finish ----------------------------------
 

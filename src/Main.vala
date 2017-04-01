@@ -85,7 +85,7 @@ public class Main : GLib.Object {
 	public Gee.HashMap<string,SystemGroup> group_list_bak;
 
 	public Gee.ArrayList<SystemUser> user_list_home;
-	
+
 	public Gee.ArrayList<BackupTask> task_list;
 	public string selected_tasks = "";
 	public bool backup_mode = false;
@@ -1687,23 +1687,45 @@ public class Main : GLib.Object {
 	
 	/* App Settings */
 
+	public Gee.ArrayList<SystemUser> selected_users {
+		owned get {
+			var users = new Gee.ArrayList<SystemUser>();
+			
+			if (all_users){
+				foreach(var user in SystemUser.all_users_sorted){
+					if (user.is_system && (user.name != "root")){ continue; }
+					users.add(user);
+				}
+			}
+			else{
+				users.add(current_user);
+			}
+
+			return users;
+		}
+	}
+	
 	public bool backup_app_settings_all(Gee.ArrayList<AppExcludeEntry> config_list) {
+		
 		bool ok = true;
 
 		log_debug("Main: backup_app_settings_all()");
 		
 		backup_app_settings_init(config_list);
 
-		foreach(var config in config_list) {
-			
-			if (!config.enabled) { continue; }
+		foreach (var user in selected_users) {
 
-			if ((arg_size_limit > 0) && (config.size > arg_size_limit)){
-				continue;
+			foreach(var config in config_list) {
+				
+				if (!config.enabled) { continue; }
+
+				if ((arg_size_limit > 0) && (config.size > arg_size_limit)){
+					continue;
+				}
+
+				var status = backup_app_settings_single(config, user);
+				ok = ok && status;
 			}
-
-			var status = backup_app_settings_single(config);
-			ok = ok && status;
 		}
 
 		return ok;
@@ -1715,6 +1737,8 @@ public class Main : GLib.Object {
 		
 		progress_total = 0;
 		progress_count = 0;
+
+		// configs already have sum of size and count for all selected users
 		
 		foreach(var config in config_list) {
 			
@@ -1726,12 +1750,14 @@ public class Main : GLib.Object {
 			
 			progress_total += config.count;
 		}
+
+		app_config_save_selections();
 	}
 	
-	public bool backup_app_settings_single(AppExcludeEntry config) {
+	public bool backup_app_settings_single(AppExcludeEntry config, SystemUser user) {
 		string cmd;
 
-		string backup_dir_config = path_combine(backup_dir, "app-settings/%s".printf(current_user.name));
+		string backup_dir_config = path_combine(backup_dir, "app-settings/%s".printf(user.name));
 		dir_create(backup_dir_config);
 		
 		try {
@@ -1752,17 +1778,23 @@ public class Main : GLib.Object {
 			list_txt += "count=%lld\n".printf(config.count);
 			
 			foreach(string item in config.items){
+				
 				var disk_path = item[2:item.length]; // remove ~/
+
+				var full_disk_path = path_combine(user.home_path, disk_path);
+				if (!file_or_dir_exists(full_disk_path)){ continue; }
+				
 				files += " '%s'".printf(escape_single_quote(disk_path));
 				list_txt += "%s\n".printf(item); 
 			}
+			
 			file_write(list_file, list_txt);
 			
 			//zip selected folder
-			cmd = "tar czvf '%s' -C '%s' %s".printf(zip_file, escape_single_quote(current_user.home_path), files);
+			cmd = "tar czvf '%s' -C '%s' %s".printf(zip_file, escape_single_quote(user.home_path), files);
 			status_line = "";
 
-			log_msg(cmd);
+			log_debug(cmd);
 
 			if (gui_mode) {
 				run_gzip(cmd);
@@ -1789,50 +1821,45 @@ public class Main : GLib.Object {
 		}
 	}
 
-	
-	public Gee.ArrayList<AppExcludeEntry> list_app_config_directories_from_home() {
+	public Gee.ArrayList<AppExcludeEntry> list_app_config_directories_from_home(bool apply_selections) {
 
 		log_debug("Main: list_app_config_directories_from_home()");
 
 		AppExcludeEntry.clear();
 
-		/*if (all_users){
-
-			SystemUser.query_users();
-			
-			foreach (var user in SystemUser.all_users_sorted) {
-				if (user.is_system){ continue; }
-
-				AppExcludeEntry.add_app_exclude_entries_from_path(user.home_path);
-			}
-
-			AppExcludeEntry.add_app_exclude_entries_from_path("/root");
+		foreach (var user in selected_users) {
+			AppExcludeEntry.add_app_exclude_entries_from_path(user.home_path);
 		}
-		else{*/
-			AppExcludeEntry.add_app_exclude_entries_from_path(current_user.home_path);
-		//}
 
-		return AppExcludeEntry.get_apps_list(null);
+		if (apply_selections){
+			app_config_apply_selections();
+		}
+
+		return AppExcludeEntry.get_apps_list();
 	}
 
-	public Gee.ArrayList<AppExcludeEntry> list_app_config_directories_from_backup() {
+	public Gee.ArrayList<AppExcludeEntry> list_app_config_directories_from_backup(bool apply_selections) {
 
-		string backup_dir_config = path_combine(backup_dir, "app-settings/%s".printf(current_user.name));
+		log_debug("Main: list_app_config_directories_from_backup()");
 		
-		var list = list_app_config_directories_from_backup_path(backup_dir_config);
+		AppExcludeEntry.clear();
 
-		CompareDataFunc<AppExcludeEntry> entry_compare = (a, b) => { return strcmp(a.name, b.name); };
-		list.sort((owned) entry_compare);
+		foreach (var user in selected_users) {
+			string backup_dir_config = path_combine(backup_dir, "app-settings/%s".printf(user.name));
+			list_app_config_archives_from_backup_path(backup_dir_config);
+		}
 
-		return list;
+		if (apply_selections){
+			app_config_apply_selections();
+		}
+
+		return AppExcludeEntry.get_apps_list();
 	}
 
-	public Gee.ArrayList<AppExcludeEntry> list_app_config_directories_from_backup_path(string backup_path) {
+	public void list_app_config_archives_from_backup_path(string backup_path) {
 
-		var list = new Gee.ArrayList<AppExcludeEntry>();
-		
 		try{
-			File f_bak = File.new_for_path (backup_path);
+			File f_bak = File.new_for_path(backup_path);
 			FileEnumerator enumerator = f_bak.enumerate_children ("%s".printf(FileAttribute.STANDARD_NAME), 0);
 			
 			FileInfo file;
@@ -1843,56 +1870,55 @@ public class Main : GLib.Object {
 
 				if (!name.has_suffix(".tgz")){ continue; }
 
-				string item_name = name[0:name.length - 4];  // remove .tgz
-
-				string zip_file = path_combine(backup_path, item_name + ".tgz");
-				string list_file = path_combine(backup_path, item_name + ".info");
-				
-				if (!file_exists(list_file)){ continue; }
-
-				if (name == "Xauthority"){ continue; } // skip this file
-
-				var conf = new AppExcludeEntry(item_name);
-				
-				foreach(string line in file_read(list_file).split("\n")){
-
-					if (line.length == 0){ continue; }
-					
-					if (line.has_prefix("size=")){
-						conf.size = int64.parse(line.split("size=")[1]);
-					}
-					else if (line.has_prefix("count=")){
-						conf.count = int64.parse(line.split("count=")[1]);
-					}
-					else{
-						conf.items.add(line);
-					}
-				}
-				
-				list.add(conf);
+				AppExcludeEntry.add_item_from_archive(path);
 			}
 		}
 		catch (Error e) {
 			log_error (e.message);
 		}
-
-		return list;
 	}
 
+	public void app_config_apply_selections(){
 
+		foreach(var item in AppExcludeEntry.app_map.values){
+			item.enabled = true;
+		}
+
+		// apply selections
+		var selection_file = path_combine(backup_dir, "app-selections.list");
+		AppSelection.read(selection_file);
+
+		string username = all_users ? "" : current_user.name;
+		foreach(var item in AppSelection.get_selections_for_user(username)){
+			if (AppExcludeEntry.app_map.has_key(item.name)){
+				AppExcludeEntry.app_map[item.name].enabled = item.selected;
+			}
+		}
+	}
+
+	public void app_config_save_selections(){
+		// apply selections
+		var selection_file = path_combine(backup_dir, "app-selections.list");
+		AppSelection.save(selection_file);
+	}
+	
+	
 	public bool restore_app_settings_all(Gee.ArrayList<AppExcludeEntry> config_list) {
 		bool ok = true;
 
 		log_debug("Main: restore_app_settings_all()");
 		
 		restore_app_settings_init(config_list);
-		
-		foreach(var config in config_list) {
-			
-			if (!config.enabled) { continue; }
 
-			var status = restore_app_settings_single(config);
-			ok = ok && status;
+		foreach (var user in selected_users) {
+			
+			foreach(var config in config_list) {
+				
+				if (!config.enabled) { continue; }
+
+				var status = restore_app_settings_single(config, user);
+				ok = ok && status;
+			}
 		}
 
 		update_ownership(config_list);
@@ -1906,26 +1932,29 @@ public class Main : GLib.Object {
 		
 		progress_total = 0;
 		progress_count = 0;
-		
-		foreach(var config in config_list) {
-			
-			if (!config.enabled) { continue; }
-				
-			string name = config.name;
-			string backup_dir_config = path_combine(backup_dir, "app-settings/%s".printf(current_user.name));
-			string zip_file = "%s/%s.tgz".printf(backup_dir_config, name);
-			string cmd = "tar tzvf '%s' | wc -l".printf(zip_file);
-			string stderr, stdout;
-			exec_script_sync(cmd, out stdout, out stderr, true);
-			progress_total += long.parse(stdout);
+
+		foreach (var user in selected_users) {
+
+			foreach(var config in config_list) {
+				if (!config.enabled) { continue; }
+					
+				string name = config.name;
+				string backup_dir_config = path_combine(backup_dir, "app-settings/%s".printf(user.name));
+				string zip_file = "%s/%s.tgz".printf(backup_dir_config, name);
+				string cmd = "tar tzvf '%s' | wc -l".printf(zip_file);
+				string stderr, stdout;
+				exec_script_sync(cmd, out stdout, out stderr, true);
+				progress_total += long.parse(stdout);
+			}
 		}
+
+		app_config_save_selections();
 		//log_msg("Total=%ld".printf(progress_total));
 	}
 	
-	public bool restore_app_settings_single(AppExcludeEntry config) {
-		string cmd;
+	public bool restore_app_settings_single(AppExcludeEntry config, SystemUser user) {
 
-		string backup_dir_config = path_combine(backup_dir, "app-settings/%s".printf(current_user.name));
+		string backup_dir_config = path_combine(backup_dir, "app-settings/%s".printf(user.name));
 		string name = config.name.replace("~/", "");
 		string zip_file = "%s/%s.tgz".printf(backup_dir_config, name);
 		
@@ -1937,19 +1966,20 @@ public class Main : GLib.Object {
 
 		// delete existing app_dir
 		foreach(string item in config.items){
-			string app_dir = path_combine(current_user.home_path, item[2:item.length]); // skip ~/
+			string app_dir = path_combine(user.home_path, item[2:item.length]); // skip ~/
 			if (dir_exists(app_dir)) {
-				cmd = "rm -rf '%s'".printf(escape_single_quote(app_dir));
+				string cmd = "rm -rf '%s'".printf(escape_single_quote(app_dir));
+				log_debug(cmd);
 				exec_sync(cmd);
 			}
 			dir_create(app_dir);
 		}
 
 		//unzip selected items to home directory
-		cmd = "tar xzvf '%s' -C '%s'".printf(zip_file, current_user.home_path);
+		string cmd = "tar xzvf '%s' -C '%s'".printf(zip_file, user.home_path);
 		status_line = "";
 
-		log_msg(cmd);
+		log_debug(cmd);
 		
 		if (gui_mode) {
 			run_gzip(cmd);
@@ -1973,18 +2003,20 @@ public class Main : GLib.Object {
 
 	public bool reset_app_settings(Gee.ArrayList<AppExcludeEntry> config_list) {
 
-		foreach(var config in config_list) {
+		foreach (var user in selected_users) {
 			
-			if (!config.enabled) { continue; }
-			
-			foreach(var item in config.items){
+			foreach(var config in config_list) {
+				if (!config.enabled) { continue; }
 				
-				//log_debug("item=%s".printf(item));
-				string app_dir = path_combine(current_user.home_path, item[2:item.length]); // skip ~/
-				
-				if (dir_exists(app_dir)) {
-					string cmd = "rm -rf '%s'".printf(escape_single_quote(app_dir));
-					exec_sync(cmd);
+				foreach(var item in config.items){
+					
+					string app_dir = path_combine(current_user.home_path, item[2:item.length]); // skip ~/
+					
+					if (dir_exists(app_dir)) {
+						string cmd = "rm -rf '%s'".printf(escape_single_quote(app_dir));
+						log_debug(cmd);
+						exec_sync(cmd);
+					}
 				}
 			}
 		}
@@ -3087,6 +3119,7 @@ public class Main : GLib.Object {
 		}
 	}
 }
+
 
 public class BackupTask : GLib.Object {
 	public string name = "";

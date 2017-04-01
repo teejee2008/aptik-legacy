@@ -191,6 +191,14 @@ namespace TeeJee.FileSystem{
 	}
 
 	// file helpers -----------------------------
+
+	public bool file_or_dir_exists(string item_path){
+		
+		/* check if item exists on disk*/
+
+		var item = File.parse_name(item_path);
+		return item.query_exists();
+	}
 	
 	public bool file_exists (string file_path){
 		/* Check if file exists */
