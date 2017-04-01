@@ -47,21 +47,23 @@ public class DownloadWindow : Dialog {
 	private Gtk.TreeViewColumn col_size;
 	private Gtk.TreeViewColumn col_desc;
 	private Gtk.TreeViewColumn col_status;
+	
 	private uint tmr_init = 0;
 	private uint tmr_progress = 0;
 	//private uint tmr_close = 0;
+	
 	private int def_width = 560;
 	private int def_height = 400;
 
-	private Gee.ArrayList<DownloadManager> download_list;
-	private int job_count = 0;
-	private int job_count_max = 3;
+	private DownloadTask mgr;
 	private bool user_aborted = false;
 	//private bool allow_close = false;
+
+	private Gee.ArrayList<Package> package_list;
 	
 	// init
 
-	public DownloadWindow.with_parent(Window parent, Gee.ArrayList<Package> pkg_download_list) {
+	public DownloadWindow.with_parent(Window parent, Gee.ArrayList<Package> _package_list) {
 		set_transient_for(parent);
 		set_modal(true);
 		//set_skip_taskbar_hint(true);
@@ -74,20 +76,28 @@ public class DownloadWindow : Dialog {
 		App.progress_count = 0;
 		App.progress_total = 0;
 
-		download_list = new Gee.ArrayList<DownloadManager>();
-		foreach(var pkg in pkg_download_list){
-			var mgr = new DownloadManager(pkg.deb_file_name,"/var/cache/apt/archives","/var/cache/apt/archives/partial",pkg.deb_uri);
-			mgr.size = pkg.deb_size;
-			mgr.md5hash = pkg.deb_md5hash;
-			download_list.add(mgr);
+		package_list = _package_list;
+
+		mgr = new DownloadTask();
+		mgr.status_in_kb = true;
+
+		mgr.task_complete.connect(() => {
+			this.response(Gtk.ResponseType.OK);
+		});
+
+		foreach(var pkg in package_list){
+			var item = new DownloadItem(pkg.deb_uri, "/var/cache/apt/archives", pkg.deb_file_name);
+			item.name = pkg.name;
+			mgr.add_to_queue(item);
 			
-			App.progress_total += mgr.size;
+			App.progress_total += pkg.deb_size;
 		}
 
 		init_window();
 	}
 
 	public void init_window () {
+		
 		title = _("Download");
 		icon = get_app_icon(16);
 		set_default_size (def_width, def_height);
@@ -173,7 +183,7 @@ public class DownloadWindow : Dialog {
 		//sw_pkg.margin_top = 12;
 		vbox_main.add(sw_pkg);
 
-		//col_status ------------------
+		//Status ------------------
 		
 		col_status = new TreeViewColumn();
 		col_status.title = _("Status");
@@ -186,13 +196,12 @@ public class DownloadWindow : Dialog {
 		col_status.pack_start (cell_status, false);
 		
 		col_status.set_cell_data_func (cell_status, (cell_layout, cell, model, iter) => {
-			DownloadManager mgr;
-			int progress_percent;
-			model.get (iter, 0, out mgr, 1, out progress_percent, -1);
-			(cell as CellRendererProgress2).value = progress_percent;
+			int percent;
+			model.get (iter, 1, out percent, -1);
+			(cell as CellRendererProgress2).value = percent;
 		});
 
-		//col_size ----------------------
+		//Size ----------------------
 
 		col_size = new TreeViewColumn();
 		col_size.title = _("Size");
@@ -206,13 +215,12 @@ public class DownloadWindow : Dialog {
 		col_size.pack_start (cell_size, false);
 
 		col_size.set_cell_data_func (cell_size, (cell_layout, cell, model, iter) => {
-			DownloadManager mgr;
-			model.get (iter, 0, out mgr, -1);
-			//(cell as Gtk.CellRendererText).text = "%'.0f KB".printf((mgr.size / 1000.0));
-			(cell as Gtk.CellRendererText).text = "%s".printf(format_file_size(mgr.size));
+			DownloadItem item;
+			model.get (iter, 0, out item, -1);
+			(cell as Gtk.CellRendererText).text = "%s".printf(format_file_size(item.bytes_total));
 		});
 		
-		//col_name ----------------------
+		//Package ----------------------
 
 		col_name = new TreeViewColumn();
 		col_name.title = _("Package");
@@ -226,12 +234,12 @@ public class DownloadWindow : Dialog {
 		col_name.pack_start (cell_name, false);
 
 		col_name.set_cell_data_func (cell_name, (cell_layout, cell, model, iter) => {
-			DownloadManager mgr;
-			model.get (iter, 0, out mgr, -1);
-			(cell as Gtk.CellRendererText).text = mgr.name;
+			DownloadItem item;
+			model.get (iter, 0, out item, -1);
+			(cell as Gtk.CellRendererText).text = item.name;
 		});
 
-		//col_ppa_desc ----------------------
+		//Progress ----------------------
 
 		col_desc = new TreeViewColumn();
 		col_desc.title = _("Progress");
@@ -245,26 +253,20 @@ public class DownloadWindow : Dialog {
 		col_desc.pack_start (cell_desc, false);
 
 		col_desc.set_cell_data_func (cell_desc, (cell_layout, cell, model, iter) => {
-			string desc;
-			DownloadManager mgr;
-			model.get (iter, 0, out mgr, 2, out desc, -1);
-			if (mgr.status == DownloadManager.Status.STARTED){
-				(cell as Gtk.CellRendererText).text = desc;
-			}
-			else{
-				(cell as Gtk.CellRendererText).text = "";
-			}
+			string txt;
+			model.get (iter, 2, out txt, -1);
+			(cell as Gtk.CellRendererText).text = txt;
 		});
 	}
 
 	private void tv_pkg_refresh() {
-		var model = new Gtk.ListStore(3, typeof(DownloadManager),typeof(int),typeof(string));
+		var model = new Gtk.ListStore(3, typeof(DownloadItem),typeof(int),typeof(string));
 
 		TreeIter iter;
-		foreach(DownloadManager mgr in download_list) {
+		foreach(var item in mgr.downloads) {
 			//add row
 			model.append(out iter);
-			model.set (iter, 0, mgr, 1, 0, 2, "", -1);
+			model.set (iter, 0, item, 1, 0, 2, "", -1);
 		}
 
 		tv_pkg.set_model(model);
@@ -274,60 +276,33 @@ public class DownloadWindow : Dialog {
 	// do work
 
 	private void download_begin(){
-		job_count = 0;
+
+		mgr.execute();
+		
 		update_timer_start();
-		start_next();
 	}
 
-	private void start_next(){
-		while ((job_count < job_count_max) && (!user_aborted)){
-			bool assigned = false;
-			foreach(var mgr in download_list){
-				if (mgr.status == DownloadManager.Status.PENDING){
-					mgr.download_complete.connect(download_complete_callback);
-					mgr.download_begin();
-					job_count++;
-					assigned = true;
-					break;
-				}
-			}
-			if (!assigned){
-				break; //nothing left to assign
-			}
-		}
-	}
-
-	private void download_complete_callback(){
-		job_count--;
-		start_next();
-		bool all_done = true;
-		foreach(var mgr in download_list){
-			if (mgr.status != DownloadManager.Status.FINISHED){
-				all_done = false;
-				break;
-			}
-		}
-		if (all_done){
-			this.response(Gtk.ResponseType.OK);
-		}
-	}
-	
 	public void update_timer_start(){
-		tmr_progress = Timeout.add(100, update_progress);
+		tmr_progress = Timeout.add(1000, update_progress);
 	}
 
-	private bool update_progress(){
+	public void update_timer_stop(){
 		if (tmr_progress > 0) {
 			Source.remove(tmr_progress);
 			tmr_progress = 0;
 		}
+	}
+	
+	private bool update_progress(){
+		
+		update_timer_stop();
 
 		int64 downrate = 0;
 		App.progress_count = 0;
-		foreach(var mgr in download_list){
-			App.progress_count += mgr.progress_count;
-			if (mgr.status == DownloadManager.Status.STARTED){
-				downrate += mgr.download_rate;
+		foreach(var item in mgr.downloads){
+			App.progress_count += item.bytes_received;
+			if (item.status == "RUNNING"){
+				downrate += item.rate;
 			}
 		}
 
@@ -342,34 +317,31 @@ public class DownloadWindow : Dialog {
 		gtk_do_events();
 
 		if (!user_aborted){
-			tmr_progress = Timeout.add(1000, update_progress);
+			update_timer_start();
 		}
 		return true;
 	}
 
 	public void update_status_all(){
+		
 		var model = (Gtk.ListStore) tv_pkg.model;
-		DownloadManager mgr = null;
 		int index = -1;
 		TreeIter iter;
 
 		bool iterExists = model.get_iter_first (out iter);
 		index++;
 
+		DownloadItem item;
+
 		while (iterExists){
-			model.get (iter, 0, out mgr, -1);
-			model.set (iter, 1, (int) (mgr.progress_percent));
-			model.set (iter, 2, mgr.status_line);
+			model.get (iter, 0, out item, -1);
+			model.set (iter, 1, (int) (item.progress * 100), -1);
+			model.set (iter, 2, item.status_line, -1);
+
+			//log_debug("progress=%d".printf(item.progress));
 
 			iterExists = model.iter_next (ref iter);
 			index++;
-		}
-	}
-	
-	public void update_timer_stop(){
-		if (tmr_progress > 0) {
-			Source.remove(tmr_progress);
-			tmr_progress = 0;
 		}
 	}
 

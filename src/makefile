@@ -26,10 +26,10 @@ all:
 	#build binaries
 
 	#aptik-gtk
-	valac -X -D'GETTEXT_PACKAGE="${app_name}"' --Xcc="-lm" -X -Wl,-rpath,/usr/share/${app_name}/libs ${define_symbols} --thread "Main.vala" "Classes.vala" "Utility.vala" "AptikGtk.vala" "MainWindow.vala" "PackageWindow.vala" "ProgressWindow.vala" "PpaWindow.vala" "ThemeWindow.vala" "MountWindow.vala" "ConfigWindow.vala" "CustomMessageDialog.vala" "DonationWindow.vala" "DownloadWindow.vala" "AboutWindow.vala" "Theme.vala" "Archive.vala" "Archiver.vala" "FileItem.vala" "TerminalWindow.vala" "UserAccountWindow.vala" "OneClickSettingsDialog.vala" "UserDataSettingsDialog.vala" "AppExcludeEntry.vala" "SystemUser.vala"  "CronTab.vala" -o ${app_name}-gtk --pkg glib-2.0 --pkg gio-unix-2.0 --pkg posix --pkg gtk+-3.0 --pkg $(vte_version) --pkg gee-0.8 --pkg json-glib-1.0 
+	valac -X -D'GETTEXT_PACKAGE="${app_name}"' --Xcc="-lm" -X -Wl,-rpath,/usr/share/${app_name}/libs ${define_symbols} --thread "Main.vala" "AptikGtk.vala" "MainWindow.vala" "PackageWindow.vala" "ProgressWindow.vala" "PpaWindow.vala" "ThemeWindow.vala" "MountWindow.vala" "ConfigWindow.vala" "CustomMessageDialog.vala" "DonationWindow.vala" "DownloadWindow.vala" "AboutWindow.vala" "TerminalWindow.vala" "UserAccountWindow.vala" "OneClickSettingsDialog.vala" "UserDataSettingsDialog.vala" Utility/*.vala -o ${app_name}-gtk --pkg glib-2.0 --pkg gio-unix-2.0 --pkg posix --pkg gtk+-3.0 --pkg $(vte_version) --pkg gee-0.8 --pkg json-glib-1.0 
 
 	#aptik
-	valac -X -D'GETTEXT_PACKAGE="${app_name}"' --Xcc="-lm" -X -Wl,-rpath,/usr/share/${app_name}/libs --thread "Main.vala" "Classes.vala" "Utility.vala" "CustomMessageDialog.vala" "AptikConsole.vala" "Theme.vala" "Archive.vala" "Archiver.vala" "FileItem.vala" "AppExcludeEntry.vala" "SystemUser.vala" "CronTab.vala" -o ${app_name} --pkg glib-2.0 --pkg gio-unix-2.0 --pkg posix --pkg gtk+-3.0 --pkg gee-0.8 --pkg libsoup-2.4 --pkg json-glib-1.0
+	valac -X -D'GETTEXT_PACKAGE="${app_name}"' --Xcc="-lm" -X -Wl,-rpath,/usr/share/${app_name}/libs --thread "Main.vala" "CustomMessageDialog.vala" "AptikConsole.vala" Utility/*.vala -o ${app_name} --pkg glib-2.0 --pkg gio-unix-2.0 --pkg posix --pkg gtk+-3.0 --pkg gee-0.8 --pkg libsoup-2.4 --pkg json-glib-1.0
 
 	#update translation template
 	xgettext --language=C --keyword=_ --copyright-holder='Tony George (teejee2008@gmail.com)' --package-name='${app_name}' --package-version='1.6' --msgid-bugs-address='teejee2008@gmail.com' --escape --sort-output -o ../${app_name}.pot *.vala

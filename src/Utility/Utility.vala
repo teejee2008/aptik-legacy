@@ -320,6 +320,13 @@ namespace TeeJee.FileSystem{
 
 	// directory helpers ----------------------
 
+	public bool dir_delete (string dir_path){
+		
+		/* Recursively deletes directory along with contents */
+		
+		return file_delete(dir_path);
+	}
+	
 	public int64 file_get_size(string file_path){
 		try{
 			File file = File.parse_name (file_path);
@@ -605,23 +612,49 @@ namespace TeeJee.FileSystem{
 		return output.split("\t")[0].strip();
 	}
 
-	public string format_file_size (uint64 size, bool binary_units = false){
-		int64 KB = binary_units ? 1024 : 1000;
-		int64 MB = binary_units ? 1024 * KB : 1000 * KB;
-		int64 GB = binary_units ? 1024 * MB : 1000 * MB;
+	public string format_file_size (
+		uint64 size, bool binary_units = false,
+		string unit = "", bool show_units = true, int decimals = 1){
+			
+		int64 unit_k = binary_units ? 1024 : 1000;
+		int64 unit_m = binary_units ? 1024 * unit_k : 1000 * unit_k;
+		int64 unit_g = binary_units ? 1024 * unit_m : 1000 * unit_m;
+		int64 unit_t = binary_units ? 1024 * unit_g : 1000 * unit_g;
 
-		if (size > GB){
-			return "%'0.1f %sB".printf(size/(1.0*GB), (binary_units)?"Gi":"G");
+		string txt = "";
+		
+		if ((size > unit_t) && ((unit.length == 0) || (unit == "t"))){
+			txt += ("%%'0.%df".printf(decimals)).printf(size / (1.0 * unit_t));
+			if (show_units){
+				txt += " %sB".printf(binary_units ? "Ti" : "T");
+			}
 		}
-		else if (size > MB){
-			return "%'0.1f %sB".printf(size/(1.0*MB), (binary_units)?"Mi":"M");
+		else if ((size > unit_g) && ((unit.length == 0) || (unit == "g"))){
+			txt += ("%%'0.%df".printf(decimals)).printf(size / (1.0 * unit_g));
+			if (show_units){
+				txt += " %sB".printf(binary_units ? "Gi" : "G");
+			}
 		}
-		else if (size > KB){
-			return "%'0.0f %sB".printf(size/(1.0*KB), (binary_units)?"Ki":"K");
+		else if ((size > unit_m) && ((unit.length == 0) || (unit == "m"))){
+			txt += ("%%'0.%df".printf(decimals)).printf(size / (1.0 * unit_m));
+			if (show_units){
+				txt += " %sB".printf(binary_units ? "Mi" : "M");
+			}
+		}
+		else if ((size > unit_k) && ((unit.length == 0) || (unit == "k"))){
+			txt += ("%%'0.%df".printf(decimals)).printf(size / (1.0 * unit_k));
+			if (show_units){
+				txt += " %sB".printf(binary_units ? "Ki" : "K");
+			}
 		}
 		else{
-			return "%'0lld B".printf(size);
+			txt += "%'0lld".printf(size);
+			if (show_units){
+				txt += " B";
+			}
 		}
+
+		return txt;
 	}
 	
 	public int chmod (string file, string permission){
@@ -735,6 +768,12 @@ namespace TeeJee.ProcessManagement{
 		//log_debug("TEMP_DIR=" + TEMP_DIR);
 	}
 
+	public string create_temp_subdir(){
+		var temp = "%s/%s".printf(TEMP_DIR, random_string());
+		dir_create(temp);
+		return temp;
+	}
+	
 	public int exec_sync (string cmd, out string? std_out = null, out string? std_err = null){
 
 		/* Executes single command synchronously.
@@ -760,7 +799,7 @@ namespace TeeJee.ProcessManagement{
 		 * std_out, std_err can be null. Output will be written to terminal if null.
 		 * */
 
-		string path = save_bash_script_temp(script, supress_errors);
+		string path = save_bash_script_temp(script, null, true, supress_errors);
 
 		try {
 
@@ -877,8 +916,11 @@ namespace TeeJee.ProcessManagement{
 	    }
 	}
 
-	public string? save_bash_script_temp (string commands, bool force_locale = true, bool supress_errors = false){
+public string? save_bash_script_temp (string commands, string? script_path = null,
+		bool force_locale = true, bool supress_errors = false, bool admin_mode = false){
 
+		string sh_path = script_path;
+		
 		/* Creates a temporary bash script with given commands
 		 * Returns the script file path */
 
@@ -893,30 +935,48 @@ namespace TeeJee.ProcessManagement{
 		script.append ("\n\nexitCode=$?\n");
 		script.append ("echo ${exitCode} > ${exitCode}\n");
 		script.append ("echo ${exitCode} > status\n");
-		
-		string script_path = get_temp_file_path() + ".sh";
+
+		if ((sh_path == null) || (sh_path.length == 0)){
+			sh_path = get_temp_file_path() + ".sh";
+		}
 
 		try{
 			//write script file
-			var file = File.new_for_path (script_path);
-			if (file.query_exists ()) { file.delete (); }
+			var file = File.new_for_path (sh_path);
+			if (file.query_exists ()) {
+				file.delete ();
+			}
 			var file_stream = file.create (FileCreateFlags.REPLACE_DESTINATION);
 			var data_stream = new DataOutputStream (file_stream);
 			data_stream.put_string (script.str);
 			data_stream.close();
 
 			// set execute permission
-			chmod (script_path, "u+x");
-
-			return script_path;
+			chmod (sh_path, "u+x");
 		}
 		catch (Error e) {
 			if (!supress_errors){
 				log_error (e.message);
 			}
+			return null;
 		}
 
-		return null;
+		if (admin_mode){
+			
+			var script_admin = "#!/bin/bash\n";
+			script_admin += "pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY";
+			script_admin += " '%s'".printf(escape_single_quote(sh_path));
+
+			string sh_file_admin = "";
+			sh_file_admin = GLib.Path.build_filename(file_parent(sh_path),"script-admin.sh");
+
+			save_bash_script_temp(script_admin, sh_file_admin, true, supress_errors);
+
+			return sh_file_admin;
+		}
+		else{
+			return sh_path;
+		}
 	}
 
 	public string get_temp_file_path(){
@@ -1991,18 +2051,6 @@ namespace TeeJee.System{
 		}
 	}
 
-	public string random_string(int length = 8, string charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"){
-		string random = "";
-
-		for(int i=0;i<length;i++){
-			int random_index = Random.int_range(0,charset.length);
-			string ch = charset.get_char(charset.index_of_nth_char(random_index)).to_string();
-			random += ch;
-		}
-
-		return random;
-	}
-	
 	public class ProcStats{
 		public double user = 0;
 		public double nice = 0;
@@ -2634,5 +2682,33 @@ namespace TeeJee.Misc {
 
 		return new DateTime.utc(year,month,day,hour,min,sec);
 	}
+
+	public string timestamp_for_path (){
+
+		/* Returns a formatted timestamp string */
+
+		Time t = Time.local (time_t ());
+		return t.format ("%Y-%d-%m_%H-%M-%S");
+	}
+
+	public string random_string(int length = 8, string charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"){
+		string random = "";
+
+		for(int i=0;i<length;i++){
+			int random_index = Random.int_range(0,charset.length);
+			string ch = charset.get_char(charset.index_of_nth_char(random_index)).to_string();
+			random += ch;
+		}
+
+		return random;
+	}
 	
+	public bool is_numeric(string text){
+		for (int i = 0; i < text.length; i++){
+			if (!text[i].isdigit()){
+				return false;
+			}
+		}
+		return true;
+	}
 }

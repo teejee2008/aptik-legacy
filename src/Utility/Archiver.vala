@@ -244,7 +244,7 @@ public class Archiver : GLib.Object {
 			
 			timer.stop();
 
-			if (status != AppStatus.STOPPED) {
+			if (status != AppStatus.CANCELLED) {
 				status = AppStatus.FINISHED;
 			}
 		}
@@ -485,7 +485,7 @@ public class Archiver : GLib.Object {
 
 		process_kill(procID);
 
-		status = AppStatus.STOPPED;
+		status = AppStatus.CANCELLED;
 	}
 
 	public void set_priority() {
@@ -511,14 +511,6 @@ public class Archiver : GLib.Object {
 			}
 		}
 	}
-}
-
-public enum AppStatus {
-	NOTSTARTED,
-	RUNNING,
-	PAUSED,
-	FINISHED,
-	STOPPED
 }
 
 public enum AppMode {
