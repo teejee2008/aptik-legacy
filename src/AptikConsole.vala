@@ -535,9 +535,9 @@ public class AptikConsole : GLib.Object {
 		}
 	}
 
-	public void print_config_list(Gee.ArrayList<AppConfig> config_list) {
-		foreach(AppConfig config in config_list){
-			log_msg("%-60s%10s".printf(config.name,config.size));
+	public void print_config_list(Gee.ArrayList<AppExcludeEntry> config_list) {
+		foreach(var config in config_list){
+			log_msg("%-60s%10s".printf(config.name, format_file_size(config.size)));
 			//TODO: show size in bytes with commas
 		}
 	}
@@ -802,8 +802,8 @@ public class AptikConsole : GLib.Object {
 				App.select_user(username);
 
 				var list = App.list_app_config_directories_from_home();
-				foreach(AppConfig conf in list){
-					conf.is_selected = true;
+				foreach(var conf in list){
+					conf.enabled = true;
 				}
 
 				var status = App.backup_app_settings_all(list);
@@ -814,8 +814,8 @@ public class AptikConsole : GLib.Object {
 		}
 		else{
 			var list = App.list_app_config_directories_from_home();
-			foreach(AppConfig conf in list){
-				conf.is_selected = true;
+			foreach(var conf in list){
+				conf.enabled = true;
 			}
 
 			var status = App.backup_app_settings_all(list);
@@ -841,8 +841,8 @@ public class AptikConsole : GLib.Object {
 				App.select_user(username);
 				
 				var list = App.list_app_config_directories_from_backup();
-				foreach(AppConfig conf in list){
-					conf.is_selected = true;
+				foreach(var conf in list){
+					conf.enabled = true;
 				}
 
 				var status = App.restore_app_settings_all(list);
@@ -853,8 +853,8 @@ public class AptikConsole : GLib.Object {
 		}
 		else{
 			var list = App.list_app_config_directories_from_backup();
-			foreach(AppConfig conf in list){
-				conf.is_selected = true;
+			foreach(var conf in list){
+				conf.enabled = true;
 			}
 
 			var status = App.restore_app_settings_all(list);

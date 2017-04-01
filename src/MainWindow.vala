@@ -468,7 +468,7 @@ public class MainWindow : Window {
 			if (!check_backup_folder()) {
 				return;
 			}
-			if (!check_backup_subfolder("configs")){
+			if (!check_backup_subfolder("app-settings")){
 				return;
 			}
 

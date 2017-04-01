@@ -34,6 +34,7 @@ using TeeJee.Misc;
 using TeeJee.GtkHelper;
 
 public class ConfigWindow : Window {
+	
 	private Gtk.Box vbox_main;
 
 	private Button btn_restore;
@@ -42,11 +43,11 @@ public class ConfigWindow : Window {
 	private Button btn_cancel;
 	private Button btn_select_all;
 	private Button btn_select_none;
-	private TreeView tv_config;
+	private TreeView treeview;
 	private Gtk.ComboBox cmb_username;
 	private Gtk.Box hbox_filter;
 	
-	private Gee.ArrayList<AppConfig> config_list_user;
+	private Gee.ArrayList<AppExcludeEntry> config_list_user;
 	
 	private int def_width = 550;
 	private int def_height = 450;
@@ -171,18 +172,25 @@ public class ConfigWindow : Window {
 
 		index++;
 		store.append(out iter);
+		store.set (iter, 0, "All Users", 1, "", -1);
+			
+		index++;
+		store.append(out iter);
 		store.set (iter, 0, _("root"), 1, "root", -1);
 
-		foreach (string username in list_dir_names("/home")) {
-			if (username == "PinguyBuilder"){
-				continue;
-			}
+		SystemUser.query_users();
+		
+		foreach (var user in SystemUser.all_users_sorted) {
+			
+			if (user.name == "PinguyBuilder"){ continue; }
+
+			if (user.is_system){ continue; }
 			
 			index++;
 			store.append(out iter);
-			store.set (iter, 0, username, 1, username, -1);
+			store.set (iter, 0, user.name, 1, user.name, -1);
 
-			if (App.user_login == username){
+			if (App.user_login == user.name){
 				selected = index;
 			}
 		}
@@ -193,17 +201,18 @@ public class ConfigWindow : Window {
 
 
 	private void init_treeview() {
-		//tv_config
-		tv_config = new TreeView();
-		tv_config.get_selection().mode = SelectionMode.MULTIPLE;
-		tv_config.headers_clickable = true;
-		tv_config.set_rules_hint (true);
-		//tv_config.set_tooltip_column(3);
+		
+		//treeview
+		treeview = new TreeView();
+		treeview.get_selection().mode = SelectionMode.MULTIPLE;
+		treeview.headers_clickable = true;
+		treeview.set_rules_hint (true);
+		treeview.set_tooltip_column(2);
 
 		//sw_config
 		ScrolledWindow sw_config = new ScrolledWindow(null, null);
 		sw_config.set_shadow_type (ShadowType.ETCHED_IN);
-		sw_config.add (tv_config);
+		sw_config.add (treeview);
 		sw_config.expand = true;
 		vbox_main.add(sw_config);
 
@@ -214,26 +223,26 @@ public class ConfigWindow : Window {
 		CellRendererToggle cell_config_select = new CellRendererToggle ();
 		cell_config_select.activatable = true;
 		col_config_select.pack_start (cell_config_select, false);
-		tv_config.append_column(col_config_select);
+		treeview.append_column(col_config_select);
 
 		col_config_select.set_cell_data_func (cell_config_select, (cell_layout, cell, model, iter) => {
 			bool selected;
-			AppConfig config;
+			AppExcludeEntry config;
 			model.get (iter, 0, out selected, 1, out config, -1);
 			(cell as Gtk.CellRendererToggle).active = selected;
 		});
 
 		cell_config_select.toggled.connect((path) => {
-			var model = (Gtk.ListStore)tv_config.model;
+			var model = (Gtk.ListStore)treeview.model;
 			bool selected;
-			AppConfig config;
+			AppExcludeEntry config;
 			TreeIter iter;
 
 			model.get_iter_from_string (out iter, path);
 			model.get (iter, 0, out selected);
 			model.get (iter, 1, out config);
 			model.set (iter, 0, !selected);
-			config.is_selected = !selected;
+			config.enabled = !selected;
 		});
 
 		//col_config_name ----------------------
@@ -242,14 +251,14 @@ public class ConfigWindow : Window {
 		col_config_name.title = _("Path");
 		col_config_name.resizable = true;
 		col_config_name.min_width = 180;
-		tv_config.append_column(col_config_name);
+		treeview.append_column(col_config_name);
 
 		CellRendererText cell_config_name = new CellRendererText ();
 		cell_config_name.ellipsize = Pango.EllipsizeMode.END;
 		col_config_name.pack_start (cell_config_name, false);
 
 		col_config_name.set_cell_data_func (cell_config_name, (cell_layout, cell, model, iter) => {
-			AppConfig config;
+			AppExcludeEntry config;
 			model.get (iter, 1, out config, -1);
 			(cell as Gtk.CellRendererText).text = config.name;
 		});
@@ -257,17 +266,18 @@ public class ConfigWindow : Window {
 		TreeViewColumn col_config_size = new TreeViewColumn();
 		col_config_size.title = _("Size");
 		col_config_size.resizable = true;
-		tv_config.append_column(col_config_size);
+		treeview.append_column(col_config_size);
 
 		CellRendererText cell_config_size = new CellRendererText ();
 		cell_config_size.xalign = (float) 1.0;
 		col_config_size.pack_start (cell_config_size, false);
 
 		col_config_size.set_cell_data_func (cell_config_size, (cell_layout, cell, model, iter) => {
-			AppConfig config;
+			AppExcludeEntry config;
 			model.get (iter, 1, out config, -1);
-			(cell as Gtk.CellRendererText).text = config.size;
-			if (config.size.contains("M") || config.size.contains("G")) {
+			string size = format_file_size(config.size);
+			(cell as Gtk.CellRendererText).text = size;
+			if (size.contains("M") || size.contains("G")) {
 				(cell as Gtk.CellRendererText).foreground = "red";
 			}
 			else {
@@ -280,27 +290,32 @@ public class ConfigWindow : Window {
 		TreeViewColumn col_config_desc = new TreeViewColumn();
 		col_config_desc.title = _("Description");
 		col_config_desc.resizable = true;
-		tv_config.append_column(col_config_desc);
+		treeview.append_column(col_config_desc);
 
 		CellRendererText cell_config_desc = new CellRendererText ();
 		cell_config_desc.ellipsize = Pango.EllipsizeMode.END;
 		col_config_desc.pack_start (cell_config_desc, false);
 
 		col_config_desc.set_cell_data_func (cell_config_desc, (cell_layout, cell, model, iter) => {
-			AppConfig config;
+			AppExcludeEntry config;
 			model.get (iter, 1, out config, -1);
 			(cell as Gtk.CellRendererText).text = config.description;
 		});
 	}
 
-	private void tv_config_refresh() {
-		var model = new Gtk.ListStore(2, typeof(bool), typeof(AppConfig));
-		tv_config.model = model;
+	private void treeview_refresh() {
 
-		foreach(AppConfig entry in config_list_user) {
+		log_debug("ConfigWindow: treeview_refresh()");
+		
+		var model = new Gtk.ListStore(3, typeof(bool), typeof(AppExcludeEntry), typeof(string));
+		treeview.model = model;
+
+		foreach(var entry in config_list_user) {
 			TreeIter iter;
 			model.append(out iter);
-			model.set (iter, 0, entry.is_selected, 1, entry, -1);
+			model.set (iter, 0, entry.enabled);
+			model.set (iter, 1, entry);
+			model.set (iter, 2, entry.tooltip_text());
 		}
 	}
 
@@ -314,20 +329,20 @@ public class ConfigWindow : Window {
 		btn_select_all = new Gtk.Button.with_label (" " + _("Select All") + " ");
 		hbox_config_actions.pack_start (btn_select_all, true, true, 0);
 		btn_select_all.clicked.connect(() => {
-			foreach(AppConfig config in config_list_user) {
-				config.is_selected = true;
+			foreach(var config in config_list_user) {
+				config.enabled = true;
 			}
-			tv_config_refresh();
+			treeview_refresh();
 		});
 
 		//btn_select_none
 		btn_select_none = new Gtk.Button.with_label (" " + _("Select None") + " ");
 		hbox_config_actions.pack_start (btn_select_none, true, true, 0);
 		btn_select_none.clicked.connect(() => {
-			foreach(AppConfig config in config_list_user) {
-				config.is_selected = false;
+			foreach(var config in config_list_user) {
+				config.enabled = false;
 			}
-			tv_config_refresh();
+			treeview_refresh();
 		});
 
 		//btn_backup
@@ -377,13 +392,17 @@ public class ConfigWindow : Window {
 	private void backup_init() {
 		gtk_set_busy(true, this);
 
-		config_list_user = App.list_app_config_directories_from_home();
+		log_debug("ConfigWindow: restore_app_settings_init()");
 
-		foreach(AppConfig config in config_list_user) {
-			config.is_selected = true;
+		config_list_user = App.list_app_config_directories_from_home();
+		
+		foreach(var config in config_list_user) {
+			config.enabled = true;
 		}
 			
-		tv_config_refresh();
+		treeview_refresh();
+
+		log_debug("ConfigWindow: restore_app_settings_init(): ok");
 
 		gtk_set_busy(false, this);
 	}
@@ -391,8 +410,8 @@ public class ConfigWindow : Window {
 	private void btn_backup_clicked() {
 		//check if no action required
 		bool none_selected = true;
-		foreach(AppConfig config in config_list_user) {
-			if (config.is_selected) {
+		foreach(var config in config_list_user) {
+			if (config.enabled) {
 				none_selected = false;
 				break;
 			}
@@ -419,8 +438,8 @@ public class ConfigWindow : Window {
 
 		bool ok = true;
 		
-		foreach(AppConfig config in config_list_user){
-			if (!config.is_selected) { continue; }
+		foreach(var config in config_list_user){
+			if (!config.enabled) { continue; }
 			
 			bool status = App.backup_app_settings_single(config);
 			ok = ok && status;
@@ -450,13 +469,17 @@ public class ConfigWindow : Window {
 	private void restore_init() {
 		gtk_set_busy(true, this);
 
+		log_debug("ConfigWindow: restore_init()");
+		
 		config_list_user = App.list_app_config_directories_from_backup();
 
-		foreach(AppConfig config in config_list_user) {
-			config.is_selected = true;
+		foreach(var config in config_list_user) {
+			config.enabled = true;
 		}
 		
-		tv_config_refresh();
+		treeview_refresh();
+
+		log_debug("ConfigWindow: restore_init(): ok");
 
 		gtk_set_busy(false, this);
 	}
@@ -464,8 +487,8 @@ public class ConfigWindow : Window {
 	private void btn_restore_clicked() {
 		//check if no action required
 		bool none_selected = true;
-		foreach(AppConfig conf in config_list_user) {
-			if (conf.is_selected) {
+		foreach(var conf in config_list_user) {
+			if (conf.enabled) {
 				none_selected = false;
 				break;
 			}
@@ -506,8 +529,8 @@ public class ConfigWindow : Window {
 		dlg.update_status_line(true);
 
 		bool ok = true;
-		foreach(AppConfig config in config_list_user){
-			if (!config.is_selected) { continue; }
+		foreach(var config in config_list_user){
+			if (!config.enabled) { continue; }
 			
 			bool status = App.restore_app_settings_single(config);
 			ok = ok && status;
@@ -541,8 +564,8 @@ public class ConfigWindow : Window {
 	private void btn_reset_clicked() {
 		//check if no action required
 		bool none_selected = true;
-		foreach(AppConfig conf in config_list_user) {
-			if (conf.is_selected) {
+		foreach(var conf in config_list_user) {
+			if (conf.enabled) {
 				none_selected = false;
 				break;
 			}
