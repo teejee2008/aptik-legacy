@@ -156,7 +156,9 @@ public class ConfigWindow : Window {
 		});
 
 		cmb_username.changed.connect(()=>{
-			App.select_user(gtk_combobox_get_value(cmb_username,1,"root"));
+			
+			App.select_user(gtk_combobox_get_value(cmb_username,1,""));
+			
 			if (is_restore_view){
 				restore_init();
 			}
@@ -180,9 +182,6 @@ public class ConfigWindow : Window {
 		SystemUser.query_users();
 		
 		foreach (var user in SystemUser.all_users_sorted) {
-			
-			if (user.name == "PinguyBuilder"){ continue; }
-
 			if (user.is_system){ continue; }
 			
 			index++;

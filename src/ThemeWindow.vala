@@ -174,11 +174,13 @@ public class ThemeWindow : Window {
 		});
 
 		cmb_username.changed.connect(()=>{
-			App.select_user(gtk_combobox_get_value(cmb_username,1,"(all)"));
+
+			string username = gtk_combobox_get_value(cmb_username,1,"");
+			App.select_user(username);
 			
 			if (is_restore_view){
-				foreach(Theme theme in theme_list_user){
-					theme.check_installed(App.current_user.name);
+				foreach(var theme in theme_list_user){
+					theme.check_installed(username);
 					theme.is_selected = !theme.is_installed;
 				}
 				tv_theme_refresh();
@@ -210,29 +212,16 @@ public class ThemeWindow : Window {
 		var store = new Gtk.ListStore(2, typeof (string), typeof (string));;
 		TreeIter iter;
 
-		int selected = 0;
-		int index = -1;
+		store.append(out iter);
+		store.set (iter, 0, _("All Users"), 1, "", -1);
+		
+		SystemUser.query_users();
+		
+		foreach (var user in SystemUser.all_users_sorted) {
+			if (user.is_system){ continue; }
 
-		index++;
-		store.append(out iter);
-		store.set (iter, 0, _("All Users"), 1, "(all)", -1);
-		
-		index++;
-		store.append(out iter);
-		store.set (iter, 0, _("root"), 1, "root", -1);
-		
-		foreach (string username in list_dir_names("/home")) {
-			if (username == "PinguyBuilder"){
-				continue;
-			}
-			
-			index++;
 			store.append(out iter);
-			store.set (iter, 0, username, 1, username, -1);
-
-			if (App.current_user.name == username){
-				selected = index;
-			}
+			store.set (iter, 0, user.name, 1, user.name, -1);
 		}
 		
 		cmb_username.set_model (store);
@@ -449,7 +438,7 @@ public class ThemeWindow : Window {
 
 		TreeIter iter;
 		string tt = "";
-		foreach(Theme theme in theme_list_user) {
+		foreach(var theme in theme_list_user) {
 			if ((theme_type != Theme.ThemeType.ALL) && (!theme.type_list.contains((Theme.ThemeType)theme_type))){
 				continue;
 			}
@@ -694,8 +683,8 @@ public class ThemeWindow : Window {
 	private void restore_init_thread() {
 		theme_list_user = Theme.list_themes_archived(App.backup_dir);
 		
-		foreach(Theme theme in theme_list_user){
-			theme.check_installed(App.current_user.name);
+		foreach(var theme in theme_list_user){
+			theme.check_installed("");
 		}
 		
 		is_running = false;
