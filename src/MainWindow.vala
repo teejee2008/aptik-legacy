@@ -1164,6 +1164,9 @@ public class MainWindow : Window {
 			}
 			
 			var cmd = (App.backup_mode) ? task.backup_cmd : task.restore_cmd;
+
+			log_debug(cmd);
+			
 			sh += "echo '%s'\n".printf(string.nfill(70,'='));
 			sh += "echo '%s'\n".printf(task.display_name);
 			sh += "echo '%s'\n".printf(string.nfill(70,'='));

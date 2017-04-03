@@ -251,6 +251,12 @@ public class AppExcludeEntry : GLib.Object{
 
 		var bytes = dir_size(disk_path);
 		var file_count = dir_count(disk_path);
+
+		if (file_count == 0){
+			
+			return; // skip empty directories
+		}
+		log_debug("count=%lld, %s".printf(file_count, disk_path));
 		
 		AppExcludeEntry entry = null;
 		if (app_map.has_key(name)){
