@@ -54,7 +54,7 @@ public class OneClickSettingsDialog : Gtk.Dialog {
 		
 		// get content area
 		var vbox_main = get_content_area();
-		vbox_main.spacing = 12;
+		vbox_main.spacing = 6;
 		vbox_main.margin = 6;
 		//vbox_main.margin_bottom = 12;
 		vbox_main.set_size_request(400,400);
@@ -130,7 +130,7 @@ public class OneClickSettingsDialog : Gtk.Dialog {
 
 		var hbox = new Gtk.Box (Orientation.HORIZONTAL, 6);
 		//hbox.homogeneous = true;
-		//hbox.margin_left = 6;
+		//hbox.margin_top = 6;
 		vbox_main.add(hbox);
 
 		var tt = _("[Application Settings Backup]\n\nSome applications such as Steam and Wine store a large amount of data in their configuration directories (~/.local/share/Steam and ~/.wine). Setting a limit will skip the backup for these applications. Keep the limit as 0 to backup the settings for all apps.");
@@ -147,6 +147,13 @@ public class OneClickSettingsDialog : Gtk.Dialog {
 		spin.set_tooltip_text(tt);
 		hbox.add (spin);
 		spin_size_limit = spin;
+
+		spin.set_value(App.arg_size_limit / 1024.0);
+
+		//buffer
+		label = new Label("");
+		label.margin_top = 36;
+		vbox_main.add(label);
 
 		// actions -------------------------
 		
@@ -196,6 +203,8 @@ public class OneClickSettingsDialog : Gtk.Dialog {
 		App.selected_tasks = s;
 
 		App.arg_size_limit = (uint64) (spin_size_limit.get_value() * 1024);
+
+		App.save_app_config();
 	}
 }
 

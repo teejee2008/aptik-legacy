@@ -281,6 +281,7 @@ public class Main : GLib.Object {
 
 		config.set_string_member("backup_dir", backup_dir);
 		config.set_string_member("selected_tasks", selected_tasks);
+		config.set_string_member("app_settings_size_limit", arg_size_limit.to_string());
 
 		var json = new Json.Generator();
 		json.pretty = true;
@@ -321,6 +322,8 @@ public class Main : GLib.Object {
 		}
 
 		selected_tasks = json_get_string(config, "selected_tasks", "");
+
+		arg_size_limit = json_get_int64(config, "app_settings_size_limit", 0);
 
 		if (gui_mode) {
 			log_msg(_("App config loaded") + ": '%s'".printf(this.app_conf_path));
