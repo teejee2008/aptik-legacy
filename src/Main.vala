@@ -167,7 +167,7 @@ public class Main : GLib.Object {
 		}
 
 		SystemUser.query_users();
-		select_user(get_username());
+		select_user("");
 
 		NATIVE_ARCH = execute_command_sync_get_output("dpkg --print-architecture").strip();
 
@@ -176,7 +176,7 @@ public class Main : GLib.Object {
 		init_user_list_home();
 	}
 
-	public void select_user(string _username){
+	public void select_user(string _username, bool print_message = true){
 
 		string username = _username;
 		
@@ -195,13 +195,23 @@ public class Main : GLib.Object {
 			current_user = SystemUser.all_users["root"];
 		}
 
+		if (print_message){
+			log_msg(string.nfill(70,'-'));
+			if (all_users){
+				log_msg(_("Selected user: (All Users)"));
+			}
+			else{
+				log_msg(_("Selected user: %s, %s").printf(current_user.name, current_user.home_path));
+			}
+			log_msg(string.nfill(70,'-'));
+			log_msg("");
+		}
+	}
+
+	public void print_user(SystemUser user){
+		log_msg("");
 		log_msg(string.nfill(70,'-'));
-		if (all_users){
-			log_msg(_("Selected user: (All Users)"));
-		}
-		else{
-			log_msg(_("Selected user: %s, %s").printf(current_user.name, current_user.home_path));
-		}
+		log_msg(_("User: %s, %s").printf(user.name, user.home_path));
 		log_msg(string.nfill(70,'-'));
 		log_msg("");
 	}
@@ -1712,6 +1722,8 @@ public class Main : GLib.Object {
 
 		foreach (var user in selected_users) {
 
+			print_user(user);
+			
 			foreach(var config in config_list) {
 				
 				if (!config.enabled) { continue; }

@@ -166,13 +166,11 @@ public class AptikConsole : GLib.Object {
 			return false;
 		}
 
-		if (App.current_user.name.length == 0){
-			App.select_user("");
-		}
-		
+		//App.select_user("", false); // set by main
+
 		//parse options
-		for (int k = 1; k < args.length; k++) // Oth arg is app path
-		{
+		for (int k = 1; k < args.length; k++) {// Oth arg is app path
+
 			switch (args[k].down()) {
 			case "--desc":
 			case "--show-desc":
@@ -215,11 +213,9 @@ public class AptikConsole : GLib.Object {
 			}
 		}
 
-		
-
 		//parse commands
-		for (int k = 1; k < args.length; k++) // Oth arg is app path
-		{
+		for (int k = 1; k < args.length; k++) { // Oth arg is app path
+
 			switch (args[k].down()) {
 
 			// ppa --------------------------------------------
