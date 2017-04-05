@@ -58,7 +58,7 @@ public class DownloadTask : AsyncTask{
 		
 		string std_out, std_err;
 		
-		string cmd = "aria2c --version";
+		string cmd = "aria2c --version --max-concurrent-downloads=5 ";
 
 		log_debug(cmd);
 		
