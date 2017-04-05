@@ -79,7 +79,8 @@ public class DownloadWindow : Dialog {
 		package_list = _package_list;
 
 		mgr = new DownloadTask();
-		mgr.status_in_kb = true;
+		mgr.concurrent_downloads = 5;
+		mgr.status_in_kb = false;
 
 		mgr.task_complete.connect(() => {
 			this.response(Gtk.ResponseType.OK);
@@ -88,6 +89,7 @@ public class DownloadWindow : Dialog {
 		foreach(var pkg in package_list){
 			var item = new DownloadItem(pkg.deb_uri, "/var/cache/apt/archives", pkg.deb_file_name);
 			item.name = pkg.name;
+			item.bytes_total = pkg.deb_size;
 			mgr.add_to_queue(item);
 			
 			App.progress_total += pkg.deb_size;

@@ -58,7 +58,7 @@ public class DownloadTask : AsyncTask{
 		
 		string std_out, std_err;
 		
-		string cmd = "aria2c --version --max-concurrent-downloads=5 ";
+		string cmd = "aria2c --version ";
 
 		log_debug(cmd);
 		
@@ -191,6 +191,16 @@ public class DownloadTask : AsyncTask{
 		
 		if (regex["file-complete"].match(line, 0, out match)) {
 			//log_debug("match: file-complete: " + line);
+			//12/03 21:15:33 [NOTICE] Download complete: /home/teejee/.cache/ukuu/v4.7.8/CHANGES
+			string path = match.fetch(1).strip();
+			foreach(var item in downloads){
+				if (item.file_path_partial == path){
+					//log_debug("item found");
+					item.status = "OK";
+					item.bytes_received = item.bytes_total;
+					break;
+				}
+			}
 			prg_count++;
 		}
 		else if (regex["file-status"].match(line, 0, out match)) {
@@ -210,14 +220,17 @@ public class DownloadTask : AsyncTask{
 			if (map.has_key(gid_key)){
 				map[gid_key].rate = rate;
 				map[gid_key].status = status;
+				map[gid_key].bytes_received = map[gid_key].bytes_total;
 			}
 		}
 		else if (regex["file-progress"].match(line, 0, out match)) {
-
+	
 			//log_debug("match: file-progress: " + line);
 			
 			// Note: HTML files don't have content length, so bytes_total will be 0
 
+			//[#4df0c7 19283968B/45095814B(42%) CN:1 DL:105404B ETA:4m4s]
+			
 			var gid_key = match.fetch(1).strip();
 			var received = int64.parse(match.fetch(2).strip());
 			var total = int64.parse(match.fetch(3).strip());
@@ -345,19 +358,27 @@ public class DownloadItem : GLib.Object{
 
 	public string status_line {
 		owned get{
-			if (task.status_in_kb){
-				return "%s / %s, %s/s (%s)".printf(
-					format_file_size(bytes_received, false, "", true, 1),
-					format_file_size(bytes_total, false, "", true, 1),
-					format_file_size(rate, false, "", true, 1),
-					eta).replace("\n","");
+			if (bytes_received == 0){
+				return _("Waiting");
+			}
+			else if (status == "OK"){
+				return _("Done");
 			}
 			else{
-				return "%s / %s, %s/s (%s)".printf(
-					format_file_size(bytes_received),
-					format_file_size(bytes_total),
-					format_file_size(rate),
-					eta).replace("\n","");
+				if (task.status_in_kb){
+					return "%s, %s/s (%s)".printf(
+						format_file_size(bytes_received, false, "k", false, 1),
+						//format_file_size(bytes_total, false, "k", true, 1),
+						format_file_size(rate, false, "k", true, 1),
+						eta).replace("\n","");
+				}
+				else{
+					return "%s, %s/s (%s)".printf(
+						format_file_size(bytes_received, false, "", false, 1),
+						//format_file_size(bytes_total, false, "", true, 1),
+						format_file_size(rate, false, "", true, 1),
+						eta).replace("\n","");
+				}
 			}
 		}
 	}

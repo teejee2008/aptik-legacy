@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2017-04-03 21:29+0530\n"
+"POT-Creation-Date: 2017-04-05 21:08+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -479,7 +479,7 @@ msgstr ""
 msgid "Donations"
 msgstr ""
 
-#: DownloadWindow.vala:101
+#: DownloadWindow.vala:103
 msgid "Download"
 msgstr ""
 
@@ -487,7 +487,7 @@ msgstr ""
 msgid "Downloaded Packages"
 msgstr ""
 
-#: DownloadWindow.vala:122
+#: DownloadWindow.vala:124
 msgid "Downloading packages..."
 msgstr ""
 
@@ -631,7 +631,7 @@ msgstr ""
 msgid "Failed to save file"
 msgstr ""
 
-#: Utility.vala:1915
+#: Utility.vala:1896
 msgid "Failed to set ownership"
 msgstr ""
 
@@ -946,7 +946,7 @@ msgstr ""
 msgid "Missing Dependencies"
 msgstr ""
 
-#: Utility.vala:1438
+#: Utility.vala:1419
 msgid "Missing Icon"
 msgstr ""
 
@@ -1086,7 +1086,7 @@ msgstr ""
 msgid "PPA is Not Added"
 msgstr ""
 
-#: DownloadWindow.vala:226 PackageManagerWindow.vala:381 PackageWindow.vala:300
+#: DownloadWindow.vala:228 PackageManagerWindow.vala:381 PackageWindow.vala:300
 msgid "Package"
 msgstr ""
 
@@ -1178,7 +1178,7 @@ msgstr ""
 msgid "Print debug information"
 msgstr ""
 
-#: DownloadWindow.vala:245
+#: DownloadWindow.vala:247
 msgid "Progress"
 msgstr ""
 
@@ -1401,7 +1401,7 @@ msgstr ""
 msgid "Selected user: (All Users)"
 msgstr ""
 
-#: Utility.vala:1911
+#: Utility.vala:1892
 #, c-format
 msgid "Set owner: %s, dir: %s"
 msgstr ""
@@ -1469,7 +1469,7 @@ msgstr ""
 msgid "Showing unselected packages"
 msgstr ""
 
-#: ConfigWindow.vala:274 DownloadWindow.vala:207
+#: ConfigWindow.vala:274 DownloadWindow.vala:209
 msgid "Size"
 msgstr ""
 
@@ -1490,11 +1490,11 @@ msgstr ""
 msgid "Specify password for encrypting and decrypting backups"
 msgstr ""
 
-#: DownloadWindow.vala:189
+#: DownloadWindow.vala:191
 msgid "Status"
 msgstr ""
 
-#: Utility.vala:1129
+#: Utility.vala:1110
 msgid "Stopped"
 msgstr ""
 
