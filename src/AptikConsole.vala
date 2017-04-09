@@ -850,16 +850,18 @@ public class AptikConsole : GLib.Object {
 		
 		var list = Theme.list_themes_archived(App.backup_dir);
 
+		string username = App.all_users ? "" : App.current_user.name;
+		
 		foreach(var theme in list){
-			theme.check_installed(App.current_user.name);
+			theme.check_installed(username);
 			theme.is_selected = !theme.is_installed;
 		}
-		
+
 		foreach(var theme in list) {
 			
 			if (theme.is_selected && !theme.is_installed) {
-				
-				theme.unzip(App.current_user.name, false);
+
+				theme.unzip(username, false);
 				
 				while (theme.is_running) {
 					sleep(500);

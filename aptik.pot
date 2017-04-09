@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2017-04-06 23:16+0530\n"
+"POT-Creation-Date: 2017-04-09 14:47+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -213,7 +213,7 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
-#: AptikConsole.vala:1016 AptikConsole.vala:1051 ConfigWindow.vala:363
+#: AptikConsole.vala:1018 AptikConsole.vala:1053 ConfigWindow.vala:363
 #: MainWindow.vala:288 MainWindow.vala:338 MainWindow.vala:367
 #: MainWindow.vala:417 MainWindow.vala:446 MainWindow.vala:494
 #: MainWindow.vala:542 MainWindow.vala:571 MainWindow.vala:600
@@ -547,7 +547,7 @@ msgstr ""
 msgid "Extracting"
 msgstr ""
 
-#: ConfigWindow.vala:541 ThemeWindow.vala:728
+#: ConfigWindow.vala:541 ThemeWindow.vala:729
 msgid "Extracting..."
 msgstr ""
 
@@ -1017,7 +1017,7 @@ msgid "NotInstalled"
 msgstr ""
 
 #: ConfigWindow.vala:510 ConfigWindow.vala:592 PackageWindow.vala:1014
-#: PackageWindow.vala:1034 ThemeWindow.vala:705
+#: PackageWindow.vala:1034 ThemeWindow.vala:706
 msgid "Nothing To Do"
 msgstr ""
 
@@ -1166,7 +1166,7 @@ msgstr ""
 #: ConfigWindow.vala:440 ConfigWindow.vala:533 ConfigWindow.vala:615
 #: MainWindow.vala:883 MainWindow.vala:933 PackageWindow.vala:836
 #: PackageWindow.vala:947 PpaWindow.vala:370 PpaWindow.vala:450
-#: PpaWindow.vala:507 ThemeWindow.vala:582 ThemeWindow.vala:713
+#: PpaWindow.vala:507 ThemeWindow.vala:582 ThemeWindow.vala:714
 msgid "Preparing..."
 msgstr ""
 
@@ -1218,7 +1218,7 @@ msgid ""
 "application."
 msgstr ""
 
-#: AptikConsole.vala:1016 AptikConsole.vala:1051 ConfigWindow.vala:110
+#: AptikConsole.vala:1018 AptikConsole.vala:1053 ConfigWindow.vala:110
 #: ConfigWindow.vala:369 MainWindow.vala:305 MainWindow.vala:346
 #: MainWindow.vala:384 MainWindow.vala:425 MainWindow.vala:462
 #: MainWindow.vala:510 MainWindow.vala:550 MainWindow.vala:579
@@ -1388,7 +1388,7 @@ msgstr ""
 msgid "Selected packages are already installed"
 msgstr ""
 
-#: ThemeWindow.vala:706
+#: ThemeWindow.vala:707
 msgid "Selected themes are already installed"
 msgstr ""
 

@@ -177,7 +177,7 @@ public class ThemeWindow : Window {
 
 			string username = gtk_combobox_get_value(cmb_username,1,"");
 			App.select_user(username);
-			
+
 			if (is_restore_view){
 				foreach(var theme in theme_list_user){
 					theme.check_installed(username);
@@ -589,7 +589,7 @@ public class ThemeWindow : Window {
 		
 		App.progress_total = 0;
 		App.progress_count = 0;
-		foreach(Theme theme in theme_list_user) {
+		foreach(var theme in theme_list_user) {
 			if (theme.is_selected) {
 				App.progress_total += theme.progress_total;
 			}
@@ -602,7 +602,7 @@ public class ThemeWindow : Window {
 		// zip themes --------------------------------------
 		
 		int64 count_temp = 0;
-		foreach(Theme theme in theme_list_user) {
+		foreach(var theme in theme_list_user) {
 			if (App.cancelled){
 				break;
 			}
@@ -681,6 +681,7 @@ public class ThemeWindow : Window {
 	}
 
 	private void restore_init_thread() {
+		
 		theme_list_user = Theme.list_themes_archived(App.backup_dir);
 		
 		foreach(var theme in theme_list_user){
@@ -695,7 +696,7 @@ public class ThemeWindow : Window {
 		// check if no action required ----------------------------
 		
 		bool none_selected = true;
-		foreach(Theme theme in theme_list_user) {
+		foreach(var theme in theme_list_user) {
 			if (theme.is_selected && !theme.is_installed) {
 				none_selected = false;
 				break;
@@ -719,7 +720,7 @@ public class ThemeWindow : Window {
 		
 		App.progress_total = 0;
 		App.progress_count = 0;
-		foreach(Theme theme in theme_list_user) {
+		foreach(var theme in theme_list_user) {
 			if (theme.is_selected && !theme.is_installed) {
 				App.progress_total += theme.get_file_count_archived();
 			}
@@ -731,7 +732,7 @@ public class ThemeWindow : Window {
 		// unzip themes -----------------------
 		
 		int64 count_temp = 0;
-		foreach(Theme theme in theme_list_user) {
+		foreach(var theme in theme_list_user) {
 			if (App.cancelled){
 				break;
 			}
@@ -758,7 +759,7 @@ public class ThemeWindow : Window {
 		// finish ----------------------------------
 		
 		if (!App.cancelled){
-			foreach(Theme theme in theme_list_user){
+			foreach(var theme in theme_list_user){
 				theme.check_installed(App.current_user.name);
 			}
 			
