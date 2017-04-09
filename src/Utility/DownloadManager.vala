@@ -12,7 +12,8 @@ public class DownloadTask : AsyncTask{
 	public int connect_timeout_secs = 60;
 	public int timeout_secs = 60;
 	public int concurrent_downloads = 20;
-
+	public int connections_per_server = 5;
+	
 	// download lists
 	public Gee.ArrayList<DownloadItem> downloads;
 	public Gee.HashMap<string, DownloadItem> map;
@@ -152,6 +153,7 @@ public class DownloadTask : AsyncTask{
 			cmd += " --connect-timeout=%d".printf(connect_timeout_secs);
 			cmd += " --timeout=%d".printf(timeout_secs);
 			cmd += " --max-concurrent-downloads=%d".printf(concurrent_downloads);
+			cmd += " --max-connection-per-server=%d".printf(connections_per_server);
 			//cmd += " --continue"; // never use - this is for continuing files downloaded sequentially by web browser and other programs
 			//cmd += " --optimize-concurrent-downloads=true"; // not supported by all versions
 			//cmd += " -l download.log"; // too much logging
@@ -366,15 +368,15 @@ public class DownloadItem : GLib.Object{
 			}
 			else{
 				if (task.status_in_kb){
-					return "%s, %s/s (%s)".printf(
-						format_file_size(bytes_received, false, "k", false, 1),
-						//format_file_size(bytes_total, false, "k", true, 1),
-						format_file_size(rate, false, "k", true, 1),
+					return "%s @ %s/s (%s)".printf(
+						format_file_size(bytes_received, false, "k", true, 0),
+						//format_file_size(bytes_total, false, "k", true, 0),
+						format_file_size(rate, false, "k", true, 0),
 						eta).replace("\n","");
 				}
 				else{
-					return "%s, %s/s (%s)".printf(
-						format_file_size(bytes_received, false, "", false, 1),
+					return "%s @ %s/s (%s)".printf(
+						format_file_size(bytes_received, false, "", true, 1),
 						//format_file_size(bytes_total, false, "", true, 1),
 						format_file_size(rate, false, "", true, 1),
 						eta).replace("\n","");
