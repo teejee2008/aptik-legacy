@@ -861,7 +861,7 @@ public class Theme : GLib.Object{
 	public static void fix_nested_folders_in_path(string share_path){
 		try {
 			
-			log_msg("\n" + _("Checking for nested folders in path") + ": %s".printf(share_path));
+			log_debug("\n" + _("Checking for nested folders in path") + ": %s".printf(share_path));
 			
 			var dir = File.new_for_path(share_path);
 			if (!dir.query_exists()){

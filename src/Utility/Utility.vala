@@ -356,7 +356,7 @@ namespace TeeJee.FileSystem{
 
 		cmd = "find '%s' | wc -l".printf(escape_single_quote(path));
 		ret_val = exec_script_sync(cmd, out std_out, out std_err);
-		return long.parse(std_out);
+		return long.parse(std_out) - 1;
 	}
 
 	public bool dir_exists (string dir_path){
@@ -2304,7 +2304,7 @@ namespace TeeJee.System{
 		
 		public bool is_system{
 			get {
-				return (gid < 1000);
+				return (gid < 1000) || (gid == 65534); // 65534 - nogroup
 			}
 		}
 

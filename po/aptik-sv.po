@@ -1,0 +1,1841 @@
+# Swedish translation for apt-toolkit
+# Copyright (c) 2016 Rosetta Contributors and Canonical Ltd 2016
+# This file is distributed under the same license as the apt-toolkit package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: apt-toolkit\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2017-03-31 16:16+0530\n"
+"PO-Revision-Date: 2017-03-31 08:25+0000\n"
+"Last-Translator: Åke Engelbrektson <Unknown>\n"
+"Language-Team: Svenska Språkfiler <https://svenskasprakfiler.se>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2017-04-09 12:40+0000\n"
+"X-Generator: Launchpad (build 18343)\n"
+"Language: sv\n"
+
+#: MainWindow.vala:907
+#, c-format
+msgid "(%ld packages in backup)"
+msgstr "(%ld paket i säkerhetskopian)"
+
+#: MainWindow.vala:957
+#, c-format
+msgid "(%ld packages in cache)"
+msgstr "(%ld paket i cache)"
+
+#: PackageWindow.vala:510
+msgid "(backup-list)"
+msgstr "(kopieringslista)"
+
+#: PackageManagerWindow.vala:846 PackageWindow.vala:506 PackageWindow.vala:531
+msgid "(selected)"
+msgstr "(markerat)"
+
+#: PackageManagerWindow.vala:848 PackageWindow.vala:508 PackageWindow.vala:533
+msgid "(unselected)"
+msgstr "(omarkerat)"
+
+#: MountWindow.vala:471
+msgid "/etc/fstab and /etc/crypttab are already up-to-date"
+msgstr "/etc/fstab och /etc/crypttab är redan uppdaterade"
+
+#: PackageWindow.vala:186
+msgid ""
+"<b>(backup-list)</b>\n"
+"Packages in the backup list"
+msgstr ""
+"<b>(kopieringslista)</b>\n"
+"Paket i kopieringslistan"
+
+#: PackageWindow.vala:182
+msgid ""
+"<b>Installed (auto)</b>\n"
+"Packages that were installed automatically for satisfying the dependencies "
+"of extra packages that were installed by you. Displays B, C, D from the "
+"above example."
+msgstr ""
+"<b>Installerade (auto)</b>\n"
+"Paket som installerats automatiskt, för att möta beroenden från extra paket "
+"som installerats av dig. Visar B, C och D från ovanstående exempel."
+
+#: PackageWindow.vala:183
+msgid ""
+"<b>Installed (deb)</b>\n"
+"Packages that were installed from downloaded DEB files."
+msgstr ""
+"<b>Installerade (deb)</b>\n"
+"Paket som hämtats från nedladdade DEB-filer."
+
+#: PackageWindow.vala:180
+msgid ""
+"<b>Installed (dist)</b>\n"
+"Packages that came with your OS."
+msgstr ""
+"<b>Installerade (dist)</b>\n"
+"Paket som kom förinstallerade med ditt OS."
+
+#: PackageWindow.vala:181
+msgid ""
+"<b>Installed (user)</b>\n"
+"Extra packages installed by you. Dependency packages will not be displayed. "
+"For example, if you installed package A on your system, and packages B, C, D "
+"were installed along with A (as dependencies), then only A will be listed."
+msgstr ""
+"<b>Installerade (användare)</b>\n"
+"Extra paket installerade av dig. Beroendepaket visas inte. Om du t.ex. "
+"installerade paket A på ditt system, och paketen B, C och D installerades "
+"tillsammans med A (som beroenden), kommer endast A att listas."
+
+#: PackageWindow.vala:179
+msgid ""
+"<b>Installed</b>\n"
+"All installed packages."
+msgstr ""
+"<b>Installerade</b>\n"
+"Alla installerade paket."
+
+#: PackageWindow.vala:185
+msgid ""
+"<b>Not Available</b>\n"
+"Packages that are not available for installation. These packages are not "
+"available in software repositories and there are no DEB files in backup "
+"directory."
+msgstr ""
+"<b>Inte tillgängliga</b>\n"
+"Paketen är inte tillgängliga för installation. Dessa paket finns inte "
+"tillgängliga i mjukvaruförråden och det finns inga DEB-filer i "
+"säkerhetskopian."
+
+#: PackageWindow.vala:184
+msgid ""
+"<b>Not Installed</b>\n"
+"Packages that are not installed but available for installation."
+msgstr ""
+"<b>Inte installerade</b>\n"
+"Paketen är inte installerade, men finns tillgängliga för installation."
+
+#: PackageWindow.vala:178
+msgid ""
+"<b>Package State</b>\n"
+"\n"
+msgstr ""
+"<b>Paketstatus</b>\n"
+"\n"
+
+#: MainWindow.vala:753
+msgid "About"
+msgstr "Om"
+
+#: Classes.vala:673
+msgid "Add"
+msgstr "Lägg till"
+
+#: MainWindow.vala:306
+msgid "Add missing PPAs"
+msgstr "Lägg till saknade PPA:er"
+
+#: PpaWindow.vala:527
+#, c-format
+msgid "Adding '%s'..."
+msgstr "Lägger till '%s'..."
+
+#: AptikConsole.vala:581
+msgid "Adding PPA"
+msgstr "Lägger till PPA"
+
+#: AdminWindow.vala:61
+msgid "Admin"
+msgstr "Administratör"
+
+#: AptikGtk.vala:59
+msgid "Admin Access Required"
+msgstr "Administratörsbehörighet krävs"
+
+#: PackageWindow.vala:146 ThemeWindow.vala:136
+msgid "Advanced"
+msgstr "Avancerat"
+
+#: PackageManagerWindow.vala:832 PackageManagerWindow.vala:858
+#: PackageWindow.vala:490 PackageWindow.vala:515 PackageWindow.vala:544
+msgid "All"
+msgstr "Alla"
+
+#: AptikConsole.vala:149
+msgid "All Items"
+msgstr "Alla objekt"
+
+#: ThemeWindow.vala:277
+msgid "All Types"
+msgstr "Alla typer"
+
+#: ThemeWindow.vala:218
+msgid "All Users"
+msgstr "Alla användare"
+
+#: PackageWindow.vala:857
+msgid "All top-level installed packages have been selected by default."
+msgstr "Alla installerade toppnivåpaket har markerats som standard."
+
+#: Main.vala:318
+msgid "App config loaded"
+msgstr "Programkonfiguration inläst"
+
+#: Main.vala:291
+msgid "App config saved"
+msgstr "Programkonfiguration sparad"
+
+#: OneClickSettingsDialog.vala:137
+msgid "App settings backup limit (KB)"
+msgstr "Utrymmesgräns för programinställningskopia (KB)"
+
+#: MainWindow.vala:754
+msgid "Application Info"
+msgstr "Programinformation"
+
+#: Main.vala:3344
+msgid "Application Settings"
+msgstr "Programinställningar"
+
+#: AptikConsole.vala:56 AptikGtk.vala:57
+msgid "Aptik needs admin access to backup and restore packages."
+msgstr ""
+"Aptik behöver administratörsbehörighet för att säkerhetskopiera och "
+"återställa paket."
+
+#: Main.vala:1756 Theme.vala:623
+#, c-format
+msgid "Archiving"
+msgstr "Arkivering"
+
+#: ConfigWindow.vala:417 ThemeWindow.vala:610
+msgid "Archiving..."
+msgstr "Arkiverar..."
+
+#: AboutWindow.vala:348
+#, c-format
+msgid "Artists"
+msgstr "Artister"
+
+#: AptikConsole.vala:92
+msgid "Assume Yes for all prompts"
+msgstr "Anta Ja, för alla frågor"
+
+#: AboutWindow.vala:324
+#, c-format
+msgid "Authors"
+msgstr "Upphovsman"
+
+#: PackageManagerWindow.vala:638 PackageWindow.vala:660 PackageWindow.vala:664
+#: PackageWindow.vala:690
+msgid "Available"
+msgstr "Tillgänglig"
+
+#: AboutWindow.vala:295
+msgid "Back"
+msgstr "Tillbaka"
+
+#: AptikConsole.vala:1063 AptikConsole.vala:1098 ConfigWindow.vala:334
+#: MainWindow.vala:287 MainWindow.vala:337 MainWindow.vala:366
+#: MainWindow.vala:416 MainWindow.vala:445 MainWindow.vala:493
+#: MainWindow.vala:541 MainWindow.vala:570 MainWindow.vala:599
+#: PackageManagerWindow.vala:476 PackageWindow.vala:131 PackageWindow.vala:406
+#: PpaWindow.vala:111 PpaWindow.vala:265 ThemeWindow.vala:123
+#: ThemeWindow.vala:526 UserDataSettingsDialog.vala:62
+#: UserDataSettingsDialog.vala:486
+msgid "Backup"
+msgstr "Säkerhetskopiera"
+
+#: MainWindow.vala:240
+msgid "Backup &amp; Restore"
+msgstr "Säkerhetskopiera &amp; återställ"
+
+#: AptikConsole.vala:136 MainWindow.vala:534
+msgid "Backup /etc/fstab and /etc/crypttab entries"
+msgstr "Säkerhetskopiera /etc/fstab- och /etc/crypttab-poster"
+
+#: ConfigWindow.vala:118
+msgid "Backup Application Settings"
+msgstr "Säkerhetskopiera programinställningar"
+
+#: MainWindow.vala:812
+msgid "Backup Directory Not Selected"
+msgstr "Ingen plats för säkerhetskopian vald"
+
+#: ThemeWindow.vala:396
+msgid "Backup File"
+msgstr "Säkerhetskopiera fil"
+
+#: MainWindow.vala:280
+msgid "Backup Launchpad PPAs"
+msgstr "Säkerhetskopiera Launchpad-PPA:er"
+
+#: MainWindow.vala:120
+msgid "Backup Location &amp; Password"
+msgstr "Säkerhetskopieringsplats &amp; Lösenord"
+
+#: UserDataSettingsDialog.vala:266
+msgid "Backup Mode"
+msgstr "Säkerhetskopieringsläge"
+
+#: AptikConsole.vala:151
+msgid "Backup all items"
+msgstr "Säkerhetskopiera alla objekt"
+
+#: MainWindow.vala:438
+msgid "Backup application settings"
+msgstr "Säkerhetskopiera programinställningar"
+
+#: Main.vala:3292
+msgid "Backup completed"
+msgstr "Säkerhetskopiering slutförd"
+
+#: Main.vala:3293
+msgid "Backup completed with errors"
+msgstr "Säkerhetskopiering slutförd med fel"
+
+#: AptikConsole.vala:124
+msgid "Backup config files from /home/<user>"
+msgstr "Säkerhetskopiera konfigurationsfiler från /home/<användare>"
+
+#: AptikConsole.vala:88
+msgid "Backup directory (defaults to current directory)"
+msgstr "Säkerhetskopiera mapp (aktuell mapp som standard)"
+
+#: AptikConsole.vala:181
+msgid "Backup directory not found"
+msgstr "Säkerhetskopieringsmappen hittades inte"
+
+#: AptikConsole.vala:103
+msgid "Backup downloaded packages from APT cache"
+msgstr "Säkerhetskopiera hämtade paket från APT cache"
+
+#: MainWindow.vala:330
+msgid "Backup downloaded packages in /var/cache/apt"
+msgstr "Säkerhetskopiera hämtade paket i /var/cache/apt"
+
+#: MainWindow.vala:563
+msgid ""
+"Backup home directory data\n"
+"\n"
+"Note: App config directories will not be included in the backup. Use the "
+"'Application Settings' section to backup app config directories."
+msgstr ""
+"Säkerhetskopiera data i hemkatalogen\n"
+"\n"
+"Notera: Konfigurationsmappar för program kommer inte att tas med i "
+"säkerhetskopian. Använd 'Programinställningar' för att säkerhetskopiera "
+"konfigurationsmappar för program."
+
+#: MainWindow.vala:359
+msgid "Backup installed packages"
+msgstr "Säkerhetskopiera installerade paket"
+
+#: AptikConsole.vala:98
+msgid "Backup list of PPAs"
+msgstr "Säkerhetskopiera PPA-lista"
+
+#: AptikConsole.vala:113
+msgid "Backup list of manual and installed packages"
+msgstr "Säkerhetskopiera lista med manuella och installerade paket"
+
+#: Main.vala:3294
+msgid "Backup saved"
+msgstr "Säkerhetskopia sparad"
+
+#: MainWindow.vala:592
+msgid "Backup scheduled tasks for all users (crontab file)"
+msgstr ""
+"Säkerhetskopiera schemalagda åtgärder för alla användare (crontab-fil)"
+
+#: MainWindow.vala:289
+msgid "Backup the list of installed PPAs"
+msgstr "Säkerhetskopiera lista med installerade PPA:er"
+
+#: AptikConsole.vala:131
+msgid "Backup themes from /usr/share/themes"
+msgstr "Säkerhetskopiera teman från /usr/share/themes"
+
+#: MainWindow.vala:486
+msgid ""
+"Backup themes, icons and cursors in /usr/share/icons and /usr/share/themes"
+msgstr ""
+"Säkerhetskopiera teman, ikoner och pekare i /usr/share/icons och "
+"usr/share/themes"
+
+#: AptikConsole.vala:146
+msgid "Backup user's scheduled tasks (crontab)"
+msgstr "Säkerhetskopiera användares schemalagda åtgärder (crontab)"
+
+#: AptikConsole.vala:141
+msgid "Backup user-created data in user's home directory"
+msgstr "Säkerhetskopiera egna filer i användarens hemkatalog"
+
+#: AptikConsole.vala:118 MainWindow.vala:409
+msgid "Backup users and groups"
+msgstr "Säkerhetskopiera användare och grupper"
+
+#: Main.vala:1944
+msgid "Bash Command History"
+msgstr "Bash kommandohistorik"
+
+#: Main.vala:1946
+msgid "Bash Init Script"
+msgstr "Bash initieringsskript"
+
+#: Main.vala:1948
+msgid "Bash Logout Script"
+msgstr "Bash utloggningsskrip"
+
+#: Main.vala:1555 MainWindow.vala:927
+msgid "Cache backup not found in backup directory"
+msgstr "Kan inte hitta någon cache-kopia i säkerhetskopieringsmappen"
+
+#: PackageManagerWindow.vala:488 ProgressWindow.vala:136
+#: TerminalWindow.vala:164
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: PackageManagerWindow.vala:182 PackageWindow.vala:205
+msgid "Category"
+msgstr "Kategori"
+
+#: ThemeWindow.vala:653
+msgid "Checking backups..."
+msgstr "Kontrollerar säkerhetskopior..."
+
+#: Theme.vala:864
+msgid "Checking for nested folders in path"
+msgstr "Söker efter undermappar i sökvägen"
+
+#: PackageManagerWindow.vala:524
+msgid "Checking installed and available packages..."
+msgstr "Söker installerade och tillgängliga paket..."
+
+#: Main.vala:1954
+msgid "Chromium Web Browser"
+msgstr "Chromium webbläsare"
+
+#: ThemeWindow.vala:298
+msgid "Cinnamon Shell"
+msgstr "Cinnamon Shell"
+
+#: AboutWindow.vala:305 ConfigWindow.vala:354 MountWindow.vala:367
+#: PackageWindow.vala:418 PpaWindow.vala:277 TerminalWindow.vala:174
+#: ThemeWindow.vala:538 UserAccountWindow.vala:332
+msgid "Close"
+msgstr "Stäng"
+
+#: Main.vala:225
+msgid "Commands listed below are not available on this system"
+msgstr "Nedan listade kommandon finns inte tillgängliga i detta system"
+
+#: AptikConsole.vala:86
+msgid "Common"
+msgstr "Normal"
+
+#: AboutWindow.vala:332
+#, c-format
+msgid "Contributions"
+msgstr "Bidrag"
+
+#: MainWindow.vala:888 MainWindow.vala:938
+msgid "Copying packages..."
+msgstr "Kopierar paket..."
+
+#: AboutWindow.vala:282 AboutWindow.vala:299
+msgid "Credits"
+msgstr "Tack till"
+
+#: CronTab.vala:94
+msgid "Cron job added"
+msgstr "Cron-jobb tillagt"
+
+#: CronTab.vala:144
+msgid "Cron job removed"
+msgstr "Cron-jobb borttaget"
+
+#: ThemeWindow.vala:283
+msgid "Cursors"
+msgstr "Pekare"
+
+#: PackageWindow.vala:321
+msgid "DEB File Backup"
+msgstr "Säkerhetskopiering av DEB-filer"
+
+#: PackageWindow.vala:454
+msgid "DEB files were copied to backup location."
+msgstr "DEB-filer kopierades till säkerhetskopieringsmappen."
+
+#: ConfigWindow.vala:347
+msgid "Delete"
+msgstr "Ta bort"
+
+#: ConfigWindow.vala:580
+msgid "Deleting..."
+msgstr "Tar bort..."
+
+#: ConfigWindow.vala:281 PackageManagerWindow.vala:435 PackageWindow.vala:340
+msgid "Description"
+msgstr "Beskrivning"
+
+#: MountWindow.vala:219 MountWindow.vala:409
+msgid "Device"
+msgstr "Enhet"
+
+#: Utility.vala:390
+msgid "Dir not found"
+msgstr "Mappen hittades inte"
+
+#: Main.vala:3315
+msgid "Directory created"
+msgstr "Mappen skapad"
+
+#: Main.vala:3318
+msgid "Directory exists"
+msgstr "Mappen finns redan"
+
+#: Main.vala:3319
+msgid "Directory missing"
+msgstr "Mappen saknas"
+
+#: AboutWindow.vala:364
+#, c-format
+msgid "Documenters"
+msgstr "Dokumenterare"
+
+#: MainWindow.vala:736 MainWindow.vala:737
+msgid "Donate"
+msgstr "Donera"
+
+#: DonationWindow.vala:83
+msgid "Donate - Google Wallet"
+msgstr "Donera - Google Wallet"
+
+#: DonationWindow.vala:75
+msgid "Donate - PayPal"
+msgstr "Donera  - PayPal"
+
+#: AboutWindow.vala:372
+#, c-format
+msgid "Donations"
+msgstr "Donationer"
+
+#: DownloadWindow.vala:91
+msgid "Download"
+msgstr "Ladda ner"
+
+#: Main.vala:3339
+msgid "Downloaded Packages"
+msgstr "Hämtade paket"
+
+#: DownloadWindow.vala:112
+msgid "Downloading packages..."
+msgstr "Laddar ner paket..."
+
+#: MountWindow.vala:313
+msgid "Dump"
+msgstr "Dump"
+
+#: Utility.vala:101
+msgid "E"
+msgstr "E"
+
+#: MountWindow.vala:423
+msgid "Encrypted Device"
+msgstr "Krypterad enhet"
+
+#: MountWindow.vala:139
+msgid "Encrypted Devices (/etc/crypttab)"
+msgstr "Krypterade enheter (/etc/crypttab)"
+
+#: MainWindow.vala:188
+msgid "Enter encryption password"
+msgstr "Ange krypteringslösenord"
+
+#: Main.vala:3013
+#, c-format
+msgid "Enter password again to confirm"
+msgstr "Ange lösenordet igen, för att bekräfta"
+
+#: Main.vala:3334
+msgid "Enter password for decrypting backup"
+msgstr "Ange lösenord för att dekryptera säkerhetskopia"
+
+#: Main.vala:3333
+msgid "Enter password for encrypting backup"
+msgstr "Ange lösenord för att kryptera säkerhetskopia"
+
+#: MainWindow.vala:828
+msgid "Enter the passphrase for encryption"
+msgstr "Ange lösenordsfras för kryptering"
+
+#: AptikConsole.vala:572 AptikConsole.vala:648 MainWindow.vala:616
+#: MainWindow.vala:638 MainWindow.vala:1108 PackageWindow.vala:1017
+#: PpaWindow.vala:495 UserAccountWindow.vala:513 Utility.vala:153
+msgid "Error"
+msgstr "Fel"
+
+#: UserDataSettingsDialog.vala:104
+msgid "Exclude"
+msgstr "Undanta"
+
+#: Main.vala:2035 Theme.vala:664
+#, c-format
+msgid "Extracting"
+msgstr "Extrahering"
+
+#: ConfigWindow.vala:505 ThemeWindow.vala:739
+msgid "Extracting..."
+msgstr "Extraherar..."
+
+#: MountWindow.vala:275
+msgid "FS Type"
+msgstr "FS-typ"
+
+#: PpaWindow.vala:600
+msgid "Failed to add PPAs"
+msgstr "Kunde inte lägga till PPA:er"
+
+#: CronTab.vala:90
+msgid "Failed to add cron job"
+msgstr "Kunde inte lägga till cron-jobb"
+
+#: Main.vala:3325
+msgid "Failed to add group"
+msgstr "Kunde inte lägga till grupp"
+
+#: Main.vala:3322
+msgid "Failed to add user"
+msgstr "Kunde inte lägga till användare"
+
+#: Main.vala:3328
+msgid "Failed to add user to group"
+msgstr "Kunde inte lägga till användare i grupp"
+
+#: Main.vala:3137
+msgid "Failed to change file ownership"
+msgstr "Kunde inte ändra filens ägarförhållande"
+
+#: Utility.vala:269
+msgid "Failed to copy file"
+msgstr "Kunde inte kopiera fil"
+
+#: Utility.vala:361
+msgid "Failed to create dir"
+msgstr "Kunde inte skapa mapp"
+
+#: Main.vala:3316
+msgid "Failed to create directory"
+msgstr "Kunde inte skapa mapp"
+
+#: Main.vala:3310
+msgid "Failed to decrypt file"
+msgstr "Kunde inte kryptera fil"
+
+#: Main.vala:3313 Utility.vala:208
+msgid "Failed to delete file"
+msgstr "Kunde inte ta bort fil"
+
+#: CronTab.vala:184
+msgid "Failed to export crontab file"
+msgstr "Kunde inte exportera crontab-fil"
+
+#: CronTab.vala:167
+msgid "Failed to install crontab file"
+msgstr "Kunde inte installera crontab-fil"
+
+#: Utility.vala:289
+msgid "Failed to move file"
+msgstr "Kunde inte flytta fil"
+
+#: CronTab.vala:47
+msgid "Failed to read cron tab"
+msgstr "Kunde inte läsa crontab"
+
+#: Main.vala:3307 Utility.vala:226
+msgid "Failed to read file"
+msgstr "Kunde inte läsa fil"
+
+#: CronTab.vala:140
+msgid "Failed to remove cron job"
+msgstr "Kunde inte ta bort cron-jobb"
+
+#: Main.vala:3295
+msgid "Failed to save backup"
+msgstr "Kunde inte spara säkerhetskopia"
+
+#: Main.vala:3304
+msgid "Failed to save file"
+msgstr "Kunde inte spara fil"
+
+#: Utility.vala:1972
+msgid "Failed to set ownership"
+msgstr "Kunde inte ange ägarskap"
+
+#: Main.vala:568
+#, c-format
+msgid "Failed to unzip: '%s'"
+msgstr "Kunde inte extrahera: '%s'"
+
+#: Main.vala:767
+msgid "Failed to write"
+msgstr "Kunde inte skriva"
+
+#: Utility.vala:253
+msgid "Failed to write file"
+msgstr "Kunde inte skriva fil"
+
+#: OneClickSettingsDialog.vala:80
+msgid "File"
+msgstr "Fil"
+
+#: PackageWindow.vala:854
+msgid "File Missing"
+msgstr "Filen saknas"
+
+#: MainWindow.vala:840
+msgid "File Not Found"
+msgstr "Filen hittades inte"
+
+#: Main.vala:3309
+msgid "File decrypted"
+msgstr "Filen krypterad"
+
+#: Main.vala:3312
+msgid "File deleted"
+msgstr "Filen borttagen"
+
+#: Main.vala:3300
+msgid "File exists"
+msgstr "Filen finns redan"
+
+#: Utility.vala:485 Utility.vala:522
+msgid "File is missing"
+msgstr "Filen saknas"
+
+#: CronTab.vala:152 Main.vala:2007 Main.vala:3301 Theme.vala:649
+#: Utility.vala:283 Utility.vala:417
+msgid "File not found"
+msgstr "Filen hittades inte"
+
+#: Main.vala:257 MainWindow.vala:841
+msgid "File not found in backup directory"
+msgstr "Filen hittades inte i säkerhetskopieringsmappen"
+
+#: Main.vala:473 Main.vala:1090
+#, c-format
+msgid "File not found: %s"
+msgstr "Filen hittades inte: %s"
+
+#: Main.vala:3306
+msgid "File read"
+msgstr "Fil läst"
+
+#: Main.vala:764 Main.vala:3303
+msgid "File saved"
+msgstr "Fil sparad"
+
+#: PackageWindow.vala:455
+msgid "Files Copied"
+msgstr "Filer kopierade"
+
+#: MainWindow.vala:926
+msgid "Files Not Found"
+msgstr "Filer hittades inte"
+
+#: Main.vala:3341
+msgid "Filesystem Mounts"
+msgstr "Monteringspunkter"
+
+#: PackageManagerWindow.vala:160 PackageWindow.vala:158
+msgid "Filter"
+msgstr "Filter"
+
+#: MainWindow.vala:613 MainWindow.vala:635 MainWindow.vala:1105
+#: MountWindow.vala:510 UserAccountWindow.vala:509
+msgid "Finished"
+msgstr "Slutfört"
+
+#: PackageWindow.vala:1092
+msgid "Finished installing packages"
+msgstr "Paketinstallation slutförd"
+
+#: Main.vala:1934
+msgid "Firefox Web Browser"
+msgstr "Firefox webbläsare"
+
+#: MainWindow.vala:859
+msgid "Folder Not Found"
+msgstr "Mapp hittades inte"
+
+#: MainWindow.vala:860
+msgid "Folder not found in backup directory"
+msgstr "Mapp hittades inte i säkerhetskopieringsmappen"
+
+#: PackageWindow.vala:1033
+msgid "Following packages are NOT available"
+msgstr "Följande paket finns INTE tillgängliga"
+
+#: AptikConsole.vala:656
+msgid "Following packages are not available"
+msgstr "Följande paket finns inte tillgängliga"
+
+#: PackageWindow.vala:981
+#, c-format
+msgid ""
+"Following packages are not available (missing PPA):\n"
+"\n"
+"%s"
+msgstr ""
+"Följande paket finns inte tillgängliga (PPA saknas):\n"
+"\n"
+"%s"
+
+#: PackageWindow.vala:890
+msgid "Following packages are not available in software repositories"
+msgstr "Följande paket finns inte tillgängliga i mjukvaruförråden"
+
+#: AptikConsole.vala:664 AptikConsole.vala:684
+msgid "Following packages will be installed"
+msgstr "Följande paket kommer att installeras"
+
+#: UserDataSettingsDialog.vala:295
+msgid "Full"
+msgstr "Fullständig"
+
+#: UserDataSettingsDialog.vala:272
+msgid ""
+"Full - Remove previous backup and create new\n"
+"Incremental - Keep existing backup and save changes"
+msgstr ""
+"Fullständig - Ta bort föregående säkerhetskopia och skapa ny\n"
+"Inkrementell - Bevara befintlig säkerhetskopia och spara ändringar"
+
+#: UserAccountWindow.vala:454
+msgid "GID"
+msgstr "GID"
+
+#: ThemeWindow.vala:286
+msgid "GTK-2"
+msgstr "GTK-2"
+
+#: ThemeWindow.vala:289
+msgid "GTK-3"
+msgstr "GTK-3"
+
+#: UserDataSettingsDialog.vala:81
+msgid "General"
+msgstr "Allmänt"
+
+#: ThemeWindow.vala:292
+msgid "Gnome Shell"
+msgstr "Gnome Shell"
+
+#: UserAccountWindow.vala:453
+msgid "Group"
+msgstr "Grupp"
+
+#: Main.vala:3324
+msgid "Group added"
+msgstr "Grupp tillagd"
+
+#: UserAccountWindow.vala:136 UserAccountWindow.vala:443
+msgid "Groups"
+msgstr "Grupper"
+
+#: MainWindow.vala:201
+msgid "Hide"
+msgstr "Dölj"
+
+#: MainWindow.vala:202
+msgid "Hide passphrase"
+msgstr "Dölj lösenordsfras"
+
+#: Main.vala:3345
+msgid "Home Directory Data"
+msgstr "Data i hemkatalogen"
+
+#: DonationWindow.vala:57
+msgid ""
+"I made this application for my own use. I'm distributing it in the hope that "
+"it will be useful to someone. This is not a commercial product, there's no "
+"company behind it and there are no support teams to answer your questions. I "
+"work on this application during my free time based on my own requirements "
+"and interest.\n"
+"\n"
+"If you need help with an issue, or if you have a feature request, please "
+"open a ticket on the GitHub issue tracker. If the requested feature is "
+"useful to me and I have the time, I will implement it. If it is not useful "
+"to me or if it requires a lot of time and effort, then it will remain in the "
+"tracker till someone takes interest in the feature and implements it. That's "
+"the whole idea behind open-source software. Open-source does not mean "
+"\"free\" stuff that you don't need to pay for. It's software that belongs to "
+"everyone. If someone needs a feature that is missing, they can take the "
+"source code, add the feature and contribute the change back to the project "
+"so that everyone can benefit from their work.\n"
+"\n"
+"Having said that, please feel free to leave feature requests, suggestions "
+"and bug reports in the issue tracker. Good ideas are always useful and many "
+"of them require little time to implement. Check if an issue was already "
+"reported before opening a new item in the tracker, and help out other users "
+"if you know the solution to an issue.\n"
+"\n"
+"You can leave a donation via PayPal if you wish to say thanks. My PayPal ID "
+"is linked below.\n"
+"\n"
+"Thanks,\n"
+"Tony George"
+msgstr ""
+"Jag har skapat detta program för eget bruk, och jag distribuerar det i hopp "
+"om att det skall vara användbart för fler än mig. Det är ingen kommersiell "
+"produkt, det finns inget företag bakom det och heller ingen \"support-"
+"grupp\" som besvarar dina frågor. Jag arbetar med programmet på min fritid, "
+"baserat på mina egna krav och intressen.\n"
+"\n"
+" Om du behöver hjälp med något problem, eller om du har önskemål om någon "
+"ytterligare funktion, kan du öppna en tråd i ärendehanteraren på GitHub. Om "
+"dina önskemål är användbara för mig och jag har den tid som krävs, kommer "
+"jag att implementera dem. Om jag inte finner det användbart, eller om det "
+"kräver mycket tid och ansträngning, kommer ärendet att kvarstå på GitHub "
+"tills dess att någon intresserar sig för funktionen och implementerar den.\n"
+"Det är hela idéen, bakom öppen källkod. Öppen källkod är inte detsamma som "
+"\"gratisprogram\", som du slipper betala för. Det är mjukvara som tillhör "
+"alla. Om någon saknar en funktion, kan denne någon ta källkoden, lägga till "
+"funktionen och bidra till projektet, så att alla kan dra fördel av arbetet.\n"
+"\n"
+" Med detta sagt, skall du känna dig välkommen med funktionsönskemål, förslag "
+"och felrapporter i ärendehanteraren. Bra idéer är alltid användbara och "
+"många av dem kräver endast lite tid att implementera. Kontrollera om ett "
+"ärende redan finns rapporterat i ärendehanteraren, innan du öppnar ett nytt, "
+"och hjälp andra användare om du har lösningen på ett problem eller en "
+"fråga.\n"
+"\n"
+"Du kan donera via PayPal om du vill tacka mig. Mitt PayPal-ID finns länkat "
+"här under.\n"
+"\n"
+"Tack!\n"
+"Tony George"
+
+#: UserAccountWindow.vala:237
+msgid "ID"
+msgstr "ID"
+
+#: ThemeWindow.vala:280
+msgid "Icons"
+msgstr "Ikoner"
+
+#: PackageWindow.vala:892
+msgid ""
+"If you have the DEB files for these packages, you can drag-and-drop the "
+"files on this window. Files will be saved to backup location and used for "
+"restore."
+msgstr ""
+"Om du har DEB-filerna för dessa paket, kan du dra-och-släppa dem på detta "
+"fönster. Filerna kommer att sparas i säkerhetskopieringsmappen och användas "
+"för återställning."
+
+#: ThemeWindow.vala:416
+msgid "Includes"
+msgstr "Inkluderar"
+
+#: UserDataSettingsDialog.vala:298
+msgid "Incremental"
+msgstr "Inkrementell"
+
+#: PackageManagerWindow.vala:399 PackageManagerWindow.vala:634
+#: PackageManagerWindow.vala:834 PackageWindow.vala:492 PackageWindow.vala:517
+#: PackageWindow.vala:656 ThemeWindow.vala:460
+msgid "Installed"
+msgstr "Installerat"
+
+#: PackageManagerWindow.vala:840 PackageWindow.vala:498 PackageWindow.vala:523
+msgid "Installed (auto)"
+msgstr "Installerat (auto)"
+
+#: PackageWindow.vala:500 PackageWindow.vala:525
+msgid "Installed (deb)"
+msgstr "Installerat (deb)"
+
+#: PackageManagerWindow.vala:836 PackageWindow.vala:494 PackageWindow.vala:519
+msgid "Installed (dist)"
+msgstr "Installerat (dist)"
+
+#: PackageManagerWindow.vala:842
+msgid "Installed (updates)"
+msgstr "Installerat (uppdateringar)"
+
+#: PackageManagerWindow.vala:838 PackageWindow.vala:496 PackageWindow.vala:521
+msgid "Installed (user)"
+msgstr "Installerat (användare)"
+
+#: Main.vala:3340
+msgid "Installed Software"
+msgstr "Installerade paket"
+
+#: PackageWindow.vala:1081
+#, c-format
+msgid "Installing packages from DEB files"
+msgstr "Installerar paket från DEB-filer"
+
+#: PackageWindow.vala:1073
+#, c-format
+msgid "Installing packages from repos"
+msgstr "Installerar paket från förråd"
+
+#: Main.vala:3290
+msgid ""
+"Internet connection is not active. Check the connection and try again."
+msgstr ""
+"Internetanslutningen är inte aktiv. Kontrollera anslutningen och försök igen."
+
+#: DonationWindow.vala:91
+msgid "Issue Tracker"
+msgstr "Ärendehanterare"
+
+#: PackageWindow.vala:856
+msgid ""
+"It is not possible to determine whether a package was installed by you, or "
+"whether it was installed along with the Linux distribution."
+msgstr ""
+"Det är inte möjligt att avgöra om ett paket blev installerat av dig, eller "
+"om det installerades med Linux-distributionen."
+
+#: UserDataSettingsDialog.vala:336
+msgid "Item"
+msgstr "Objekt"
+
+#: PackageManagerWindow.vala:417
+msgid "Latest"
+msgstr "Senast"
+
+#: UserAccountWindow.vala:290
+msgid "List"
+msgstr "Lista"
+
+#: AptikConsole.vala:97
+msgid "List PPAs"
+msgstr "Lista PPA:er"
+
+#: AptikConsole.vala:110
+msgid "List auto-installed packages"
+msgstr "Lista automatiskt installerade paket"
+
+#: AptikConsole.vala:108
+msgid "List available packages"
+msgstr "Lista tillgängliga paket"
+
+#: AptikConsole.vala:123
+msgid "List config dirs in /home/<user>"
+msgstr "Lista konfigurationsmappar i /home/<användare>"
+
+#: AptikConsole.vala:112
+msgid "List default packages for linux distribution"
+msgstr "Lista standardpaket för Linux-distributionen"
+
+#: AptikConsole.vala:111
+msgid "List extra packages installed by user"
+msgstr "Lista extra paket, installerade av användare"
+
+#: AptikConsole.vala:109
+msgid "List installed packages"
+msgstr "Lista installerade paket"
+
+#: AptikConsole.vala:130
+msgid "List themes in /usr/share/themes"
+msgstr "Lista teman i /usr/share/themes"
+
+#: Main.vala:1940 Main.vala:1950
+msgid "Local Fonts"
+msgstr "Lokala teckensnitt"
+
+#: Main.vala:1942 Main.vala:1952
+msgid "Local Themes"
+msgstr "Lokala teman"
+
+#: MountWindow.vala:201
+msgid "Mapped Name"
+msgstr "Mappat namn"
+
+#: ThemeWindow.vala:301
+msgid "Metacity Window Border"
+msgstr "Metacity fönsterkant"
+
+#: MainWindow.vala:794
+msgid "Migration utility for Ubuntu-based distributions"
+msgstr "Migrationsverktyg för Ubuntu-baserade distributioner"
+
+#: Main.vala:142
+msgid "Missing Dependencies"
+msgstr "Saknade beroenden"
+
+#: Utility.vala:1491
+msgid "Missing Icon"
+msgstr "Saknad ikon"
+
+#: PackageWindow.vala:980
+msgid "Missing Packages"
+msgstr "Saknade paket"
+
+#: MountWindow.vala:238
+msgid "Mount Point"
+msgstr "Monteringspunkt"
+
+#: UserAccountWindow.vala:207 UserDataSettingsDialog.vala:229
+msgid "Name"
+msgstr "Namn"
+
+#: Classes.vala:671 Classes.vala:677
+msgid "No Change"
+msgstr "Ingen ändring"
+
+#: UserAccountWindow.vala:497
+msgid "No Changes Required"
+msgstr "Inga ändringar krävs"
+
+#: ConfigWindow.vala:401
+msgid "No Directories Selected"
+msgstr "Inga mappar valda"
+
+#: PpaWindow.vala:417
+msgid "No PPA Selected"
+msgstr "Inga PPA:er valda"
+
+#: PackageWindow.vala:913
+msgid "No Packages Selected"
+msgstr "Inga paket valda"
+
+#: ThemeWindow.vala:587
+msgid "No Themes Selected"
+msgstr "Inga teman valda"
+
+#: Main.vala:3330
+msgid "No changes required"
+msgstr "Inga ändringar krävs"
+
+#: UserAccountWindow.vala:278 UserAccountWindow.vala:283
+msgid "Normal"
+msgstr "Normal"
+
+#: PackageWindow.vala:668
+msgid "Not Available"
+msgstr "Inte tillgänglig"
+
+#: PackageManagerWindow.vala:642
+msgid "Not Available! Check if PPA needs to be added"
+msgstr "Inte tillgänglig! Kontrollera om PPA behöver läggas till"
+
+#: PackageManagerWindow.vala:638 PackageManagerWindow.vala:844
+#: PackageWindow.vala:660 PackageWindow.vala:664 PackageWindow.vala:690
+#: ThemeWindow.vala:464
+msgid "Not Installed"
+msgstr "Inte installerad"
+
+#: PackageWindow.vala:504 PackageWindow.vala:529
+msgid "NotAvailable"
+msgstr "Inte tillgänglig"
+
+#: PackageWindow.vala:502 PackageWindow.vala:527
+msgid "NotInstalled"
+msgstr "Inte tillgänglig"
+
+#: ConfigWindow.vala:474 ConfigWindow.vala:551 PackageWindow.vala:1010
+#: PackageWindow.vala:1030 ThemeWindow.vala:716
+msgid "Nothing To Do"
+msgstr "Inget att göra"
+
+#: MainWindow.vala:702
+msgid ""
+"One-Click\n"
+"Backup"
+msgstr ""
+"Säkerhetskopiera\n"
+"med ett klick"
+
+#: MainWindow.vala:711
+msgid ""
+"One-Click\n"
+"Restore"
+msgstr ""
+"Återställ \n"
+"med ett klick"
+
+#: MainWindow.vala:720
+msgid ""
+"One-Click\n"
+"Settings"
+msgstr ""
+"Inställningar\n"
+"för ett klick"
+
+#: MainWindow.vala:703
+msgid "One-Click Backup"
+msgstr "Säkerhetskopiera med ett klick"
+
+#: MainWindow.vala:674
+msgid "One-Click Backup &amp; Restore"
+msgstr "Säkerhetskopiera &amp; återställ med ett klick"
+
+#: MainWindow.vala:712
+msgid "One-Click Restore"
+msgstr "Återställ med ett klick"
+
+#: AdminWindow.vala:55 OneClickSettingsDialog.vala:53
+msgid "One-Click Settings"
+msgstr "Inställningar för ett klick"
+
+#: MainWindow.vala:164
+msgid "Open"
+msgstr "Öppna"
+
+#: MainWindow.vala:166
+msgid "Open backup location"
+msgstr "Öppna säkerhetskopieringsmappen"
+
+#: Main.vala:1938
+msgid "Opera Web Browser"
+msgstr "Opera webbläsare"
+
+#: AptikConsole.vala:84 AptikGtk.vala:117 MountWindow.vala:294
+msgid "Options"
+msgstr "Alternativ"
+
+#: Main.vala:3133
+#, c-format
+msgid "Ownership changed to '%s' for files in directory '%s'"
+msgstr "Ägarskapet ändrat till '%s' för filer i mappen '%s'"
+
+#: PackageManagerWindow.vala:283 PpaWindow.vala:181
+msgid "PPA"
+msgstr "PPA"
+
+#: PackageManagerWindow.vala:803 PackageManagerWindow.vala:807
+#: PpaWindow.vala:337 PpaWindow.vala:341
+#, c-format
+msgid "PPA is Enabled (%d installed packages)"
+msgstr "PPA är aktiverat (%d installerade paket)"
+
+#: PackageManagerWindow.vala:812 PpaWindow.vala:346
+msgid "PPA is Not Added"
+msgstr "PPA har inte lagts till"
+
+#: DownloadWindow.vala:218 PackageManagerWindow.vala:381 PackageWindow.vala:294
+msgid "Package"
+msgstr "Paket"
+
+#: PackageManagerWindow.vala:169
+msgid ""
+"Package State\n"
+"\n"
+"Installed\t\t\tAll installed packages\n"
+"Installed (dist)\t\tPackages that are part of the base distribution\n"
+"Installed (user)\t\tExtra packages that were installed by user\n"
+"Installed (auto)\t\tPackages that were installed automatically\n"
+"\t\t\t\t\t(as a dependency for other packages)\n"
+"Installed (updates)\tPackages that have updates available\n"
+"Not Installed\t\tPackages which are not installed"
+msgstr ""
+"Paketstatus\n"
+"\n"
+"Installerat\t\t\tAlla installerade paket\n"
+"Installerat (dist)\t\tPaket som är en del av grunddistributionen\n"
+"Installerat (användare)\t\tExtra paket som installerats av användare\n"
+"Installerat (auto)\t\tPaket som installerats automatiskt\n"
+"\t\t\t\t\t\t(som beroenden för andra paket)\n"
+"Installerat (uppdateringar)\tPaket som har tillgängliga uppdateringar\n"
+"Inte installerat\t\tPaket som inte installerats"
+
+#: Main.vala:3288
+msgid "Package installation has failed or was aborted by user"
+msgstr "Paketinstallationen misslyckades eller avbröts av användaren"
+
+#: PackageManagerWindow.vala:301 PpaWindow.vala:200 PpaWindow.vala:203
+msgid "Packages"
+msgstr "Paket"
+
+#: MountWindow.vala:332
+msgid "Pass"
+msgstr "Lösenord"
+
+#: MountWindow.vala:257
+msgid "Password / Keyfile"
+msgstr "Lösenord / Nyckelfil"
+
+#: MainWindow.vala:827
+msgid "Password Field is Empty"
+msgstr "Lösenordsfältet är tomt"
+
+#: Main.vala:3335
+msgid "Password cannot be empty!"
+msgstr "Lösenordet kan inte utelämnas!"
+
+#: Main.vala:3332
+msgid "Password not specified!"
+msgstr "Lösenord ospecificerat!"
+
+#: Main.vala:3336
+msgid "Passwords do not match!"
+msgstr "Lösenorden matchar inte!"
+
+#: ConfigWindow.vala:242
+msgid "Path"
+msgstr "Sökväg"
+
+#: Main.vala:226
+msgid "Please install required packages and try running Aptik again"
+msgstr "Installera nödvändiga paket och försök starta Aptik igen"
+
+#: AptikGtk.vala:58
+msgid "Please run the application as admin ('gksu aptik-gtk')"
+msgstr "Kör programmet som administratör ('gksu aptik-gtk')"
+
+#: AptikConsole.vala:57
+msgid "Please run the application as admin (using 'sudo' or 'su')"
+msgstr "Kör programmet som administratör (med hjälp av 'sudo' eller 'su')"
+
+#: ConfigWindow.vala:552
+msgid "Please select the directories to reset"
+msgstr "Välj mappar att nollställa"
+
+#: ConfigWindow.vala:475
+msgid "Please select the directories to restore"
+msgstr "Välj mappar att återställa"
+
+#: PackageWindow.vala:858
+msgid "Please un-select the packages that are not required."
+msgstr "Avmarkera de paket som inte behövs."
+
+#: ConfigWindow.vala:408 ConfigWindow.vala:497 ConfigWindow.vala:574
+#: MainWindow.vala:882 MainWindow.vala:932 PackageWindow.vala:832
+#: PackageWindow.vala:943 PpaWindow.vala:364 PpaWindow.vala:444
+#: PpaWindow.vala:501 ThemeWindow.vala:593 ThemeWindow.vala:724
+msgid "Preparing..."
+msgstr "Förbereder..."
+
+#: PackageWindow.vala:1095
+msgid "Press ENTER to exit..."
+msgstr "Tryck RETUR för att avsluta..."
+
+#: AptikGtk.vala:119
+msgid "Print debug information"
+msgstr "Skriv ut felsökningsinformation"
+
+#: DownloadWindow.vala:237
+msgid "Progress"
+msgstr "Förlopp"
+
+#: Main.vala:361
+msgid "Reading deb files from backup..."
+msgstr "Läser deb-filer från säkerhetskopia..."
+
+#: Main.vala:352
+msgid "Reading default package lists..."
+msgstr "Läser standardpaketlistor..."
+
+#: Main.vala:340
+msgid "Reading package lists..."
+msgstr "Läser paketlistor..."
+
+#: Main.vala:1017
+msgid "Reading package priorities..."
+msgstr "Läser paketprioriteringar..."
+
+#: Main.vala:960
+msgid "Reading source lists..."
+msgstr "Läser resurslistor..."
+
+#: Main.vala:346
+msgid "Reading state information..."
+msgstr "Läser statusinformation..."
+
+#: MountWindow.vala:134
+msgid "Regular Devices (/etc/fstab)"
+msgstr "Ordinarie enheter (/etc/fstab)"
+
+#: ConfigWindow.vala:349
+msgid ""
+"Reset the settings for an application (Eg: Chromium Browser) by deleting the "
+"settings directory (~/.config/chromium). The directory will be created "
+"automatically with default configuration files on the next run of the "
+"application."
+msgstr ""
+"Nollställ inställningarna för ett program (T.ex. Chromium webbläsare) genom "
+"att ta bort inställningsmappen (~/.config/chromium). Mappen återskapas "
+"automatiskt med standardinställningar, nästa gång programmet startas."
+
+#: AptikConsole.vala:1063 AptikConsole.vala:1098 ConfigWindow.vala:108
+#: ConfigWindow.vala:340 MainWindow.vala:304 MainWindow.vala:345
+#: MainWindow.vala:383 MainWindow.vala:424 MainWindow.vala:461
+#: MainWindow.vala:509 MainWindow.vala:549 MainWindow.vala:578
+#: MainWindow.vala:621 MountWindow.vala:115 MountWindow.vala:362
+#: PackageManagerWindow.vala:482 PackageWindow.vala:123 PackageWindow.vala:412
+#: PpaWindow.vala:103 PpaWindow.vala:271 ThemeWindow.vala:114
+#: ThemeWindow.vala:532 UserAccountWindow.vala:112 UserAccountWindow.vala:327
+#: UserDataSettingsDialog.vala:62 UserDataSettingsDialog.vala:486
+msgid "Restore"
+msgstr "Återställ"
+
+#: AptikConsole.vala:137
+msgid "Restore /etc/fstab and /etc/crypttab entries"
+msgstr "Återställ /etc/fstab- och /etc/crypttab-poster"
+
+#: AptikConsole.vala:99
+msgid "Restore PPAs from file 'ppa.list'"
+msgstr "Återställ PPA:er från filen 'ppa.list'"
+
+#: AptikConsole.vala:152
+msgid "Restore all items"
+msgstr "Återställ alla objekt"
+
+#: Main.vala:3297
+msgid "Restore completed"
+msgstr "Återställning slutförd"
+
+#: Main.vala:3298
+msgid "Restore completed with errors"
+msgstr "Återställning slutförd med fel"
+
+#: AptikConsole.vala:125
+msgid "Restore config files to /home/<user>"
+msgstr "Återställ konfigurationsfiler till /home/<användare>"
+
+#: AptikConsole.vala:104
+msgid "Restore downloaded packages to APT cache"
+msgstr "Återställ hämtade paket till APT cache"
+
+#: ThemeWindow.vala:162
+msgid "Restore for:"
+msgstr "Återställ för:"
+
+#: AptikConsole.vala:114
+msgid "Restore packages from file 'packages.list'"
+msgstr "Återställ paket från filen 'packages.list'"
+
+#: ConfigWindow.vala:342
+msgid ""
+"Restore the settings for an application (Eg: Chromium Browser) by replacing "
+"the settings directory (~/.config/chromium) with files from backup. Use the "
+"'Reset' button to delete the restored files in case of issues."
+msgstr ""
+"Återställ inställningar för ett program (t.ex. Chromium webbläsare) genom "
+"att ersätta inställningsmappen (~/.config/chromium) med filer från "
+"säkerhetskopian. Använd knappen 'Nollställ' för att ta bort återställda "
+"filer, vid problem."
+
+#: AptikConsole.vala:132
+msgid "Restore themes to /usr/share/themes"
+msgstr "Återställ teman till /usr/share/themes"
+
+#: AptikConsole.vala:147
+msgid "Restore user's scheduled tasks (crontab)"
+msgstr "Återställ användarens schemalagda åtgärder (crontab)"
+
+#: AptikConsole.vala:142
+msgid "Restore user-created data in user's home directory"
+msgstr "Återställ användarens egna filer i hemkatalogen"
+
+#: AptikConsole.vala:119
+msgid "Restore users and groups"
+msgstr "Återställ användare och grupper"
+
+#: Main.vala:2278
+msgid "Restoring /etc/fstab and /etc/crypttab entries"
+msgstr "Återställer /etc/fstab- och /etc/crypttab-poster"
+
+#: PpaWindow.vala:560
+msgid "Running 'apt-get update'..."
+msgstr "Kör 'apt-get update'..."
+
+#: PackageWindow.vala:919 PpaWindow.vala:423
+msgid "Saving..."
+msgstr "Sparar..."
+
+#: Main.vala:3346
+msgid "Scheduled Tasks"
+msgstr "Schemalagda åtgärder"
+
+#: PackageWindow.vala:172
+msgid "Search package name and description"
+msgstr "Sök paketnamn och beskrivning"
+
+#: MainWindow.vala:156
+msgid "Select"
+msgstr "Välj"
+
+#: ConfigWindow.vala:314 PackageManagerWindow.vala:456 PackageWindow.vala:362
+#: PpaWindow.vala:225 ThemeWindow.vala:486
+msgid "Select All"
+msgstr "Markera alla"
+
+#: ConfigWindow.vala:324 PackageManagerWindow.vala:466 PackageWindow.vala:384
+#: PpaWindow.vala:245 ThemeWindow.vala:506
+msgid "Select None"
+msgstr "Avmarkera alla"
+
+#: MainWindow.vala:135
+msgid "Select backup directory"
+msgstr "Välj säkerhetskopieringsplats"
+
+#: MainWindow.vala:158
+msgid "Select backup location"
+msgstr "Välj säkerhetskopieringsplats"
+
+#: OneClickSettingsDialog.vala:62 OneClickSettingsDialog.vala:69
+#: UserDataSettingsDialog.vala:168 UserDataSettingsDialog.vala:320
+msgid "Select items to backup and restore"
+msgstr "Välj objekt för säkerhetskopiering och återställning"
+
+#: UserDataSettingsDialog.vala:312
+msgid "Select items to exclude"
+msgstr "Välj objekt att undantas"
+
+#: PpaWindow.vala:418
+msgid "Select the PPAs to backup"
+msgstr "Välj PPA:er att säkerhetskopiera"
+
+#: MainWindow.vala:813
+msgid "Select the backup directory"
+msgstr "Ange säkerhetskopians plats"
+
+#: ConfigWindow.vala:402
+msgid "Select the directories to backup"
+msgstr "Välj mappar att säkerhetskopiera"
+
+#: PackageWindow.vala:914
+msgid "Select the packages to backup"
+msgstr "Välj paket att säkerhetskopiera"
+
+#: ThemeWindow.vala:588
+msgid "Select the themes to backup"
+msgstr "Välj teman att säkerhetskopiera"
+
+#: AptikConsole.vala:89
+msgid "Select username for listing config files"
+msgstr "Välj användarnamn för att lista konfigurationsfiler"
+
+#: UserDataSettingsDialog.vala:160
+msgid "Select users"
+msgstr "Välj användare"
+
+#: PpaWindow.vala:489
+msgid "Selected PPAs are already enabled on this system"
+msgstr "Valda PPA:er är redan aktiverade i det här systemet"
+
+#: ConfigWindow.vala:590
+msgid "Selected directories were deleted successfully"
+msgstr "Valda mappar togs bort"
+
+#: ConfigWindow.vala:559
+msgid "Selected directories will be deleted."
+msgstr "Markerade mappar kommer att tas bort."
+
+#: ConfigWindow.vala:482
+msgid "Selected directories will be replaced with files from backup."
+msgstr "Valda mappar kommer att ersättas med filer från säkerhetskopian."
+
+#: AptikConsole.vala:660
+msgid "Selected packages are already installed"
+msgstr "Valda paket är redan installerade"
+
+#: ThemeWindow.vala:717
+msgid "Selected themes are already installed"
+msgstr "Valda teman är redan installerade"
+
+#: Main.vala:206
+#, c-format
+msgid "Selected user: %s, %s"
+msgstr "Vald användare: %s, %s"
+
+#: Utility.vala:1968
+#, c-format
+msgid "Set owner: %s, dir: %s"
+msgstr "Ange ägare: %s, mapp: %s"
+
+#: MainWindow.vala:721
+msgid "Settings for One-Click Backup & Restore"
+msgstr "Inställningar för att säkerhetskopiera & återställa med ett klick"
+
+#: MainWindow.vala:194 MainWindow.vala:205
+msgid "Show"
+msgstr "Visa"
+
+#: AptikConsole.vala:93 AptikGtk.vala:120
+msgid "Show all options"
+msgstr "Visa alla alternativ"
+
+#: AptikConsole.vala:91
+msgid "Show package description if available"
+msgstr "Visa paketbeskrivning om tillgänglig"
+
+#: MainWindow.vala:206
+msgid "Show passphrase"
+msgstr "Visa lösenordsfras"
+
+#: PackageWindow.vala:570
+msgid "Showing all available packages"
+msgstr "Visar alla tillgängliga paket"
+
+#: PackageWindow.vala:573
+msgid "Showing all installed packages"
+msgstr "Visar alla installerade paket"
+
+#: PackageWindow.vala:579
+msgid "Showing extra packages that were installed by you"
+msgstr "Visar extra paket som installerats av dig"
+
+#: PackageWindow.vala:597
+msgid "Showing packages from the backup list"
+msgstr "Visar paket från säkerhetskopieringslistan"
+
+#: PackageWindow.vala:588
+msgid ""
+"Showing packages that are not installed but available for installation"
+msgstr ""
+"Visar paket som inte installerats men finns tillgängliga för installation"
+
+#: PackageWindow.vala:582
+msgid ""
+"Showing packages that were automatically installed (required by other "
+"packages)"
+msgstr "Visar paket som installerats automatiskt (beroenden för andra paket)"
+
+#: PackageWindow.vala:585
+msgid "Showing packages that were installed from DEB files"
+msgstr "Visar paket  som installerats från DEB-filer"
+
+#: PackageWindow.vala:576
+msgid "Showing packages that were installed with the Linux OS"
+msgstr "Visar paket som installerats med Linux-distributionen"
+
+#: PackageWindow.vala:591
+msgid "Showing selected packages"
+msgstr "Visar utvalda paket"
+
+#: PackageWindow.vala:594
+msgid "Showing unselected packages"
+msgstr "Visar ej valda paket"
+
+#: ConfigWindow.vala:258 DownloadWindow.vala:198
+msgid "Size"
+msgstr "Storlek"
+
+#: AptikConsole.vala:126
+msgid "Skip config dirs larger than specified size"
+msgstr "Undanta konfigurationsmappar större än specificerad storlek"
+
+#: Main.vala:3338
+msgid "Software Sources (PPA)"
+msgstr "Programkällor"
+
+#: AptikConsole.vala:90
+msgid "Specify password for encrypting and decrypting backups"
+msgstr "Ange lösenord för kryptering och dekryptering av säkerhetskopior"
+
+#: Main.vala:1956
+msgid "Startup Applications"
+msgstr "Uppstartsprogram"
+
+#: DownloadWindow.vala:179
+msgid "Status"
+msgstr "Status"
+
+#: Utility.vala:1129
+msgid "Stopped"
+msgstr "Stoppad"
+
+#: AptikConsole.vala:82 AptikGtk.vala:115
+msgid "Syntax"
+msgstr "Syntax"
+
+#: UserAccountWindow.vala:278 UserAccountWindow.vala:283
+msgid "System"
+msgstr "System"
+
+#: ThemeWindow.vala:399
+msgid "System Path"
+msgstr "Systemsökväg"
+
+#: PackageWindow.vala:855
+msgid "The list of default packages is missing on this system"
+msgstr "Listan med standardpaket saknas i detta system"
+
+#: ThemeWindow.vala:373
+msgid "Theme"
+msgstr "Tema"
+
+#: ThemeWindow.vala:244
+msgid "Theme Type"
+msgstr "Tematyp"
+
+#: Main.vala:3342
+msgid "Themes and Icons"
+msgstr "Teman och ikoner"
+
+#: PackageWindow.vala:1035
+msgid "There are no packages selected for installation"
+msgstr "Det finns inga paket markerade för installation"
+
+#: PackageWindow.vala:1011
+msgid "There are no packages selected for installation2"
+msgstr "Det finns inga paket markerade för installation2"
+
+#: AboutWindow.vala:340
+#, c-format
+msgid "Third Party Tools"
+msgstr "Tredjepartsverktyg"
+
+#: PackageWindow.vala:678
+msgid "This package is part of the Linux distribution"
+msgstr "Detta paket är en del av Linux-distributionen"
+
+#: PackageWindow.vala:686
+msgid "This package was installed as a dependency for other packages"
+msgstr "Detta paket installerades som ett beroende för andra paket"
+
+#: PackageWindow.vala:682
+msgid "This package was installed by user"
+msgstr "Detta paket installerades av användare"
+
+#: PackageWindow.vala:674
+msgid "This package was installed from a DEB file"
+msgstr "Detta paket installerades från en DEB-fil"
+
+#: AboutWindow.vala:356
+#, c-format
+msgid "Translators"
+msgstr "Översättare"
+
+#: UserAccountWindow.vala:264 UserAccountWindow.vala:442
+#: UserAccountWindow.vala:455
+msgid "Type"
+msgstr "Typ"
+
+#: ThemeWindow.vala:249
+msgid "Type of theme to display"
+msgstr "Tematyp att visa"
+
+#: UserAccountWindow.vala:441
+msgid "UID"
+msgstr "UID"
+
+#: ThemeWindow.vala:295
+msgid "Unity Shell"
+msgstr "Unity Shell"
+
+#: PackageWindow.vala:893
+msgid "Unknown Source"
+msgstr "Okänd källa"
+
+#: AptikConsole.vala:421 AptikGtk.vala:102
+msgid "Unknown option"
+msgstr "Okänt alternativ"
+
+#: Classes.vala:675
+msgid "Update"
+msgstr "Uppdatera"
+
+#: AptikConsole.vala:592
+msgid "Updating Package Information..."
+msgstr "Uppdaterar paketinformation..."
+
+#: ConfigWindow.vala:522
+msgid "Updating file ownership..."
+msgstr "Uppdatera filägarskap..."
+
+#: ConfigWindow.vala:138 ConfigWindow.vala:143 UserAccountWindow.vala:440
+#: UserDataSettingsDialog.vala:212
+msgid "User"
+msgstr "Användare"
+
+#: Main.vala:3321
+msgid "User added"
+msgstr "Användare tillagd"
+
+#: Main.vala:3327
+msgid "User added to group"
+msgstr "Användare tillagd i grupp"
+
+#: ThemeWindow.vala:165
+msgid "User:"
+msgstr "Användare:"
+
+#: ThemeWindow.vala:153 ThemeWindow.vala:158
+msgid "Username"
+msgstr "Användarnamn"
+
+#: UserAccountWindow.vala:131 UserAccountWindow.vala:456
+#: UserDataSettingsDialog.vala:92
+msgid "Users"
+msgstr "Användare"
+
+#: Main.vala:3343
+msgid "Users and Groups"
+msgstr "Användare och grupper"
+
+#: UserAccountWindow.vala:498
+msgid "Users and Groups are already up-to-date"
+msgstr "Användare och grupper är redan uppdaterade"
+
+#: Utility.vala:101
+msgid "W"
+msgstr "W"
+
+#: ConfigWindow.vala:481 ConfigWindow.vala:558
+msgid "Warning"
+msgstr "Varning"
+
+#: DonationWindow.vala:99
+msgid "Website"
+msgstr "Webbsida"
+
+#: ThemeWindow.vala:307
+msgid "XFCE Notification"
+msgstr "XFCE-avisering"
+
+#: ThemeWindow.vala:304
+msgid "XFCE Window Border"
+msgstr "XFCE fönsterkant"
+
+#: OneClickSettingsDialog.vala:136
+msgid ""
+"[Application Settings Backup]\n"
+"\n"
+"Some applications such as Steam and Wine store a large amount of data in "
+"their configuration directories (~/.local/share/Steam and ~/.wine). Setting "
+"a limit will skip the backup for these applications. Keep the limit as 0 to "
+"backup the settings for all apps."
+msgstr ""
+"[Säkerhetskopiering av programinställningar]\n"
+"\n"
+"Vissa program såsom Steam och Wine, lagrar en stor mängd data i sina "
+"konfigurationsmappar (~/.local/share/Steam och/.wine). Anges en gräns, "
+"kommer dessa program att undantas från säkerhetskopiering. Sätt "
+"begränsningen till 0, för att säkerhetskopiera alla program."
+
+#: PackageManagerWindow.vala:314 PackageManagerWindow.vala:945
+msgid "available"
+msgstr "tillgänglig"
+
+#: CronTab.vala:188
+msgid "crontab file exported"
+msgstr "crontab-fil exporterad"
+
+#: CronTab.vala:171
+msgid "crontab file installed"
+msgstr "crontab-fil installerad"
+
+#: PackageManagerWindow.vala:315 PackageManagerWindow.vala:946
+msgid "installed"
+msgstr "installerad"
+
+#: PackageManagerWindow.vala:944
+msgid "packages listed"
+msgstr "paket listade"
+
+#: ConfigWindow.vala:174 ThemeWindow.vala:222
+msgid "root"
+msgstr "root"

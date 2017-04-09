@@ -781,10 +781,11 @@ public class MainWindow : Window {
 		
 		dialog.translators = {
 			"B. W. Knight (Korean):https://launchpad.net/~kbd0651",
-			"giulux (Italian)",
+			"giulux (Italian):https://launchpad.net/~giulbuntu",
 			"Jorge Jamhour (Brazilian Portuguese):https://launchpad.net/~jorge-jamhour",
 			"Radek Otáhal (Czech):radek.otahal@email.cz",
-			"Rodion R. (Russian):https://launchpad.net/~r0di0n"
+			"Rodion R. (Russian):https://launchpad.net/~r0di0n",
+			"Åke Engelbrektson:https://launchpad.net/~eson"
 		};
 
 		dialog.documenters = null;
@@ -795,7 +796,7 @@ public class MainWindow : Window {
 		dialog.comments = _("Migration utility for Ubuntu-based distributions");
 		dialog.copyright = "Copyright © 2012-2017 %s (%s)".printf(AppAuthor, AppAuthorEmail);
 		dialog.version = AppVersion;
-		dialog.logo = get_app_icon(128);
+		dialog.logo = get_app_icon(128); 
 
 		dialog.license = "This program is free for personal and commercial use and comes with absolutely no warranty. You use this program entirely at your own risk. The author will not be liable for any damages arising from the use of this program.";
 		dialog.website = "http://teejeetech.in";

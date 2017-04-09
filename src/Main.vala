@@ -1988,7 +1988,7 @@ public class Main : GLib.Object {
 		
 		//check zip file
 		if (!file_exists(zip_file)) {
-			log_error(_("File not found") + ": '%s'".printf(zip_file));
+			//log_error(_("File not found") + ": '%s'".printf(zip_file));
 			return false;
 		}
 
@@ -2060,8 +2060,11 @@ public class Main : GLib.Object {
 			if (!config.enabled) { continue; }
 			
 			foreach(var item in config.items){
-				
+
 				string app_dir = path_combine(current_user.home_path, item[2:item.length]); // skip ~/
+				
+				if (!dir_exists(app_dir)){ continue; }
+				
 				set_directory_ownership(app_dir, current_user.name);
 			}
 		}
@@ -2866,6 +2869,11 @@ public class Main : GLib.Object {
 			if (file_exists(exclude_list)){
 				file_delete(exclude_list);
 			}
+
+			if (dir_count(bak_dir) == 0){
+				continue;
+			}
+
 			file_write(exclude_list, exclude_list_create(user));
 
 			var cmd = "";
@@ -3222,9 +3230,6 @@ public class BackupTask : GLib.Object {
 		task.restore_cmd = "aptik --backup-dir '%s' --restore-packages".printf(App.backup_dir);
 		list.add(task);
 
-		// exit script on error
-		task.restore_cmd += "\nstatus=$?; if [ $status -ne 0 ]; then exit $status; fi\n";
-
 		task = new BackupTask("mount", Message.TASK_MOUNT);
 		task.backup_cmd = "aptik --backup-dir '%s' --password '%s' --backup-mounts".printf(App.backup_dir, App.arg_password);
 		task.restore_cmd = "aptik --backup-dir '%s' --password '%s' --restore-mounts".printf(App.backup_dir, App.arg_password);
@@ -3278,6 +3283,14 @@ public class BackupTask : GLib.Object {
 			foreach(var item in list){
 				item.backup_cmd += " --debug";
 				item.restore_cmd += " --debug";
+			}
+		}
+
+		foreach(var item in list){
+			if (item.name == "package"){
+				// exit script on error
+				item.restore_cmd += "\nstatus=$?; if [ $status -ne 0 ]; then exit $status; fi\n";
+				break;
 			}
 		}
 		
