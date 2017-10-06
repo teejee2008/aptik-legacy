@@ -3,9 +3,11 @@
  "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
  "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
 <policyconfig>
-
+  <vendor>Tony George</vendor>
+  <vendor_url>https://github.com/teejee2008</vendor_url>
   <action id="in.teejeetech.pkexec.aptik-gtk">
-    <message>Authentication is required to run Aptik</message>
+    <message gettext-domain="aptik">Authentication is required to run Aptik as Administrator</message>
+    <description>Run Aptik as Administrator</description>
     <icon_name>aptik</icon_name>
     <defaults>
       <allow_any>auth_admin</allow_any>
@@ -15,5 +17,16 @@
     <annotate key="org.freedesktop.policykit.exec.path">/usr/bin/aptik-gtk</annotate>
     <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
   </action>
-
+  <action id="in.teejeetech.pkexec.aptik">
+    <message gettext-domain="aptik">Authentication is required to run Aptik as Administrator</message>
+    <description>Run Aptik as Administrator</description>
+    <icon_name>aptik</icon_name>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>auth_admin</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/bin/aptik</annotate>
+    <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
+  </action>
 </policyconfig>
