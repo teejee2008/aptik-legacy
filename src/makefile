@@ -1,3 +1,6 @@
+SHELL=/bin/bash
+CFLAGS=--std=c99
+
 prefix=/usr
 bindir=$(prefix)/bin
 sharedir=$(prefix)/share
@@ -6,7 +9,7 @@ launcherdir=$(sharedir)/applications
 polkitdir=$(sharedir)/polkit-1/actions
 mandir=$(sharedir)/man
 man1dir=$(mandir)/man1
-CFLAGS=--std=c99
+
 app_name=aptik
 app_fullname=Aptik
 
@@ -35,7 +38,10 @@ all:
 	xgettext --language=C --keyword=_ --copyright-holder='Tony George (teejee2008@gmail.com)' --package-name='${app_name}' --package-version='1.6' --msgid-bugs-address='teejee2008@gmail.com' --escape --sort-output -o ../${app_name}.pot *.vala
 
 clean:
-	rm -rf *.o ${app_name} ${app_name}-gtk
+	rm -rfv ../release/{source,i386,amd64,armel,armhf}
+	rm -rfv ../release/*.{run,deb}
+	rm -rfv *.c *.o *.mo
+	rm -fv ${app_name} ${app_name}-gtk
 
 install:
 	mkdir -p "$(DESTDIR)$(bindir)"
