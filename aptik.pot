@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aptik 1.6\n"
 "Report-Msgid-Bugs-To: teejee2008@gmail.com\n"
-"POT-Creation-Date: 2017-04-09 21:53+0530\n"
+"POT-Creation-Date: 2017-11-01 18:06+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -345,8 +345,8 @@ msgstr ""
 msgid "Cache backup not found in backup directory"
 msgstr ""
 
-#: PackageManagerWindow.vala:488 ProgressWindow.vala:136
-#: TerminalWindow.vala:164
+#: CustomMessageDialog.vala:168 PackageManagerWindow.vala:488
+#: ProgressWindow.vala:136 TerminalWindow.vala:164
 msgid "Cancel"
 msgstr ""
 
@@ -889,6 +889,10 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
+#: CustomMessageDialog.vala:173
+msgid "No"
+msgstr ""
+
 #: UserAccountWindow.vala:497
 msgid "No Changes Required"
 msgstr ""
@@ -942,6 +946,10 @@ msgstr ""
 #: ConfigWindow.vala:510 ConfigWindow.vala:592 PackageWindow.vala:1014
 #: PackageWindow.vala:1034 ThemeWindow.vala:706
 msgid "Nothing To Do"
+msgstr ""
+
+#: CustomMessageDialog.vala:163 CustomMessageDialog.vala:167
+msgid "OK"
 msgstr ""
 
 #: MainWindow.vala:703
@@ -1578,6 +1586,10 @@ msgstr ""
 
 #: ThemeWindow.vala:293
 msgid "XFCE Window Border"
+msgstr ""
+
+#: CustomMessageDialog.vala:172
+msgid "Yes"
 msgstr ""
 
 #: OneClickSettingsDialog.vala:136
