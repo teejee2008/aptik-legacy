@@ -1534,7 +1534,7 @@ public class Main : GLib.Object {
 
 			string cmd = "rsync -ai --numeric-ids --list-only";
 			cmd += " --exclude=lock --exclude=partial/";
-			cmd += " %s %s".printf("/var/cache/apt/archives/", archives_dir + "/");
+			cmd += " '%s/' '%s/'".printf("/var/cache/apt/archives", escape_single_quote(archives_dir));
 
 			if (gui_mode) {
 				//run rsync to get total count
@@ -1569,7 +1569,7 @@ public class Main : GLib.Object {
 
 		string cmd = "rsync -ai --numeric-ids --list-only";
 		cmd += " --exclude=lock --exclude=partial/";
-		cmd += " %s %s".printf(archives_dir + "/", "/var/cache/apt/archives/");
+		cmd += " '%s/' '%s/'".printf(escape_single_quote(archives_dir), "/var/cache/apt/archives");
 
 		if (gui_mode) {
 			//run rsync to get total count
